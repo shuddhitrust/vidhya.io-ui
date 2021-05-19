@@ -1,0 +1,59 @@
+<p>
+  <mat-toolbar color="white" id="navbar">
+    <span
+      ><a [routerLink]="['']"><img id="logo" src="assets/images/logo.svg" /></a
+    ></span>
+    <span class="example-spacer"></span>
+    <ng-container *ngIf="!isLoggedIn; else loggedInMenu">
+      <span *ngTemplateOutlet="loggedOutMenu"></span
+    ></ng-container>
+  </mat-toolbar>
+</p>
+<ng-template #loggedOutMenu>
+  <button mat-stroked-button color="primary" (click)="login()">
+    <mat-icon>logout</mat-icon>&nbsp;
+    <span>Login</span>
+  </button>
+</ng-template>
+
+<ng-template #loggedInMenu>
+  <ng-container *ngIf="isFullyAuthenticated && approved; else pendingApproval">
+    <button
+      [matMenuTriggerFor]="menu"
+      class="example-icon"
+      aria-label="Example icon-button with a menu"
+      mat-icon-button
+    >
+      <mat-icon>menu</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu" color="#0099ff">
+      <button mat-menu-item [routerLink]="dashboardRoute">
+        <mat-icon>dashboard</mat-icon>
+        <span>Dashboard</span>
+      </button>
+      <button mat-menu-item [routerLink]="profileRoute">
+        <mat-icon>account_circle</mat-icon>
+        <span>Profile</span>
+      </button>
+      <button mat-menu-item [routerLink]="accountRoute">
+        <mat-icon>settings</mat-icon>
+        <span>Account Settings</span>
+      </button>
+      <button mat-menu-item [routerLink]="supportRoute">
+        <mat-icon>supporting_agent</mat-icon>
+        <span>Support</span>
+      </button>
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
+      </button>
+    </mat-menu>
+  </ng-container>
+</ng-template>
+
+<ng-template #pendingApproval>
+  <button mat-stroked-button color="primary" (click)="logout()">
+    <mat-icon>logout</mat-icon>&nbsp;
+    <span>Logout</span>
+  </button>
+</ng-template>

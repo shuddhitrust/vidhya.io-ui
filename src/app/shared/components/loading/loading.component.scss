@@ -1,0 +1,42 @@
+.center {
+  z-index: 999999999;
+  margin: 0;
+  background: rgba(0, 0, 0, 0.5);
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+}
+
+#loading-message {
+  color: white;
+  text-align: center;
+  margin-top: 100px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+  -ms-transform: translateX(-50%);
+  transform: translateX(-50%);
+}
+
+#loader,
+#loader:after {
+  width: 5em;
+  height: 5em;
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+#loader {
+  margin: auto;
+  font-size: 10px;
+  position: relative;
+  z-index: 9999999999;
+}

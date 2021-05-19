@@ -1,0 +1,29 @@
+<div class="feed-header-block">
+  <h2>Groups</h2>
+  <button
+    (click)="createGroup()"
+    class="floating-header-button-top"
+    mat-raised-button
+    color="primary"
+  >
+    Create Group
+  </button>
+</div>
+
+<span *ngIf="!(isFetching$ | async); else loading">
+  <span *ngIf="(groups$ | async).length > 0; else feedEmpty">
+    <div *ngFor="let group of groups$ | async">
+      <span class="feed-card" (click)="openGroup(group)">
+        {{ group.name }}
+      </span>
+    </div>
+  </span>
+</span>
+
+<ng-template #feedEmpty>
+  <p class="center-title">There are no groups you are part of!</p>
+</ng-template>
+
+<ng-template #loading>
+  <app-simple-loading-spinner></app-simple-loading-spinner>
+</ng-template>

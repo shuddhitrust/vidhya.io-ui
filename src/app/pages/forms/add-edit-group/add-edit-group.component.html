@@ -1,0 +1,143 @@
+<button mat-icon-button (click)="goBack()" class="floating-back-button">
+  <mat-icon>keyboard_backspace</mat-icon>
+</button>
+<h2 class="center-title">Group Form</h2>
+<div class="col-lg-8 col-sm-12 form-container">
+  <form
+    [formGroup]="groupForm"
+    novalidate
+    (submit)="reviewMemberInfo(groupForm, formDirective)"
+    #formDirective="ngForm"
+  >
+    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Name</mat-label>
+      <input
+        matInput
+        formControlName="name"
+        required
+        placeholder="Name of the group"
+      />
+      <small
+        class="validation-error"
+        *ngIf="
+          groupForm.get('name').hasError('required') && formDirective.submitted
+        "
+      >
+        Name is required
+      </small>
+    </mat-form-field>
+
+    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Institution</mat-label>
+      <mat-select
+        formControlName="groupInstitutionId"
+        placeholder="The institution you belong to"
+      >
+        <mat-option
+          *ngFor="let institution of institutionOptions$ | async"
+          [value]="institution.value"
+        >
+          {{ institution.label }}
+        </mat-option>
+      </mat-select>
+      <small
+        class="validation-error"
+        *ngIf="
+          groupForm.get('groupInstitutionId').hasError('required') &&
+          formDirective.submitted
+        "
+      >
+        Institution is required
+      </small>
+    </mat-form-field>
+
+    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Group Type</mat-label>
+      <mat-select
+        formControlName="type"
+        required
+        placeholder="The type of group this is"
+      >
+        <mat-option *ngFor="let type of groupTypeOptions" [value]="type.value">
+          {{ type.label }}
+        </mat-option>
+      </mat-select>
+      <small
+        class="validation-error"
+        *ngIf="
+          groupForm.get('type').hasError('required') && formDirective.submitted
+        "
+      >
+        Group Type is required
+      </small>
+    </mat-form-field>
+
+    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Description</mat-label>
+      <input
+        matInput
+        formControlName="description"
+        required
+        placeholder="Group's Description"
+      />
+      <small
+        class="validation-error"
+        *ngIf="
+          groupForm.get('description').hasError('required') &&
+          formDirective.submitted
+        "
+      >
+        Description is required
+      </small>
+    </mat-form-field>
+    <!-- <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Admins</mat-label>
+      <mat-select
+        multiple
+        formControlName="admins"
+        placeholder="The members who are admins"
+      >
+        <mat-option
+          *ngFor="let member of memberOptions$ | async"
+          [value]="member.value"
+        >
+          {{ member.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field> -->
+
+    <mat-form-field
+      *ngIf="memberOptions?.length"
+      class="col-lg-12 col-md-12 col-sm-12"
+      [class.dropdown-loading]="isFetchingMembers"
+      appearance="outline"
+    >
+      <mat-label>Members</mat-label>
+      <mat-select
+        multiple
+        formControlName="members"
+        placeholder="The members of the group"
+      >
+        <mat-option *ngFor="let member of memberOptions" [value]="member.value">
+          {{ member.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button
+      type="submit"
+      class="floating-button-bottom"
+      mat-raised-button
+      color="primary"
+      [class.button-loading]="(formSubmitting$ | async) === true"
+      [disabled]="(formSubmitting$ | async) === true"
+    >
+      {{ (formSubmitting$ | async) === true ? "Submitting..." : "Submit" }}
+    </button>
+  </form>
+  <ag-grid-angular
+    class="ag-theme-alpine group-member-table"
+    [rowData]="memberRows"
+    [columnDefs]="selectedMemberColumns"
+  >
+  </ag-grid-angular>
+</div>

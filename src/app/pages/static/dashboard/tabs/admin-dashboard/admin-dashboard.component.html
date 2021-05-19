@@ -1,0 +1,41 @@
+<button mat-icon-button (click)="drawer.toggle()" id="drawer-puller">
+  <mat-icon>{{
+    opened === true ? "navigate_before" : "navigate_next"
+  }}</mat-icon>
+</button>
+<mat-drawer-container class="drawer-container">
+  <mat-drawer #drawer mode="side" [(opened)]="opened" class="drawer-content">
+    <mat-selection-list [multiple]="false">
+      <mat-list-option
+        [ngClass]="
+          selectedEntity === entity ? 'selectedSection' : 'unselectedSection'
+        "
+        *ngFor="let entity of entities"
+        [value]="entity"
+        (click)="onSelectEntity(entity)"
+      >
+        {{ entity }}
+      </mat-list-option>
+    </mat-selection-list>
+  </mat-drawer>
+
+  <app-awaiting-moderation-table
+    *ngIf="selectedEntity == moderation"
+  ></app-awaiting-moderation-table>
+
+  <app-institutions-table
+    *ngIf="selectedEntity == institutions"
+  ></app-institutions-table>
+
+  <app-members-table *ngIf="selectedEntity == members"></app-members-table>
+
+  <app-institution-admins-table
+    *ngIf="selectedEntity == institutionAdmins"
+  ></app-institution-admins-table>
+
+  <app-class-admins-table
+    *ngIf="selectedEntity == classAdmins"
+  ></app-class-admins-table>
+
+  <app-learners-table *ngIf="selectedEntity == learners"></app-learners-table>
+</mat-drawer-container>

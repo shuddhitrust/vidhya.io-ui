@@ -1,0 +1,31 @@
+<mat-tab-group
+  mat-align-tabs="center"
+  color="primary"
+  [(selectedIndex)]="activeTabIndex"
+  (selectedTabChange)="onTabChange($event)"
+>
+  <mat-tab [label]="tabIndexList[0]">
+    <div class="mat-tab">
+      <app-admin-dashboard [params]="params"></app-admin-dashboard>
+    </div>
+  </mat-tab>
+  <mat-tab [label]="tabIndexList[1]">
+    <div class="mat-tab">
+      <app-announcement-dashboard></app-announcement-dashboard>
+    </div>
+  </mat-tab>
+  <mat-tab [label]="tabIndexList[2]">
+    <div class="mat-tab">
+      <app-assignment-dashboard></app-assignment-dashboard>
+    </div>
+  </mat-tab>
+  <mat-tab [label]="tabIndexList[3]">
+    <div class="mat-tab"><app-course-dashboard></app-course-dashboard></div>
+  </mat-tab>
+  <mat-tab [label]="tabIndexList[4]">
+    <div class="mat-tab"><app-group-dashboard></app-group-dashboard></div>
+  </mat-tab>
+  <mat-tab [label]="tabIndexList[5]">
+    <div class="mat-tab"><app-report-dashboard></app-report-dashboard></div>
+  </mat-tab>
+</mat-tab-group>

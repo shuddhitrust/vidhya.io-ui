@@ -1,0 +1,82 @@
+<div id="title-tab">
+  <div class="title-block">
+    <mat-form-field id="search-query-field" appearance="outline">
+      <input
+        [(ngModel)]="searchParams.searchQuery"
+        (keyup.enter)="fetchRecords()"
+        matInput
+        placeholder="Search..."
+      />
+      <mat-icon matSuffix id="search-input-icon" (click)="fetchRecords()"
+        >search</mat-icon
+      >
+    </mat-form-field>
+  </div>
+  <div class="title-block" id="title">
+    <h2 style="text-align: center">
+      {{ tableTitle
+      }}<mat-icon
+        id="sync-records-icon"
+        *ngIf="!isFetching"
+        (click)="refreshRecords()"
+      >
+        sync
+      </mat-icon>
+    </h2>
+  </div>
+  <div *ngIf="createMethod.observers.length" class="title-block">
+    <button mat-icon-button (click)="createRecord()" id="add-button">
+      <mat-icon>add_circle</mat-icon>
+    </button>
+  </div>
+</div>
+
+<ag-grid-angular
+  class="ag-theme-alpine table-style"
+  [gridOptions]="gridOptions"
+  [rowData]="rows"
+  [columnDefs]="columns"
+  [defaultColDef]="defaultColDef"
+  [rowSelection]="rowSelection"
+  (firstDataRendered)="onFirstDataRendered($event)"
+  (rowDataChanged)="onRowDataChanged($event)"
+  (sortChanged)="onSortChanged($event)"
+  (filterChanged)="onFilterChanged($event)"
+  (selectionChanged)="onSelectionChanged($event)"
+  (columnResized)="onColumnResize($event)"
+  (dragStopped)="onColumnReorder($event)"
+  [rowHeight]="rowHeight"
+  [getRowHeight]="getRowHeight"
+  (gridReady)="onGridReady($event)"
+  [overlayLoadingTemplate]="overlayLoadingTemplate"
+  [overlayNoRowsTemplate]="overlayNoRowsTemplate"
+  [frameworkComponents]="frameworkComponents"
+  [isFullWidthCell]="isFullWidthCell"
+  [fullWidthCellRenderer]="fullWidthCellRenderer"
+  [fullWidthCellRendererParams]="fullWidthCellRendererParams"
+>
+</ag-grid-angular>
+<div>
+  <button
+    [ngStyle]="{
+      visibility: paginationObject.previousPageDisabled ? 'hidden' : 'visible'
+    }"
+    mat-icon-button
+    class="pagination-button"
+    style="float: left"
+    (click)="previousPage()"
+  >
+    <mat-icon>arrow_left</mat-icon>
+  </button>
+  <button
+    [ngStyle]="{
+      visibility: paginationObject.nextPageDisabled ? 'hidden' : 'visible'
+    }"
+    mat-icon-button
+    class="pagination-button"
+    style="float: right"
+    (click)="nextPage()"
+  >
+    <mat-icon>arrow_right</mat-icon>
+  </button>
+</div>

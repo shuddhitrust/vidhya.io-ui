@@ -1,0 +1,115 @@
+<button mat-icon-button (click)="goBack()" class="floating-back-button">
+  <mat-icon>keyboard_backspace</mat-icon>
+</button>
+<h2 class="center-title">Announcement Form</h2>
+<div class="col-lg-8 col-sm-12 form-container">
+  <form
+    [formGroup]="announcementForm"
+    novalidate
+    (submit)="submitForm(announcementForm, formDirective)"
+    #formDirective="ngForm"
+  >
+    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Title</mat-label>
+      <input
+        matInput
+        formControlName="title"
+        required
+        placeholder="Title of the announcement"
+      />
+      <small
+        class="validation-error"
+        *ngIf="
+          announcementForm.get('title').hasError('required') &&
+          formDirective.submitted
+        "
+      >
+        Title is required
+      </small>
+    </mat-form-field>
+
+    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Message</mat-label>
+      <input
+        matInput
+        formControlName="message"
+        required
+        placeholder="Announcement message"
+      />
+      <small
+        class="validation-error"
+        *ngIf="
+          announcementForm.get('message').hasError('required') &&
+          formDirective.submitted
+        "
+      >
+        Message is required
+      </small>
+    </mat-form-field>
+
+    <!-- <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Institution</mat-label>
+      <mat-select
+        formControlName="institutionId"
+        placeholder="The institution you belong to"
+      >
+        <mat-option
+          *ngFor="let institution of institutionOptions$ | async"
+          [value]="institution.value"
+        >
+          {{ institution.label }}
+        </mat-option>
+      </mat-select>
+      <small
+        class="validation-error"
+        *ngIf="
+          announcementForm.get('institutionId').hasError('required') &&
+          formDirective.submitted
+        "
+      >
+        Institution is required
+      </small>
+    </mat-form-field> -->
+
+    <!-- <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Admins</mat-label>
+      <mat-select
+        multiple
+        formControlName="admins"
+        placeholder="The members who are admins"
+      >
+        <mat-option
+          *ngFor="let member of memberOptions$ | async"
+          [value]="member.value"
+        >
+          {{ member.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field> -->
+
+    <!-- <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Members</mat-label>
+      <mat-select
+        multiple
+        formControlName="members"
+        placeholder="The members of the announcement"
+      >
+        <mat-option
+          *ngFor="let member of memberOptions$ | async"
+          [value]="member.value"
+        >
+          {{ member.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field> -->
+    <button
+      type="submit"
+      class="floating-button-bottom"
+      mat-raised-button
+      color="primary"
+      [disabled]="(formSubmitting$ | async) === true"
+    >
+      {{ (formSubmitting$ | async) === true ? "Submitting..." : "Submit" }}
+    </button>
+  </form>
+</div>

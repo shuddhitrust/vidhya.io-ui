@@ -1,0 +1,22 @@
+<button mat-icon-button (click)="goBack()" class="floating-back-button">
+  <mat-icon>keyboard_backspace</mat-icon>
+</button>
+
+<span *ngIf="!(isFetchingAnnouncement$ | async)">
+  <button
+    mat-raised-button
+    color="warn"
+    class="profile-button"
+    (click)="deleteConfirmation()"
+  >
+    Delete
+  </button>
+  <div class="announcement-card">
+    <h2>{{ announcement.title }}</h2>
+    <p>{{ announcement.message }}</p>
+  </div>
+</span>
+
+<ng-template #loading>
+  <app-simple-loading-spinner></app-simple-loading-spinner>
+</ng-template>

@@ -1,0 +1,22 @@
+.announcement-card {
+  text-align: center;
+  padding: 10px;
+  margin: auto 10px 10px 10px;
+  display: block;
+  border-radius: 5px;
+}
+
+.announcement-icon {
+  vertical-align: middle;
+  float: left;
+  color: var(--shuddhi-color);
+}
+
+.close-announcement-icon {
+  vertical-align: middle;
+  float: right;
+  cursor: pointer;
+  opacity: 60%;
+  color: red;
+  font-size: 1em;
+}

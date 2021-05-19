@@ -1,0 +1,32 @@
+<button mat-icon-button (click)="goBack()" class="floating-back-button">
+  <mat-icon>keyboard_backspace</mat-icon>
+</button>
+
+<span *ngIf="!(isFetchingGroup$ | async)">
+  <button
+    mat-raised-button
+    color="warn"
+    class="profile-button"
+    (click)="deleteConfirmation()"
+  >
+    Delete
+  </button>
+  <button
+    mat-raised-button
+    color="info"
+    [class.button-loading]="isFetchingGroup$ | async"
+    class="profile-button"
+    (click)="editGroup()"
+  >
+    Edit
+  </button>
+
+  <div class="group-card">
+    <h2>{{ group.name }}</h2>
+    <p>{{ group.description }}</p>
+  </div>
+</span>
+
+<ng-template #loading>
+  <app-simple-loading-spinner></app-simple-loading-spinner>
+</ng-template>

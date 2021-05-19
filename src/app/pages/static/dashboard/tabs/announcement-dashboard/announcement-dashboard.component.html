@@ -1,0 +1,28 @@
+<div class="feed-header-block">
+  <h2>Announcements</h2>
+  <button
+    (click)="createAnnouncement()"
+    class="floating-header-button-top"
+    mat-raised-button
+    color="primary"
+  >
+    Create Announcement
+  </button>
+</div>
+<span *ngIf="!(isFetching$ | async); else loading">
+  <span *ngIf="(announcements$ | async).length > 0; else feedEmpty">
+    <div *ngFor="let announcement of announcements$ | async">
+      <span class="feed-card" (click)="openAnnouncement(announcement)">
+        {{ announcement.title }}
+      </span>
+    </div>
+  </span>
+</span>
+
+<ng-template #feedEmpty>
+  <p class="center-title">There are no announcements for you!</p>
+</ng-template>
+
+<ng-template #loading>
+  <app-simple-loading-spinner></app-simple-loading-spinner>
+</ng-template>

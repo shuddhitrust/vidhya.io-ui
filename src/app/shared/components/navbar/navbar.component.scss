@@ -1,0 +1,39 @@
+.example-spacer {
+  flex: 1 1 auto;
+}
+
+#navbar {
+  border-bottom: 1px solid #0099ff;
+  height: var(--navbar-height);
+  position: fixed;
+  background: #fff;
+  top: 0px;
+  left: 0px;
+  z-index: 1000;
+}
+
+#logo {
+  margin-top: 5px;
+  height: 40px;
+}
+
+#logo:hover {
+  height: 42px;
+}
+
+#login-button {
+  text-decoration: none;
+  margin-right: 10px;
+  color: var(--shuddhi-color);
+}
+#login-button:hover {
+  color: var(--shuddhi-color-light);
+}
+
+#login-button > h1 {
+  font-size: 1.5em;
+}
+
+#login-button:visited {
+  color: inherit;
+}

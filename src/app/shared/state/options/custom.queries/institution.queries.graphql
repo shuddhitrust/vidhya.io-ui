@@ -1,0 +1,24 @@
+query GetInstitutionMembers($id: ID!) {
+  getInstitution(id: $id) {
+    members {
+      items {
+        id
+        name
+      }
+      nextToken
+    }
+  }
+}
+
+query GetInstitutionGroups($id: ID!) {
+  getInstitution(id: $id) {
+    groups {
+      items {
+        id
+        name
+        type
+      }
+      nextToken
+    }
+  }
+}

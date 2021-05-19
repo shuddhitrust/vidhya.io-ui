@@ -1,0 +1,14 @@
+<app-master-grid
+  [defaultColDef]="defaultColDef"
+  [columns]="columns"
+  [rows]="rows$ | async"
+  [isFetching]="isFetching$ | async"
+  [errorFetching]="errorFetching$ | async"
+  [tableTitle]="tableTitle"
+  [frameworkComponents]="frameworkComponents"
+  [gridOptions]="gridOptions"
+  [paginationObject]="paginationObject$ | async"
+  (fetchMethod)="fetchMembers($event[0])"
+  [columnFilters]="columnFilters"
+  (refreshData)="forceRefetchMembers($event[0])"
+></app-master-grid>

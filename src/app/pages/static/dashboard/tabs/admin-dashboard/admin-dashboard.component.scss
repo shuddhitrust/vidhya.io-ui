@@ -1,0 +1,34 @@
+.drawer-container {
+  height: 100%;
+  width: 100%;
+  padding: 0px;
+  min-height: 500px;
+}
+
+.drawer-content {
+  border-right: 1px solid rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+#drawer-puller {
+  float: left;
+  position: absolute;
+  left: -10px;
+  z-index: 1000;
+  visibility: hidden;
+}
+
+#drawer-puller:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+#drawer-puller mat-icon {
+  color: var(--shuddhi-color);
+}
+.selectedSection {
+  border-right: 2px solid var(--shuddhi-color);
+}
+
+.unselectedSelection {
+  border-right: inherit;
+}
