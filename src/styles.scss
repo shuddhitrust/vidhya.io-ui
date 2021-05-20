@@ -5,6 +5,8 @@
 @import "~@angular/material/theming";
 // Plus imports for other components in your app.
 
+@import "./app/shared/common/shared-styles.css";
+
 // AG Grid Styles
 @import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
 @import "../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css";

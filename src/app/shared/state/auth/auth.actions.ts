@@ -1,9 +1,19 @@
-import { idPayload } from '../../common/models';
+import { FormGroup, FormGroupDirective } from '@angular/forms';
 
 export class LoginAction {
   static readonly type = '[AUTH] Login';
 
-  constructor() {}
+  constructor(
+    public payload: { form: FormGroup; formDirective: FormGroupDirective }
+  ) {}
+}
+
+export class ResetPasswordAction {
+  static readonly type = '[AUTH] Reset Password';
+
+  constructor(
+    public payload: { form: FormGroup; formDirective: FormGroupDirective }
+  ) {}
 }
 
 export class LogoutAction {

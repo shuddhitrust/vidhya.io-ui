@@ -20,10 +20,7 @@ import { Announcement } from 'src/app/shared/common/models';
 @Component({
   selector: 'app-add-edit-announcement',
   templateUrl: './add-edit-announcement.component.html',
-  styleUrls: [
-    './add-edit-announcement.component.scss',
-    './../../../shared/common/shared-styles.css',
-  ],
+  styleUrls: ['./add-edit-announcement.component.scss'],
 })
 export class AddEditAnnouncementComponent implements OnInit {
   formSubmitting: boolean = false;

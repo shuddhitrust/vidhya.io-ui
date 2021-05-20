@@ -10,10 +10,7 @@ import { AnnouncementState } from 'src/app/shared/state/announcements/announceme
 @Component({
   selector: 'app-announcement-dashboard',
   templateUrl: './announcement-dashboard.component.html',
-  styleUrls: [
-    './announcement-dashboard.component.scss',
-    './../../../../../../app/shared/common/shared-styles.css',
-  ],
+  styleUrls: ['./announcement-dashboard.component.scss'],
 })
 export class AnnouncementDashboardComponent implements OnInit {
   @Select(AnnouncementState.listAnnouncements)

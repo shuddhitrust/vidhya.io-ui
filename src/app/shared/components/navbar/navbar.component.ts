@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Store, Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
+import { LoginModalComponent } from 'src/app/pages/modals/login/login-modal.component';
 import { MembershipStatus } from '../../common/models';
 import { uiroutes } from '../../common/ui-routes';
 import { LoginAction, LogoutAction } from '../../state/auth/auth.actions';
@@ -25,7 +27,7 @@ export class NavbarComponent implements OnInit {
   membershipStatus: MembershipStatus;
   approved: boolean;
 
-  constructor(private store: Store) {
+  constructor(private store: Store, public dialog: MatDialog) {
     this.authState$.subscribe((val) => {
       this.authState = val;
       this.isLoggedIn = this.authState.isLoggedIn;
@@ -36,7 +38,11 @@ export class NavbarComponent implements OnInit {
   }
 
   login() {
-    this.store.dispatch(new LoginAction());
+    const dialogRef = this.dialog.open(LoginModalComponent);
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(`Dialog result: ${result}`);
+    });
   }
 
   logout() {

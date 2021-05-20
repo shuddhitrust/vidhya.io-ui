@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { GraphQLModule } from './shared/api/graphql.module';
+import { GraphQLModule } from './shared/api/graphql/graphql.module';
 import { HttpClientModule } from '@angular/common/http';
 import { Styling } from './styling.imports';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -72,6 +72,7 @@ import { AnnouncementState } from './shared/state/announcements/announcement.sta
 import { AwaitingModerationTableComponent } from './pages/tables/awaiting-moderation-table/awaiting-moderation-table.component';
 import { OptionsState } from './shared/state/options/options.state';
 import { GroupMemberState } from './shared/state/groupMembers/group-members.state';
+import { LoginModalComponent } from './pages/modals/login/login-modal.component';
 
 @NgModule({
   declarations: [
@@ -114,6 +115,7 @@ import { GroupMemberState } from './shared/state/groupMembers/group-members.stat
     MemberProfileComponent,
     OwnProfileComponent,
     GroupMemberReviewDialog,
+    LoginModalComponent,
   ],
   imports: [
     BrowserModule,
