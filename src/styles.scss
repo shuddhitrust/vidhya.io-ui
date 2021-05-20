@@ -1,4 +1,109 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@import "~@angular/material/theming";
+// Plus imports for other components in your app.
+
+// AG Grid Styles
+@import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
+@import "../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css";
+
+// Uncomment this to get customized notification action button color
+// @import "src/app/shared/ngxs/notifications/notification.style.scss";
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat-core();
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+
+:root {
+  --shuddhi-color: #0099ff;
+  --shuddhi-color-light: rgba(0, 153, 255, 0.8);
+  --shuddhi-color-translucent: rgba(0, 153, 255, 0.3);
+  --amplify-primary-color: #0099ff;
+  --amplify-primary-tint: #0377c5;
+  --amplify-primary-shade: #032a44;
+  --navbar-height: 50px;
+}
+:host {
+  --container-height: 100%;
+  --container-display: block;
+  --container-justify: center;
+  --container-align: center;
+}
+
+$shuddhi-mat-color: (
+  50: #e0f3ff,
+  100: #b3e0ff,
+  200: #80ccff,
+  300: #4db8ff,
+  400: #26a8ff,
+  500: #0099ff,
+  600: #0091ff,
+  700: #0086ff,
+  800: #007cff,
+  900: #006bff,
+  A100: #ffffff,
+  A200: #f2f7ff,
+  A400: #bfd6ff,
+  A700: #a6c6ff,
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #000000,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+    A100: #000000,
+    A200: #000000,
+    A400: #000000,
+    A700: #000000,
+  ),
+);
+
+$vidhya-primary: mat-palette($shuddhi-mat-color);
+$vidhya-accent: mat-palette($mat-orange, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$vidhya-warn: mat-palette($mat-red);
+
+// Create the theme object. A theme consists of configurations for individual
+// theming systems such as "color" or "typography".
+$vidhya-theme: mat-light-theme(
+  (
+    color: (
+      primary: $vidhya-primary,
+      accent: $vidhya-accent,
+      warn: $vidhya-warn,
+    ),
+  )
+);
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include angular-material-theme($vidhya-theme);
+
+/* You can add global styles to this file, and also import other style files */
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.auth-container {
+  display: none !important;
+  min-height: none !important;
+}
