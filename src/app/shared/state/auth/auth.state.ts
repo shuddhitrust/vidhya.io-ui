@@ -4,9 +4,12 @@ import { AuthStateModel, defaultAuthState } from './auth.model';
 import { Injectable } from '@angular/core';
 import { LoginAction } from './auth.actions';
 import { ShowNotificationAction } from '../notifications/notification.actions';
+<<<<<<< HEAD
 import { Apollo } from 'apollo-angular';
 import { LOGIN } from '../../api/graphql/mutations.graphql';
 import { getErrorMessageFromGraphQLResponse } from '../../common/functions';
+=======
+>>>>>>> 15f5f394940554a3cd671c24b0d8208ab7b6c831
 
 @State<AuthStateModel>({
   name: 'authState',
@@ -14,7 +17,11 @@ import { getErrorMessageFromGraphQLResponse } from '../../common/functions';
 })
 @Injectable()
 export class AuthState {
+<<<<<<< HEAD
   constructor(private store: Store, private apollo: Apollo) {}
+=======
+  constructor(private store: Store) {}
+>>>>>>> 15f5f394940554a3cd671c24b0d8208ab7b6c831
 
   @Selector()
   static getIsLoggingIn(state: AuthStateModel): boolean {

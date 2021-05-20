@@ -1,6 +1,7 @@
 import { gql } from 'apollo-angular';
 
 export const LOGIN = gql`
+<<<<<<< HEAD
   mutation tokenAuth($username: String!, $password: String!) {
     tokenAuth(username: $username, password: $password) {
       success
@@ -20,3 +21,8 @@ export const LOGIN = gql`
     }
   }
 `;
+=======
+{
+    
+}`;
+>>>>>>> 15f5f394940554a3cd671c24b0d8208ab7b6c831
