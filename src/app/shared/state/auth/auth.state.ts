@@ -6,6 +6,7 @@ import { LoginAction } from './auth.actions';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import { Apollo } from 'apollo-angular';
 import { LOGIN } from '../../api/graphql/mutations.graphql';
+import { getErrorMessageFromGraphQLResponse } from '../../common/functions';
 
 @State<AuthStateModel>({
   name: 'authState',
@@ -61,9 +62,9 @@ export class AuthState {
               );
               this.store.dispatch(
                 new ShowNotificationAction({
-                  message: data?.tokenAuth?.errors?.nonFieldErrors[0]?.message
-                    ? data?.tokenAuth?.errors?.nonFieldErrors[0]?.message
-                    : 'Something went wrong. Check your credentials.',
+                  message: getErrorMessageFromGraphQLResponse(
+                    data?.tokenAuth?.errors
+                  ),
                 })
               );
             }

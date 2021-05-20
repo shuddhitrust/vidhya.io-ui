@@ -137,3 +137,9 @@ export const autoGenOptions = (type: object): MatSelectOption[] => {
     return { value: key, label: convertKeyToLabel(key) };
   });
 };
+
+export const getErrorMessageFromGraphQLResponse = (errors): string => {
+  const keys = Object.keys(errors);
+  const message = errors[keys[0]][0].message;
+  return message ? message : 'Something went wrong!';
+};
