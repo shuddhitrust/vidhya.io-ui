@@ -4,6 +4,8 @@ import { AuthStateModel, defaultAuthState } from './auth.model';
 import { Injectable } from '@angular/core';
 import { LoginAction } from './auth.actions';
 import { ShowNotificationAction } from '../notifications/notification.actions';
+import { Apollo } from 'apollo-angular';
+import { LOGIN } from '../../api/graphql/mutations.graphql';
 
 @State<AuthStateModel>({
   name: 'authState',
@@ -11,7 +13,7 @@ import { ShowNotificationAction } from '../notifications/notification.actions';
 })
 @Injectable()
 export class AuthState {
-  constructor(private store: Store) {}
+  constructor(private store: Store, private apollo: Apollo) {}
 
   @Selector()
   static getIsLoggingIn(state: AuthStateModel): boolean {
@@ -30,6 +32,53 @@ export class AuthState {
       isLoggingIn = true;
       const values = form.value;
       patchState({ isLoggingIn });
+      this.apollo
+        .mutate({
+          mutation: LOGIN,
+          variables: {
+            username: values.username,
+            password: values.password,
+          },
+          errorPolicy: 'all',
+        })
+        .subscribe(
+          ({ data }: any) => {
+            isLoggingIn = false;
+            patchState({ isLoggingIn });
+            console.log('got data', { data });
+            if (data.tokenAuth.success) {
+              form.reset();
+              formDirective.resetForm();
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message: 'Logged in successfully!',
+                })
+              );
+            } else {
+              console.log(
+                'data.tokenAuth.errors.nonFieldErrors[0].message',
+                data.tokenAuth.errors.nonFieldErrors[0].message
+              );
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message: data?.tokenAuth?.errors?.nonFieldErrors[0]?.message
+                    ? data?.tokenAuth?.errors?.nonFieldErrors[0]?.message
+                    : 'Something went wrong. Check your credentials.',
+                })
+              );
+            }
+          },
+          (error) => {
+            console.error('There was an error ', error);
+            isLoggingIn = false;
+            patchState({ isLoggingIn });
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: 'There was an error in submitting your form!',
+              })
+            );
+          }
+        );
       // client
       //   .mutate({
       //     mutation: updateForm
