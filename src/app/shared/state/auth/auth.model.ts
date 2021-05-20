@@ -3,6 +3,7 @@ import { emptyMemberFormRecord } from '../members/member.model';
 
 export interface AuthStateModel {
   isLoggedIn: boolean;
+  isLoggingIn: boolean;
   lastLogin: string;
   isFullyAuthenticated: boolean;
   userId: string;
@@ -15,6 +16,7 @@ export interface AuthStateModel {
 
 export const defaultAuthState: AuthStateModel = {
   isLoggedIn: false,
+  isLoggingIn: false,
   lastLogin: null,
   isFullyAuthenticated: false,
   userId: null,

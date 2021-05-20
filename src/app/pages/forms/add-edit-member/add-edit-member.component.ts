@@ -37,10 +37,7 @@ import { FetchGroupOptionsByInstitution } from 'src/app/shared/state/options/opt
 @Component({
   selector: 'app-add-edit-member',
   templateUrl: './add-edit-member.component.html',
-  styleUrls: [
-    './add-edit-member.component.scss',
-    './../../../shared/common/shared-styles.css',
-  ],
+  styleUrls: ['./add-edit-member.component.scss'],
 })
 export class AddEditMemberComponent implements OnInit {
   formSubmitting: boolean = false;

@@ -1,0 +1,79 @@
+<div mat-dialog-content class="dialog-box">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Login</mat-card-title>
+    </mat-card-header>
+    <form
+      [formGroup]="loginForm"
+      novalidate
+      (submit)="login(loginForm, formDirective)"
+      #formDirective="ngForm"
+    >
+      <mat-form-field
+        class="col-lg-12 col-md-12 col-sm-12"
+        appearance="outline"
+      >
+        <mat-label>Username</mat-label>
+        <input
+          matInput
+          formControlName="username"
+          required
+          placeholder="Username"
+        />
+        <small
+          class="validation-error"
+          *ngIf="
+            loginForm.get('username').hasError('required') &&
+            formDirective.submitted
+          "
+        >
+          Username is required
+        </small>
+      </mat-form-field>
+
+      <mat-form-field
+        class="col-lg-12 col-md-12 col-sm-12"
+        appearance="outline"
+      >
+        <mat-label>Password</mat-label>
+        <input
+          matInput
+          [type]="hide ? 'password' : 'text'"
+          formControlName="password"
+          required
+          placeholder="Password"
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          (click)="hide = !hide"
+          [attr.aria-label]="'Hide password'"
+          [attr.aria-pressed]="hide"
+        >
+          <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+        </button>
+        <small
+          class="validation-error"
+          *ngIf="
+            loginForm.get('password').hasError('required') &&
+            formDirective.submitted
+          "
+        >
+          Password is required
+        </small>
+      </mat-form-field>
+
+      <button
+        type="submit"
+        id="login-submit-button"
+        mat-raised-button
+        color="primary"
+        [disabled]="(isLoggingIn$ | async) === true"
+      >
+        {{ (isLoggingIn$ | async) === true ? "Logging in..." : "Login" }}
+      </button>
+    </form>
+    <p><a href="#" (click)="forgotPassword()">Forgot password?</a></p>
+    <p><a href="#" (click)="register()">Register</a></p>
+  </mat-card>
+</div>

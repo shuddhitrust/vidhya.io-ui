@@ -33,10 +33,7 @@ import {
 @Component({
   selector: 'app-add-edit-group',
   templateUrl: './add-edit-group.component.html',
-  styleUrls: [
-    './add-edit-group.component.scss',
-    './../../../shared/common/shared-styles.css',
-  ],
+  styleUrls: ['./add-edit-group.component.scss'],
 })
 export class AddEditGroupComponent implements OnInit {
   selectedMemberColumns = [{ field: 'label', headerName: 'Group Members' }];
@@ -216,10 +213,7 @@ export class AddEditGroupComponent implements OnInit {
 
 @Component({
   selector: 'group-member-review-dialog',
-  styleUrls: [
-    './add-edit-group.component.scss',
-    './../../../shared/common/shared-styles.css',
-  ],
+  styleUrls: ['./add-edit-group.component.scss'],
   templateUrl: './group-member-review-dialog.html',
 })
 export class GroupMemberReviewDialog {

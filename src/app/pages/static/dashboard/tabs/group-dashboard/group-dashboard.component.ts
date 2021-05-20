@@ -10,10 +10,7 @@ import { GroupState } from 'src/app/shared/state/groups/group.state';
 @Component({
   selector: 'app-group-dashboard',
   templateUrl: './group-dashboard.component.html',
-  styleUrls: [
-    './group-dashboard.component.scss',
-    './../../../../../../app/shared/common/shared-styles.css',
-  ],
+  styleUrls: ['./group-dashboard.component.scss'],
 })
 export class GroupDashboardComponent implements OnInit {
   @Select(GroupState.listGroups)
