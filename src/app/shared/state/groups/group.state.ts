@@ -352,7 +352,7 @@ export class GroupState {
       this.store.dispatch(
         new ShowNotificationAction({
           message:
-            'Please fill all required fields before attempting to submit!',
+            'Please make sure there are no errors in the form before attempting to submit!',
         })
       );
     }
