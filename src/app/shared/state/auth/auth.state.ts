@@ -2,14 +2,19 @@ import { State, Action, StateContext, Selector, Store } from '@ngxs/store';
 import { AuthStateModel, defaultAuthState } from './auth.model';
 
 import { Injectable } from '@angular/core';
-import { LoginAction } from './auth.actions';
+import {
+  RegisterAction,
+  LoginAction,
+  VerifyAccountAction,
+  ResendActivationEmailAction,
+  SendPasswordResetEmailAction,
+  PasswordResetAction,
+  PasswordChangeAction,
+} from './auth.actions';
 import { ShowNotificationAction } from '../notifications/notification.actions';
-<<<<<<< HEAD
 import { Apollo } from 'apollo-angular';
-import { LOGIN } from '../../api/graphql/mutations.graphql';
+import { AUTH } from '../../api/graphql/mutations.graphql';
 import { getErrorMessageFromGraphQLResponse } from '../../common/functions';
-=======
->>>>>>> 15f5f394940554a3cd671c24b0d8208ab7b6c831
 
 @State<AuthStateModel>({
   name: 'authState',
@@ -17,69 +22,65 @@ import { getErrorMessageFromGraphQLResponse } from '../../common/functions';
 })
 @Injectable()
 export class AuthState {
-<<<<<<< HEAD
   constructor(private store: Store, private apollo: Apollo) {}
-=======
-  constructor(private store: Store) {}
->>>>>>> 15f5f394940554a3cd671c24b0d8208ab7b6c831
 
   @Selector()
-  static getIsLoggingIn(state: AuthStateModel): boolean {
-    return state.isLoggingIn;
+  static getIsSubmittingForm(state: AuthStateModel): boolean {
+    return state.isSubmittingForm;
   }
 
-  @Action(LoginAction)
-  forceRefetchInstitutions(
+  @Action(RegisterAction)
+  register(
     { getState, patchState }: StateContext<AuthStateModel>,
-    { payload }: LoginAction
+    { payload }: RegisterAction
   ) {
     const state = getState();
     const { form, formDirective } = payload;
-    let { isLoggingIn } = state;
+    let { isSubmittingForm } = state;
     if (form.valid) {
-      isLoggingIn = true;
+      isSubmittingForm = true;
       const values = form.value;
-      patchState({ isLoggingIn });
+      patchState({ isSubmittingForm });
       this.apollo
         .mutate({
-          mutation: LOGIN,
+          mutation: AUTH.REGISTER,
           variables: {
             username: values.username,
-            password: values.password,
+            email: values.email,
+            password1: values.password1,
+            password2: values.password2,
           },
-          errorPolicy: 'all',
         })
         .subscribe(
           ({ data }: any) => {
-            isLoggingIn = false;
-            patchState({ isLoggingIn });
+            const response = data.resgister;
+            isSubmittingForm = false;
+            patchState({ isSubmittingForm });
             console.log('got data', { data });
-            if (data.tokenAuth.success) {
+            if (response?.success) {
               form.reset();
               formDirective.resetForm();
+              patchState({
+                token: response?.token,
+                refreshToken: response?.refreshToken,
+              });
               this.store.dispatch(
                 new ShowNotificationAction({
-                  message: 'Logged in successfully!',
+                  message: 'Registered successfully!',
                 })
               );
             } else {
-              console.log(
-                'data.tokenAuth.errors.nonFieldErrors[0].message',
-                data.tokenAuth.errors.nonFieldErrors[0].message
-              );
               this.store.dispatch(
                 new ShowNotificationAction({
-                  message: getErrorMessageFromGraphQLResponse(
-                    data?.tokenAuth?.errors
-                  ),
+                  message: getErrorMessageFromGraphQLResponse(response?.errors),
                 })
               );
             }
           },
           (error) => {
             console.error('There was an error ', error);
-            isLoggingIn = false;
-            patchState({ isLoggingIn });
+            isSubmittingForm = false;
+            patchState({ isSubmittingForm });
             this.store.dispatch(
               new ShowNotificationAction({
                 message: 'There was an error in submitting your form!',
@@ -87,38 +88,396 @@ export class AuthState {
             );
           }
         );
-      // client
-      //   .mutate({
-      //     mutation: updateForm
-      //       ? mutations.UpdateInstitution
-      //       : mutations.CreateInstitution,
-      //     variables: {
-      //       input: values,
-      //     },
-      //   })
-      //   .then((res: any) => {
-      //     this.store.dispatch(new ForceRefetchInstitutions({}));
-      //     formSubmitting = false;
-      //     patchState({ institutionFormRecord: emptyInstitutionFormRecord });
-      //     form.reset();
-      //     formDirective.resetForm();
-      //     patchState({ formSubmitting });
-      //     this.store.dispatch(
-      //       new ShowNotificationAction({
-      //         message: 'Form submitted successfully!',
-      //       })
-      //     );
-      //   })
-      //   .catch((err) => {
-      //     console.error(err);
-      //     formSubmitting = false;
-      //     patchState({ formSubmitting });
-      //     this.store.dispatch(
-      //       new ShowNotificationAction({
-      //         message: 'There was an error in submitting your form!',
-      //       })
-      //     );
-      //   });
+    } else {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message:
+            'Please fill all required fields before attempting to submit!',
+        })
+      );
+    }
+  }
+
+  @Action(VerifyAccountAction)
+  verifyAccount(
+    { getState, patchState }: StateContext<AuthStateModel>,
+    { payload }: VerifyAccountAction
+  ) {
+    const state = getState();
+    const { form, formDirective } = payload;
+    let { isSubmittingForm } = state;
+    if (form.valid) {
+      isSubmittingForm = true;
+      const values = form.value;
+      patchState({ isSubmittingForm });
+      this.apollo
+        .mutate({
+          mutation: AUTH.VERIFY_ACCOUNT,
+          variables: {
+            token: values.token,
+          },
+        })
+        .subscribe(
+          ({ data }: any) => {
+            const response = data.verifyAccount;
+            isSubmittingForm = false;
+            patchState({ isSubmittingForm });
+            console.log('got data', { data });
+            if (response.success) {
+              form.reset();
+              formDirective.resetForm();
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message: 'Account verified successfully!',
+                })
+              );
+            } else {
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message: getErrorMessageFromGraphQLResponse(response?.errors),
+                })
+              );
+            }
+          },
+          (error) => {
+            console.error('There was an error ', error);
+            isSubmittingForm = false;
+            patchState({ isSubmittingForm });
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: 'There was an error in submitting your form!',
+              })
+            );
+          }
+        );
+    } else {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message:
+            'Please fill all required fields before attempting to submit!',
+        })
+      );
+    }
+  }
+
+  @Action(ResendActivationEmailAction)
+  resendActivationEmail(
+    { getState, patchState }: StateContext<AuthStateModel>,
+    { payload }: ResendActivationEmailAction
+  ) {
+    const state = getState();
+    const { form, formDirective } = payload;
+    let { isSubmittingForm } = state;
+    if (form.valid) {
+      isSubmittingForm = true;
+      const values = form.value;
+      patchState({ isSubmittingForm });
+      this.apollo
+        .mutate({
+          mutation: AUTH.RESEND_ACTIVATION_EMAIL,
+          variables: {
+            email: values.email,
+          },
+        })
+        .subscribe(
+          ({ data }: any) => {
+            const response = data.resendActivationEmail;
+            isSubmittingForm = false;
+            patchState({ isSubmittingForm });
+            console.log('got data', { data });
+            if (response.success) {
+              form.reset();
+              formDirective.resetForm();
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message:
+                    'Your activation email has been resent. Please check your email inbox.',
+                })
+              );
+            } else {
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message: getErrorMessageFromGraphQLResponse(response?.errors),
+                })
+              );
+            }
+          },
+          (error) => {
+            console.error('There was an error ', error);
+            isSubmittingForm = false;
+            patchState({ isSubmittingForm });
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: 'There was an error in submitting your form!',
+              })
+            );
+          }
+        );
+    } else {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message:
+            'Please fill all required fields before attempting to submit!',
+        })
+      );
+    }
+  }
+
+  @Action(LoginAction)
+  login(
+    { getState, patchState }: StateContext<AuthStateModel>,
+    { payload }: LoginAction
+  ) {
+    const state = getState();
+    const { form, formDirective } = payload;
+    let { isSubmittingForm } = state;
+    if (form.valid) {
+      isSubmittingForm = true;
+      const values = form.value;
+      patchState({ isSubmittingForm });
+      this.apollo
+        .mutate({
+          mutation: AUTH.LOGIN,
+          variables: {
+            username: values.username,
+            password: values.password,
+          },
+        })
+        .subscribe(
+          ({ data }: any) => {
+            const response = data.tokenAuth;
+            isSubmittingForm = false;
+            patchState({ isSubmittingForm });
+            console.log('got data', { data });
+            if (response.success) {
+              form.reset();
+              formDirective.resetForm();
+              patchState({
+                token: response?.token,
+                refreshToken: response?.refreshToken,
+              });
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message: 'Logged in successfully!',
+                })
+              );
+            } else {
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message: getErrorMessageFromGraphQLResponse(response?.errors),
+                })
+              );
+            }
+          },
+          (error) => {
+            console.error('There was an error ', error);
+            isSubmittingForm = false;
+            patchState({ isSubmittingForm });
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: 'There was an error in submitting your form!',
+              })
+            );
+          }
+        );
+    } else {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message:
+            'Please fill all required fields before attempting to submit!',
+        })
+      );
+    }
+  }
+
+  @Action(SendPasswordResetEmailAction)
+  sendPasswordResetEmail(
+    { getState, patchState }: StateContext<AuthStateModel>,
+    { payload }: SendPasswordResetEmailAction
+  ) {
+    const state = getState();
+    const { form, formDirective } = payload;
+    let { isSubmittingForm } = state;
+    if (form.valid) {
+      isSubmittingForm = true;
+      const values = form.value;
+      patchState({ isSubmittingForm });
+      this.apollo
+        .mutate({
+          mutation: AUTH.SEND_PASSWORD_RESET_EMAIL,
+          variables: {
+            email: values.email,
+          },
+        })
+        .subscribe(
+          ({ data }: any) => {
+            const response = data.sendPasswordResetEmail;
+            isSubmittingForm = false;
+            patchState({ isSubmittingForm });
+            console.log('got data', { data });
+            if (response.success) {
+              form.reset();
+              formDirective.resetForm();
+              patchState({
+                token: response?.token,
+                refreshToken: response?.refreshToken,
+              });
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message: 'Logged in successfully!',
+                })
+              );
+            } else {
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message: getErrorMessageFromGraphQLResponse(response?.errors),
+                })
+              );
+            }
+          },
+          (error) => {
+            console.error('There was an error ', error);
+            isSubmittingForm = false;
+            patchState({ isSubmittingForm });
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: 'There was an error in submitting your form!',
+              })
+            );
+          }
+        );
+    } else {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message:
+            'Please fill all required fields before attempting to submit!',
+        })
+      );
+    }
+  }
+
+  @Action(PasswordResetAction)
+  passwordReset(
+    { getState, patchState }: StateContext<AuthStateModel>,
+    { payload }: PasswordResetAction
+  ) {
+    const state = getState();
+    const { form, formDirective } = payload;
+    let { isSubmittingForm } = state;
+    if (form.valid) {
+      isSubmittingForm = true;
+      const values = form.value;
+      patchState({ isSubmittingForm });
+      this.apollo
+        .mutate({
+          mutation: AUTH.PASSWORD_RESET,
+          variables: {
+            token: values.token,
+            newPassword1: values.newPassword1,
+            newPassword2: values.newPassword2,
+          },
+        })
+        .subscribe(
+          ({ data }: any) => {
+            const response = data.psswordReset;
+            isSubmittingForm = false;
+            patchState({ isSubmittingForm });
+            console.log('got data', { data });
+            if (response.success) {
+              form.reset();
+              formDirective.resetForm();
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message: 'Password Changed successfully!',
+                })
+              );
+            } else {
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message: getErrorMessageFromGraphQLResponse(response?.errors),
+                })
+              );
+            }
+          },
+          (error) => {
+            console.error('There was an error ', error);
+            isSubmittingForm = false;
+            patchState({ isSubmittingForm });
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: 'There was an error in submitting your form!',
+              })
+            );
+          }
+        );
+    } else {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message:
+            'Please fill all required fields before attempting to submit!',
+        })
+      );
+    }
+  }
+
+  @Action(PasswordChangeAction)
+  passwordChange(
+    { getState, patchState }: StateContext<AuthStateModel>,
+    { payload }: PasswordChangeAction
+  ) {
+    const state = getState();
+    const { form, formDirective } = payload;
+    let { isSubmittingForm } = state;
+    if (form.valid) {
+      isSubmittingForm = true;
+      const values = form.value;
+      patchState({ isSubmittingForm });
+      this.apollo
+        .mutate({
+          mutation: AUTH.PASSWORD_CHANGE,
+          variables: {
+            oldPassword: values.oldPassword,
+            newPassword1: values.newPassword1,
+            newPassword2: values.newPassword2,
+          },
+        })
+        .subscribe(
+          ({ data }: any) => {
+            const response = data.passwordChange;
+            isSubmittingForm = false;
+            patchState({ isSubmittingForm });
+            console.log('got data', { data });
+            if (response.success) {
+              form.reset();
+              formDirective.resetForm();
+              patchState({
+                token: response?.token,
+                refreshToken: response?.refreshToken,
+              });
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message: 'Password Changed successfully!',
+                })
+              );
+            } else {
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message: getErrorMessageFromGraphQLResponse(response?.errors),
+                })
+              );
+            }
+          },
+          (error) => {
+            console.error('There was an error ', error);
+            isSubmittingForm = false;
+            patchState({ isSubmittingForm });
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: 'There was an error in submitting your form!',
+              })
+            );
+          }
+        );
     } else {
       this.store.dispatch(
         new ShowNotificationAction({

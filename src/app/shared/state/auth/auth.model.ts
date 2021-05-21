@@ -2,8 +2,10 @@ import { User } from '../../common/models';
 import { emptyMemberFormRecord } from '../members/member.model';
 
 export interface AuthStateModel {
+  token: string;
+  refreshToken: string;
+  isSubmittingForm: boolean;
   isLoggedIn: boolean;
-  isLoggingIn: boolean;
   lastLogin: string;
   isFullyAuthenticated: boolean;
   userId: string;
@@ -15,8 +17,10 @@ export interface AuthStateModel {
 }
 
 export const defaultAuthState: AuthStateModel = {
+  token: null,
+  refreshToken: null,
+  isSubmittingForm: false,
   isLoggedIn: false,
-  isLoggingIn: false,
   lastLogin: null,
   isFullyAuthenticated: false,
   userId: null,
