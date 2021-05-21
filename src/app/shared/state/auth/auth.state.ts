@@ -53,7 +53,7 @@ export class AuthState {
         })
         .subscribe(
           ({ data }: any) => {
-            const response = data.resgister;
+            const response = data.register;
             isSubmittingForm = false;
             patchState({ isSubmittingForm });
             console.log('got data', { data });
@@ -66,7 +66,8 @@ export class AuthState {
               });
               this.store.dispatch(
                 new ShowNotificationAction({
-                  message: 'Registered successfully!',
+                  message:
+                    'Registered successfully! Check your email inbox to activate your account before trying to log in.',
                 })
               );
             } else {
@@ -92,7 +93,7 @@ export class AuthState {
       this.store.dispatch(
         new ShowNotificationAction({
           message:
-            'Please fill all required fields before attempting to submit!',
+            'Please make sure there are no errors in the form before attempting to submit!',
         })
       );
     }
@@ -154,7 +155,7 @@ export class AuthState {
       this.store.dispatch(
         new ShowNotificationAction({
           message:
-            'Please fill all required fields before attempting to submit!',
+            'Please make sure there are no errors in the form before attempting to submit!',
         })
       );
     }
@@ -217,7 +218,7 @@ export class AuthState {
       this.store.dispatch(
         new ShowNotificationAction({
           message:
-            'Please fill all required fields before attempting to submit!',
+            'Please make sure there are no errors in the form before attempting to submit!',
         })
       );
     }
@@ -284,7 +285,7 @@ export class AuthState {
       this.store.dispatch(
         new ShowNotificationAction({
           message:
-            'Please fill all required fields before attempting to submit!',
+            'Please make sure there are no errors in the form before attempting to submit!',
         })
       );
     }
@@ -324,7 +325,8 @@ export class AuthState {
               });
               this.store.dispatch(
                 new ShowNotificationAction({
-                  message: 'Logged in successfully!',
+                  message:
+                    'If you have an account with us, you should have received an email with instructions to reset your password. Please check your email inbox.',
                 })
               );
             } else {
@@ -350,7 +352,7 @@ export class AuthState {
       this.store.dispatch(
         new ShowNotificationAction({
           message:
-            'Please fill all required fields before attempting to submit!',
+            'Please make sure there are no errors in the form before attempting to submit!',
         })
       );
     }
@@ -388,7 +390,7 @@ export class AuthState {
               formDirective.resetForm();
               this.store.dispatch(
                 new ShowNotificationAction({
-                  message: 'Password Changed successfully!',
+                  message: 'Password reset successfully!',
                 })
               );
             } else {
@@ -414,7 +416,7 @@ export class AuthState {
       this.store.dispatch(
         new ShowNotificationAction({
           message:
-            'Please fill all required fields before attempting to submit!',
+            'Please make sure there are no errors in the form before attempting to submit!',
         })
       );
     }
@@ -482,7 +484,7 @@ export class AuthState {
       this.store.dispatch(
         new ShowNotificationAction({
           message:
-            'Please fill all required fields before attempting to submit!',
+            'Please make sure there are no errors in the form before attempting to submit!',
         })
       );
     }
