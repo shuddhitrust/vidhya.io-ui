@@ -1,8 +1,22 @@
-.dialog-box {
+.login-dialog-box {
   width: 40vw;
   min-width: 300px;
   height: 40vh;
   min-height: 300px;
+}
+
+.register-dialog-box {
+  width: 40vw;
+  min-width: 300px;
+  height: 40vh;
+  min-height: 500px;
+}
+
+.forgot-password-dialog-box {
+  width: 40vw;
+  min-width: 300px;
+  height: 40vh;
+  min-height: 250px;
 }
 
 .profile-title {
@@ -13,7 +27,23 @@
   float: right;
 }
 
-#login-submit-button {
+.secondary-auth-options {
+  float: left;
+  padding-top: 10px;
+  font-size: 0.9em;
+}
+
+.submit-button {
   display: block;
   float: right;
+  margin-top: 30px;
+}
+
+.link-button {
+  cursor: pointer;
+  color: var(--shuddhi-color);
+}
+
+.form-title {
+  text-align: center;
 }

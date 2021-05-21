@@ -1,79 +1,299 @@
-<div mat-dialog-content class="dialog-box">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>Login</mat-card-title>
-    </mat-card-header>
-    <form
-      [formGroup]="loginForm"
-      novalidate
-      (submit)="login(loginForm, formDirective)"
-      #formDirective="ngForm"
-    >
-      <mat-form-field
-        class="col-lg-12 col-md-12 col-sm-12"
-        appearance="outline"
+<span *ngIf="showDialog == LOGIN">
+  <ng-container *ngTemplateOutlet="loginTemplate"></ng-container>
+</span>
+<span *ngIf="showDialog == REGISTER">
+  <ng-container *ngTemplateOutlet="registerTemplate"></ng-container>
+</span>
+<span *ngIf="showDialog == FORGOT_PASSWORD">
+  <ng-container *ngTemplateOutlet="forgotPasswordTemplate"></ng-container>
+</span>
+<ng-template #loginTemplate>
+  <div mat-dialog-content class="login-dialog-box">
+    <mat-card>
+      <mat-card-header class="form-title">
+        <mat-card-title>Login</mat-card-title>
+      </mat-card-header>
+      <form
+        [formGroup]="loginForm"
+        novalidate
+        #formDirective="ngForm"
+        (submit)="login(loginForm, formDirective)"
       >
-        <mat-label>Username</mat-label>
-        <input
-          matInput
-          formControlName="username"
-          required
-          placeholder="Username"
-        />
-        <small
-          class="validation-error"
-          *ngIf="
-            loginForm.get('username').hasError('required') &&
-            formDirective.submitted
-          "
+        <mat-form-field
+          class="col-lg-12 col-md-12 col-sm-12"
+          appearance="outline"
         >
-          Username is required
-        </small>
-      </mat-form-field>
+          <mat-label>Username</mat-label>
+          <input
+            matInput
+            formControlName="username"
+            required
+            placeholder="Username"
+          />
+          <small
+            class="validation-error"
+            *ngIf="
+              loginForm.get('username').hasError('required') &&
+              formDirective.submitted
+            "
+          >
+            Username is required
+          </small>
+        </mat-form-field>
 
-      <mat-form-field
-        class="col-lg-12 col-md-12 col-sm-12"
-        appearance="outline"
-      >
-        <mat-label>Password</mat-label>
-        <input
-          matInput
-          [type]="hide ? 'password' : 'text'"
-          formControlName="password"
-          required
-          placeholder="Password"
-        />
+        <mat-form-field
+          class="col-lg-12 col-md-12 col-sm-12"
+          appearance="outline"
+        >
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            [type]="hide ? 'password' : 'text'"
+            formControlName="password"
+            required
+            placeholder="Password"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            (click)="hide = !hide"
+            [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hide"
+          >
+            <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+          </button>
+          <small
+            class="validation-error"
+            *ngIf="
+              loginForm.get('password').hasError('required') &&
+              formDirective.submitted
+            "
+          >
+            Password is required
+          </small>
+        </mat-form-field>
         <button
-          mat-icon-button
-          matSuffix
-          (click)="hide = !hide"
-          [attr.aria-label]="'Hide password'"
-          [attr.aria-pressed]="hide"
+          class="submit-button"
+          mat-raised-button
+          color="primary"
+          [disabled]="(isSubmittingForm$ | async) === true"
         >
-          <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+          {{ (isSubmittingForm$ | async) === true ? "Logging in..." : "Login" }}
         </button>
-        <small
-          class="validation-error"
-          *ngIf="
-            loginForm.get('password').hasError('required') &&
-            formDirective.submitted
-          "
-        >
-          Password is required
-        </small>
-      </mat-form-field>
+      </form>
+    </mat-card>
+    <div class="secondary-auth-options">
+      <p class="link-button" (click)="showForgotPassword()">Forgot password?</p>
+      <p class="link-button" (click)="showRegister()">Register</p>
+    </div>
+  </div>
+</ng-template>
 
-      <button
-        type="submit"
-        id="login-submit-button"
-        mat-raised-button
-        color="primary"
-        [disabled]="(isLoggingIn$ | async) === true"
+<ng-template #registerTemplate>
+  <div mat-dialog-content class="register-dialog-box">
+    <mat-card>
+      <mat-card-header class="form-title">
+        <mat-card-title>Register</mat-card-title>
+      </mat-card-header>
+      <form
+        [formGroup]="registerForm"
+        novalidate
+        #formDirective="ngForm"
+        (submit)="register(registerForm, formDirective)"
       >
-        {{ (isLoggingIn$ | async) === true ? "Logging in..." : "Login" }}
-      </button>
-    </form>
-    <p><a href="#" (click)="forgotPassword()">Forgot password?</a></p>
-    <p><a href="#" (click)="register()">Register</a></p>
-  </mat-card>
-</div>
+        <mat-form-field
+          class="col-lg-12 col-md-12 col-sm-12"
+          appearance="outline"
+        >
+          <mat-label>Username</mat-label>
+          <input
+            matInput
+            formControlName="username"
+            required
+            placeholder="Username"
+          />
+          <small
+            class="validation-error"
+            *ngIf="
+              registerForm.get('username').hasError('required') &&
+              formDirective.submitted
+            "
+          >
+            Username is required
+          </small>
+        </mat-form-field>
+
+        <mat-form-field
+          class="col-lg-12 col-md-12 col-sm-12"
+          appearance="outline"
+        >
+          <mat-label>Email ID</mat-label>
+          <input
+            matInput
+            formControlName="email"
+            required
+            placeholder="Email ID"
+          />
+          <small
+            class="validation-error"
+            *ngIf="
+              registerForm.get('email').hasError('required') &&
+              formDirective.submitted
+            "
+          >
+            Email is required
+          </small>
+          <small
+            class="validation-error"
+            *ngIf="
+              registerForm.get('email').hasError('email') &&
+              formDirective.submitted
+            "
+          >
+            Please enter a valid email
+          </small>
+        </mat-form-field>
+
+        <mat-form-field
+          class="col-lg-12 col-md-12 col-sm-12"
+          appearance="outline"
+        >
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            type="password"
+            formControlName="password1"
+            required
+            placeholder="Password"
+          />
+          <small
+            class="validation-error"
+            *ngIf="
+              registerForm.get('password1').hasError('required') &&
+              formDirective.submitted
+            "
+          >
+            Password is required
+          </small>
+        </mat-form-field>
+        <mat-form-field
+          class="col-lg-12 col-md-12 col-sm-12"
+          appearance="outline"
+        >
+          <mat-label>Confirm</mat-label>
+          <input
+            matInput
+            [type]="hide ? 'password' : 'text'"
+            formControlName="password2"
+            required
+            placeholder="Confirm password"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            (click)="hide = !hide"
+            [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hide"
+          >
+            <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+          </button>
+          <small
+            class="validation-error"
+            *ngIf="
+              registerForm.get('password2').hasError('required') &&
+              formDirective.submitted
+            "
+          >
+            Password is required
+          </small>
+        </mat-form-field>
+        <button
+          type="submit"
+          class="submit-button"
+          mat-raised-button
+          color="primary"
+          [disabled]="(isSubmittingForm$ | async) === true"
+        >
+          {{
+            (isSubmittingForm$ | async) === true ? "Registering..." : "Register"
+          }}
+        </button>
+      </form>
+    </mat-card>
+    <div class="secondary-auth-options">
+      <p class="link-button" (click)="showForgotPassword()">Forgot password?</p>
+      <p class="link-button" (click)="showLogin()">Login</p>
+    </div>
+    <mat-dialog-actions class="card-actions"> </mat-dialog-actions>
+  </div>
+</ng-template>
+
+<ng-template #forgotPasswordTemplate>
+  <div mat-dialog-content class="forgot-password-dialog-box">
+    <mat-card>
+      <mat-card-header class="form-title">
+        <mat-card-title>Send Password Reset Email</mat-card-title>
+        <hr />
+        <mat-card-subtitle style="text-align: left"
+          ><p>
+            Enter the email ID tied to your account and submit this form to
+            receive instructions to reset your password in the email.
+          </p></mat-card-subtitle
+        >
+      </mat-card-header>
+
+      <form
+        [formGroup]="forgotPasswordForm"
+        novalidate
+        #formDirective="ngForm"
+        (submit)="sendPasswordResetEmail(forgotPasswordForm, formDirective)"
+      >
+        <mat-form-field
+          class="col-lg-12 col-md-12 col-sm-12"
+          appearance="outline"
+        >
+          <mat-label>Email ID</mat-label>
+          <input
+            matInput
+            formControlName="email"
+            required
+            placeholder="Email ID"
+          />
+          <small
+            class="validation-error"
+            *ngIf="
+              forgotPasswordForm.get('email').hasError('required') &&
+              formDirective.submitted
+            "
+          >
+            Email is required
+          </small>
+          <small
+            class="validation-error"
+            *ngIf="
+              forgotPasswordForm.get('email').hasError('email') &&
+              formDirective.submitted
+            "
+          >
+            Please enter a valid email
+          </small>
+        </mat-form-field>
+        <button
+          class="submit-button"
+          mat-raised-button
+          color="primary"
+          [disabled]="(isSubmittingForm$ | async) === true"
+        >
+          {{
+            (isSubmittingForm$ | async) === true
+              ? "Sending Reset Email..."
+              : "Send Reset Instructions"
+          }}
+        </button>
+      </form>
+    </mat-card>
+    <div class="secondary-auth-options">
+      <p class="link-button" (click)="showLogin()">Login</p>
+    </div>
+  </div>
+</ng-template>
