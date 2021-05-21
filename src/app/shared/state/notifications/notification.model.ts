@@ -7,5 +7,5 @@ export interface NotificationStateModel {
 export const defaultNotificationState: NotificationStateModel = {
   message: '',
   action: 'Ok',
-  duration: 3000,
+  duration: 10000,
 };
