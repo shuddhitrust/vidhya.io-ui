@@ -2,11 +2,21 @@ import { gql } from 'apollo-angular';
 
 export const AUTH = {
   REGISTER: gql`
-    mutation register($username: String!, email: String!, password1: String!, password2: String!) {
-      register(username: $username, email: $email, password1: $password1, password2: $password2,) {
-        success,
-        errors,
-        token,
+    mutation register(
+      $username: String!
+      $email: String!
+      $password1: String!
+      $password2: String!
+    ) {
+      register(
+        username: $username
+        email: $email
+        password1: $password1
+        password2: $password2
+      ) {
+        success
+        errors
+        token
         refreshToken
       }
     }
@@ -61,8 +71,14 @@ export const AUTH = {
       $newPassword1: String!
       $newPassword2: String!
     ) {
-      success
-      errors
+      passwordReset(
+        token: $token
+        newPassword1: $newPassword1
+        newPassword2: $newPassword2
+      ) {
+        success
+        errors
+      }
     }
   `,
   PASSWORD_CHANGE: gql`
@@ -71,10 +87,16 @@ export const AUTH = {
       $newPassword1: String!
       $newPassword2: String!
     ) {
-      success
-      errors
-      token
-      refreshToken
+      passwordChange(
+        oldPassword: $oldPassword
+        newPassword1: $newPassword1
+        newPassword2: $newPassword2
+      ) {
+        success
+        errors
+        token
+        refreshToken
+      }
     }
   `,
 };
