@@ -253,9 +253,16 @@ export class AuthState {
             if (response.success) {
               form.reset();
               formDirective.resetForm();
+              const institutionId = response?.user?.institution?.id;
               patchState({
                 token: response?.token,
                 refreshToken: response?.refreshToken,
+                isLoggedIn: true,
+                username: response?.user?.username,
+                name: response?.user?.name,
+                lastLogin: response?.user?.lastLogin,
+                currentMemberInstitutionId: institutionId,
+                isFullyAuthenticated: institutionId ? true : false,
               });
               this.store.dispatch(
                 new ShowNotificationAction({
