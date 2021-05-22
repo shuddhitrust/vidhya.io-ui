@@ -10,6 +10,7 @@ import {
   SendPasswordResetEmailAction,
   PasswordResetAction,
   PasswordChangeAction,
+  AuthenticationCheckAction,
 } from './auth.actions';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import { Apollo } from 'apollo-angular';
@@ -27,6 +28,11 @@ export class AuthState {
   @Selector()
   static getIsSubmittingForm(state: AuthStateModel): boolean {
     return state.isSubmittingForm;
+  }
+
+  @Action(AuthenticationCheckAction)
+  checkAuthentication({ getState, patchState }: StateContext<AuthStateModel>) {
+    console.log('implementation of authentication check pending.');
   }
 
   @Action(RegisterAction)

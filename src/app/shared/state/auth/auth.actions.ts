@@ -66,3 +66,9 @@ export class GetCurrentUser {
 
   constructor() {}
 }
+
+export class AuthenticationCheckAction {
+  static readonly type = '[AUTH] Check Authentication';
+
+  constructor() {}
+}

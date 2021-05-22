@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
-import { Store } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
+import Observable from 'zen-observable';
 import { MembershipStatus } from './shared/common/models';
+import { AuthenticationCheckAction } from './shared/state/auth/auth.actions';
 import { AuthStateModel } from './shared/state/auth/auth.model';
+import { AuthState } from './shared/state/auth/auth.state';
 
 @Component({
   selector: 'app-root',
@@ -11,32 +14,29 @@ import { AuthStateModel } from './shared/state/auth/auth.model';
 export class AppComponent {
   title = 'vidhya-ui';
 
-  // @Select(AuthState)
-  // authState$: Observable<AuthStateModel>;
-  // authState: AuthStateModel = {};
-  isLoggedIn: boolean = true;
-  membershipStatus: MembershipStatus = null;
+  @Select(AuthState)
+  authState$: Observable<AuthStateModel>;
+  authState: AuthStateModel;
+  isLoggedIn: boolean = false;
+  isFullyAuthenticated: boolean = false;
   showApp: boolean = false;
 
   constructor(private store: Store) {
-    // this.authState$.subscribe((val) => {
-    //   this.authState = val;
-    //   this.isLoggedIn = this.authState.isLoggedIn;
-    //   this.membershipStatus = this.authState.membershipStatus;
-    //   this.showApp = this.isLoggedIn && this.membershipStatus != null;
-    //   console.log('deciding whether to show the app or not ', {
-    //     showapp: this.showApp,
-    //   });
-    // });
+    this.authState$.subscribe((val) => {
+      this.authState = val;
+      this.isLoggedIn = this.authState.isLoggedIn;
+      this.isFullyAuthenticated = this.authState.isFullyAuthenticated;
+      this.showApp = this.isLoggedIn && this.isFullyAuthenticated;
+    });
   }
 
   ngOnInit(): void {
-    // this.checkAuthentication();
+    this.checkAuthentication();
   }
 
-  // checkAuthentication() {
-  //   this.store.dispatch(new AuthenticationCheckAction());
-  // }
+  checkAuthentication() {
+    this.store.dispatch(new AuthenticationCheckAction());
+  }
 
   ngOnDestroy() {}
 }
