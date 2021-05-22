@@ -57,6 +57,14 @@ export const AUTH = {
       }
     }
   `,
+  LOGOUT: gql`
+    mutation logoutUser($id: String!) {
+      logout(id: $id) {
+        success
+        errors
+      }
+    }
+  `,
   SEND_PASSWORD_RESET_EMAIL: gql`
     mutation sendPasswordResetEmail($email: String!) {
       sendPasswordResetEmail(email: $email) {
