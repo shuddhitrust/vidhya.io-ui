@@ -5,7 +5,7 @@ import {
 } from './notification.model';
 import { ShowNotificationAction } from './notification.actions';
 import { Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { HotToastService } from '@ngneat/hot-toast';
 
 @State<NotificationStateModel>({
   name: 'notificationState',
@@ -13,7 +13,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 @Injectable()
 export class NotificationState {
-  constructor(private snackbar: MatSnackBar) {}
+  defaultConfig = {
+    autoClose: defaultNotificationState.autoClose,
+    dismissible: defaultNotificationState.dismissible,
+    position: defaultNotificationState.position,
+  };
+  constructor(private toastService: HotToastService) {}
 
   @Action(ShowNotificationAction)
   showNotification(
@@ -21,14 +26,13 @@ export class NotificationState {
     { payload }: ShowNotificationAction
   ) {
     const state = getState();
-    let { action, duration } = state;
-    const { message } = payload;
-    action = payload.action ? payload.action : action;
-    duration = payload.duration ? payload.duration : duration;
-    patchState({ message, action, duration });
-    this.snackbar.open(message, action, {
-      duration,
-      panelClass: ['color:#0099ff;'],
+    const { message, action } = payload;
+    patchState({ message, action });
+    console.log('notification message ', {
+      message,
+      action,
+      config: this.defaultConfig,
     });
+    this.toastService[action](message, this.defaultConfig);
   }
 }

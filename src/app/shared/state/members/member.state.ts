@@ -295,6 +295,7 @@ export class MemberState {
       store.dispatch(
         new ShowNotificationAction({
           message: `Registration Successful! Welcome ${sanitizedValues.name}! `,
+          action: 'success',
         })
       );
       console.log('reloading and then redirecting to home page');
@@ -408,7 +409,7 @@ export class MemberState {
     //   this.store.dispatch(
     //     new ShowNotificationAction({
     //       message:
-    //         'Please make sure there are no errors in the form before attempting to submit!',
+    //         'Please make sure there are no errors in the form before attempting to submit!', action: 'error'
     //     })
     //   );
     // }

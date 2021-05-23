@@ -17,6 +17,21 @@ export type FetchPolicy =
   | 'no-cache'
   | 'standby';
 
+export type HotToastPositionOptions =
+  | 'top-left'
+  | 'top-center'
+  | 'top-right'
+  | 'bottom-left'
+  | 'bottom-center'
+  | 'bottom-right';
+
+export type HotToastStatus =
+  | 'show'
+  | 'success'
+  | 'warning'
+  | 'error'
+  | 'loading';
+
 export type MatSelectOption = { label: string; value: string };
 
 export type PaginationObject = {

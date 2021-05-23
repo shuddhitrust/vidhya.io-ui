@@ -74,12 +74,14 @@ export class AuthState {
                 new ShowNotificationAction({
                   message:
                     'Registered successfully! Check your email inbox to activate your account before trying to log in.',
+                  action: 'success',
                 })
               );
             } else {
               this.store.dispatch(
                 new ShowNotificationAction({
                   message: getErrorMessageFromGraphQLResponse(response?.errors),
+                  action: 'error',
                 })
               );
             }
@@ -91,6 +93,7 @@ export class AuthState {
             this.store.dispatch(
               new ShowNotificationAction({
                 message: 'There was an error in submitting your form!',
+                action: 'error',
               })
             );
           }
@@ -100,6 +103,7 @@ export class AuthState {
         new ShowNotificationAction({
           message:
             'Please make sure there are no errors in the form before attempting to submit!',
+          action: 'error',
         })
       );
     }
@@ -136,12 +140,14 @@ export class AuthState {
               this.store.dispatch(
                 new ShowNotificationAction({
                   message: 'Account verified successfully!',
+                  action: 'success',
                 })
               );
             } else {
               this.store.dispatch(
                 new ShowNotificationAction({
                   message: getErrorMessageFromGraphQLResponse(response?.errors),
+                  action: 'error',
                 })
               );
             }
@@ -153,6 +159,7 @@ export class AuthState {
             this.store.dispatch(
               new ShowNotificationAction({
                 message: 'There was an error in submitting your form!',
+                action: 'error',
               })
             );
           }
@@ -162,6 +169,7 @@ export class AuthState {
         new ShowNotificationAction({
           message:
             'Please make sure there are no errors in the form before attempting to submit!',
+          action: 'error',
         })
       );
     }
@@ -199,12 +207,14 @@ export class AuthState {
                 new ShowNotificationAction({
                   message:
                     'Your activation email has been resent. Please check your email inbox.',
+                  action: 'success',
                 })
               );
             } else {
               this.store.dispatch(
                 new ShowNotificationAction({
                   message: getErrorMessageFromGraphQLResponse(response?.errors),
+                  action: 'error',
                 })
               );
             }
@@ -216,6 +226,7 @@ export class AuthState {
             this.store.dispatch(
               new ShowNotificationAction({
                 message: 'There was an error in submitting your form!',
+                action: 'error',
               })
             );
           }
@@ -225,6 +236,7 @@ export class AuthState {
         new ShowNotificationAction({
           message:
             'Please make sure there are no errors in the form before attempting to submit!',
+          action: 'error',
         })
       );
     }
@@ -273,12 +285,14 @@ export class AuthState {
               this.store.dispatch(
                 new ShowNotificationAction({
                   message: 'Logged in successfully!',
+                  action: 'success',
                 })
               );
             } else {
               this.store.dispatch(
                 new ShowNotificationAction({
                   message: getErrorMessageFromGraphQLResponse(response?.errors),
+                  action: 'error',
                 })
               );
             }
@@ -290,6 +304,7 @@ export class AuthState {
             this.store.dispatch(
               new ShowNotificationAction({
                 message: 'There was an error in submitting your form!',
+                action: 'error',
               })
             );
           }
@@ -299,6 +314,7 @@ export class AuthState {
         new ShowNotificationAction({
           message:
             'Please make sure there are no errors in the form before attempting to submit!',
+          action: 'error',
         })
       );
     }
@@ -340,12 +356,14 @@ export class AuthState {
                 new ShowNotificationAction({
                   message:
                     'If you have an account with us, you should have received an email with instructions to reset your password. Please check your email inbox.',
+                  action: 'success',
                 })
               );
             } else {
               this.store.dispatch(
                 new ShowNotificationAction({
                   message: getErrorMessageFromGraphQLResponse(response?.errors),
+                  action: 'error',
                 })
               );
             }
@@ -357,6 +375,7 @@ export class AuthState {
             this.store.dispatch(
               new ShowNotificationAction({
                 message: 'There was an error in submitting your form!',
+                action: 'error',
               })
             );
           }
@@ -366,6 +385,7 @@ export class AuthState {
         new ShowNotificationAction({
           message:
             'Please make sure there are no errors in the form before attempting to submit!',
+          action: 'error',
         })
       );
     }
@@ -404,12 +424,14 @@ export class AuthState {
               this.store.dispatch(
                 new ShowNotificationAction({
                   message: 'Password reset successfully!',
+                  action: 'success',
                 })
               );
             } else {
               this.store.dispatch(
                 new ShowNotificationAction({
                   message: getErrorMessageFromGraphQLResponse(response?.errors),
+                  action: 'error',
                 })
               );
             }
@@ -421,6 +443,7 @@ export class AuthState {
             this.store.dispatch(
               new ShowNotificationAction({
                 message: 'There was an error in submitting your form!',
+                action: 'error',
               })
             );
           }
@@ -430,6 +453,7 @@ export class AuthState {
         new ShowNotificationAction({
           message:
             'Please make sure there are no errors in the form before attempting to submit!',
+          action: 'error',
         })
       );
     }
@@ -472,12 +496,14 @@ export class AuthState {
               this.store.dispatch(
                 new ShowNotificationAction({
                   message: 'Password Changed successfully!',
+                  action: 'success',
                 })
               );
             } else {
               this.store.dispatch(
                 new ShowNotificationAction({
                   message: getErrorMessageFromGraphQLResponse(response?.errors),
+                  action: 'error',
                 })
               );
             }
@@ -489,6 +515,7 @@ export class AuthState {
             this.store.dispatch(
               new ShowNotificationAction({
                 message: 'There was an error in submitting your form!',
+                action: 'error',
               })
             );
           }
@@ -498,6 +525,7 @@ export class AuthState {
         new ShowNotificationAction({
           message:
             'Please make sure there are no errors in the form before attempting to submit!',
+          action: 'error',
         })
       );
     }

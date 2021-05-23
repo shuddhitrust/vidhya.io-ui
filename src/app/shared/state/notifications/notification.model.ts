@@ -1,11 +1,17 @@
+import { HotToastPositionOptions, HotToastStatus } from '../../common/models';
+
 export interface NotificationStateModel {
   message: string;
-  action?: string;
-  duration?: number;
+  action: HotToastStatus;
+  autoClose: boolean;
+  dismissible: boolean;
+  position: HotToastPositionOptions;
 }
 
 export const defaultNotificationState: NotificationStateModel = {
   message: '',
-  action: 'Ok',
-  duration: 10000,
+  action: 'show',
+  autoClose: true,
+  dismissible: true,
+  position: 'bottom-left',
 };

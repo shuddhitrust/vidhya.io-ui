@@ -73,6 +73,7 @@ import { AwaitingModerationTableComponent } from './pages/tables/awaiting-modera
 import { OptionsState } from './shared/state/options/options.state';
 import { GroupMemberState } from './shared/state/groupMembers/group-members.state';
 import { LoginModalComponent } from './pages/modals/login/login-modal.component';
+import { HotToastModule } from '@ngneat/hot-toast';
 
 @NgModule({
   declarations: [
@@ -128,6 +129,7 @@ import { LoginModalComponent } from './pages/modals/login/login-modal.component'
     Styling,
     BrowserAnimationsModule,
     AgGridModule.withComponents([]),
+    HotToastModule.forRoot(),
     [
       NgxsModule.forRoot(
         [

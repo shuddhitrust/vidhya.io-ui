@@ -211,6 +211,7 @@ export class GroupState {
       store.dispatch(
         new ShowNotificationAction({
           message: 'Form submitted successfully!',
+          action: 'success',
         })
       );
     }
@@ -353,6 +354,7 @@ export class GroupState {
         new ShowNotificationAction({
           message:
             'Please make sure there are no errors in the form before attempting to submit!',
+          action: 'error',
         })
       );
     }

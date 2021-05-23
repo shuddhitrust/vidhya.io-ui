@@ -302,6 +302,7 @@ export class AnnouncementState {
         new ShowNotificationAction({
           message:
             'Please make sure there are no errors in the form before attempting to submit!',
+          action: 'error',
         })
       );
     }
