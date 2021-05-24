@@ -30,32 +30,60 @@ import { Apollo } from 'apollo-angular';
 import { AUTH_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { AUTH_QUERIES, USER_QUERIES } from '../../api/graphql/queries.graphql';
 import { getErrorMessageFromGraphQLResponse } from '../../common/functions';
-import { AUTH_TOKEN_KEY, AUTH_REFRESH_TOKEN_KEY } from '../../common/constants';
+import {
+  AUTH_TOKEN_KEY,
+  AUTH_REFRESH_TOKEN_KEY,
+  minute,
+} from '../../common/constants';
 import jwtDecode from 'jwt-decode';
-import Observable from 'zen-observable';
+import { Observable } from 'rxjs';
 import { ToggleLoadingScreen } from '../loading/loading.actions';
 
+/**
+ * Auth flow:-
+ * - When the application loads, it runs the AuthenticationCheckAction which looks for the token and refreshToken in localStorage
+ * - If the token exists, it calls the VerifyTokenAction to see if that token is valid.
+ * - If the token is invalid, the user is shown the logged out state.
+ * - If it is valid, it will store the token and the refreshToken in the state along with the expiryAt,
+ * which is decoded from the token at the time of storing it in the state
+ * - Once the change in expiryAt is detected by the expiresAt$ observable in the constructor,
+ * it calls the startAutoRefreshTokenTimeout method to initiate a calculated timeout method that executes
+ * the RefreshTokenAction a set time (say 1 minute, configurable) just before the token is set to expire.
+ * - When the new refreshToken and token are sent from the backend, it is stored in the state,
+ * once again expiryAt is extracted from the decoded token and stored in the state, triggering the startAutoRefreshTokenTimeout method and the cycle continues
+ * indefinitely, as long as the user doesn't leave a gap of over 7 days between sessions, at which point the refreshToken expires.
+ * - When the user logs out, the RevokeTokenAction is initiated and when that is complete,
+ * the token and refreshToken are removed from the localstorage, the state is set to default state, forcing the app to show the logged out state in the UI.
+ */
 @State<AuthStateModel>({
   name: 'authState',
   defaults: defaultAuthState,
 })
 @Injectable()
 export class AuthState {
-  refreshTokenTimeout;
+  refreshTokenTimeout; // Variable that stores the timeout method for the next RefreshToken call
   @Select(AuthState.getExpiresAt)
   expiresAt$: Observable<string>;
   constructor(private store: Store, private apollo: Apollo) {
+    // Looking for updates in the expiresAt value...
     this.expiresAt$.subscribe((val) => {
-      // Calling the startAutoRefreshTokenTimeout method to trigger refreshToken just a minute before token invalidates
+      // Calling the startAutoRefreshTokenTimeout method the moment a new expiresAt value is detected
       if (val) {
         this.startAutoRefreshTokenTimeout(val);
       }
     });
   }
-
+  /**
+   * Creates a timeout method to call for refreshToken just a minute before
+   * @param expiresAt
+   */
   startAutoRefreshTokenTimeout = (expiresAt) => {
+    console.log('***Starting the autoRefreshToken Timeout', {
+      date: new Date(expiresAt * 1000),
+    });
     const expires = new Date(expiresAt * 1000);
-    const timeout = expires.getTime() - Date.now() - 60 * 1000;
+    const timeBeforeExpiry = minute;
+    const timeout = expires.getTime() - Date.now() - timeBeforeExpiry * 1000;
     this.refreshTokenTimeout = setTimeout(
       () => this.store.dispatch(new RefreshTokenAction()),
       timeout
@@ -85,11 +113,19 @@ export class AuthState {
       })
     );
     const localStorageToken = localStorage.getItem(AUTH_TOKEN_KEY);
+    const localStorageRefreshToken = localStorage.getItem(
+      AUTH_REFRESH_TOKEN_KEY
+    );
     console.log('from checkAuthentication => ', {
       localStorageToken,
     });
     if (localStorageToken) {
-      this.store.dispatch(new VerifyTokenAction({ token: localStorageToken }));
+      this.store.dispatch(
+        new VerifyTokenAction({
+          token: localStorageToken,
+          refreshToken: localStorageRefreshToken,
+        })
+      );
     } else {
       this.store.dispatch(
         new ToggleLoadingScreen({
@@ -106,6 +142,7 @@ export class AuthState {
   @Action(RefreshTokenAction)
   refreshToken({ getState, patchState }: StateContext<AuthStateModel>) {
     const state = getState();
+    console.log('calling refresh token method', { state });
     const { refreshToken } = state;
     if (refreshToken) {
       this.apollo
@@ -133,6 +170,7 @@ export class AuthState {
                 expiresAt,
                 isLoggedIn: true,
               });
+              this.store.dispatch(new SetAuthSessionAction());
               console.log({ state: getState() });
               this.store.dispatch(new GetCurrentUserAction());
             }
@@ -161,7 +199,7 @@ export class AuthState {
         message: 'Validating session...',
       })
     );
-    const { token } = payload;
+    const { token, refreshToken } = payload;
     this.apollo
       .mutate({
         mutation: AUTH_MUTATIONS.VERIFY_TOKEN,
@@ -183,6 +221,7 @@ export class AuthState {
             console.log('decodedToken');
             patchState({
               token,
+              refreshToken,
               expiresAt,
               isLoggedIn: true,
             });
@@ -219,6 +258,7 @@ export class AuthState {
   setAuthSession({ getState }: StateContext<AuthStateModel>) {
     const state = getState();
     const { token, refreshToken } = state;
+    console.log('Setting to local storage => ', { token, refreshToken });
     if (token) {
       localStorage.setItem(AUTH_TOKEN_KEY, token);
     } else {

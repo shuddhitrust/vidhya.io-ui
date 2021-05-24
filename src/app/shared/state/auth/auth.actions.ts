@@ -6,7 +6,7 @@ export class SetAuthSessionAction {
 }
 export class VerifyTokenAction {
   static readonly type = '[AUTH] Verify Token';
-  constructor(public payload: { token: string }) {}
+  constructor(public payload: { token: string; refreshToken: string }) {}
 }
 export class RegisterAction {
   static readonly type = '[AUTH] Register';
