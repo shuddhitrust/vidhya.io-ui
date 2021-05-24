@@ -1,6 +1,6 @@
 import { gql } from 'apollo-angular';
 
-export const AUTH = {
+export const AUTH_MUTATIONS = {
   REGISTER: gql`
     mutation register(
       $username: String!
@@ -57,9 +57,27 @@ export const AUTH = {
       }
     }
   `,
-  LOGOUT: gql`
-    mutation logoutUser($id: String!) {
-      logout(id: $id) {
+  VERIFY_TOKEN: gql`
+    mutation verifyToken($token: String!) {
+      verifyToken(token: $token) {
+        success
+        errors
+      }
+    }
+  `,
+  REFRESH_TOKEN: gql`
+    mutation refreshToken($refreshToken: String!) {
+      refreshToken(refreshToken: $refreshToken) {
+        success
+        errors
+        token
+        refreshToken
+      }
+    }
+  `,
+  REVOKE_TOKEN: gql`
+    mutation revokeToken($refreshToken: String!) {
+      revokeToken(refreshToken: $refreshToken) {
         success
         errors
       }

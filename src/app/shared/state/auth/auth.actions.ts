@@ -1,5 +1,13 @@
 import { FormGroup, FormGroupDirective } from '@angular/forms';
 
+export class SetAuthSessionAction {
+  static readonly type = '[AUTH] Set Auth Session';
+  constructor() {}
+}
+export class VerifyTokenAction {
+  static readonly type = '[AUTH] Verify Token';
+  constructor(public payload: { token: string }) {}
+}
 export class RegisterAction {
   static readonly type = '[AUTH] Register';
 
@@ -61,7 +69,7 @@ export class LogoutAction {
   constructor() {}
 }
 
-export class GetCurrentUser {
+export class GetCurrentUserAction {
   static readonly type = '[AUTH] Fetch Member';
 
   constructor() {}
@@ -69,6 +77,12 @@ export class GetCurrentUser {
 
 export class AuthenticationCheckAction {
   static readonly type = '[AUTH] Check Authentication';
+
+  constructor() {}
+}
+
+export class RefreshTokenAction {
+  static readonly type = '[AUTH] Refresh Token';
 
   constructor() {}
 }

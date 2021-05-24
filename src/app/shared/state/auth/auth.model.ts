@@ -1,8 +1,6 @@
-import { User } from '../../common/models';
-import { emptyMemberFormRecord } from '../members/member.model';
-
 export interface AuthStateModel {
   token: string;
+  expiresAt: number;
   refreshToken: string;
   isSubmittingForm: boolean;
   isLoggedIn: boolean;
@@ -12,12 +10,11 @@ export interface AuthStateModel {
   currentMemberInstitutionId: string;
   username: string;
   name: string;
-  currentMember: User;
-  sessionBeginTime: number;
 }
 
 export const defaultAuthState: AuthStateModel = {
   token: null,
+  expiresAt: null,
   refreshToken: null,
   isSubmittingForm: false,
   isLoggedIn: false,
@@ -27,6 +24,4 @@ export const defaultAuthState: AuthStateModel = {
   currentMemberInstitutionId: null,
   username: null,
   name: null,
-  currentMember: emptyMemberFormRecord,
-  sessionBeginTime: null,
 };

@@ -40,6 +40,9 @@ export class LoginModalComponent {
   hide = true; // variable to store show/hide password toggle
   @Select(AuthState.getIsSubmittingForm)
   isSubmittingForm$: Observable<boolean>;
+  @Select(AuthState.getIsLoggedIn)
+  isLoggedIn$: Observable<boolean>;
+  isLoggedIn: boolean = false;
 
   constructor(
     private store: Store,
@@ -51,6 +54,12 @@ export class LoginModalComponent {
     this.setupLoginForm();
     this.setupForgotPasswordForm();
     this.setupRegisterForm();
+    this.isLoggedIn$.subscribe((val) => {
+      this.isLoggedIn = val;
+      if (this.isLoggedIn) {
+        this.closeDialog();
+      }
+    });
   }
 
   setupForgotPasswordForm() {

@@ -10,8 +10,14 @@ import { Select, Store } from '@ngxs/store';
 import { ShowNotificationAction } from '../state/notifications/notification.actions';
 import { AuthState } from '../state/auth/auth.state';
 import { AuthStateModel } from '../state/auth/auth.model';
-import { throwToolbarMixedModesError } from '@angular/material/toolbar';
 import { MembershipStatus } from '../common/models';
+import {
+  HttpEvent,
+  HttpHandler,
+  HttpInterceptor,
+  HttpRequest,
+} from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
@@ -108,5 +114,36 @@ export class RegistrationFormAuthGuard implements CanActivate {
     //     );
     //     return false;
     //   });
+  }
+}
+
+@Injectable()
+export class AuthInterceptor implements HttpInterceptor {
+  @Select(AuthState)
+  authState$: Observable<AuthStateModel>;
+  authState: AuthStateModel;
+  token: string;
+  constructor() {
+    this.authState$.subscribe((val) => {
+      this.authState = val;
+      this.token = this.authState.token;
+    });
+  }
+
+  intercept(
+    request: HttpRequest<unknown>,
+    next: HttpHandler
+  ): Observable<HttpEvent<unknown>> {
+    // add JWT auth header if a user is logged in for API requests
+    const isApiUrl = request.url.startsWith(environment.graphql_endpoint);
+    console.log('from authInterceptor ', { isApiUrl, token: this.token });
+    if (this.token && isApiUrl) {
+      request = request.clone({
+        setHeaders: { Authorization: `Bearer ${this.token}` },
+      });
+      console.log('After setting authorization header ', request);
+    }
+
+    return next.handle(request);
   }
 }

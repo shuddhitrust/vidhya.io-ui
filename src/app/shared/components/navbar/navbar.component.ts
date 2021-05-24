@@ -24,16 +24,12 @@ export class NavbarComponent implements OnInit {
   authState: AuthStateModel;
   isLoggedIn: boolean;
   isFullyAuthenticated: Boolean;
-  membershipStatus: MembershipStatus;
-  approved: boolean;
 
   constructor(private store: Store, public dialog: MatDialog) {
     this.authState$.subscribe((val) => {
       this.authState = val;
       this.isLoggedIn = this.authState.isLoggedIn;
       this.isFullyAuthenticated = this.authState.isFullyAuthenticated;
-      // this.membershipStatus = this.authState.membershipStatus;
-      // this.approved = this.membershipStatus == MembershipStatus.ACTIVE;
     });
   }
 

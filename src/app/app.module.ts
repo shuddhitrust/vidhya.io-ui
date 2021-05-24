@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { GraphQLModule } from './shared/api/graphql/graphql.module';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Styling } from './styling.imports';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DashboardComponent } from './pages/static/dashboard/dashboard.component';
@@ -14,6 +14,7 @@ import { AccountComponent } from './pages/static/account/account.component';
 import { SupportComponent } from './pages/static/support/support.component';
 import {
   AuthenticationGuard,
+  AuthInterceptor,
   RegistrationFormAuthGuard,
 } from './shared/api/authentication.guard';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
@@ -150,7 +151,16 @@ import { HotToastModule } from '@ngneat/hot-toast';
       NgxsReduxDevtoolsPluginModule.forRoot(),
     ],
   ],
-  providers: [AuthenticationGuard, RegistrationFormAuthGuard, FormBuilder],
+  providers: [
+    AuthenticationGuard,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    },
+    RegistrationFormAuthGuard,
+    FormBuilder,
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

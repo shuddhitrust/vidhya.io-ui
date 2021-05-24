@@ -17,7 +17,7 @@
 </ng-template>
 
 <ng-template #loggedInMenu>
-  <ng-container *ngIf="isFullyAuthenticated && approved; else pendingApproval">
+  <ng-container *ngIf="isFullyAuthenticated; else pendingApproval">
     <button
       [matMenuTriggerFor]="menu"
       class="example-icon"

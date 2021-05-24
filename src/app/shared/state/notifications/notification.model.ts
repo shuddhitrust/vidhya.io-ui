@@ -13,5 +13,5 @@ export const defaultNotificationState: NotificationStateModel = {
   action: 'show',
   autoClose: true,
   dismissible: true,
-  position: 'bottom-left',
+  position: 'bottom-center',
 };

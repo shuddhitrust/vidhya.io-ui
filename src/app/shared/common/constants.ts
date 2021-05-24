@@ -5,3 +5,7 @@ export const day = hour * 24;
 export const week = day * 7;
 export const month = week * 4;
 export const year = month * 12;
+
+export const AUTH_TOKEN_KEY = 'AUTH_TOKEN';
+export const AUTH_REFRESH_TOKEN_KEY = 'AUTH_REFRESH_TOKEN';
+export const EXPIRATION_KEY = 'EXPIRES_AT';
