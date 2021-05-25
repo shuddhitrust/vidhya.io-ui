@@ -15,12 +15,13 @@ export const emptyInstitutionFormRecord: Institution = {
   phone: null,
   logo: null,
   bio: null,
+  invitecode: null,
 };
 export interface InstitutionStateModel {
   institutions: Institution[];
   fetchPolicy: FetchPolicy;
   paginationObject: PaginationObject;
-  institutionFormId: string;
+  institutionFormId: number;
   institutionFormRecord: Institution;
   isFetching: boolean;
   errorFetching: boolean;
