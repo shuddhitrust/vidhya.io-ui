@@ -3,8 +3,12 @@ This is an object that requires an id of type string
 to be used in NGXS actions
 */
 export type idPayload = {
-  id: string;
+  id: number;
 };
+
+// These are GraphQL types
+export type ID = number;
+export type Int = number;
 
 /*
 Fetch policy to be used when making Graphql queries via AWS Amplify Client
@@ -32,7 +36,7 @@ export type HotToastStatus =
   | 'error'
   | 'loading';
 
-export type MatSelectOption = { label: string; value: string };
+export type MatSelectOption = { label: string; value: number | string };
 
 export type PaginationObject = {
   paginationTokens: object;
@@ -58,6 +62,17 @@ export type Group = any;
 
 export const GroupType = {};
 
-export type Institution = any;
+export type Institution = {
+  __typename: string;
+  id: number;
+  name: string;
+  location: string;
+  city: string;
+  website: string;
+  phone: string;
+  logo: string;
+  bio: string;
+  invitecode: string;
+};
 
 export type MembershipStatus = any;
