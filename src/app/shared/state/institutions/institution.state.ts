@@ -1,27 +1,26 @@
-import { State, Action, Selector, Store, StateContext } from '@ngxs/store';
+import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 import {
   defaultInstitutionState,
   emptyInstitutionFormRecord,
   InstitutionStateModel,
 } from './institution.model';
-import {
-  CreateUpdateInstitution,
-  DeleteInstitution,
-  FetchInstitutions,
-  ForceRefetchInstitutions,
-  GetInstitution,
-} from './institution.actions';
-import { Injectable } from '@angular/core';
 
-import { ShowNotificationAction } from '../notifications/notification.actions';
-import { ToggleLoadingScreen } from '../loading/loading.actions';
+import { Injectable } from '@angular/core';
+import {
+  CreateUpdateInstitutionAction,
+  FetchInstitutionsAction,
+  GetInstitutionAction,
+} from './institution.actions';
+import { INSTITUTION_QUERIES } from './../../api/graphql/queries.graphql';
+import { Apollo } from 'apollo-angular';
 import {
   Institution,
   MatSelectOption,
   PaginationObject,
 } from '../../common/models';
-import { defaultPageSize } from '../../abstract/master-grid/table.model';
-import { setNextToken, updatePaginationObject } from '../../common/functions';
+import { INSTITUTION_MUTATIONS } from '../../api/graphql/mutations.graphql';
+import { ShowNotificationAction } from '../notifications/notification.actions';
+import { getErrorMessageFromGraphQLResponse } from '../../common/functions';
 
 @State<InstitutionStateModel>({
   name: 'institutionState',
@@ -29,7 +28,7 @@ import { setNextToken, updatePaginationObject } from '../../common/functions';
 })
 @Injectable()
 export class InstitutionState {
-  constructor(private store: Store) {}
+  constructor(private apollo: Apollo, private store: Store) {}
 
   @Selector()
   static listInstitutions(state: InstitutionStateModel): Institution[] {
@@ -37,24 +36,27 @@ export class InstitutionState {
   }
 
   @Selector()
+  static isFetching(state: InstitutionStateModel): boolean {
+    return state.isFetching;
+  }
+
+  @Selector()
   static paginationObject(state: InstitutionStateModel): PaginationObject {
     return state.paginationObject;
   }
-
   @Selector()
   static listInstitutionOptions(
     state: InstitutionStateModel
   ): MatSelectOption[] {
-    const options = state.institutions.map((i) => {
-      return { value: i.id, label: `${i.name} (${i.location})` };
+    const options: MatSelectOption[] = state.institutions.map((i) => {
+      const option: MatSelectOption = {
+        value: i.id,
+        label: `${i.name} (${i.location})`,
+      };
+      return option;
     });
     console.log('options', options);
     return options;
-  }
-
-  @Selector()
-  static isFetching(state: InstitutionStateModel): boolean {
-    return state.isFetching;
   }
 
   @Selector()
@@ -77,231 +79,118 @@ export class InstitutionState {
     return state.institutionFormRecord;
   }
 
-  @Action(ForceRefetchInstitutions)
-  forceRefetchInstitutions(
-    { patchState }: StateContext<InstitutionStateModel>,
-    { payload }: ForceRefetchInstitutions
-  ) {
-    const { searchParams } = payload;
-    patchState({ fetchPolicy: 'network-only' });
-    this.store.dispatch(new FetchInstitutions({ searchParams }));
-  }
-
-  @Action(FetchInstitutions)
-  fetchInstitutions(
-    { getState, patchState }: StateContext<InstitutionStateModel>,
-    { payload }: FetchInstitutions
-  ) {
-    const { searchParams } = payload;
+  @Action(FetchInstitutionsAction)
+  fetchInstitutions({
+    getState,
+    patchState,
+  }: StateContext<InstitutionStateModel>) {
+    patchState({ isFetching: true });
     const state = getState();
-    let {
-      institutions,
-      isFetching,
-      errorFetching,
-      fetchPolicy,
-      paginationObject,
-    } = state;
-    isFetching = true;
-    errorFetching = false;
-    paginationObject = {
-      ...paginationObject,
-      pageIndex: searchParams?.pageNumber
-        ? searchParams?.pageNumber
-        : paginationObject.pageIndex,
-    };
-    patchState({ isFetching, errorFetching, institutions });
-    const filter = searchParams?.searchQuery
-      ? {
-          searchField: { contains: searchParams.searchQuery.toLowerCase() },
-          // sortBy: searchParams.sortField,
-        }
-      : null;
-    const variables = {
-      filter,
-      limit: searchParams?.pageSize ? searchParams?.pageSize : defaultPageSize,
-      // limit: 1,
-      nextToken: setNextToken(paginationObject),
-    };
-    // client
-    //   .query({
-    //     query: modifiedQueries.ListInstitutions,
-    //     fetchPolicy,
-    //     variables,
-    //   })
-    //   .then((res: any) => {
-    //     isFetching = false;
-    //     const institutions = res.data.listInstitutions.items;
-    //     const returnedNextToken = res.data.listInstitutions.nextToken;
-    //     fetchPolicy = null;
-    //     paginationObject = updatePaginationObject(
-    //       paginationObject,
-    //       returnedNextToken
-    //     );
-
-    //     patchState({
-    //       institutions,
-    //       isFetching,
-    //       fetchPolicy,
-    //       paginationObject,
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     isFetching = false;
-    //     errorFetching = true;
-    //     institutions = [];
-    //     patchState({ institutions, isFetching, errorFetching });
-    //   });
+    const { fetchPolicy } = state;
+    this.apollo
+      .watchQuery({ query: INSTITUTION_QUERIES.GET_INSTITUTIONS, fetchPolicy })
+      .valueChanges.subscribe(({ data }: any) => {
+        const response = data.institutions;
+        patchState({ institutions: response, isFetching: false });
+      });
   }
 
-  @Action(GetInstitution)
+  @Action(GetInstitutionAction)
   getInstitution(
-    { getState, patchState }: StateContext<InstitutionStateModel>,
-    { payload }: GetInstitution
+    { patchState }: StateContext<InstitutionStateModel>,
+    { payload }: GetInstitutionAction
   ) {
     const { id } = payload;
-    const state = getState();
-    const institution = state.institutions.find((i) => i.id == id);
-    if (institution) {
-      patchState({ institutionFormRecord: institution });
-    } else {
-      this.store.dispatch(
-        new ToggleLoadingScreen({
-          showLoadingScreen: true,
-          message: 'Fetching the institution...',
-        })
-      );
-      // client
-      //   .query({
-      //     query: queries.GetInstitution,
-      //     variables: {
-      //       id,
-      //     },
-      //   })
-      //   .then((res: any) => {
-      //     this.store.dispatch(
-      //       new ToggleLoadingScreen({ showLoadingScreen: false })
-      //     );
-      //     const institutionFormRecord = res.data.getInstitution;
-      //     patchState({ institutionFormRecord });
-      //   })
-      //   .catch((res: any) => {
-      //     console.error(res);
-      //     this.store.dispatch(
-      //       new ToggleLoadingScreen({ showLoadingScreen: false })
-      //     );
-      //     this.store.dispatch(
-      //       new ShowNotificationAction({
-      //         message:
-      //           'There was an error in fetching the institution! Try again later.',
-      //       })
-      //     );
-      //   });
-    }
+    patchState({ isFetching: true });
+    this.apollo
+      .watchQuery({
+        query: INSTITUTION_QUERIES.GET_INSTITUTION,
+        variables: { id },
+        fetchPolicy: 'network-only',
+      })
+      .valueChanges.subscribe(({ data }: any) => {
+        const response = data.institution;
+        patchState({ institutionFormRecord: response, isFetching: false });
+      });
   }
 
-  @Action(CreateUpdateInstitution)
+  @Action(CreateUpdateInstitutionAction)
   createUpdateInstitution(
     { getState, patchState }: StateContext<InstitutionStateModel>,
-    { payload }: CreateUpdateInstitution
+    { payload }: CreateUpdateInstitutionAction
   ) {
     const state = getState();
     const { form, formDirective } = payload;
     let { formSubmitting } = state;
-    if (form.valid) {
-      formSubmitting = true;
-      const values = form.value;
-      const updateForm = values.id ? true : false;
-      patchState({ formSubmitting });
-      // client
-      //   .mutate({
-      //     mutation: updateForm
-      //       ? mutations.UpdateInstitution
-      //       : mutations.CreateInstitution,
-      //     variables: {
-      //       input: values,
-      //     },
-      //   })
-      //   .then((res: any) => {
-      //     this.store.dispatch(new ForceRefetchInstitutions({}));
-      //     formSubmitting = false;
-      //     patchState({ institutionFormRecord: emptyInstitutionFormRecord });
-      //     form.reset();
-      //     formDirective.resetForm();
-      //     patchState({ formSubmitting });
-      //     this.store.dispatch(
-      //       new ShowNotificationAction({
-      //         message: 'Form submitted successfully!',
-      //       })
-      //     );
-      //   })
-      //   .catch((err) => {
-      //     console.error(err);
-      //     formSubmitting = false;
-      //     patchState({ formSubmitting });
-      //     this.store.dispatch(
-      //       new ShowNotificationAction({
-      //         message: 'There was an error in submitting your form!',
-      //       })
-      //     );
-      //   });
-    } else {
-      this.store.dispatch(
-        new ShowNotificationAction({
-          message:
-            'Please make sure there are no errors in the form before attempting to submit!',
-          action: 'error',
-        })
-      );
-    }
-  }
-
-  @Action(DeleteInstitution)
-  deleteInstitution(
-    { getState, patchState }: StateContext<InstitutionStateModel>,
-    { payload }: DeleteInstitution
-  ) {
-    const { id } = payload;
-    this.store.dispatch(
-      new ToggleLoadingScreen({
-        showLoadingScreen: true,
-        message: 'Deleting the institution...',
+    // if (form.valid) {
+    formSubmitting = true;
+    patchState({ formSubmitting });
+    const values = form.value;
+    // values.id = parseInt(values.id, 10);
+    console.log('Institution Form values', values);
+    const updateForm = values.id == null ? false : true;
+    this.apollo
+      .mutate({
+        mutation: updateForm
+          ? INSTITUTION_MUTATIONS.UPDATE_INSTITUTION
+          : INSTITUTION_MUTATIONS.CREATE_INSTITUTION,
+        variables: {
+          input: values,
+          id: updateForm ? values.id : null,
+        },
       })
-    );
-    // client
-    //   .mutate({
-    //     mutation: mutations.DeleteInstitution,
-    //     variables: {
-    //       input: {
-    //         id,
-    //       },
-    //     },
-    //   })
-    //   .then((res: any) => {
-    //     this.store.dispatch(new ForceRefetchInstitutions({}));
-    //     console.log(res);
-    //     this.store.dispatch(
-    //       new ToggleLoadingScreen({
-    //         showLoadingScreen: false,
-    //       })
-    //     );
-    //     this.store.dispatch(
-    //       new ShowNotificationAction({
-    //         message: `The institution with name ${res?.data?.deleteInstitution?.name} was successfully deleted`,
-    //       })
-    //     );
-    //   })
-    //   .catch((err) => {
-    //     console.log('Error while deleting ', err);
-    //     this.store.dispatch(
-    //       new ToggleLoadingScreen({
-    //         showLoadingScreen: false,
-    //       })
-    //     );
-    //     this.store.dispatch(
-    //       new ShowNotificationAction({
-    //         message: `Something went wrong while attempting to delete the institution. It may not have been deleted.`,
-    //       })
-    //     );
-    //   });
+      .subscribe(
+        ({ data }: any) => {
+          const response = updateForm
+            ? data.updateInstitution
+            : data.createInstitution;
+          patchState({ formSubmitting: false });
+          console.log('update institution ', { response });
+          if (response.ok) {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: `Institution ${
+                  updateForm ? 'updated' : 'created'
+                } successfully!`,
+                action: 'success',
+              })
+            );
+
+            patchState({
+              institutionFormRecord: emptyInstitutionFormRecord,
+              fetchPolicy: 'network-only',
+            });
+            form.reset();
+            formDirective.resetForm();
+          } else {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(response?.errors),
+                action: 'error',
+              })
+            );
+          }
+          console.log('From createUpdateInstitution', { response });
+        },
+        (error) => {
+          console.log('Some error happened ', error);
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ formSubmitting: false });
+        }
+      );
+    // } else {
+    //   this.store.dispatch(
+    //     new ShowNotificationAction({
+    //       message:
+    //         'Please make sure there are no errors in the form before attempting to submit!',
+    //       action: 'error',
+    //     })
+    //   );
+    // }
   }
 }
