@@ -24,6 +24,7 @@ import {
   LogoutAction,
   GetCurrentUserAction,
   RefreshTokenAction,
+  CompleteLogoutAction,
 } from './auth.actions';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import { Apollo } from 'apollo-angular';
@@ -42,9 +43,13 @@ import { ToggleLoadingScreen } from '../loading/loading.actions';
 /**
  * Auth flow:-
  * - When the application loads, it runs the AuthenticationCheckAction which looks for the token and refreshToken in localStorage
- * - If the token exists, it calls the VerifyTokenAction to see if that token is valid.
- * - If the token is invalid, the user is shown the logged out state.
- * - If it is valid, it will store the token and the refreshToken in the state along with the expiryAt,
+ * - If the token and refreshToken exist, it sets them both to state and calls the VerifyTokenAction to see if that token is valid.
+ * - If the token is invalid, then it calls the RefreshTokenAction to see if the refreshToken is valid
+ * - If the refreshToken is valid, it will store the token and the refreshToken in the state along with the expiryAt
+ * and then check if the user's information is fetched.
+ * - If it isn't in the state, it fetches the user's information. Otherwise not.
+ * - If it is invalid, the user is shown the logged out state.
+ * - If it is valid, ,
  * which is decoded from the token at the time of storing it in the state
  * - Once the change in expiryAt is detected by the expiresAt$ observable in the constructor,
  * it calls the startAutoRefreshTokenTimeout method to initiate a calculated timeout method that executes
@@ -116,34 +121,83 @@ export class AuthState {
     const localStorageRefreshToken = localStorage.getItem(
       AUTH_REFRESH_TOKEN_KEY
     );
-    console.log('from checkAuthentication => ', {
-      localStorageToken,
-    });
-    if (localStorageToken) {
-      this.store.dispatch(
-        new VerifyTokenAction({
-          token: localStorageToken,
-          refreshToken: localStorageRefreshToken,
-        })
-      );
+    if (localStorageToken || localStorageRefreshToken) {
+      this.store.dispatch(new VerifyTokenAction());
+      patchState({
+        token: localStorageToken,
+        refreshToken: localStorageRefreshToken,
+      });
     } else {
-      this.store.dispatch(
-        new ToggleLoadingScreen({
-          showLoadingScreen: false,
-          message: 'Logging out...',
-        })
-      );
-      // Marking user as logged out
-      patchState(defaultAuthState);
-      this.store.dispatch(new SetAuthSessionAction());
+      // Logging out
+      this.store.dispatch(new CompleteLogoutAction());
     }
+  }
+
+  @Action(VerifyTokenAction)
+  verifyToken({ getState, patchState }: StateContext<AuthStateModel>) {
+    const state = getState();
+    const { token, refreshToken } = state;
+    this.store.dispatch(
+      new ToggleLoadingScreen({
+        showLoadingScreen: true,
+        message: 'Validating session...',
+      })
+    );
+    this.apollo
+      .mutate({
+        mutation: AUTH_MUTATIONS.VERIFY_TOKEN,
+        variables: {
+          token,
+        },
+      })
+      .subscribe(
+        ({ data }: any) => {
+          const response = data.verifyToken;
+          this.store.dispatch(
+            new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+          );
+          console.log('data from verify token response ', {
+            data,
+            response,
+            success: response.success,
+          });
+          if (response.success) {
+            console.log('token verified successfully', { token });
+            const { expiresAt, userId } = getDecodedToken(token);
+            console.log('decodedToken');
+            patchState({
+              userId,
+              token,
+              refreshToken,
+              expiresAt,
+              isLoggedIn: true,
+            });
+            console.log({ state: getState() });
+            this.store.dispatch(new GetCurrentUserAction());
+          } else {
+            this.store.dispatch(new RefreshTokenAction());
+          }
+        },
+        (error) => {
+          this.store.dispatch(
+            new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+          );
+          console.error('There was an error ', error);
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: 'There was an error!',
+              action: 'error',
+            })
+          );
+        }
+      );
   }
 
   @Action(RefreshTokenAction)
   refreshToken({ getState, patchState }: StateContext<AuthStateModel>) {
     const state = getState();
     console.log('calling refresh token method', { state });
-    const { refreshToken } = state;
+    const { refreshToken, userId } = state;
     if (refreshToken) {
       this.apollo
         .mutate({
@@ -163,7 +217,7 @@ export class AuthState {
             const { token, refreshToken } = response;
             if (response.success) {
               console.log('token refreshed successfully', { token });
-              const expiresAt = getExpiration(token);
+              const { userId, expiresAt } = getDecodedToken(token);
               patchState({
                 token,
                 refreshToken,
@@ -172,7 +226,11 @@ export class AuthState {
               });
               this.store.dispatch(new SetAuthSessionAction());
               console.log({ state: getState() });
-              this.store.dispatch(new GetCurrentUserAction());
+              if (!userId) {
+                this.store.dispatch(new GetCurrentUserAction());
+              }
+            } else {
+              this.store.dispatch(new CompleteLogoutAction());
             }
           },
           (error) => {
@@ -187,71 +245,17 @@ export class AuthState {
         );
     }
   }
-
-  @Action(VerifyTokenAction)
-  verifyToken(
-    { getState, patchState }: StateContext<AuthStateModel>,
-    { payload }: VerifyTokenAction
-  ) {
+  @Action(CompleteLogoutAction)
+  completeLogout({ patchState }: StateContext<AuthStateModel>) {
     this.store.dispatch(
       new ToggleLoadingScreen({
-        showLoadingScreen: true,
-        message: 'Validating session...',
+        showLoadingScreen: false,
+        message: '',
       })
     );
-    const { token, refreshToken } = payload;
-    this.apollo
-      .mutate({
-        mutation: AUTH_MUTATIONS.VERIFY_TOKEN,
-        variables: {
-          token,
-        },
-      })
-      .subscribe(
-        ({ data }: any) => {
-          const response = data.verifyToken;
-          console.log('data from verify token response ', {
-            data,
-            response,
-            success: response.success,
-          });
-          if (response.success) {
-            console.log('token verified successfully', { token });
-            const expiresAt = getExpiration(token);
-            console.log('decodedToken');
-            patchState({
-              token,
-              refreshToken,
-              expiresAt,
-              isLoggedIn: true,
-            });
-            console.log({ state: getState() });
-            this.store.dispatch(new GetCurrentUserAction());
-          } else {
-            this.store.dispatch(
-              new ToggleLoadingScreen({
-                showLoadingScreen: false,
-                message: 'Validating session...',
-              })
-            );
-            // Marking user as logged out
-            patchState(defaultAuthState);
-            this.store.dispatch(new SetAuthSessionAction());
-          }
-        },
-        (error) => {
-          this.store.dispatch(
-            new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
-          );
-          console.error('There was an error ', error);
-          this.store.dispatch(
-            new ShowNotificationAction({
-              message: 'There was an error!',
-              action: 'error',
-            })
-          );
-        }
-      );
+    // Marking user as logged out
+    patchState(defaultAuthState);
+    this.store.dispatch(new SetAuthSessionAction());
   }
 
   @Action(SetAuthSessionAction)
@@ -269,13 +273,12 @@ export class AuthState {
     } else {
       localStorage.removeItem(AUTH_REFRESH_TOKEN_KEY);
     }
-    // localStorage.setItem(EXPIRATION_KEY, expiresAt);
   }
 
   @Action(GetCurrentUserAction)
   getCurrentUser({ getState, patchState }: StateContext<AuthStateModel>) {
     const state = getState();
-    const { isLoggedIn } = state;
+    const { isLoggedIn, userId } = state;
     this.store.dispatch(
       new ToggleLoadingScreen({
         showLoadingScreen: true,
@@ -283,7 +286,7 @@ export class AuthState {
       })
     );
     this.apollo
-      .watchQuery({ query: USER_QUERIES.GET_USER, variables: { id: 4 } })
+      .watchQuery({ query: USER_QUERIES.GET_USER, variables: { id: userId } })
       .valueChanges.subscribe(({ data }: any) => {
         this.store.dispatch(
           new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
@@ -339,15 +342,12 @@ export class AuthState {
               formDirective.resetForm();
               const institutionId = response?.user?.institution?.id;
               const token = response?.token;
+              const { expiresAt, userId } = getDecodedToken(token);
 
-              const expiresAt = getExpiration(token);
-              console.log('*****moment of expiresAt => ', {
-                expiresAt: moment(expiresAt).toLocaleString(),
-                iat: moment(token.iAt),
-              });
               patchState({
                 token,
                 expiresAt,
+                userId,
                 refreshToken: response?.refreshToken,
                 username: response?.user?.username,
                 name: response?.user?.name,
@@ -427,19 +427,14 @@ export class AuthState {
       .subscribe(
         ({ data }: any) => {
           const response = data.revokeToken;
+          this.store.dispatch(new CompleteLogoutAction());
           // Clearing the refreshToken timeout
           clearTimeout(this.refreshTokenTimeout);
           // Marking user as logged out
-          patchState(defaultAuthState);
-          this.store.dispatch(new SetAuthSessionAction());
-          this.store.dispatch(new AuthenticationCheckAction());
-          this.store.dispatch(
-            new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
-          );
           if (response.success) {
             this.store.dispatch(
               new ShowNotificationAction({
-                message: 'Successfully Logged out!',
+                message: 'Logged out successfully!',
                 action: 'success',
               })
             );
@@ -452,7 +447,7 @@ export class AuthState {
           console.error('There was an error', error);
           this.store.dispatch(
             new ShowNotificationAction({
-              message: 'There was an error in submitting your form!',
+              message: 'There was an error in completing this action!',
               action: 'error',
             })
           );
@@ -891,12 +886,15 @@ export class AuthState {
   }
 }
 
-const getExpiration = (token) => {
+const getDecodedToken = (token) => {
   const decodedToken: any = jwtDecode(token);
   console.log('decoded token => ', {
     decodedToken,
     exp: new Date(decodedToken.exp * 1000),
     origIat: new Date(decodedToken.origIat * 1000),
   });
-  return decodedToken.exp;
+  return {
+    userId: parseInt(decodedToken.sub, 10),
+    expiresAt: decodedToken.exp,
+  };
 };

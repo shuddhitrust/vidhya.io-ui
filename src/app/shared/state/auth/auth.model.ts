@@ -6,7 +6,7 @@ export interface AuthStateModel {
   isLoggedIn: boolean;
   lastLogin: string;
   isFullyAuthenticated: boolean;
-  userId: string;
+  userId: number;
   currentMemberInstitutionId: string;
   username: string;
   name: string;

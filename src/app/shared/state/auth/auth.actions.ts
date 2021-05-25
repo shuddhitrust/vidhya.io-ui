@@ -6,7 +6,7 @@ export class SetAuthSessionAction {
 }
 export class VerifyTokenAction {
   static readonly type = '[AUTH] Verify Token';
-  constructor(public payload: { token: string; refreshToken: string }) {}
+  constructor() {}
 }
 export class RegisterAction {
   static readonly type = '[AUTH] Register';
@@ -83,6 +83,12 @@ export class AuthenticationCheckAction {
 
 export class RefreshTokenAction {
   static readonly type = '[AUTH] Refresh Token';
+
+  constructor() {}
+}
+
+export class CompleteLogoutAction {
+  static readonly type = '[AUTH] Finish Logging out';
 
   constructor() {}
 }
