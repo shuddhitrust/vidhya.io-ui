@@ -2,7 +2,7 @@ import { FormGroup, FormGroupDirective } from '@angular/forms';
 import { SearchParams } from '../../abstract/master-grid/table.model';
 import { idPayload } from '../../common/models';
 
-export class FetchInstitutions {
+export class FetchInstitutionsAction {
   static readonly type = '[INSTITUTIONS] Fetch';
 
   constructor(public payload: { searchParams?: SearchParams }) {}
@@ -14,13 +14,13 @@ export class ForceRefetchInstitutions {
   constructor(public payload: { searchParams?: SearchParams }) {}
 }
 
-export class GetInstitution {
+export class GetInstitutionAction {
   static readonly type = '[INSTITUTION] Get';
 
   constructor(public payload: idPayload) {}
 }
 
-export class CreateUpdateInstitution {
+export class CreateUpdateInstitutionAction {
   static readonly type = '[INSTITUTION] Create';
 
   constructor(
