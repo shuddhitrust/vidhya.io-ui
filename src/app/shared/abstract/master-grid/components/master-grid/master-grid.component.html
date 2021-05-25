@@ -14,14 +14,14 @@
   </div>
   <div class="title-block" id="title">
     <h2 style="text-align: center">
-      {{ tableTitle
-      }}<mat-icon
+      {{ tableTitle }}
+      <!-- <mat-icon
         id="sync-records-icon"
         *ngIf="!isFetching"
         (click)="refreshRecords()"
       >
         sync
-      </mat-icon>
+      </mat-icon> -->
     </h2>
   </div>
   <div *ngIf="createMethod.observers.length" class="title-block">
