@@ -41,7 +41,7 @@ import { Observable } from 'rxjs';
 import { ToggleLoadingScreen } from '../loading/loading.actions';
 
 /**
- * Auth flow:-
+ * Auth flow steps:-
  * - When the application loads, it runs the AuthenticationCheckAction which looks for the token and refreshToken in localStorage
  * - If the token and refreshToken exist, it sets them both to state and calls the VerifyTokenAction to see if that token is valid.
  * - If the token is invalid, then it calls the RefreshTokenAction to see if the refreshToken is valid
@@ -136,7 +136,7 @@ export class AuthState {
   @Action(VerifyTokenAction)
   verifyToken({ getState, patchState }: StateContext<AuthStateModel>) {
     const state = getState();
-    const { token, refreshToken } = state;
+    const { token, refreshToken, username } = state;
     this.store.dispatch(
       new ToggleLoadingScreen({
         showLoadingScreen: true,
@@ -173,7 +173,9 @@ export class AuthState {
               isLoggedIn: true,
             });
             console.log({ state: getState() });
-            this.store.dispatch(new GetCurrentUserAction());
+            if (!username) {
+              this.store.dispatch(new GetCurrentUserAction());
+            }
           } else {
             this.store.dispatch(new RefreshTokenAction());
           }
@@ -197,7 +199,7 @@ export class AuthState {
   refreshToken({ getState, patchState }: StateContext<AuthStateModel>) {
     const state = getState();
     console.log('calling refresh token method', { state });
-    const { refreshToken, userId } = state;
+    const { refreshToken, username } = state;
     if (refreshToken) {
       this.apollo
         .mutate({
@@ -219,6 +221,7 @@ export class AuthState {
               console.log('token refreshed successfully', { token });
               const { userId, expiresAt } = getDecodedToken(token);
               patchState({
+                userId,
                 token,
                 refreshToken,
                 expiresAt,
@@ -226,7 +229,7 @@ export class AuthState {
               });
               this.store.dispatch(new SetAuthSessionAction());
               console.log({ state: getState() });
-              if (!userId) {
+              if (!username) {
                 this.store.dispatch(new GetCurrentUserAction());
               }
             } else {
