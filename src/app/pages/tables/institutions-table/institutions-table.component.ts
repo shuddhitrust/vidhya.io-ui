@@ -10,7 +10,7 @@ import { Institution, PaginationObject } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   ForceRefetchInstitutions,
-  FetchInstitutions,
+  FetchInstitutionsAction,
 } from 'src/app/shared/state/institutions/institution.actions';
 import { InstitutionState } from 'src/app/shared/state/institutions/institution.state';
 import { InstitutionProfileComponent } from '../../modals/institution-profile/institution-profile.component';
@@ -27,8 +27,6 @@ export class InstitutionsTableComponent implements OnInit {
   rows$: Observable<Institution[]>;
   @Select(InstitutionState.isFetching)
   isFetching$: Observable<boolean>;
-  @Select(InstitutionState.errorFetching)
-  errorFetching$: Observable<boolean>;
   @Select(InstitutionState.paginationObject)
   paginationObject$: Observable<PaginationObject>;
 
@@ -64,7 +62,7 @@ export class InstitutionsTableComponent implements OnInit {
   }
 
   fetchInstitutions(searchParams: SearchParams) {
-    this.store.dispatch(new FetchInstitutions({ searchParams }));
+    this.store.dispatch(new FetchInstitutionsAction({ searchParams }));
   }
 
   createInstitution() {
