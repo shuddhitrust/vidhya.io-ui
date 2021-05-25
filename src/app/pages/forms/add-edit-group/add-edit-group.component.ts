@@ -21,7 +21,7 @@ import {
 } from 'src/app/shared/state/groups/group.model';
 import { InstitutionState } from 'src/app/shared/state/institutions/institution.state';
 import { Group, MatSelectOption } from 'src/app/shared/common/models';
-import { FetchInstitutions } from 'src/app/shared/state/institutions/institution.actions';
+import { FetchInstitutionsAction } from 'src/app/shared/state/institutions/institution.actions';
 import { OptionsState } from 'src/app/shared/state/options/options.state';
 import { FetchMemberOptionsByInstitution } from 'src/app/shared/state/members/member.actions';
 import {
@@ -33,7 +33,10 @@ import {
 @Component({
   selector: 'app-add-edit-group',
   templateUrl: './add-edit-group.component.html',
-  styleUrls: ['./add-edit-group.component.scss'],
+  styleUrls: [
+    './add-edit-group.component.scss',
+    './../../../shared/common/shared-styles.css',
+  ],
 })
 export class AddEditGroupComponent implements OnInit {
   selectedMemberColumns = [{ field: 'label', headerName: 'Group Members' }];
@@ -77,7 +80,7 @@ export class AddEditGroupComponent implements OnInit {
       this.isFetchingMembers = val;
     });
 
-    this.store.dispatch(new FetchInstitutions({}));
+    this.store.dispatch(new FetchInstitutionsAction({}));
     this.groupForm = this.setupGroupFormGroup();
     this.groupFormRecord$.subscribe((val) => {
       console.log('The group form record');

@@ -10,8 +10,8 @@ import { Select, Store } from '@ngxs/store';
 import { ActivatedRoute } from '@angular/router';
 
 import {
-  CreateUpdateInstitution,
-  GetInstitution,
+  CreateUpdateInstitutionAction,
+  GetInstitutionAction,
 } from 'src/app/shared/state/institutions/institution.actions';
 import { InstitutionState } from 'src/app/shared/state/institutions/institution.state';
 import { Observable } from 'rxjs';
@@ -21,7 +21,10 @@ import { Institution } from 'src/app/shared/common/models';
 @Component({
   selector: 'app-add-edit-institution',
   templateUrl: './add-edit-institution.component.html',
-  styleUrls: ['./add-edit-institution.component.scss'],
+  styleUrls: [
+    './add-edit-institution.component.scss',
+    './../../../shared/common/shared-styles.css',
+  ],
 })
 export class AddEditInstitutionComponent implements OnInit {
   formSubmitting: boolean = false;
@@ -67,7 +70,7 @@ export class AddEditInstitutionComponent implements OnInit {
       this.params = params;
       const id = params['id'];
       if (id) {
-        this.store.dispatch(new GetInstitution({ id }));
+        this.store.dispatch(new GetInstitutionAction({ id }));
       }
     });
   }
@@ -77,6 +80,9 @@ export class AddEditInstitutionComponent implements OnInit {
   }
 
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {
-    this.store.dispatch(new CreateUpdateInstitution({ form, formDirective }));
+    console.log('Institution Form ', { form });
+    this.store.dispatch(
+      new CreateUpdateInstitutionAction({ form, formDirective })
+    );
   }
 }

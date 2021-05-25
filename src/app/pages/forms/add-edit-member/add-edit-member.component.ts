@@ -21,7 +21,7 @@ import {
   membershipStatusOptions,
 } from 'src/app/shared/state/members/member.model';
 import { InstitutionState } from 'src/app/shared/state/institutions/institution.state';
-import { FetchInstitutions } from 'src/app/shared/state/institutions/institution.actions';
+import { FetchInstitutionsAction } from 'src/app/shared/state/institutions/institution.actions';
 import {
   MatSelectOption,
   MembershipStatus,
@@ -37,7 +37,10 @@ import { FetchGroupOptionsByInstitution } from 'src/app/shared/state/options/opt
 @Component({
   selector: 'app-add-edit-member',
   templateUrl: './add-edit-member.component.html',
-  styleUrls: ['./add-edit-member.component.scss'],
+  styleUrls: [
+    './add-edit-member.component.scss',
+    './../../../shared/common/shared-styles.css',
+  ],
 })
 export class AddEditMemberComponent implements OnInit {
   formSubmitting: boolean = false;
@@ -113,7 +116,7 @@ export class AddEditMemberComponent implements OnInit {
       });
     });
     this.checkIfFormContainsRecord();
-    this.store.dispatch(new FetchInstitutions({}));
+    this.store.dispatch(new FetchInstitutionsAction({}));
     this.memberForm = this.setupMemberFormGroup();
     // this.memberFormRecord$.subscribe((val) => {
     //   this.memberFormRecord = val;
