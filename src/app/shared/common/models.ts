@@ -6,10 +6,6 @@ export type idPayload = {
   id: number;
 };
 
-// These are GraphQL types
-export type ID = number;
-export type Int = number;
-
 /*
 Fetch policy to be used when making Graphql queries via AWS Amplify Client
 */
