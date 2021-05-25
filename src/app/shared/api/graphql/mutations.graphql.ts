@@ -1,5 +1,47 @@
 import { gql } from 'apollo-angular';
 
+export const USER_MUTATIONS = {
+  CREATE_USER: gql`
+    mutation createUser($input: UserInput!) {
+      createUser(input: $input) {
+        ok
+        user
+      }
+    }
+  `,
+  UPDATE_USER: gql`
+    mutation updateUser($input: UserInput!) {
+      updateUser(input: $input) {
+        ok
+        user
+      }
+    }
+  `,
+};
+
+export const INSTITUTION_MUTATIONS = {
+  CREATE_INSTITUTION: gql`
+    mutation createInstitution($input: InstitutionInput!) {
+      createInstitution(input: $input) {
+        ok
+        institution {
+          id
+        }
+      }
+    }
+  `,
+  UPDATE_INSTITUTION: gql`
+    mutation updateInstitution($id: Int!, $input: InstitutionInput!) {
+      updateInstitution(id: $id, input: $input) {
+        ok
+        institution {
+          id
+        }
+      }
+    }
+  `,
+};
+
 export const AUTH_MUTATIONS = {
   REGISTER: gql`
     mutation register(
