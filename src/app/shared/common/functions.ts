@@ -139,7 +139,12 @@ export const autoGenOptions = (type: object): MatSelectOption[] => {
 };
 
 export const getErrorMessageFromGraphQLResponse = (errors): string => {
+  console.log('From getERrorMessageFromGraphQLResponse ', {
+    errors: JSON.stringify(errors),
+  });
   const keys = Object.keys(errors);
-  const message = errors[keys[0]][0].message;
-  return message ? message : 'Something went wrong!';
+  const message = errors[keys[0]][0]?.message;
+  return message
+    ? message
+    : 'Something went wrong! Action could not be completed successfully.';
 };
