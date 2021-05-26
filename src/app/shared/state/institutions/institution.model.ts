@@ -1,3 +1,4 @@
+import { defaultLogos } from '../../common/constants';
 import {
   FetchPolicy,
   Institution,
@@ -13,7 +14,7 @@ export const emptyInstitutionFormRecord: Institution = {
   city: null,
   website: null,
   phone: null,
-  logo: null,
+  logo: defaultLogos.institution,
   bio: null,
   invitecode: null,
 };
