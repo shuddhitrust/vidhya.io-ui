@@ -11,6 +11,7 @@ import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   ForceRefetchInstitutions,
   FetchInstitutionsAction,
+  ResetInstitutionFormAction,
 } from 'src/app/shared/state/institutions/institution.actions';
 import { InstitutionState } from 'src/app/shared/state/institutions/institution.state';
 import { InstitutionProfileComponent } from '../../modals/institution-profile/institution-profile.component';
@@ -66,6 +67,7 @@ export class InstitutionsTableComponent implements OnInit {
   }
 
   createInstitution() {
+    this.store.dispatch(new ResetInstitutionFormAction());
     this.router.navigateByUrl(uiroutes.INSTITUTION_FORM_ROUTE);
   }
 
