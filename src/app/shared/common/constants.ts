@@ -9,3 +9,8 @@ export const year = month * 12;
 export const AUTH_TOKEN_KEY = 'AUTH_TOKEN';
 export const AUTH_REFRESH_TOKEN_KEY = 'AUTH_REFRESH_TOKEN';
 export const EXPIRATION_KEY = 'EXPIRES_AT';
+
+export const defaultLogos = {
+  institution: 'https://i.imgur.com/hB0OXas.png',
+  user: 'https://i.imgur.com/XDZCq2b.png',
+};
