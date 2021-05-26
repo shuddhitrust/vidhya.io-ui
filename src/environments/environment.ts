@@ -2,9 +2,11 @@
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+const api_endpoint = 'http://localhost:8000';
 export const environment = {
   production: false,
-  graphql_endpoint: 'http://localhost:8000/graphql/',
+  file_uplod_endpoint: `${api_endpoint}/upload/`,
+  graphql_endpoint: `${api_endpoint}/graphql/`,
 };
 
 /*

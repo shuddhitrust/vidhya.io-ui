@@ -1,4 +1,6 @@
+const api_endpoint = '';
 export const environment = {
-  production: true,
-  graphql_endpoint: '',
+  production: false,
+  file_uplod_endpoint: `${api_endpoint}/upload/`,
+  graphql_endpoint: `${api_endpoint}/graphql/`,
 };
