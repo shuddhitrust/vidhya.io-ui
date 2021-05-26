@@ -67,8 +67,8 @@ export const INSTITUTION_QUERIES = {
     }
   `,
   GET_INSTITUTIONS: gql`
-    query institutions($input: any) {
-      institutions(input: $input) {
+    query institutions {
+      institutions {
         id
         name
         location
