@@ -28,7 +28,13 @@ export class CreateUpdateInstitutionAction {
   ) {}
 }
 
-export class DeleteInstitution {
+export class ResetInstitutionFormAction {
+  static readonly type = '[INSTITUTION] Reset Form';
+
+  constructor() {}
+}
+
+export class DeleteInstitutionAction {
   static readonly type = '[INSTITUTION] Delete';
 
   constructor(public payload: idPayload) {}

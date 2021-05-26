@@ -8,7 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Institution } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
-import { DeleteInstitution } from 'src/app/shared/state/institutions/institution.actions';
+import { DeleteInstitutionAction } from 'src/app/shared/state/institutions/institution.actions';
 @Component({
   selector: 'app-institution-profile',
   templateUrl: './institution-profile.component.html',
@@ -55,7 +55,9 @@ export class InstitutionProfileComponent {
     });
   }
   deleteInstitution() {
-    this.store.dispatch(new DeleteInstitution({ id: this.profileData.id }));
+    this.store.dispatch(
+      new DeleteInstitutionAction({ id: this.profileData.id })
+    );
     this.closeDialog();
   }
 }

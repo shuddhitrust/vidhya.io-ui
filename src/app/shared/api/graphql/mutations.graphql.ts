@@ -17,6 +17,14 @@ export const USER_MUTATIONS = {
       }
     }
   `,
+  DELETE_USER: gql`
+    mutation deleteUser($id: Int) {
+      deleteUser(id: $id) {
+        ok
+        user
+      }
+    }
+  `,
 };
 
 export const INSTITUTION_MUTATIONS = {
@@ -26,6 +34,7 @@ export const INSTITUTION_MUTATIONS = {
         ok
         institution {
           id
+          name
         }
       }
     }
@@ -36,6 +45,18 @@ export const INSTITUTION_MUTATIONS = {
         ok
         institution {
           id
+          name
+        }
+      }
+    }
+  `,
+  DELETE_INSTITUTION: gql`
+    mutation deleteInstitution($id: Int!) {
+      deleteInstitution(id: $id) {
+        ok
+        institution {
+          id
+          name
         }
       }
     }

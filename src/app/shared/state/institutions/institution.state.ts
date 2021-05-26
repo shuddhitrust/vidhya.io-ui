@@ -8,8 +8,11 @@ import {
 import { Injectable } from '@angular/core';
 import {
   CreateUpdateInstitutionAction,
+  DeleteInstitutionAction,
   FetchInstitutionsAction,
+  ForceRefetchInstitutions,
   GetInstitutionAction,
+  ResetInstitutionFormAction,
 } from './institution.actions';
 import { INSTITUTION_QUERIES } from './../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
@@ -79,6 +82,14 @@ export class InstitutionState {
     return state.institutionFormRecord;
   }
 
+  @Action(ForceRefetchInstitutions)
+  forceRefetchInstitutions({
+    patchState,
+  }: StateContext<InstitutionStateModel>) {
+    patchState({ fetchPolicy: 'network-only' });
+    this.store.dispatch(new FetchInstitutionsAction({ searchParams: null }));
+  }
+
   @Action(FetchInstitutionsAction)
   fetchInstitutions({
     getState,
@@ -122,46 +133,102 @@ export class InstitutionState {
     const state = getState();
     const { form, formDirective } = payload;
     let { formSubmitting } = state;
-    // if (form.valid) {
-    formSubmitting = true;
-    patchState({ formSubmitting });
-    const values = form.value;
-    // values.id = parseInt(values.id, 10);
-    console.log('Institution Form values', values);
-    const updateForm = values.id == null ? false : true;
+    if (form.valid) {
+      formSubmitting = true;
+      patchState({ formSubmitting });
+      const values = form.value;
+      console.log('Institution Form values', values);
+      const updateForm = values.id == null ? false : true;
+      this.apollo
+        .mutate({
+          mutation: updateForm
+            ? INSTITUTION_MUTATIONS.UPDATE_INSTITUTION
+            : INSTITUTION_MUTATIONS.CREATE_INSTITUTION,
+          variables: {
+            input: values,
+            id: updateForm ? values.id : null,
+          },
+        })
+        .subscribe(
+          ({ data }: any) => {
+            const response = updateForm
+              ? data.updateInstitution
+              : data.createInstitution;
+            patchState({ formSubmitting: false });
+            console.log('update institution ', { response });
+            if (response.ok) {
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message: `Institution ${
+                    updateForm ? 'updated' : 'created'
+                  } successfully!`,
+                  action: 'success',
+                })
+              );
+
+              patchState({
+                institutionFormRecord: emptyInstitutionFormRecord,
+                fetchPolicy: 'network-only',
+              });
+              form.reset();
+              formDirective.resetForm();
+            } else {
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message: getErrorMessageFromGraphQLResponse(response?.errors),
+                  action: 'error',
+                })
+              );
+            }
+            console.log('From createUpdateInstitution', { response });
+          },
+          (error) => {
+            console.log('Some error happened ', error);
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(error),
+                action: 'error',
+              })
+            );
+            patchState({ formSubmitting: false });
+          }
+        );
+    } else {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message:
+            'Please make sure there are no errors in the form before attempting to submit!',
+          action: 'error',
+        })
+      );
+    }
+  }
+
+  @Action(DeleteInstitutionAction)
+  deleteInstitution(
+    {}: StateContext<InstitutionStateModel>,
+    { payload }: DeleteInstitutionAction
+  ) {
+    let { id } = payload;
     this.apollo
       .mutate({
-        mutation: updateForm
-          ? INSTITUTION_MUTATIONS.UPDATE_INSTITUTION
-          : INSTITUTION_MUTATIONS.CREATE_INSTITUTION,
-        variables: {
-          input: values,
-          id: updateForm ? values.id : null,
-        },
+        mutation: INSTITUTION_MUTATIONS.DELETE_INSTITUTION,
+        variables: { id },
       })
       .subscribe(
         ({ data }: any) => {
-          const response = updateForm
-            ? data.updateInstitution
-            : data.createInstitution;
-          patchState({ formSubmitting: false });
-          console.log('update institution ', { response });
+          const response = data.deleteInstitution;
+          console.log('from delete institution ', { data });
           if (response.ok) {
             this.store.dispatch(
               new ShowNotificationAction({
-                message: `Institution ${
-                  updateForm ? 'updated' : 'created'
-                } successfully!`,
+                message: 'Institution deleted successfully!',
                 action: 'success',
               })
             );
-
-            patchState({
-              institutionFormRecord: emptyInstitutionFormRecord,
-              fetchPolicy: 'network-only',
-            });
-            form.reset();
-            formDirective.resetForm();
+            this.store.dispatch(
+              new ForceRefetchInstitutions({ searchParams: null })
+            );
           } else {
             this.store.dispatch(
               new ShowNotificationAction({
@@ -170,27 +237,23 @@ export class InstitutionState {
               })
             );
           }
-          console.log('From createUpdateInstitution', { response });
         },
         (error) => {
-          console.log('Some error happened ', error);
           this.store.dispatch(
             new ShowNotificationAction({
               message: getErrorMessageFromGraphQLResponse(error),
               action: 'error',
             })
           );
-          patchState({ formSubmitting: false });
         }
       );
-    // } else {
-    //   this.store.dispatch(
-    //     new ShowNotificationAction({
-    //       message:
-    //         'Please make sure there are no errors in the form before attempting to submit!',
-    //       action: 'error',
-    //     })
-    //   );
-    // }
+  }
+
+  @Action(ResetInstitutionFormAction)
+  resetInstitutionForm({ patchState }: StateContext<InstitutionStateModel>) {
+    patchState({
+      institutionFormRecord: emptyInstitutionFormRecord,
+      formSubmitting: false,
+    });
   }
 }
