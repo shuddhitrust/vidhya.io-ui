@@ -17,6 +17,10 @@ import { InstitutionState } from 'src/app/shared/state/institutions/institution.
 import { Observable } from 'rxjs';
 import { emptyInstitutionFormRecord } from 'src/app/shared/state/institutions/institution.model';
 import { Institution } from 'src/app/shared/common/models';
+import { UploadService } from 'src/app/shared/api/upload.service';
+import { environment } from 'src/environments/environment';
+import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
+import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 
 @Component({
   selector: 'app-add-edit-institution',
@@ -35,19 +39,24 @@ export class AddEditInstitutionComponent implements OnInit {
   formSubmitting$: Observable<boolean>;
   institutionFormRecord: Institution = emptyInstitutionFormRecord;
   institutionForm: FormGroup;
+  logoFile = null;
+  previewPath = null;
 
   constructor(
     private location: Location,
     private store: Store,
     private route: ActivatedRoute,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private uploadService: UploadService
   ) {
     this.institutionForm = this.setupInstitutionFormGroup();
+    console.log('logo value', { logo: this.institutionForm.get('logo').value });
     this.institutionFormRecord$.subscribe((val) => {
       this.institutionFormRecord = val;
       this.institutionForm = this.setupInstitutionFormGroup(
         this.institutionFormRecord
       );
+      this.previewPath = this.institutionForm.get('logo').value;
     });
   }
 
@@ -75,14 +84,68 @@ export class AddEditInstitutionComponent implements OnInit {
     });
   }
 
+  onLogoChange(event) {
+    if (event.target.files.length > 0) {
+      this.logoFile = event.target.files[0];
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.previewPath = reader.result as string;
+      };
+      reader.readAsDataURL(this.logoFile);
+    } else {
+      this.logoFile = null;
+      this.previewPath = this.institutionForm.get('logo').value;
+    }
+  }
+
   goBack() {
     this.location.back();
   }
 
+  imagePreview(e) {
+    const file = (e.target as HTMLInputElement).files[0];
+  }
+
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {
-    console.log('Institution Form ', { form });
-    this.store.dispatch(
-      new CreateUpdateInstitutionAction({ form, formDirective })
-    );
+    console.log('this.logoFile on submit', this.logoFile);
+    if (this.logoFile) {
+      this.store.dispatch(
+        new ToggleLoadingScreen({
+          showLoadingScreen: true,
+          message: 'Uploading file',
+        })
+      );
+      const formData = new FormData();
+      formData.append('file', this.logoFile);
+      this.uploadService.upload(formData).subscribe(
+        (res) => {
+          const url = `${environment.api_endpoint}${res.file}`;
+          form.get('logo').setValue(url);
+          console.log('after setting the new url after upload ', {
+            formValue: form.value,
+          });
+          this.store.dispatch(
+            new CreateUpdateInstitutionAction({ form, formDirective })
+          );
+          this.store.dispatch(
+            new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+          );
+        },
+        (err) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: 'Unable to upload file. Reset and try again',
+              action: 'error',
+            })
+          );
+          return;
+        }
+      );
+    } else {
+      this.store.dispatch(
+        new CreateUpdateInstitutionAction({ form, formDirective })
+      );
+    }
   }
 }
