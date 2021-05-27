@@ -6,7 +6,7 @@
   [tableTitle]="tableTitle"
   [frameworkComponents]="frameworkComponents"
   [gridOptions]="gridOptions"
-  [paginationObject]="paginationObject$ | async"
+  [paginationObject$]="paginationObject$"
   (fetchMethod)="fetchInstitutions($event[0])"
   (refreshData)="forceRefetchInstitutions($event[0])"
   (createMethod)="createInstitution()"

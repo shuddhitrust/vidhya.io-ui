@@ -18,7 +18,7 @@ export const USER_MUTATIONS = {
     }
   `,
   DELETE_USER: gql`
-    mutation deleteUser($id: Int) {
+    mutation deleteUser($id: ID!) {
       deleteUser(id: $id) {
         ok
         user
@@ -51,7 +51,7 @@ export const INSTITUTION_MUTATIONS = {
     }
   `,
   DELETE_INSTITUTION: gql`
-    mutation deleteInstitution($id: Int!) {
+    mutation deleteInstitution($id: ID!) {
       deleteInstitution(id: $id) {
         ok
         institution {

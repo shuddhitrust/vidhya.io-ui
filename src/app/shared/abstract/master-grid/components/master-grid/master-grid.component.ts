@@ -9,7 +9,7 @@ import {
 import { Store } from '@ngxs/store';
 import { GridOptions } from 'ag-grid-community';
 import { pageSizeOptions } from './../../table.config';
-import { ColWidth, SearchParams } from './../../table.model';
+import { ColWidth, defaultPageSize, SearchParams } from './../../table.model';
 import {
   setColumnWidthsFromLocalStorage,
   updateColumnWidth,
@@ -19,6 +19,7 @@ import {
   PaginationObject,
   startingPaginationObject,
 } from 'src/app/shared/common/models';
+import { Observable } from 'rxjs';
 @Component({
   selector: 'app-master-grid',
   templateUrl: './master-grid.component.html',
@@ -67,7 +68,6 @@ export class MasterGridComponent implements OnInit, OnChanges {
   @Input() addLabel = '';
   @Input() searchParams: SearchParams = new SearchParams();
   @Output() fetchDataCallback: EventEmitter<any> = new EventEmitter();
-  @Input() totalRecords = 0;
   @Input() rowHeight = 40;
   @Input() getRowHeight = null;
   @Input() tableHeightStatic;
@@ -80,13 +80,16 @@ export class MasterGridComponent implements OnInit, OnChanges {
   @Input() csvColumnHeaders: string[] = [];
   @Input() rowSelection: string = '';
   @Input() rowDeselection: boolean = true;
-  @Input() paginationObject: PaginationObject = startingPaginationObject;
+  @Input() paginationObject$: Observable<PaginationObject>;
+  totalRecords = 0;
+  pageSize = defaultPageSize;
+  currentPage = 1;
+
   selectedRows = [];
   @Output() selectionChangeCallback: EventEmitter<any> = new EventEmitter();
   private tableHeight = `100vh - var(--topnav-height) - var(--paginator-height) - var(--search-input-height) - var(--generic-padding)`;
   sortModel = [];
   currentSearchQuery = '';
-  currentPage = 1;
   lastPage = 1;
   currentlyShowing = 0;
   previewPages: number[] = [];
@@ -100,11 +103,16 @@ export class MasterGridComponent implements OnInit, OnChanges {
   //     return `calc(${this.tableHeight} - ${this.tableHeightClearanceInPx}px)`;
   //   }
   // };
-  constructor(private store: Store) {
-    console.log('create method => ', this.createMethod);
-  }
+  constructor(private store: Store) {}
 
   ngOnChanges(changes) {
+    if (changes.paginationObject$) {
+      this.paginationObject$.subscribe((val) => {
+        this.totalRecords = val.totalCount;
+        this.pageSize = val.pageSize;
+        this.currentPage = val.currentPage;
+      });
+    }
     if (changes.isFetching) {
       if (this.isFetching == true) {
         this.showLoading();
@@ -168,12 +176,9 @@ export class MasterGridComponent implements OnInit, OnChanges {
       this.selectionChangeCallback.emit([this.selectedRows]);
     }
   };
-  previousPage() {
-    this.searchParams.pageNumber = this.paginationObject.pageIndex - 1;
-    this.fetchRecords();
-  }
-  nextPage() {
-    this.searchParams.pageNumber = this.paginationObject.pageIndex + 1;
+  onPageChange(number: number) {
+    console.log('on page change ', { number });
+    this.searchParams.newPageNumber = number;
     this.fetchRecords();
   }
   onSortChanged = (event) => {
@@ -242,7 +247,7 @@ export class MasterGridComponent implements OnInit, OnChanges {
     }
   }
   onPageSizeChange(newPageSize) {
-    this.searchParams.pageSize = newPageSize;
+    this.searchParams.newPageSize = newPageSize;
     this.fetchRecords();
   }
   onColumnResize = (event) => {

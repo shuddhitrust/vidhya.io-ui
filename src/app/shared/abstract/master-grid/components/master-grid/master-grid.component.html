@@ -56,27 +56,13 @@
   [fullWidthCellRendererParams]="fullWidthCellRendererParams"
 >
 </ag-grid-angular>
-<div>
-  <button
-    [ngStyle]="{
-      visibility: paginationObject.previousPageDisabled ? 'hidden' : 'visible'
-    }"
-    mat-icon-button
-    class="pagination-button"
-    style="float: left"
-    (click)="previousPage()"
-  >
-    <mat-icon>arrow_left</mat-icon>
-  </button>
-  <button
-    [ngStyle]="{
-      visibility: paginationObject.nextPageDisabled ? 'hidden' : 'visible'
-    }"
-    mat-icon-button
-    class="pagination-button"
-    style="float: right"
-    (click)="nextPage()"
-  >
-    <mat-icon>arrow_right</mat-icon>
-  </button>
-</div>
+<app-paginator
+  [totalRecords]="totalRecords"
+  [pageSize]="pageSize"
+  [currentPage]="currentPage"
+  [rowsShowing]="rows.length"
+  [searchQuery]="searchParams.searchQuery"
+  (onPageSizeChange)="onPageSizeChange($event)"
+  (onPageChange)="onPageChange($event)"
+>
+</app-paginator>

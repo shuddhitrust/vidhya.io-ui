@@ -23,7 +23,10 @@ import {
 } from '../../common/models';
 import { INSTITUTION_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
-import { getErrorMessageFromGraphQLResponse } from '../../common/functions';
+import {
+  getErrorMessageFromGraphQLResponse,
+  updatePaginationObject,
+} from '../../common/functions';
 
 @State<InstitutionStateModel>({
   name: 'institutionState',
@@ -91,18 +94,51 @@ export class InstitutionState {
   }
 
   @Action(FetchInstitutionsAction)
-  fetchInstitutions({
-    getState,
-    patchState,
-  }: StateContext<InstitutionStateModel>) {
+  fetchInstitutions(
+    { getState, patchState }: StateContext<InstitutionStateModel>,
+    { payload }: FetchInstitutionsAction
+  ) {
     patchState({ isFetching: true });
+    const { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy } = state;
+    const { fetchPolicy, paginationObject } = state;
+    const { searchQuery, newPageSize, newPageNumber } = searchParams;
+    const newPaginationObject = updatePaginationObject({
+      paginationObject,
+      newPageNumber,
+      newPageSize,
+    });
+    console.log('new pagination object after the update method => ', {
+      newPaginationObject,
+    });
+    const variables = {
+      searchField_Icontains: searchQuery,
+      limit: newPaginationObject.pageSize,
+      offset: newPaginationObject.offset,
+    };
+    console.log('variables for institutions fetch ', { variables });
     this.apollo
-      .watchQuery({ query: INSTITUTION_QUERIES.GET_INSTITUTIONS, fetchPolicy })
+      .watchQuery({
+        query: INSTITUTION_QUERIES.GET_INSTITUTIONS,
+        variables,
+        fetchPolicy,
+      })
       .valueChanges.subscribe(({ data }: any) => {
         const response = data.institutions;
-        patchState({ institutions: response, isFetching: false });
+        const totalCount = response[0]?.totalCount
+          ? response[0]?.totalCount
+          : 0;
+        newPaginationObject.totalCount = totalCount;
+        console.log('from after getting institutions', {
+          totalCount,
+          response,
+          newPaginationObject,
+        });
+        patchState({
+          institutions: response,
+          paginationObject: newPaginationObject,
+          isFetching: false,
+        });
       });
   }
 
@@ -139,15 +175,20 @@ export class InstitutionState {
       const values = form.value;
       console.log('Institution Form values', values);
       const updateForm = values.id == null ? false : true;
+      const { id, ...sanitizedValues } = values;
+      const variables = updateForm
+        ? {
+            input: sanitizedValues,
+            id: values.id, // adding id to the mutation variables if it is an update mutation
+          }
+        : { input: sanitizedValues };
+
       this.apollo
         .mutate({
           mutation: updateForm
             ? INSTITUTION_MUTATIONS.UPDATE_INSTITUTION
             : INSTITUTION_MUTATIONS.CREATE_INSTITUTION,
-          variables: {
-            input: values,
-            id: updateForm ? values.id : null,
-          },
+          variables,
         })
         .subscribe(
           ({ data }: any) => {
@@ -165,13 +206,12 @@ export class InstitutionState {
                   action: 'success',
                 })
               );
-
+              form.reset();
+              formDirective.resetForm();
               patchState({
                 institutionFormRecord: emptyInstitutionFormRecord,
                 fetchPolicy: 'network-only',
               });
-              form.reset();
-              formDirective.resetForm();
             } else {
               this.store.dispatch(
                 new ShowNotificationAction({

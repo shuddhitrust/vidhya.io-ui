@@ -11,39 +11,23 @@ export const getOptionLabel = (
   } else return undefined;
 };
 
-export const setNextToken = (paginationObject: PaginationObject): string => {
-  const { paginationTokens, pageIndex } = paginationObject;
-  return paginationTokens[pageIndex];
-};
-
-export const updatePaginationObject = (
-  paginationObject: PaginationObject,
-  nextToken: string
-) => {
+export const updatePaginationObject = ({
+  paginationObject,
+  newPageNumber,
+  newPageSize,
+}) => {
   // Update paginationTokens
-  let { paginationTokens, pageIndex, previousPageDisabled, nextPageDisabled } =
-    paginationObject;
-  const tokensArray = Object.values(paginationTokens);
-  const nextTokenExists = tokensArray.includes(nextToken);
-  let newPaginationTokens;
-  if (nextTokenExists) {
-    newPaginationTokens = paginationTokens;
-  } else {
-    paginationTokens = Object.assign({}, paginationTokens);
-    paginationTokens[tokensArray.length + 1] = nextToken;
-    newPaginationTokens = paginationTokens;
-  }
-  // Update show/hide of pagination buttons
-
-  (previousPageDisabled = pageIndex == 1 ? true : false),
-    (nextPageDisabled = nextToken == null ? true : false),
-    (paginationObject = {
-      ...paginationObject,
-      paginationTokens: newPaginationTokens,
-      previousPageDisabled,
-      nextPageDisabled,
-    });
-  return paginationObject;
+  let { currentPage, totalCount, pageSize, offset } = paginationObject;
+  console.log('from updatePaginationObject => ', {
+    paginationObject,
+    newPageNumber,
+    newPageSize,
+  });
+  pageSize = newPageSize;
+  currentPage = newPageNumber;
+  offset = (currentPage - 1) * pageSize;
+  const newPaginationObject = { currentPage, totalCount, pageSize, offset };
+  return newPaginationObject;
 };
 
 export const parseDateTime = (dateTime: string): string => {

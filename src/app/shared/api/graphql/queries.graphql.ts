@@ -1,25 +1,10 @@
 import { gql } from 'apollo-angular';
 
-export const AUTH_QUERIES = {
-  ME: gql`
-    query me {
-      me {
-        username
-        name
-        email
-        institution {
-          id
-          name
-        }
-        lastLogin
-      }
-    }
-  `,
-};
+export const AUTH_QUERIES = {};
 
 export const USER_QUERIES = {
   GET_USER: gql`
-    query user($id: Int!) {
+    query user($id: ID!) {
       user(id: $id) {
         username
         name
@@ -33,8 +18,12 @@ export const USER_QUERIES = {
     }
   `,
   GET_USERS: gql`
-    query users {
-      users {
+    query users($searchField_Icontains: String, $limit: Int, $offset: Int) {
+      users(
+        searchField_Icontains: $searchField_Icontains
+        limit: $limit
+        offset: $offset
+      ) {
         username
         id
         name
@@ -45,6 +34,7 @@ export const USER_QUERIES = {
           name
         }
         lastLogin
+        totalCount
       }
     }
   `,
@@ -52,7 +42,7 @@ export const USER_QUERIES = {
 
 export const INSTITUTION_QUERIES = {
   GET_INSTITUTION: gql`
-    query institution($id: Int!) {
+    query institution($id: ID!) {
       institution(id: $id) {
         id
         name
@@ -67,13 +57,22 @@ export const INSTITUTION_QUERIES = {
     }
   `,
   GET_INSTITUTIONS: gql`
-    query institutions {
-      institutions {
+    query institutions(
+      $searchField_Icontains: String
+      $limit: Int
+      $offset: Int
+    ) {
+      institutions(
+        searchField_Icontains: $searchField_Icontains
+        limit: $limit
+        offset: $offset
+      ) {
         id
         name
         location
         city
         bio
+        totalCount
       }
     }
   `,

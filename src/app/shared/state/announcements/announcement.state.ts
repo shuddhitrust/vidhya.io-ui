@@ -15,7 +15,7 @@ import { Injectable } from '@angular/core';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import { ToggleLoadingScreen } from '../loading/loading.actions';
 import { Announcement, MatSelectOption } from '../../common/models';
-import { setNextToken, updatePaginationObject } from '../../common/functions';
+// import { setNextToken, updatePaginationObject } from '../../common/functions';
 import { defaultPageSize } from '../../abstract/master-grid/table.model';
 import { ForceRefetchInstitutions } from '../institutions/institution.actions';
 
@@ -124,20 +124,20 @@ export class AnnouncementState {
     /* updating the paginationObject with the incoming new page number
     This is necessary for setting the right token
     */
-    paginationObject = {
-      ...paginationObject,
-      pageIndex: searchParams?.pageNumber
-        ? searchParams?.pageNumber
-        : paginationObject.pageIndex,
-    };
+    // paginationObject = {
+    //   ...paginationObject,
+    //   pageIndex: searchParams?.pageNumber
+    //     ? searchParams?.pageNumber
+    //     : paginationObject.pageIndex,
+    // };
     // Constructing the variables to be used in the Graphql Query
-    const variables = {
-      filter,
-      limit: searchParams?.pageSize ? searchParams?.pageSize : defaultPageSize,
-      // limit: 1,
-      nextToken: setNextToken(paginationObject),
-    };
-    console.log('variables for the query => ', variables);
+    // const variables = {
+    //   filter,
+    //   limit: searchParams?.pageSize ? searchParams?.pageSize : defaultPageSize,
+    //   // limit: 1,
+    //   // nextToken: setNextToken(paginationObject),
+    // };
+    // console.log('variables for the query => ', variables);
     // client
     //   .query({
     //     query: queries.ListAnnouncements,

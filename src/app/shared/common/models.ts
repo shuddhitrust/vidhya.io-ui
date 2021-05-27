@@ -1,3 +1,5 @@
+import { defaultPageSize } from '../abstract/master-grid/table.model';
+
 /* 
 This is an object that requires an id of type string
 to be used in NGXS actions
@@ -35,17 +37,17 @@ export type HotToastStatus =
 export type MatSelectOption = { label: string; value: number | string };
 
 export type PaginationObject = {
-  paginationTokens: object;
-  pageIndex: number;
-  previousPageDisabled: boolean;
-  nextPageDisabled: boolean;
+  currentPage: number;
+  totalCount: number;
+  pageSize: number;
+  offset: number; // the number of records in all pages prior to current page combined
 };
 
-export const startingPaginationObject = {
-  paginationTokens: { 1: null },
-  pageIndex: 1,
-  nextPageDisabled: true,
-  previousPageDisabled: true,
+export const startingPaginationObject: PaginationObject = {
+  currentPage: 1,
+  totalCount: defaultPageSize,
+  pageSize: defaultPageSize,
+  offset: 0,
 };
 
 export type User = any;

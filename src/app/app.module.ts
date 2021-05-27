@@ -75,7 +75,15 @@ import { OptionsState } from './shared/state/options/options.state';
 import { GroupMemberState } from './shared/state/groupMembers/group-members.state';
 import { LoginModalComponent } from './pages/modals/login/login-modal.component';
 import { HotToastModule } from '@ngneat/hot-toast';
+import { PaginatorComponent } from './shared/abstract/master-grid/components/paginator/paginator.component';
+import { NzPaginationModule } from 'ng-zorro-antd/pagination';
+/** config angular i18n **/
+import { registerLocaleData } from '@angular/common';
+import en from '@angular/common/locales/en';
+registerLocaleData(en);
 
+/** config ng-zorro-antd i18n **/
+import { NZ_I18N, en_US } from 'ng-zorro-antd/i18n';
 @NgModule({
   declarations: [
     AppComponent,
@@ -118,6 +126,7 @@ import { HotToastModule } from '@ngneat/hot-toast';
     OwnProfileComponent,
     GroupMemberReviewDialog,
     LoginModalComponent,
+    PaginatorComponent,
   ],
   imports: [
     BrowserModule,
@@ -131,6 +140,7 @@ import { HotToastModule } from '@ngneat/hot-toast';
     BrowserAnimationsModule,
     AgGridModule.withComponents([]),
     HotToastModule.forRoot(),
+    NzPaginationModule,
     [
       NgxsModule.forRoot(
         [
@@ -158,6 +168,7 @@ import { HotToastModule } from '@ngneat/hot-toast';
       useClass: AuthInterceptor,
       multi: true,
     },
+    { provide: NZ_I18N, useValue: en_US },
     RegistrationFormAuthGuard,
     FormBuilder,
   ],

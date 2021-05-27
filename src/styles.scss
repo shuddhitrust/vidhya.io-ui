@@ -5,6 +5,9 @@
 @import "~@angular/material/theming";
 // Plus imports for other components in your app.
 
+// For the ng.ant.design themes
+@import "~ng-zorro-antd/ng-zorro-antd.min.css";
+
 @import "./app/shared/common/shared-styles.css";
 
 // AG Grid Styles

@@ -7,7 +7,7 @@
   [tableTitle]="tableTitle"
   [frameworkComponents]="frameworkComponents"
   [gridOptions]="gridOptions"
-  [paginationObject]="paginationObject$ | async"
+  [paginationObject$]="paginationObject$"
   [columnFilters]="columnFilters"
   (fetchMethod)="fetchMembers($event[0])"
   (refreshData)="forceRefetchMembers($event[0])"

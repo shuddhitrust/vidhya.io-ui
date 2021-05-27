@@ -1,0 +1,15 @@
+<div id="records-info" style="float: left">
+  <span *ngIf="showSearchTextInfo()">
+    {{ searchInfoText }}
+  </span>
+</div>
+<nz-pagination
+  style="float: right; margin: 5px 0px 5px"
+  [nzPageIndex]="currentPage"
+  [nzTotal]="totalRecords"
+  nzShowSizeChanger
+  [nzPageSize]="pageSize"
+  (nzPageIndexChange)="runOnPageChange($event)"
+  (nzPageSizeChange)="runOnPageSizeChange($event)"
+  [nzPageSizeOptions]="pageSizeOptions"
+></nz-pagination>
