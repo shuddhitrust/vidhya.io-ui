@@ -2,12 +2,15 @@
   <div class="title-block">
     <mat-form-field id="search-query-field" appearance="outline">
       <input
-        [(ngModel)]="searchParams.searchQuery"
-        (keyup.enter)="fetchRecords()"
+        [(ngModel)]="draftSearchQuery"
+        (keyup.enter)="initiateGlobalSearch()"
         matInput
         placeholder="Search..."
       />
-      <mat-icon matSuffix id="search-input-icon" (click)="fetchRecords()"
+      <mat-icon
+        matSuffix
+        id="search-input-icon"
+        (click)="initiateGlobalSearch()"
         >search</mat-icon
       >
     </mat-form-field>
@@ -61,6 +64,7 @@
   [pageSize]="pageSize"
   [currentPage]="currentPage"
   [rowsShowing]="rows.length"
+  [staticTable]="staticTable"
   [searchQuery]="searchParams.searchQuery"
   (onPageSizeChange)="onPageSizeChange($event)"
   (onPageChange)="onPageChange($event)"

@@ -61,7 +61,7 @@ export class MasterGridComponent implements OnInit, OnChanges {
 
   private originalSearchParams;
   pageSizeOptions: Array<Object> = pageSizeOptions.map((p) => p.value);
-  staticTable = true;
+  staticTable = false; // Set to true if there are no server side operations
   @Input() searchInputExists: boolean = false;
   @Input() tableId = '';
   @Input() addRoute = '';
@@ -89,7 +89,7 @@ export class MasterGridComponent implements OnInit, OnChanges {
   @Output() selectionChangeCallback: EventEmitter<any> = new EventEmitter();
   private tableHeight = `100vh - var(--topnav-height) - var(--paginator-height) - var(--search-input-height) - var(--generic-padding)`;
   sortModel = [];
-  currentSearchQuery = '';
+  draftSearchQuery = '';
   lastPage = 1;
   currentlyShowing = 0;
   previewPages: number[] = [];
@@ -176,6 +176,11 @@ export class MasterGridComponent implements OnInit, OnChanges {
       this.selectionChangeCallback.emit([this.selectedRows]);
     }
   };
+  initiateGlobalSearch() {
+    this.searchParams.newPageNumber = 1;
+    this.searchParams.searchQuery = this.draftSearchQuery;
+    this.fetchRecords();
+  }
   onPageChange(number: number) {
     console.log('on page change ', { number });
     this.searchParams.newPageNumber = number;

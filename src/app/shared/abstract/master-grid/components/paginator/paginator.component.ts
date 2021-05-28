@@ -21,13 +21,13 @@ export class PaginatorComponent implements OnChanges {
   @Input() rowsShowing = defaultPageSize;
   @Input() searchQuery: string;
   @Input() staticTable = false;
-  searchInfoText = '';
   @Output() onPageChange: EventEmitter<any> = new EventEmitter();
   @Output() onPageSizeChange: EventEmitter<any> = new EventEmitter();
-  pageSizeOptions: Array<any> = pageSizeOptions.map((p) => p.value);
-  currentlyShowing: number;
-  totalRecordsShowing: number;
-  lastPage: number;
+  searchInfoText = '';
+  hidePageSizeOptions = false; // If the number of records is fewer than the lowest pageSize, then don't show it.
+  currentlyShowing: number; // Number of currently visible records on screen (including ones visible on scroll)
+  pageSizeOptions: Array<any> = pageSizeOptions.map((p) => p.value); // Options visible in the page size options
+  lastPage: number; // The number of pages. This is a calculated number based on the total number of records and pageSize
   showSearchTextInfo = () => {
     return typeof this.totalRecords === 'number' && this.currentlyShowing !== 0;
   };
@@ -41,34 +41,51 @@ export class PaginatorComponent implements OnChanges {
   }
   SetPaginationMeta = () => {
     // Calculating the last page from total records...
-    this.totalRecordsShowing = this.totalRecords;
     this.lastPage = lastPageCalculator(this.totalRecords, this.pageSize);
     // Calculating the no. of records being shown on current page...
     if (this.staticTable) {
+      // If this table has no server side functions enabled...
       this.currentlyShowing = this.totalRecords;
-    } else if (this.totalRecords > this.pageSize) {
+    }
+    // Calculate how many records are showing in the table right now
+    if (this.totalRecords > this.pageSize) {
       this.currentlyShowing = this.rowsShowing;
-      if (
-        this.currentlyShowing < this.pageSize &&
-        this.currentPage != this.lastPage
-      ) {
-        this.totalRecordsShowing = this.currentlyShowing;
-      }
-      // this.currentPage == this.lastPage
-      //   ? this.totalRecords % this.pageSize
-      //   : this.actualShowing;
     } else {
       this.currentlyShowing = this.totalRecords;
     }
-    console.log('from setPaginationMet => ', {
-      lastPage: this.lastPage,
-      currentPage: this.currentPage,
-      currentlyShowing: this.currentlyShowing,
-    });
-    const record = this.totalRecords > 1 ? 'records' : 'record';
-    this.searchInfoText = `Showing ${this.currentlyShowing} of ${
-      this.totalRecordsShowing
-    } ${record}${this.searchQuery ? ` for "${this.searchQuery}"` : ''}`;
+    this.calculatePageSizeOptionsVisibility();
+    this.calculateSearchText();
+  };
+
+  /**
+   * Methodd to calculate whether to show or hide the pageSizeOptions
+   */
+  calculatePageSizeOptionsVisibility = () => {
+    if (
+      (this.currentlyShowing < defaultPageSize &&
+        this.lastPage != this.currentPage) ||
+      this.totalRecords < defaultPageSize
+    ) {
+      // If the total number of records is less than the lowest page size,
+      // or if in the case of the number of records for search results is
+      // lower than the lowest page size, hide the page size options dropdown
+      this.hidePageSizeOptions = true;
+    } else {
+      this.hidePageSizeOptions = false;
+    }
+  };
+  /**
+   * This is the methodd to calculate the text that shows on the left side bottom under the table
+   */
+  calculateSearchText = () => {
+    const record = this.currentlyShowing > 1 ? 'records' : 'record';
+    // Check whether to show total reqcords
+    const showTotalRecords = !this.searchQuery && !this.hidePageSizeOptions;
+    this.searchInfoText = `Showing ${this.currentlyShowing} ${
+      this.searchQuery
+        ? `${record} for "${this.searchQuery}"`
+        : `${showTotalRecords ? `of ${this.totalRecords}` : ''} ${record}`
+    }`;
   };
   constructor() {}
 

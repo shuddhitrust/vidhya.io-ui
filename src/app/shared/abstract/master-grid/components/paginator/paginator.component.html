@@ -4,6 +4,7 @@
   </span>
 </div>
 <nz-pagination
+  *ngIf="hidePageSizeOptions == false"
   style="float: right; margin: 5px 0px 5px"
   [nzPageIndex]="currentPage"
   [nzTotal]="totalRecords"
