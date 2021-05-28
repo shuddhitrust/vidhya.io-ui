@@ -8,7 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { User } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
-import { DeleteMember } from 'src/app/shared/state/members/member.actions';
+import { DeleteMemberAction } from 'src/app/shared/state/members/member.actions';
 
 @Component({
   selector: 'app-member-profile',
@@ -59,7 +59,7 @@ export class MemberProfileComponent {
     console.log('payload before dispatching Member action => ', {
       id: this.profileData.id,
     });
-    this.store.dispatch(new DeleteMember({ id: this.profileData.id }));
+    this.store.dispatch(new DeleteMemberAction({ id: this.profileData.id }));
     this.closeDialog();
   }
 }

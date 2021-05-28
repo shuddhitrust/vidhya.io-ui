@@ -1,13 +1,28 @@
 import { gql } from 'apollo-angular';
 
-export const AUTH_QUERIES = {};
+export const AUTH_QUERIES = {
+  ME: gql`
+    query me {
+      me {
+        username
+        nickName
+        email
+        institution {
+          id
+          name
+        }
+        lastLogin
+      }
+    }
+  `,
+};
 
 export const USER_QUERIES = {
   GET_USER: gql`
     query user($id: ID!) {
       user(id: $id) {
         username
-        name
+        nickName
         email
         institution {
           id
@@ -26,14 +41,14 @@ export const USER_QUERIES = {
       ) {
         username
         id
-        name
+        nickName
         title
         bio
         institution {
           id
           name
         }
-        lastLogin
+        lastActive
         totalCount
       }
     }

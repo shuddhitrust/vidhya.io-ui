@@ -9,8 +9,8 @@ import { MemberProfileRendererComponent } from 'src/app/shared/cell-renderers/me
 import { PaginationObject, User } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
-  FetchMembers,
-  ForceRefetchMembers,
+  FetchMembersAction,
+  ForceRefetchMembersAction,
 } from 'src/app/shared/state/members/member.actions';
 import { memberColumns } from 'src/app/shared/state/members/member.model';
 import { MemberState } from 'src/app/shared/state/members/member.state';
@@ -58,11 +58,11 @@ export class AwaitingModerationTableComponent implements OnInit {
   }
 
   fetchMembers(searchParams: SearchParams) {
-    this.store.dispatch(new FetchMembers({ searchParams }));
+    this.store.dispatch(new FetchMembersAction({ searchParams }));
   }
 
   forceRefetchMembers(searchParams: SearchParams) {
-    this.store.dispatch(new ForceRefetchMembers({ searchParams }));
+    this.store.dispatch(new ForceRefetchMembersAction({ searchParams }));
   }
 
   createMember() {

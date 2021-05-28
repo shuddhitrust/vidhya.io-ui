@@ -9,7 +9,7 @@ import { InstitutionProfileRendererComponent } from 'src/app/shared/cell-rendere
 import { Institution, PaginationObject } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
-  ForceRefetchInstitutions,
+  ForceRefetchInstitutionsAction,
   FetchInstitutionsAction,
   ResetInstitutionFormAction,
 } from 'src/app/shared/state/institutions/institution.actions';
@@ -72,7 +72,7 @@ export class InstitutionsTableComponent implements OnInit {
   }
 
   forceRefetchInstitutions(searchParams: SearchParams) {
-    this.store.dispatch(new ForceRefetchInstitutions({ searchParams }));
+    this.store.dispatch(new ForceRefetchInstitutionsAction({ searchParams }));
   }
 
   openInstitutionProfile(rowData) {

@@ -10,21 +10,22 @@
     #formDirective="ngForm"
   >
     <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
-      <mat-label>Name</mat-label>
+      <mat-label>Nick Name</mat-label>
       <input
         matInput
         readonly="createForm"
-        formControlName="name"
+        formControlName="nickName"
         required
-        placeholder="Name of the member"
+        placeholder="Choose a nick name for yourself"
       />
       <small
         class="validation-error"
         *ngIf="
-          memberForm.get('name').hasError('required') && formDirective.submitted
+          memberForm.get('nickName').hasError('required') &&
+          formDirective.submitted
         "
       >
-        Name is required
+        Nick name is required
       </small>
     </mat-form-field>
 
@@ -99,63 +100,6 @@
           {{ group.label }}
         </mat-option>
       </mat-select>
-    </mat-form-field>
-
-    <mat-form-field
-      *ngIf="!createForm"
-      class="col-lg-12 col-md-12 col-sm-12"
-      appearance="outline"
-    >
-      <mat-label>Type</mat-label>
-      <mat-select
-        formControlName="type"
-        required
-        placeholder="The type of member"
-      >
-        <mat-option
-          disabled="true"
-          *ngFor="let type of userTypeOptions"
-          [value]="type.value"
-        >
-          {{ type.label }}
-        </mat-option>
-      </mat-select>
-      <small
-        class="validation-error"
-        *ngIf="
-          memberForm.get('type').hasError('required') && formDirective.submitted
-        "
-      >
-        User type is required
-      </small>
-    </mat-form-field>
-
-    <mat-form-field
-      *ngIf="!createForm"
-      class="col-lg-12 col-md-12 col-sm-12"
-      appearance="outline"
-    >
-      <mat-label>Status</mat-label>
-      <mat-select
-        formControlName="membershipStatus"
-        required
-        placeholder="The status of the member"
-      >
-        <mat-option
-          *ngFor="let membershipStatus of membershipStatusOptions"
-          [value]="membershipStatus.value"
-        >
-          {{ membershipStatus.label }}
-        </mat-option>
-      </mat-select>
-      <small
-        class="validation-error"
-        *ngIf="
-          memberForm.get('type').hasError('required') && formDirective.submitted
-        "
-      >
-        User type is required
-      </small>
     </mat-form-field>
 
     <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">

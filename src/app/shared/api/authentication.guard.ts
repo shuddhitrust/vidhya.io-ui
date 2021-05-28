@@ -139,7 +139,7 @@ export class AuthInterceptor implements HttpInterceptor {
     console.log('from authInterceptor ', { isApiUrl, token: this.token });
     if (this.token && isApiUrl) {
       request = request.clone({
-        setHeaders: { Authorization: `Bearer ${this.token}` },
+        setHeaders: { Authorization: `JWT ${this.token}` },
       });
       console.log('After setting authorization header ', request);
     }

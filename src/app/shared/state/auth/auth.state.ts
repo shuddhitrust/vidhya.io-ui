@@ -7,7 +7,6 @@ import {
   Select,
 } from '@ngxs/store';
 import { AuthStateModel, defaultAuthState } from './auth.model';
-import * as moment from 'moment';
 
 import { Injectable } from '@angular/core';
 import {
@@ -29,7 +28,7 @@ import {
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import { Apollo } from 'apollo-angular';
 import { AUTH_MUTATIONS } from '../../api/graphql/mutations.graphql';
-import { AUTH_QUERIES, USER_QUERIES } from '../../api/graphql/queries.graphql';
+import { AUTH_QUERIES } from '../../api/graphql/queries.graphql';
 import { getErrorMessageFromGraphQLResponse } from '../../common/functions';
 import {
   AUTH_TOKEN_KEY,
@@ -289,14 +288,14 @@ export class AuthState {
       })
     );
     this.apollo
-      .watchQuery({ query: USER_QUERIES.GET_USER, variables: { id: userId } })
+      .watchQuery({ query: AUTH_QUERIES.ME })
       .valueChanges.subscribe(({ data }: any) => {
         this.store.dispatch(
           new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
         );
         console.log('***********From getCurrentUser => ', { data });
-        const user = data.user;
-        const institutionId = data.user?.institution?.id;
+        const user = data.me;
+        const institutionId = user?.institution?.id;
         const isFullyAuthenticated =
           isLoggedIn == true && institutionId !== null;
         patchState({

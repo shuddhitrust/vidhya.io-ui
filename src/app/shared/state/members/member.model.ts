@@ -2,7 +2,6 @@ import {
   autoGenOptions,
   getOptionLabel,
   parseDateTime,
-  parseLastModified,
 } from '../../common/functions';
 import {
   FetchPolicy,
@@ -12,15 +11,27 @@ import {
   User,
 } from '../../common/models';
 
+export interface MemberInput {
+  id: Number;
+  institution: Number;
+  nickName: String;
+  email: String;
+  avatar: String;
+  member: Number;
+  title: String;
+  bio: String;
+  searchField: String;
+}
+
 export const emptyMemberFormRecord: User = {
   __typename: 'Member',
   id: null,
-  name: null,
+  nickName: null,
   type: null,
   title: null,
   bio: null,
   // membershipStatus: MembershipStatus.PENDING_REGISTRATION,
-  institution: null,
+  member: null,
   groups: null,
   // instructor: null,
   // assistant: null,
@@ -56,26 +67,20 @@ export const defaultMemberState: MemberStateModel = {
   errorSubmitting: false,
 };
 
-export const userTypeOptions: MatSelectOption[] = []; // autoGenOptions(CognitoGroup);
+export const memberTypeOptions: MatSelectOption[] = []; // autoGenOptions(CognitoGroup);
 
 export const membershipStatusOptions: MatSelectOption[] = []; // autoGenOptions(MembershipStatus);
 
 export const memberColumns = [
   {
-    field: 'name',
+    field: 'nickName',
     cellRenderer: 'memberRenderer',
   },
   {
-    field: 'institution',
-    cellRenderer: (params) => {
-      return params.value.name;
-    },
+    field: 'firstName',
   },
   {
-    field: 'type',
-    cellRenderer: (params) => {
-      return getOptionLabel(params.value, userTypeOptions);
-    },
+    field: 'lastName',
   },
   {
     field: 'membershipStatus',
@@ -84,10 +89,10 @@ export const memberColumns = [
     },
   },
   {
-    field: 'lastLogin',
+    field: 'lastActive',
     cellRenderer: (params) => {
       return parseDateTime(params.value);
     },
-    tooltipField: 'lastLogin',
+    tooltipField: 'lastActive',
   },
 ];

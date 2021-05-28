@@ -1,56 +1,41 @@
 import { FormGroup, FormGroupDirective } from '@angular/forms';
 import { SearchParams } from '../../abstract/master-grid/table.model';
-import { idPayload, MatSelectOption, User } from '../../common/models';
+import { idPayload } from '../../common/models';
 
-export class FetchMembers {
+export class FetchMembersAction {
   static readonly type = '[MEMBERS] Fetch';
 
   constructor(public payload: { searchParams?: SearchParams }) {}
 }
 
-export class ForceRefetchMembers {
-  static readonly type = '[MEMBERS] Refetch from network';
+export class ForceRefetchMembersAction {
+  static readonly type = '[MEMBERS] Fetch from network';
 
   constructor(public payload: { searchParams?: SearchParams }) {}
 }
-export class GetMember {
+
+export class GetMemberAction {
   static readonly type = '[MEMBER] Get';
 
   constructor(public payload: idPayload) {}
 }
 
-export class ResetMemberForm {
+export class CreateUpdateMemberAction {
+  static readonly type = '[MEMBER] Create';
+
+  constructor(
+    public payload: { form: FormGroup; formDirective: FormGroupDirective }
+  ) {}
+}
+
+export class ResetMemberFormAction {
   static readonly type = '[MEMBER] Reset Form';
 
   constructor() {}
 }
 
-export class CreateUpdateMember {
-  static readonly type = '[MEMBER] Create';
-
-  constructor(
-    public payload: {
-      form: FormGroup;
-      formDirective: FormGroupDirective;
-      institutionOptions: MatSelectOption[];
-    }
-  ) {}
-}
-
-export class DeleteMember {
+export class DeleteMemberAction {
   static readonly type = '[MEMBER] Delete';
 
   constructor(public payload: idPayload) {}
-}
-
-export class SetMemberFormRecord {
-  static readonly type = '[MEMBER] Set member form record';
-
-  constructor(public payload: User) {}
-}
-
-export class FetchMemberOptionsByInstitution {
-  static readonly type = '[MEMBER] Fetch members by institution';
-
-  constructor(public payload: { memberInstitutionId: string }) {}
 }

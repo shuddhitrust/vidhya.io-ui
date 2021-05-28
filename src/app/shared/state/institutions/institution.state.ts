@@ -10,7 +10,7 @@ import {
   CreateUpdateInstitutionAction,
   DeleteInstitutionAction,
   FetchInstitutionsAction,
-  ForceRefetchInstitutions,
+  ForceRefetchInstitutionsAction,
   GetInstitutionAction,
   ResetInstitutionFormAction,
 } from './institution.actions';
@@ -85,7 +85,7 @@ export class InstitutionState {
     return state.institutionFormRecord;
   }
 
-  @Action(ForceRefetchInstitutions)
+  @Action(ForceRefetchInstitutionsAction)
   forceRefetchInstitutions({
     patchState,
   }: StateContext<InstitutionStateModel>) {
@@ -267,7 +267,7 @@ export class InstitutionState {
               })
             );
             this.store.dispatch(
-              new ForceRefetchInstitutions({ searchParams: null })
+              new ForceRefetchInstitutionsAction({ searchParams: null })
             );
           } else {
             this.store.dispatch(

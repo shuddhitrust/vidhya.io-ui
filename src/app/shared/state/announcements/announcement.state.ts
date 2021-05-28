@@ -17,7 +17,7 @@ import { ToggleLoadingScreen } from '../loading/loading.actions';
 import { Announcement, MatSelectOption } from '../../common/models';
 // import { setNextToken, updatePaginationObject } from '../../common/functions';
 import { defaultPageSize } from '../../abstract/master-grid/table.model';
-import { ForceRefetchInstitutions } from '../institutions/institution.actions';
+import { ForceRefetchInstitutionsAction } from '../institutions/institution.actions';
 
 @State<AnnouncementStateModel>({
   name: 'announcementState',
@@ -86,7 +86,7 @@ export class AnnouncementState {
   @Action(ForceRefetchAnnouncements)
   fetchAnnouncementsFromNetwork(
     { patchState }: StateContext<AnnouncementStateModel>,
-    { payload }: ForceRefetchInstitutions
+    { payload }: ForceRefetchInstitutionsAction
   ) {
     const { searchParams } = payload;
     patchState({ fetchPolicy: 'network-only' });

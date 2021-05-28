@@ -23,7 +23,6 @@ import { InstitutionState } from 'src/app/shared/state/institutions/institution.
 import { Group, MatSelectOption } from 'src/app/shared/common/models';
 import { FetchInstitutionsAction } from 'src/app/shared/state/institutions/institution.actions';
 import { OptionsState } from 'src/app/shared/state/options/options.state';
-import { FetchMemberOptionsByInstitution } from 'src/app/shared/state/members/member.actions';
 import {
   MatDialog,
   MatDialogRef,
@@ -82,35 +81,6 @@ export class AddEditGroupComponent implements OnInit {
 
     this.store.dispatch(new FetchInstitutionsAction({}));
     this.groupForm = this.setupGroupFormGroup();
-    this.groupFormRecord$.subscribe((val) => {
-      console.log('The group form record');
-      this.groupFormRecord = val;
-      this.store.dispatch(
-        new FetchMemberOptionsByInstitution({
-          memberInstitutionId: this.groupFormRecord?.institution?.id,
-        })
-      );
-      this.groupForm = this.setupGroupFormGroup(this.groupFormRecord);
-      this.groupForm.valueChanges.subscribe((vals) => {
-        console.log('values of groupForm changed ', { vals });
-        if (this.memberInstitutionId != vals?.groupInstitutionId) {
-          console.log('fetching members by institutionId');
-          this.memberInstitutionId = vals?.groupInstitutionId;
-          this.store.dispatch(
-            new FetchMemberOptionsByInstitution({
-              memberInstitutionId: this.memberInstitutionId,
-            })
-          );
-        }
-        this.memberRows = vals.members?.map((id) => {
-          return this.memberOptions.find((option) => option.value == id);
-        });
-        console.log('new member rows ', {
-          memberOptions: this.memberOptions,
-          memberRows: this.memberRows,
-        });
-      });
-    });
   }
 
   setupGroupFormGroup = (

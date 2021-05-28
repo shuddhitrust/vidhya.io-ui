@@ -8,8 +8,8 @@ import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
 import { MemberProfileRendererComponent } from 'src/app/shared/cell-renderers/member-profile/member-profile-renderer.component';
 import { PaginationObject, User } from 'src/app/shared/common/models';
 import {
-  FetchMembers,
-  ForceRefetchMembers,
+  FetchMembersAction,
+  ForceRefetchMembersAction,
 } from 'src/app/shared/state/members/member.actions';
 import { memberColumns } from 'src/app/shared/state/members/member.model';
 import { MemberState } from 'src/app/shared/state/members/member.state';
@@ -57,11 +57,11 @@ export class InstitutionAdminsTableComponent implements OnInit {
   }
 
   fetchMembers(searchParams: SearchParams) {
-    this.store.dispatch(new FetchMembers({ searchParams }));
+    this.store.dispatch(new FetchMembersAction({ searchParams }));
   }
 
   forceRefetchMembers(searchParams: SearchParams) {
-    this.store.dispatch(new ForceRefetchMembers({ searchParams }));
+    this.store.dispatch(new ForceRefetchMembersAction({ searchParams }));
   }
 
   openMemberProfile(rowData) {

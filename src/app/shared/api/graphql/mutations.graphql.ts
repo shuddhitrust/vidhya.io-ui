@@ -109,7 +109,7 @@ export const AUTH_MUTATIONS = {
         refreshToken
         user {
           username
-          name
+          nickName
           email
           institution {
             id

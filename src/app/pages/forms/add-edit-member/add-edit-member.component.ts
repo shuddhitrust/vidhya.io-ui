@@ -10,14 +10,13 @@ import { Select, Store } from '@ngxs/store';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import {
-  CreateUpdateMember,
-  GetMember,
+  CreateUpdateMemberAction,
+  GetMemberAction,
 } from 'src/app/shared/state/members/member.actions';
 import { MemberState } from 'src/app/shared/state/members/member.state';
 import { Observable } from 'rxjs';
 import {
   emptyMemberFormRecord,
-  userTypeOptions,
   membershipStatusOptions,
 } from 'src/app/shared/state/members/member.model';
 import { InstitutionState } from 'src/app/shared/state/institutions/institution.state';
@@ -73,7 +72,6 @@ export class AddEditMemberComponent implements OnInit {
   groupInstitutionId: string;
 
   // Static Options List
-  userTypeOptions: MatSelectOption[] = userTypeOptions;
   membershipStatusOptions: MatSelectOption[] = membershipStatusOptions;
 
   // Validation Constants
@@ -152,7 +150,7 @@ export class AddEditMemberComponent implements OnInit {
   ): FormGroup => {
     return this.fb.group({
       id: [memberFormRecord?.id],
-      name: [memberFormRecord?.name, Validators.required],
+      nickName: [memberFormRecord?.nickName, Validators.required],
       // email: [memberFormRecord.email, [Validators.required, Validators.email]],
       type: [memberFormRecord?.type, Validators.required],
       membershipStatus: [
@@ -176,7 +174,7 @@ export class AddEditMemberComponent implements OnInit {
       this.params = params;
       const id = params['id'];
       if (id) {
-        this.store.dispatch(new GetMember({ id }));
+        this.store.dispatch(new GetMemberAction({ id }));
       }
     });
   }
@@ -191,10 +189,9 @@ export class AddEditMemberComponent implements OnInit {
 
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {
     this.store.dispatch(
-      new CreateUpdateMember({
+      new CreateUpdateMemberAction({
         form,
         formDirective,
-        institutionOptions: this.institutionOptions,
       })
     );
   }
