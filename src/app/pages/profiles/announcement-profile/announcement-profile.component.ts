@@ -4,9 +4,9 @@ import { ActivatedRoute } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import {
-  DeleteAnnouncement,
-  GetAnnouncement,
-  ResetAnnouncementForm,
+  DeleteAnnouncementAction,
+  GetAnnouncementAction,
+  ResetAnnouncementFormAction,
 } from 'src/app/shared/state/announcements/announcement.actions';
 import { AnnouncementState } from 'src/app/shared/state/announcements/announcement.state';
 import {
@@ -22,10 +22,10 @@ import { Announcement } from 'src/app/shared/common/models';
   styleUrls: ['./announcement-profile.component.scss'],
 })
 export class AnnouncementProfileComponent implements OnInit, OnDestroy {
-  @Select(AnnouncementState.announcementFormRecord)
+  @Select(AnnouncementState.getAnnouncementFormRecord)
   announcement$: Observable<Announcement>;
   announcement: Announcement;
-  @Select(AnnouncementState.isFetchingFormRecord)
+  @Select(AnnouncementState.isFetching)
   isFetchingAnnouncement$: Observable<boolean>;
 
   constructor(
@@ -42,7 +42,7 @@ export class AnnouncementProfileComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       const announcementId = params['id'];
-      this.store.dispatch(new GetAnnouncement({ id: announcementId }));
+      this.store.dispatch(new GetAnnouncementAction({ id: announcementId }));
     });
   }
 
@@ -66,12 +66,14 @@ export class AnnouncementProfileComponent implements OnInit, OnDestroy {
     console.log('payload before passing to action => ', {
       id: this.announcement.id,
     });
-    this.store.dispatch(new DeleteAnnouncement({ id: this.announcement.id }));
+    this.store.dispatch(
+      new DeleteAnnouncementAction({ id: this.announcement.id })
+    );
     this.goBack();
   }
 
   ngOnDestroy(): void {
-    this.store.dispatch(new ResetAnnouncementForm());
+    this.store.dispatch(new ResetAnnouncementFormAction());
   }
 }
 

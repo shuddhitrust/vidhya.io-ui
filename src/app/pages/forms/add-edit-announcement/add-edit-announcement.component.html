@@ -47,61 +47,21 @@
       </small>
     </mat-form-field>
 
-    <!-- <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
-      <mat-label>Institution</mat-label>
-      <mat-select
-        formControlName="institutionId"
-        placeholder="The institution you belong to"
-      >
-        <mat-option
-          *ngFor="let institution of institutionOptions$ | async"
-          [value]="institution.value"
-        >
-          {{ institution.label }}
-        </mat-option>
-      </mat-select>
-      <small
-        class="validation-error"
-        *ngIf="
-          announcementForm.get('institutionId').hasError('required') &&
-          formDirective.submitted
-        "
-      >
-        Institution is required
-      </small>
-    </mat-form-field> -->
-
-    <!-- <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
-      <mat-label>Admins</mat-label>
+    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Groups</mat-label>
       <mat-select
         multiple
-        formControlName="admins"
-        placeholder="The members who are admins"
+        formControlName="groups"
+        placeholder="The groups to make the announcement to"
       >
         <mat-option
-          *ngFor="let member of memberOptions$ | async"
-          [value]="member.value"
+          *ngFor="let group of groupOptions$ | async"
+          [value]="group.value"
         >
-          {{ member.label }}
+          {{ group.label }}
         </mat-option>
       </mat-select>
-    </mat-form-field> -->
-
-    <!-- <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
-      <mat-label>Members</mat-label>
-      <mat-select
-        multiple
-        formControlName="members"
-        placeholder="The members of the announcement"
-      >
-        <mat-option
-          *ngFor="let member of memberOptions$ | async"
-          [value]="member.value"
-        >
-          {{ member.label }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field> -->
+    </mat-form-field>
     <button
       type="submit"
       class="floating-button-bottom"

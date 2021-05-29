@@ -1,23 +1,35 @@
-import { State, Action, Selector, Store, StateContext } from '@ngxs/store';
+import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 import {
   defaultAnnouncementState,
   emptyAnnouncementFormRecord,
+  AnnouncementFormCloseURL,
   AnnouncementStateModel,
 } from './announcement.model';
-import {
-  CreateUpdateAnnouncement,
-  DeleteAnnouncement,
-  FetchAnnouncements,
-  ForceRefetchAnnouncements,
-  GetAnnouncement,
-} from './announcement.actions';
+
 import { Injectable } from '@angular/core';
+import {
+  CreateUpdateAnnouncementAction,
+  DeleteAnnouncementAction,
+  FetchAnnouncementsAction,
+  ForceRefetchAnnouncementsAction,
+  GetAnnouncementAction,
+  ResetAnnouncementFormAction,
+} from './announcement.actions';
+import { ANNOUNCEMENT_QUERIES } from '../../api/graphql/queries.graphql';
+import { Apollo } from 'apollo-angular';
+import {
+  Announcement,
+  MatSelectOption,
+  PaginationObject,
+} from '../../common/models';
+import { ANNOUNCEMENT_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
-import { ToggleLoadingScreen } from '../loading/loading.actions';
-import { Announcement, MatSelectOption } from '../../common/models';
-// import { setNextToken, updatePaginationObject } from '../../common/functions';
-import { defaultPageSize } from '../../abstract/master-grid/table.model';
-import { ForceRefetchInstitutionsAction } from '../institutions/institution.actions';
+import {
+  getErrorMessageFromGraphQLResponse,
+  updatePaginationObject,
+} from '../../common/functions';
+import { Router } from '@angular/router';
+import { defaultSearchParams } from '../../common/constants';
 
 @State<AnnouncementStateModel>({
   name: 'announcementState',
@@ -25,25 +37,15 @@ import { ForceRefetchInstitutionsAction } from '../institutions/institution.acti
 })
 @Injectable()
 export class AnnouncementState {
-  constructor(private store: Store) {}
+  constructor(
+    private apollo: Apollo,
+    private store: Store,
+    private router: Router
+  ) {}
 
   @Selector()
   static listAnnouncements(state: AnnouncementStateModel): Announcement[] {
     return state.announcements;
-  }
-
-  @Selector()
-  static paginationObject(state: AnnouncementStateModel): Object {
-    return state.paginationObject;
-  }
-
-  @Selector()
-  static listAnnouncementOptions(
-    state: AnnouncementStateModel
-  ): MatSelectOption[] {
-    return state.announcements.map((m) => {
-      return { value: m.id, label: m.title };
-    });
   }
 
   @Selector()
@@ -52,18 +54,27 @@ export class AnnouncementState {
   }
 
   @Selector()
+  static paginationObject(state: AnnouncementStateModel): PaginationObject {
+    return state.paginationObject;
+  }
+  @Selector()
+  static listAnnouncementOptions(
+    state: AnnouncementStateModel
+  ): MatSelectOption[] {
+    const options: MatSelectOption[] = state.announcements.map((i) => {
+      const option: MatSelectOption = {
+        value: i.id,
+        label: i.name,
+      };
+      return option;
+    });
+    console.log('options', options);
+    return options;
+  }
+
+  @Selector()
   static errorFetching(state: AnnouncementStateModel): boolean {
     return state.errorFetching;
-  }
-
-  @Selector()
-  static isFetchingFormRecord(state: AnnouncementStateModel) {
-    return state.isFetchingFormRecord;
-  }
-
-  @Selector()
-  static announcementFormRecord(state: AnnouncementStateModel) {
-    return state.announcementFormRecord;
   }
 
   @Selector()
@@ -83,220 +94,156 @@ export class AnnouncementState {
     return state.announcementFormRecord;
   }
 
-  @Action(ForceRefetchAnnouncements)
-  fetchAnnouncementsFromNetwork(
-    { patchState }: StateContext<AnnouncementStateModel>,
-    { payload }: ForceRefetchInstitutionsAction
-  ) {
-    const { searchParams } = payload;
+  @Action(ForceRefetchAnnouncementsAction)
+  forceRefetchAnnouncements({
+    patchState,
+  }: StateContext<AnnouncementStateModel>) {
     patchState({ fetchPolicy: 'network-only' });
-    this.store.dispatch(new FetchAnnouncements({ searchParams }));
+    this.store.dispatch(
+      new FetchAnnouncementsAction({ searchParams: defaultSearchParams })
+    );
   }
 
-  @Action(FetchAnnouncements)
+  @Action(FetchAnnouncementsAction)
   fetchAnnouncements(
     { getState, patchState }: StateContext<AnnouncementStateModel>,
-    { payload }: FetchAnnouncements
+    { payload }: FetchAnnouncementsAction
   ) {
-    const { searchParams } = payload;
-    console.log('search params from announcements state ', searchParams);
+    console.log('Fetching announcements from announcement state');
+    patchState({ isFetching: true });
+    let { searchParams } = payload;
     const state = getState();
-    let {
-      announcements,
-      isFetching,
-      errorFetching,
-      fetchPolicy,
+    const { fetchPolicy, paginationObject } = state;
+    const { searchQuery, newPageSize, newPageNumber } = searchParams;
+    const newPaginationObject = updatePaginationObject({
       paginationObject,
-    } = state;
-    isFetching = true;
-    errorFetching = false;
-    patchState({ isFetching, errorFetching, announcements });
-
-    // Constructing the filter object
-    let filter = {
-      ...searchParams.columnFilters,
-      searchField: searchParams.searchQuery
-        ? { contains: searchParams.searchQuery.toLowerCase() }
-        : null,
+      newPageNumber,
+      newPageSize,
+    });
+    const variables = {
+      searchField_Icontains: searchQuery,
+      limit: newPaginationObject.pageSize,
+      offset: newPaginationObject.offset,
     };
-
-    filter = Object.keys(filter).length ? filter : null;
-    /* updating the paginationObject with the incoming new page number
-    This is necessary for setting the right token
-    */
-    // paginationObject = {
-    //   ...paginationObject,
-    //   pageIndex: searchParams.pageNumber
-    //     ? searchParams.pageNumber
-    //     : paginationObject.pageIndex,
-    // };
-    // Constructing the variables to be used in the Graphql Query
-    // const variables = {
-    //   filter,
-    //   limit: searchParams.pageSize ? searchParams.pageSize : defaultPageSize,
-    //   // limit: 1,
-    //   // nextToken: setNextToken(paginationObject),
-    // };
-    // console.log('variables for the query => ', variables);
-    // client
-    //   .query({
-    //     query: queries.ListAnnouncements,
-    //     fetchPolicy: fetchPolicy,
-    //   })
-    //   .then((res: any) => {
-    //     console.log('Getting announcement response => ', res);
-    //     isFetching = false;
-    //     const announcements = res.data.listAnnouncements.items;
-    //     const returnedNextToken = res.data.listAnnouncements.nextToken;
-    //     fetchPolicy = null;
-    //     paginationObject = updatePaginationObject(
-    //       paginationObject,
-    //       returnedNextToken
-    //     );
-    //     patchState({
-    //       announcements,
-    //       isFetching,
-    //       fetchPolicy,
-    //       paginationObject,
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     console.error('Error in announcement fetch => ', err);
-    //     isFetching = false;
-    //     errorFetching = true;
-    //     announcements = [];
-    //     patchState({ announcements, isFetching, errorFetching });
-    //   });
+    console.log('variables for announcements fetch ', { variables });
+    this.apollo
+      .watchQuery({
+        query: ANNOUNCEMENT_QUERIES.GET_ANNOUNCEMENTS,
+        variables,
+        fetchPolicy,
+      })
+      .valueChanges.subscribe(({ data }: any) => {
+        console.log('resposne to get announcements query ', { data });
+        const response = data.announcements;
+        const totalCount = response[0]?.totalCount
+          ? response[0]?.totalCount
+          : 0;
+        newPaginationObject.totalCount = totalCount;
+        console.log('from after getting announcements', {
+          totalCount,
+          response,
+          newPaginationObject,
+        });
+        patchState({
+          announcements: response,
+          paginationObject: newPaginationObject,
+          isFetching: false,
+        });
+      });
   }
 
-  @Action(GetAnnouncement)
+  @Action(GetAnnouncementAction)
   getAnnouncement(
-    { getState, patchState }: StateContext<AnnouncementStateModel>,
-    { payload }: GetAnnouncement
+    { patchState }: StateContext<AnnouncementStateModel>,
+    { payload }: GetAnnouncementAction
   ) {
     const { id } = payload;
-    const state = getState();
-    const announcementFound = state.announcements.find((i) => i.id == id);
-    if (announcementFound) {
-      patchState({ announcementFormRecord: announcementFound });
-    } else {
-      this.store.dispatch(
-        new ToggleLoadingScreen({
-          showLoadingScreen: true,
-          message: 'Fetching the announcement...',
-        })
-      );
-      // client
-      //   .query({
-      //     query: queries.GetAnnouncement,
-      //     variables: {
-      //       id,
-      //     },
-      //   })
-      //   .then((res: any) => {
-      //     this.store.dispatch(
-      //       new ToggleLoadingScreen({ showLoadingScreen: false })
-      //     );
-      //     const announcementFormRecord = res.data.getAnnouncement;
-      //     patchState({ announcementFormRecord });
-      //   })
-      //   .catch((res: any) => {
-      //     console.error(res);
-      //     this.store.dispatch(
-      //       new ToggleLoadingScreen({ showLoadingScreen: false })
-      //     );
-      //     this.store.dispatch(
-      //       new ShowNotificationAction({
-      //         message:
-      //           'There was an error in fetching the announcement! Try again later.',
-      //       })
-      //     );
-      //   });
-    }
+    patchState({ isFetching: true });
+    this.apollo
+      .watchQuery({
+        query: ANNOUNCEMENT_QUERIES.GET_ANNOUNCEMENT,
+        variables: { id },
+        fetchPolicy: 'network-only',
+      })
+      .valueChanges.subscribe(({ data }: any) => {
+        const response = data.announcement;
+        patchState({ announcementFormRecord: response, isFetching: false });
+      });
   }
 
-  @Action(CreateUpdateAnnouncement)
+  @Action(CreateUpdateAnnouncementAction)
   createUpdateAnnouncement(
     { getState, patchState }: StateContext<AnnouncementStateModel>,
-    { payload }: CreateUpdateAnnouncement
+    { payload }: CreateUpdateAnnouncementAction
   ) {
     const state = getState();
     const { form, formDirective } = payload;
     let { formSubmitting } = state;
     if (form.valid) {
       formSubmitting = true;
-      const values = form.value;
-      const updateForm = values.id ? true : false;
       patchState({ formSubmitting });
-      if (updateForm) {
-        // client
-        //   .mutate({
-        //     mutation: updateForm
-        //       ? mutations.UpdateAnnouncement
-        //       : mutations.CreateAnnouncement,
-        //     variables: {
-        //       input: values,
-        //     },
-        //   })
-        //   .then((res: any) => {
-        //     formSubmitting = false;
-        //     form.reset();
-        //     formDirective.resetForm();
-        //     patchState({
-        //       announcementFormRecord: emptyAnnouncementFormRecord,
-        //       formSubmitting,
-        //     });
-        //     this.store.dispatch(new ForceRefetchAnnouncements({}));
-        //     this.store.dispatch(
-        //       new ShowNotificationAction({
-        //         message: 'Form submitted successfully!',
-        //       })
-        //     );
-        //   })
-        //   .catch((err) => {
-        //     console.error(err);
-        //     formSubmitting = false;
-        //     patchState({ formSubmitting });
-        //     this.store.dispatch(
-        //       new ShowNotificationAction({
-        //         message: 'There was an error in submitting your form!',
-        //       })
-        //     );
-        //   });
-      } else {
-        // Create method for announcement
-        console.log('sending values to createAnnouncement => ', values);
-        // client
-        //   .mutate({
-        //     mutation: mutations.CreateAnnouncement,
-        //     variables: { input: values },
-        //   })
-        //   .then((res: any) => {
-        //     formSubmitting = false;
-        //     form.reset();
-        //     formDirective.resetForm();
-        //     patchState({
-        //       announcementFormRecord: emptyAnnouncementFormRecord,
-        //       formSubmitting,
-        //     });
-        //     this.store.dispatch(new ForceRefetchAnnouncements({}));
-        //     this.store.dispatch(
-        //       new ShowNotificationAction({
-        //         message: 'Form submitted successfully!',
-        //       })
-        //     );
-        //   })
-        //   .catch((err) => {
-        //     console.error('Error while creating announcement', err);
-        //     formSubmitting = false;
-        //     patchState({ formSubmitting });
-        //     this.store.dispatch(
-        //       new ShowNotificationAction({
-        //         message: 'There was an error in submitting your form!',
-        //       })
-        //     );
-        //   });
-      }
+      const values = form.value;
+      console.log('Announcement Form values', values);
+      const updateForm = values.id == null ? false : true;
+      const { id, ...sanitizedValues } = values;
+      const variables = updateForm
+        ? {
+            input: sanitizedValues,
+            id: values.id, // adding id to the mutation variables if it is an update mutation
+          }
+        : { input: sanitizedValues };
+
+      this.apollo
+        .mutate({
+          mutation: updateForm
+            ? ANNOUNCEMENT_MUTATIONS.UPDATE_ANNOUNCEMENT
+            : ANNOUNCEMENT_MUTATIONS.CREATE_ANNOUNCEMENT,
+          variables,
+        })
+        .subscribe(
+          ({ data }: any) => {
+            const response = updateForm
+              ? data.updateAnnouncement
+              : data.createAnnouncement;
+            patchState({ formSubmitting: false });
+            console.log('update announcement ', { response });
+            if (response.ok) {
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message: `Announcement ${
+                    updateForm ? 'updated' : 'created'
+                  } successfully!`,
+                  action: 'success',
+                })
+              );
+              form.reset();
+              formDirective.resetForm();
+              this.router.navigateByUrl(AnnouncementFormCloseURL);
+              patchState({
+                announcementFormRecord: emptyAnnouncementFormRecord,
+                fetchPolicy: 'network-only',
+              });
+            } else {
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message: getErrorMessageFromGraphQLResponse(response?.errors),
+                  action: 'error',
+                })
+              );
+            }
+            console.log('From createUpdateAnnouncement', { response });
+          },
+          (error) => {
+            console.log('Some error happened ', error);
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(error),
+                action: 'error',
+              })
+            );
+            patchState({ formSubmitting: false });
+          }
+        );
     } else {
       this.store.dispatch(
         new ShowNotificationAction({
@@ -308,55 +255,59 @@ export class AnnouncementState {
     }
   }
 
-  @Action(DeleteAnnouncement)
+  @Action(DeleteAnnouncementAction)
   deleteAnnouncement(
-    { getState, patchState }: StateContext<AnnouncementStateModel>,
-    { payload }: DeleteAnnouncement
+    {}: StateContext<AnnouncementStateModel>,
+    { payload }: DeleteAnnouncementAction
   ) {
-    console.log('delete announcment payloa d => ', payload);
-    const { id } = payload;
-
-    this.store.dispatch(
-      new ToggleLoadingScreen({
-        showLoadingScreen: true,
-        message: 'Deleting the announcement...',
+    let { id } = payload;
+    this.apollo
+      .mutate({
+        mutation: ANNOUNCEMENT_MUTATIONS.DELETE_ANNOUNCEMENT,
+        variables: { id },
       })
-    );
-    // client
-    //   .mutate({
-    //     mutation: mutations.DeleteAnnouncement,
-    //     variables: {
-    //       input: {
-    //         id,
-    //       },
-    //     },
-    //   })
-    //   .then((res: any) => {
-    //     console.log(res);
-    //     this.store.dispatch(
-    //       new ToggleLoadingScreen({
-    //         showLoadingScreen: false,
-    //       })
-    //     );
-    //     this.store.dispatch(
-    //       new ShowNotificationAction({
-    //         message: `The announcement with name ${res?.data?.deleteAnnouncement?.title} was successfully deleted!`,
-    //       })
-    //     );
-    //     this.store.dispatch(new ForceRefetchAnnouncements({}));
-    //   })
-    //   .catch((err) => {
-    //     console.log('Error while deleting ', err);
-    //     this.store.dispatch(
-    //       new ToggleLoadingScreen({
-    //         showLoadingScreen: false,
-    //       })
-    //     );
-    //     this.store.dispatch(
-    //       new ShowNotificationAction({
-    //         message: `Something went wrong while attempting to delete the announcement. It may not have been deleted.`,
-    //       })
-    //     );
-    //   });
+      .subscribe(
+        ({ data }: any) => {
+          const response = data.deleteAnnouncement;
+          console.log('from delete announcement ', { data });
+          if (response.ok) {
+            this.router.navigateByUrl(AnnouncementFormCloseURL);
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: 'Announcement deleted successfully!',
+                action: 'success',
+              })
+            );
+            this.store.dispatch(
+              new ForceRefetchAnnouncementsAction({
+                searchParams: defaultSearchParams,
+              })
+            );
+          } else {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(response?.errors),
+                action: 'error',
+              })
+            );
+          }
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+        }
+      );
+  }
+
+  @Action(ResetAnnouncementFormAction)
+  resetAnnouncementForm({ patchState }: StateContext<AnnouncementStateModel>) {
+    patchState({
+      announcementFormRecord: emptyAnnouncementFormRecord,
+      formSubmitting: false,
+    });
   }
 }

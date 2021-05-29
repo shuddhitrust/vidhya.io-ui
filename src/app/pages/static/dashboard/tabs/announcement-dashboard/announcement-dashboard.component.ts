@@ -5,13 +5,16 @@ import { Observable } from 'rxjs';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { Announcement } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
-import { FetchAnnouncements } from 'src/app/shared/state/announcements/announcement.actions';
+import { FetchAnnouncementsAction } from 'src/app/shared/state/announcements/announcement.actions';
 import { AnnouncementState } from 'src/app/shared/state/announcements/announcement.state';
 
 @Component({
   selector: 'app-announcement-dashboard',
   templateUrl: './announcement-dashboard.component.html',
-  styleUrls: ['./announcement-dashboard.component.scss'],
+  styleUrls: [
+    './announcement-dashboard.component.scss',
+    './../../../../../shared/common/shared-styles.css',
+  ],
 })
 export class AnnouncementDashboardComponent implements OnInit {
   @Select(AnnouncementState.listAnnouncements)
@@ -22,7 +25,7 @@ export class AnnouncementDashboardComponent implements OnInit {
 
   constructor(private store: Store, private router: Router) {
     this.store.dispatch(
-      new FetchAnnouncements({ searchParams: defaultSearchParams })
+      new FetchAnnouncementsAction({ searchParams: defaultSearchParams })
     );
   }
 

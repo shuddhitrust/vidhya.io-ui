@@ -7,9 +7,9 @@ export interface AuthStateModel {
   lastLogin: string;
   isFullyAuthenticated: boolean;
   userId: number;
-  currentMemberInstitutionId: string;
+  currentMemberInstitutionId: number;
   username: string;
-  name: string;
+  nickName: string;
 }
 
 export const defaultAuthState: AuthStateModel = {
@@ -23,5 +23,5 @@ export const defaultAuthState: AuthStateModel = {
   userId: null,
   currentMemberInstitutionId: null,
   username: null,
-  name: null,
+  nickName: null,
 };

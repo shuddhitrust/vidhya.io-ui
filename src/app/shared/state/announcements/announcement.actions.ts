@@ -2,30 +2,25 @@ import { FormGroup, FormGroupDirective } from '@angular/forms';
 import { SearchParams } from '../../abstract/master-grid/table.model';
 import { idPayload } from '../../common/models';
 
-export class FetchAnnouncements {
+export class FetchAnnouncementsAction {
   static readonly type = '[ANNOUNCEMENTS] Fetch';
 
   constructor(public payload: { searchParams: SearchParams }) {}
 }
 
-export class ForceRefetchAnnouncements {
-  static readonly type = '[ANNOUNCEMENTS] Refetch from network';
+export class ForceRefetchAnnouncementsAction {
+  static readonly type = '[ANNOUNCEMENTS] Fetch from network';
 
   constructor(public payload: { searchParams: SearchParams }) {}
 }
-export class GetAnnouncement {
+
+export class GetAnnouncementAction {
   static readonly type = '[ANNOUNCEMENT] Get';
 
   constructor(public payload: idPayload) {}
 }
 
-export class ResetAnnouncementForm {
-  static readonly type = '[ANNOUNCEMENT] Reset Form';
-
-  constructor() {}
-}
-
-export class CreateUpdateAnnouncement {
+export class CreateUpdateAnnouncementAction {
   static readonly type = '[ANNOUNCEMENT] Create';
 
   constructor(
@@ -35,7 +30,14 @@ export class CreateUpdateAnnouncement {
     }
   ) {}
 }
-export class DeleteAnnouncement {
+
+export class ResetAnnouncementFormAction {
+  static readonly type = '[ANNOUNCEMENT] Reset Form';
+
+  constructor() {}
+}
+
+export class DeleteAnnouncementAction {
   static readonly type = '[ANNOUNCEMENT] Delete';
 
   constructor(public payload: idPayload) {}

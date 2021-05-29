@@ -131,3 +131,49 @@ export const GROUP_QUERIES = {
     }
   `,
 };
+
+export const ANNOUNCEMENT_QUERIES = {
+  GET_ANNOUNCEMENT: gql`
+    query announcement($id: ID!) {
+      announcement(id: $id) {
+        id
+        title
+        author {
+          id
+          firstName
+          lastName
+        }
+        message
+        institution {
+          id
+        }
+        groups {
+          id
+          name
+        }
+      }
+    }
+  `,
+  GET_ANNOUNCEMENTS: gql`
+    query announcements(
+      $searchField_Icontains: String
+      $limit: Int
+      $offset: Int
+    ) {
+      announcements(
+        searchField_Icontains: $searchField_Icontains
+        limit: $limit
+        offset: $offset
+      ) {
+        id
+        title
+        author {
+          id
+          firstName
+          lastName
+        }
+        message
+      }
+    }
+  `,
+};

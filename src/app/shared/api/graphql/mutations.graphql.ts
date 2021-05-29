@@ -99,6 +99,42 @@ export const GROUP_MUTATIONS = {
   `,
 };
 
+export const ANNOUNCEMENT_MUTATIONS = {
+  CREATE_ANNOUNCEMENT: gql`
+    mutation createAnnouncement($input: AnnouncementInput!) {
+      createAnnouncement(input: $input) {
+        ok
+        announcement {
+          id
+          title
+        }
+      }
+    }
+  `,
+  UPDATE_ANNOUNCEMENT: gql`
+    mutation updateAnnouncement($id: Int!, $input: AnnouncementInput!) {
+      updateAnnouncement(id: $id, input: $input) {
+        ok
+        announcement {
+          id
+          title
+        }
+      }
+    }
+  `,
+  DELETE_ANNOUNCEMENT: gql`
+    mutation deleteAnnouncement($id: ID!) {
+      deleteAnnouncement(id: $id) {
+        ok
+        announcement {
+          id
+          title
+        }
+      }
+    }
+  `,
+};
+
 export const AUTH_MUTATIONS = {
   REGISTER: gql`
     mutation register(

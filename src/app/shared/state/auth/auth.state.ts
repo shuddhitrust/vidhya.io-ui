@@ -107,6 +107,14 @@ export class AuthState {
   static getIsSubmittingForm(state: AuthStateModel): boolean {
     return state.isSubmittingForm;
   }
+  @Selector()
+  static getCurrentMemberInstitutionId(state: AuthStateModel): number {
+    return state.currentMemberInstitutionId;
+  }
+  @Selector()
+  static getCurrentUserId(state: AuthStateModel): number {
+    return state.userId;
+  }
 
   @Action(AuthenticationCheckAction)
   checkAuthentication({ patchState }: StateContext<AuthStateModel>) {
@@ -299,7 +307,7 @@ export class AuthState {
         const isFullyAuthenticated =
           isLoggedIn == true && institutionId !== null;
         patchState({
-          name: user.name,
+          nickName: user.nickName,
           username: user.usersname,
           currentMemberInstitutionId: institutionId,
           isFullyAuthenticated,
@@ -352,7 +360,7 @@ export class AuthState {
                 userId,
                 refreshToken: response?.refreshToken,
                 username: response?.user?.username,
-                name: response?.user?.name,
+                nickName: response?.user?.nickName,
                 lastLogin: response?.user?.lastLogin,
                 currentMemberInstitutionId: institutionId,
               });

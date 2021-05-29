@@ -10,13 +10,15 @@ import { Select, Store } from '@ngxs/store';
 import { ActivatedRoute } from '@angular/router';
 
 import {
-  CreateUpdateAnnouncement,
-  GetAnnouncement,
+  CreateUpdateAnnouncementAction,
+  GetAnnouncementAction,
 } from 'src/app/shared/state/announcements/announcement.actions';
 import { AnnouncementState } from 'src/app/shared/state/announcements/announcement.state';
 import { Observable } from 'rxjs';
 import { emptyAnnouncementFormRecord } from 'src/app/shared/state/announcements/announcement.model';
-import { Announcement } from 'src/app/shared/common/models';
+import { Announcement, MatSelectOption } from 'src/app/shared/common/models';
+import { AuthState } from 'src/app/shared/state/auth/auth.state';
+import { GroupState } from 'src/app/shared/state/groups/group.state';
 @Component({
   selector: 'app-add-edit-announcement',
   templateUrl: './add-edit-announcement.component.html',
@@ -30,8 +32,16 @@ export class AddEditAnnouncementComponent implements OnInit {
   params: object = {};
   @Select(AnnouncementState.getAnnouncementFormRecord)
   announcementFormRecord$: Observable<Announcement>;
+  @Select(GroupState.listGroupOptions)
+  groupOptions$: Observable<MatSelectOption[]>;
   @Select(AnnouncementState.formSubmitting)
   formSubmitting$: Observable<boolean>;
+  @Select(AuthState.getCurrentMemberInstitutionId)
+  currentMemberInstitutionId$: Observable<number>;
+  currentMemberInstitutionId: number = 1;
+  @Select(AuthState.getCurrentUserId)
+  currentUserId$: Observable<number>;
+  currentUserId: number = 4;
   announcementFormRecord: Announcement = emptyAnnouncementFormRecord;
   announcementForm: FormGroup;
 
@@ -48,18 +58,33 @@ export class AddEditAnnouncementComponent implements OnInit {
         this.announcementFormRecord
       );
     });
+
+    this.currentUserId$.subscribe((val) => {
+      this.currentUserId = val;
+    });
   }
 
   setupAnnouncementFormGroup = (
     announcementFormRecord: Announcement = emptyAnnouncementFormRecord
   ): FormGroup => {
+    console.log('the current User id ', this.currentUserId);
     return this.fb.group({
-      id: [announcementFormRecord.id],
-      title: [announcementFormRecord.title, Validators.required],
-      // institutionId: [announcementFormRecord.institution, Validators.required],
-      message: [announcementFormRecord.message, Validators.required],
-      // admins: [announcementFormRecord.admins],
-      // members: [announcementFormRecord.members],
+      id: [announcementFormRecord?.id],
+      author: [
+        announcementFormRecord?.author?.id
+          ? announcementFormRecord?.author?.id
+          : this.currentUserId,
+        Validators.required,
+      ],
+      title: [announcementFormRecord?.title, Validators.required],
+      institution: [
+        announcementFormRecord.institution?.id
+          ? announcementFormRecord.institution?.id
+          : this.currentMemberInstitutionId,
+        Validators.required,
+      ],
+      message: [announcementFormRecord?.message, Validators.required],
+      groups: [announcementFormRecord?.groups, Validators.required],
     });
   };
   ngOnInit(): void {
@@ -67,7 +92,7 @@ export class AddEditAnnouncementComponent implements OnInit {
       this.params = params;
       const id = params['id'];
       if (id) {
-        this.store.dispatch(new GetAnnouncement({ id }));
+        this.store.dispatch(new GetAnnouncementAction({ id }));
       }
     });
   }
@@ -77,8 +102,9 @@ export class AddEditAnnouncementComponent implements OnInit {
   }
 
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {
+    console.log('announcement submit form value => ', form.value);
     this.store.dispatch(
-      new CreateUpdateAnnouncement({
+      new CreateUpdateAnnouncementAction({
         form,
         formDirective,
       })
