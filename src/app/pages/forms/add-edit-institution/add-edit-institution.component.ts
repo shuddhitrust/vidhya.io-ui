@@ -21,7 +21,6 @@ import { UploadService } from 'src/app/shared/api/upload.service';
 import { environment } from 'src/environments/environment';
 import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
-
 @Component({
   selector: 'app-add-edit-institution',
   templateUrl: './add-edit-institution.component.html',
@@ -35,9 +34,9 @@ export class AddEditInstitutionComponent implements OnInit {
   params: object = {};
   @Select(InstitutionState.getInstitutionFormRecord)
   institutionFormRecord$: Observable<Institution>;
+  institutionFormRecord: Institution = emptyInstitutionFormRecord;
   @Select(InstitutionState.formSubmitting)
   formSubmitting$: Observable<boolean>;
-  institutionFormRecord: Institution = emptyInstitutionFormRecord;
   institutionForm: FormGroup;
   logoFile = null;
   previewPath = null;
@@ -52,18 +51,21 @@ export class AddEditInstitutionComponent implements OnInit {
     this.institutionForm = this.setupInstitutionFormGroup();
     console.log('logo value', { logo: this.institutionForm.get('logo').value });
     this.institutionFormRecord$.subscribe((val) => {
+      console.log('institution form record was reset', { val });
       this.institutionFormRecord = val;
       this.institutionForm = this.setupInstitutionFormGroup(
         this.institutionFormRecord
       );
-      this.previewPath = this.institutionForm.get('logo').value;
     });
   }
 
   setupInstitutionFormGroup = (
     institutionFormRecord: Institution = emptyInstitutionFormRecord
   ): FormGroup => {
-    return this.fb.group({
+    console.log('setting up the institution form ', { institutionFormRecord });
+    this.logoFile = null;
+    this.previewPath = null;
+    const formGroup = this.fb.group({
       id: [institutionFormRecord.id],
       name: [institutionFormRecord.name, Validators.required],
       location: [institutionFormRecord.location, Validators.required],
@@ -73,6 +75,8 @@ export class AddEditInstitutionComponent implements OnInit {
       logo: [institutionFormRecord.logo],
       bio: [institutionFormRecord.bio],
     });
+    this.previewPath = formGroup.get('logo').value;
+    return formGroup;
   };
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {

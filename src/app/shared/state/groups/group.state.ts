@@ -1,34 +1,30 @@
-import {
-  State,
-  Action,
-  Selector,
-  Store,
-  StateContext,
-  actionMatcher,
-  Select,
-} from '@ngxs/store';
+import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 import {
   defaultGroupState,
   emptyGroupFormRecord,
+  GroupFormCloseURL,
   GroupStateModel,
 } from './group.model';
-import {
-  CreateUpdateGroup,
-  DeleteGroup,
-  FetchGroups,
-  ForceRefetchGroups,
-  GetGroup,
-  ResetGroupForm,
-} from './group.actions';
+
 import { Injectable } from '@angular/core';
-import { ShowNotificationAction } from '../notifications/notification.actions';
-import { ToggleLoadingScreen } from '../loading/loading.actions';
-import { MatSelectOption } from '../../common/models';
 import {
-  BulkCreateGroupMembers,
-  BulkDeleteGroupMembers,
-} from '../groupMembers/group-members.actions';
-import { GroupMemberState } from '../groupMembers/group-members.state';
+  CreateUpdateGroupAction,
+  DeleteGroupAction,
+  FetchGroupsAction,
+  ForceRefetchGroupsAction,
+  GetGroupAction,
+  ResetGroupFormAction,
+} from './group.actions';
+import { GROUP_QUERIES } from '../../api/graphql/queries.graphql';
+import { Apollo } from 'apollo-angular';
+import { Group, MatSelectOption, PaginationObject } from '../../common/models';
+import { GROUP_MUTATIONS } from '../../api/graphql/mutations.graphql';
+import { ShowNotificationAction } from '../notifications/notification.actions';
+import {
+  getErrorMessageFromGraphQLResponse,
+  updatePaginationObject,
+} from '../../common/functions';
+import { Router } from '@angular/router';
 
 @State<GroupStateModel>({
   name: 'groupState',
@@ -36,319 +32,203 @@ import { GroupMemberState } from '../groupMembers/group-members.state';
 })
 @Injectable()
 export class GroupState {
-  // @Select(GroupMemberState.getBulkAddingGroupMembersSuccessful)
-  // bulkAddingGroupMembersSuccessful$;
-  // bulkAddingGroupMembersSuccessful: boolean;
-  // @Select(GroupMemberState.getBulkDeletingGroupMembersSuccessful)
-  // bulkDeletingGroupMembersSuccessful$;
-  // bulkDeletingGroupMembersSuccessful: boolean;
-  constructor(private store: Store) {
-    // this.bulkAddingGroupMembersSuccessful$.subscribe((val) => {
-    //   this.bulkAddingGroupMembersSuccessful = val;
-    // });
-    // this.bulkDeletingGroupMembersSuccessful$.subscribe((val) => {
-    //   this.bulkDeletingGroupMembersSuccessful = val;
-    // });
-  }
+  constructor(
+    private apollo: Apollo,
+    private store: Store,
+    private router: Router
+  ) {}
 
   @Selector()
-  static listGroups(state: GroupStateModel) {
+  static listGroups(state: GroupStateModel): Group[] {
     return state.groups;
   }
 
   @Selector()
-  static listGroupOptions(state: GroupStateModel): MatSelectOption[] {
-    return state.groups.map((g) => {
-      return { value: g.id, label: g.name };
-    });
-  }
-
-  @Selector()
-  static isFetching(state: GroupStateModel) {
+  static isFetching(state: GroupStateModel): boolean {
     return state.isFetching;
   }
 
   @Selector()
-  static isFetchingFormRecord(state: GroupStateModel) {
-    return state.isFetchingFormRecord;
+  static paginationObject(state: GroupStateModel): PaginationObject {
+    return state.paginationObject;
+  }
+  @Selector()
+  static listGroupOptions(state: GroupStateModel): MatSelectOption[] {
+    const options: MatSelectOption[] = state.groups.map((i) => {
+      const option: MatSelectOption = {
+        value: i.id,
+        label: i.name,
+      };
+      return option;
+    });
+    console.log('options', options);
+    return options;
   }
 
   @Selector()
-  static groupFormRecord(state: GroupStateModel) {
-    return state.groupFormRecord;
-  }
-
-  @Selector()
-  static errorFetching(state: GroupStateModel) {
+  static errorFetching(state: GroupStateModel): boolean {
     return state.errorFetching;
   }
 
   @Selector()
-  static formSubmitting(state: GroupStateModel) {
+  static formSubmitting(state: GroupStateModel): boolean {
     return state.formSubmitting;
   }
 
   @Selector()
-  static errorSubmitting(state: GroupStateModel) {
+  static errorSubmitting(state: GroupStateModel): boolean {
     return state.errorSubmitting;
   }
 
   @Selector()
-  static getGroupFormRecord(state: GroupStateModel) {
+  static getGroupFormRecord(state: GroupStateModel): Group {
     return state.groupFormRecord;
   }
 
-  @Action(ForceRefetchGroups)
-  fetchGroupsFromNetwork({ patchState }: StateContext<GroupStateModel>) {
+  @Action(ForceRefetchGroupsAction)
+  forceRefetchGroups({ patchState }: StateContext<GroupStateModel>) {
     patchState({ fetchPolicy: 'network-only' });
+    this.store.dispatch(new FetchGroupsAction({ searchParams: null }));
   }
 
-  @Action(FetchGroups)
-  fetchGroups({ getState, patchState }: StateContext<GroupStateModel>) {
-    const state = getState();
-    let { groups, isFetching, errorFetching, fetchPolicy } = state;
-    isFetching = true;
-    errorFetching = false;
-    patchState({ isFetching, errorFetching, groups });
-    // client
-    //   .query({
-    //     query: queries.ListGroups,
-    //     fetchPolicy: fetchPolicy,
-    //   })
-    //   .then((res: any) => {
-    //     console.log('Fetched groups => ', res);
-    //     isFetching = false;
-    //     const groups = res.data.listGroups.items;
-    //     fetchPolicy = null;
-    //     patchState({ groups, isFetching, fetchPolicy });
-    //   })
-    //   .catch((err) => {
-    //     console.error('There was an error while fetching groups => ', err);
-    //     isFetching = false;
-    //     errorFetching = true;
-    //     groups = [];
-    //     patchState({ groups, isFetching, errorFetching });
-    //   });
-  }
-
-  @Action(GetGroup)
-  getGroup(
+  @Action(FetchGroupsAction)
+  fetchGroups(
     { getState, patchState }: StateContext<GroupStateModel>,
-    { payload }: GetGroup
+    { payload }: FetchGroupsAction
+  ) {
+    console.log('Fetching groups from group state');
+    patchState({ isFetching: true });
+    let { searchParams } = payload;
+    const state = getState();
+    const { fetchPolicy, paginationObject } = state;
+    const { searchQuery, newPageSize, newPageNumber } = searchParams;
+    const newPaginationObject = updatePaginationObject({
+      paginationObject,
+      newPageNumber,
+      newPageSize,
+    });
+    const variables = {
+      searchField_Icontains: searchQuery,
+      limit: newPaginationObject.pageSize,
+      offset: newPaginationObject.offset,
+    };
+    console.log('variables for groups fetch ', { variables });
+    this.apollo
+      .watchQuery({
+        query: GROUP_QUERIES.GET_GROUPS,
+        variables,
+        fetchPolicy,
+      })
+      .valueChanges.subscribe(({ data }: any) => {
+        console.log('resposne to get groups query ', { data });
+        const response = data.groups;
+        const totalCount = response[0]?.totalCount
+          ? response[0]?.totalCount
+          : 0;
+        newPaginationObject.totalCount = totalCount;
+        console.log('from after getting groups', {
+          totalCount,
+          response,
+          newPaginationObject,
+        });
+        patchState({
+          groups: response,
+          paginationObject: newPaginationObject,
+          isFetching: false,
+        });
+      });
+  }
+
+  @Action(GetGroupAction)
+  getGroup(
+    { patchState }: StateContext<GroupStateModel>,
+    { payload }: GetGroupAction
   ) {
     const { id } = payload;
-    const state = getState();
-    let { isFetchingFormRecord, errorFetchingFormRecord } = state;
-    const groupFound = state.groups.find((i) => i.id == id);
-    if (groupFound) {
-      patchState({ groupFormRecord: groupFound });
-    } else {
-      patchState({
-        isFetchingFormRecord: true,
-        errorFetchingFormRecord: false,
+    patchState({ isFetching: true });
+    this.apollo
+      .watchQuery({
+        query: GROUP_QUERIES.GET_GROUP,
+        variables: { id },
+        fetchPolicy: 'network-only',
+      })
+      .valueChanges.subscribe(({ data }: any) => {
+        const response = data.group;
+        patchState({ groupFormRecord: response, isFetching: false });
       });
-      this.store.dispatch(
-        new ToggleLoadingScreen({
-          showLoadingScreen: true,
-          message: 'Fetching the group...',
-        })
-      );
-      // client
-      //   .query({
-      //     query: queries.GetGroup,
-      //     variables: {
-      //       id,
-      //     },
-      //   })
-      //   .then((res: any) => {
-      //     patchState({ isFetchingFormRecord: false });
-      //     this.store.dispatch(
-      //       new ToggleLoadingScreen({ showLoadingScreen: false })
-      //     );
-      //     const groupFormRecord = res.data.getGroup;
-
-      //     patchState({ groupFormRecord });
-      //   })
-      //   .catch((res: any) => {
-      //     console.error(res);
-      //     patchState({
-      //       isFetchingFormRecord: false,
-      //       errorFetchingFormRecord: true,
-      //     });
-      //     this.store.dispatch(
-      //       new ToggleLoadingScreen({ showLoadingScreen: false })
-      //     );
-      //     this.store.dispatch(
-      //       new ShowNotificationAction({
-      //         message:
-      //           'There was an error in fetching the group! Try again later.',
-      //       })
-      //     );
-      //   });
-    }
   }
 
-  @Action(ResetGroupForm)
-  resetGroupForm({ patchState }: StateContext<GroupStateModel>) {
-    patchState({ groupFormId: null, groupFormRecord: emptyGroupFormRecord });
-  }
-
-  @Action(CreateUpdateGroup)
+  @Action(CreateUpdateGroupAction)
   createUpdateGroup(
     { getState, patchState }: StateContext<GroupStateModel>,
-    { payload }: CreateUpdateGroup
+    { payload }: CreateUpdateGroupAction
   ) {
-    function groupUpdateSuccess({ form, formDirective, patchState, store }) {
-      console.log('executing groupUpdateSuccess method inside the function');
-      const formSubmitting = false;
-      form.reset();
-      formDirective.resetForm();
-      patchState({
-        groupFormRecord: emptyGroupFormRecord,
-        formSubmitting,
-      });
-      store.dispatch(new ForceRefetchGroups());
-      store.dispatch(
-        new ShowNotificationAction({
-          message: 'Form submitted successfully!',
-          action: 'success',
-        })
-      );
-    }
     const state = getState();
-    console.log('Actual state for create Group starts here ');
-    const { form, formDirective, addMemberIds, removeMemberIds } = payload;
+    const { form, formDirective } = payload;
     let { formSubmitting } = state;
     if (form.valid) {
-      console.log('Group form is valid');
       formSubmitting = true;
-      const values = form.value;
-      const { members, ...sanitzedValues } = values;
-      const updateForm = sanitzedValues.id ? true : false;
       patchState({ formSubmitting });
-      if (updateForm) {
-        // client
-        //   .mutate({
-        //     mutation: updateForm
-        //       ? mutations.UpdateGroup
-        //       : mutations.CreateGroup,
-        //     variables: {
-        //       input: sanitzedValues,
-        //     },
-        //   })
-        //   .then((res: any) => {
-        //     console.log('update group resulted in success', { res });
-        //     const groupId = res.data?.updateGroup?.id;
-        //     if (groupId) {
-        //       if (addMemberIds.length || removeMemberIds.length) {
-        //         if (addMemberIds.length) {
-        //           this.store.dispatch(
-        //             new BulkCreateGroupMembers({
-        //               groupId,
-        //               memberIds: addMemberIds,
-        //             })
-        //           );
-        //         }
-        //         if (removeMemberIds.length) {
-        //           this.store.dispatch(
-        //             new BulkDeleteGroupMembers({
-        //               groupId,
-        //               memberIds: removeMemberIds,
-        //             })
-        //           );
-        //         }
-        //         if (
-        //           this.bulkAddingGroupMembersSuccessful &&
-        //           this.bulkDeletingGroupMembersSuccessful
-        //         ) {
-        //           groupUpdateSuccess({
-        //             form,
-        //             formDirective,
-        //             patchState,
-        //             store: this.store,
-        //           });
-        //         }
-        //       } else {
-        //         groupUpdateSuccess({
-        //           form,
-        //           formDirective,
-        //           patchState,
-        //           store: this.store,
-        //         });
-        //       }
-        //     } else throw false;
-        //   })
-        //   .catch((err) => {
-        //     console.error(err);
-        //     formSubmitting = false;
-        //     patchState({ formSubmitting });
-        //     this.store.dispatch(
-        //       new ShowNotificationAction({
-        //         message: 'There was an error in submitting your form!',
-        //       })
-        //     );
-        //   });
-      } else {
-        console.log('sanitized group form values => ', sanitzedValues);
-        // client
-        //   .mutate({
-        //     mutation: mutations.CreateGroup,
-        //     variables: {
-        //       input: sanitzedValues,
-        //     },
-        //   })
-        //   .then((res: any) => {
-        //     const groupId = res.data?.createGroup?.id;
-        //     if (groupId) {
-        //       if (addMemberIds.length || removeMemberIds.length) {
-        //         if (addMemberIds.length) {
-        //           this.store.dispatch(
-        //             new BulkCreateGroupMembers({
-        //               groupId,
-        //               memberIds: addMemberIds,
-        //             })
-        //           );
-        //         }
-        //         if (removeMemberIds.length) {
-        //           this.store.dispatch(
-        //             new BulkDeleteGroupMembers({
-        //               groupId,
-        //               memberIds: removeMemberIds,
-        //             })
-        //           );
-        //         }
-        //         if (
-        //           this.bulkAddingGroupMembersSuccessful &&
-        //           this.bulkDeletingGroupMembersSuccessful
-        //         ) {
-        //           groupUpdateSuccess({
-        //             form,
-        //             formDirective,
-        //             patchState,
-        //             store: this.store,
-        //           });
-        //         }
-        //       } else {
-        //         groupUpdateSuccess({
-        //           form,
-        //           formDirective,
-        //           patchState,
-        //           store: this.store,
-        //         });
-        //       }
-        //     } else throw false;
-        //   })
-        //   .catch((err) => {
-        //     console.error('Error while creating group', err, values);
-        //     formSubmitting = false;
-        //     patchState({ formSubmitting });
-        //     this.store.dispatch(
-        //       new ShowNotificationAction({
-        //         message: 'There was an error in submitting your form!',
-        //       })
-        //     );
-        //   });
-      }
+      const values = form.value;
+      console.log('Group Form values', values);
+      const updateForm = values.id == null ? false : true;
+      const { id, ...sanitizedValues } = values;
+      const variables = updateForm
+        ? {
+            input: sanitizedValues,
+            id: values.id, // adding id to the mutation variables if it is an update mutation
+          }
+        : { input: sanitizedValues };
+
+      this.apollo
+        .mutate({
+          mutation: updateForm
+            ? GROUP_MUTATIONS.UPDATE_GROUP
+            : GROUP_MUTATIONS.CREATE_GROUP,
+          variables,
+        })
+        .subscribe(
+          ({ data }: any) => {
+            const response = updateForm ? data.updateGroup : data.createGroup;
+            patchState({ formSubmitting: false });
+            console.log('update group ', { response });
+            if (response.ok) {
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message: `Group ${
+                    updateForm ? 'updated' : 'created'
+                  } successfully!`,
+                  action: 'success',
+                })
+              );
+              form.reset();
+              formDirective.resetForm();
+              this.router.navigateByUrl(GroupFormCloseURL);
+              patchState({
+                groupFormRecord: emptyGroupFormRecord,
+                fetchPolicy: 'network-only',
+              });
+            } else {
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message: getErrorMessageFromGraphQLResponse(response?.errors),
+                  action: 'error',
+                })
+              );
+            }
+            console.log('From createUpdateGroup', { response });
+          },
+          (error) => {
+            console.log('Some error happened ', error);
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(error),
+                action: 'error',
+              })
+            );
+            patchState({ formSubmitting: false });
+          }
+        );
     } else {
       this.store.dispatch(
         new ShowNotificationAction({
@@ -360,51 +240,56 @@ export class GroupState {
     }
   }
 
-  @Action(DeleteGroup)
-  deleteGroup({ payload }: GetGroup) {
-    const { id } = payload;
-
-    this.store.dispatch(
-      new ToggleLoadingScreen({
-        showLoadingScreen: true,
-        message: 'Deleting the group...',
+  @Action(DeleteGroupAction)
+  deleteGroup(
+    {}: StateContext<GroupStateModel>,
+    { payload }: DeleteGroupAction
+  ) {
+    let { id } = payload;
+    this.apollo
+      .mutate({
+        mutation: GROUP_MUTATIONS.DELETE_GROUP,
+        variables: { id },
       })
-    );
-    // client
-    //   .mutate({
-    //     mutation: mutations.DeleteGroup,
-    //     variables: {
-    //       input: {
-    //         id,
-    //       },
-    //     },
-    //   })
-    //   .then((res: any) => {
-    //     console.log(res);
-    //     this.store.dispatch(new ForceRefetchGroups());
-    //     this.store.dispatch(
-    //       new ToggleLoadingScreen({
-    //         showLoadingScreen: false,
-    //       })
-    //     );
-    //     this.store.dispatch(
-    //       new ShowNotificationAction({
-    //         message: `The group with name ${res?.data?.deleteGroup?.name} was successfully deleted`,
-    //       })
-    //     );
-    //   })
-    //   .catch((err) => {
-    //     console.log('Error while deleting ', err);
-    //     this.store.dispatch(
-    //       new ToggleLoadingScreen({
-    //         showLoadingScreen: false,
-    //       })
-    //     );
-    //     this.store.dispatch(
-    //       new ShowNotificationAction({
-    //         message: `Something went wrong while attempting to delete the group. It may not have been deleted.`,
-    //       })
-    //     );
-    //   });
+      .subscribe(
+        ({ data }: any) => {
+          const response = data.deleteGroup;
+          console.log('from delete group ', { data });
+          if (response.ok) {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: 'Group deleted successfully!',
+                action: 'success',
+              })
+            );
+            this.store.dispatch(
+              new ForceRefetchGroupsAction({ searchParams: null })
+            );
+          } else {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(response?.errors),
+                action: 'error',
+              })
+            );
+          }
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+        }
+      );
+  }
+
+  @Action(ResetGroupFormAction)
+  resetGroupForm({ patchState }: StateContext<GroupStateModel>) {
+    patchState({
+      groupFormRecord: emptyGroupFormRecord,
+      formSubmitting: false,
+    });
   }
 }

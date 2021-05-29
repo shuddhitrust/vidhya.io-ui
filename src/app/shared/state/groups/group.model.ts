@@ -4,30 +4,28 @@ import {
   Group,
   GroupType,
   MatSelectOption,
+  PaginationObject,
+  startingPaginationObject,
 } from '../../common/models';
 
 export const emptyGroupFormRecord: Group = {
   __typename: 'Group',
   id: null,
   name: null,
-  institution: null,
-  type: null,
   description: null,
-  // admins: null,
-  // members: null,
-  createdAt: null,
-  updatedAt: null,
+  institution: null,
+  members: [],
+  admins: [],
+  groupType: null,
 };
-
 export interface GroupStateModel {
   groups: Group[];
   fetchPolicy: FetchPolicy;
-  groupFormId: string;
+  paginationObject: PaginationObject;
+  groupFormId: number;
   groupFormRecord: Group;
   isFetching: boolean;
   errorFetching: boolean;
-  isFetchingFormRecord: boolean;
-  errorFetchingFormRecord: boolean;
   formSubmitting: boolean;
   errorSubmitting: boolean;
 }
@@ -35,14 +33,16 @@ export interface GroupStateModel {
 export const defaultGroupState: GroupStateModel = {
   groups: [],
   fetchPolicy: null,
+  paginationObject: startingPaginationObject,
   groupFormId: null,
   groupFormRecord: emptyGroupFormRecord,
   isFetching: false,
   errorFetching: false,
-  isFetchingFormRecord: false,
-  errorFetchingFormRecord: false,
   formSubmitting: false,
   errorSubmitting: false,
 };
+
+export const GroupFormCloseURL =
+  'dashboard?adminSection=Institutions&tab=Groups';
 
 export const groupTypeOptions: MatSelectOption[] = autoGenOptions(GroupType);

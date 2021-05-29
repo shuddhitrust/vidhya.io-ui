@@ -41,3 +41,5 @@ export const defaultInstitutionState: InstitutionStateModel = {
   formSubmitting: false,
   errorSubmitting: false,
 };
+
+export const InstitutionFormCloseURL = 'dashboard?adminSection=Institutions';

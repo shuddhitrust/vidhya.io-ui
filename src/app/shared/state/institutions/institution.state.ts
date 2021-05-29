@@ -2,6 +2,7 @@ import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 import {
   defaultInstitutionState,
   emptyInstitutionFormRecord,
+  InstitutionFormCloseURL,
   InstitutionStateModel,
 } from './institution.model';
 
@@ -27,6 +28,7 @@ import {
   getErrorMessageFromGraphQLResponse,
   updatePaginationObject,
 } from '../../common/functions';
+import { Router } from '@angular/router';
 
 @State<InstitutionStateModel>({
   name: 'institutionState',
@@ -34,7 +36,11 @@ import {
 })
 @Injectable()
 export class InstitutionState {
-  constructor(private apollo: Apollo, private store: Store) {}
+  constructor(
+    private apollo: Apollo,
+    private store: Store,
+    private router: Router
+  ) {}
 
   @Selector()
   static listInstitutions(state: InstitutionStateModel): Institution[] {
@@ -208,6 +214,7 @@ export class InstitutionState {
               );
               form.reset();
               formDirective.resetForm();
+              this.router.navigateByUrl(InstitutionFormCloseURL);
               patchState({
                 institutionFormRecord: emptyInstitutionFormRecord,
                 fetchPolicy: 'network-only',

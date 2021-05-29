@@ -56,9 +56,22 @@ export type Announcement = any;
 
 export type CreateGroupMemberInput = any;
 
-export type Group = any;
+export type Group = {
+  __typename: 'Group';
+  id: number;
+  name: string;
+  description: string;
+  institution: number;
+  members: number[];
+  admins: number[];
+  groupType: string;
+};
 
-export const GroupType = {};
+export const GroupType = {
+  class: 'CL',
+  team: 'TE',
+  coordination: 'CO',
+};
 
 export type Institution = {
   __typename: string;

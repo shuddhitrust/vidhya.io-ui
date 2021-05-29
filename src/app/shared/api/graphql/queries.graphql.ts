@@ -92,3 +92,36 @@ export const INSTITUTION_QUERIES = {
     }
   `,
 };
+
+export const GROUP_QUERIES = {
+  GET_GROUP: gql`
+    query group($id: ID!) {
+      group(id: $id) {
+        id
+        name
+        description
+        admins {
+          id
+          name
+        }
+        members {
+          id
+          name
+        }
+      }
+    }
+  `,
+  GET_GROUPS: gql`
+    query groups($searchField_Icontains: String, $limit: Int, $offset: Int) {
+      groups(
+        searchField_Icontains: $searchField_Icontains
+        limit: $limit
+        offset: $offset
+      ) {
+        id
+        name
+        description
+      }
+    }
+  `,
+};

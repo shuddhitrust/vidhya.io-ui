@@ -4,9 +4,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import {
-  DeleteGroup,
-  GetGroup,
-  ResetGroupForm,
+  DeleteGroupAction,
+  GetGroupAction,
+  ResetGroupFormAction,
 } from 'src/app/shared/state/groups/group.actions';
 import { GroupState } from 'src/app/shared/state/groups/group.state';
 import {
@@ -23,10 +23,10 @@ import { Group } from 'src/app/shared/common/models';
   styleUrls: ['./group-profile.component.scss'],
 })
 export class GroupProfileComponent implements OnInit, OnDestroy {
-  @Select(GroupState.groupFormRecord)
+  @Select(GroupState.getGroupFormRecord)
   group$: Observable<Group>;
   group: Group;
-  @Select(GroupState.isFetchingFormRecord)
+  @Select(GroupState.isFetching)
   isFetchingGroup$: Observable<boolean>;
 
   constructor(
@@ -44,7 +44,7 @@ export class GroupProfileComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       const groupId = params['id'];
-      this.store.dispatch(new GetGroup({ id: groupId }));
+      this.store.dispatch(new GetGroupAction({ id: groupId }));
     });
   }
 
@@ -75,12 +75,12 @@ export class GroupProfileComponent implements OnInit, OnDestroy {
     console.log('payload before passing to action => ', {
       id: this.group.id,
     });
-    this.store.dispatch(new DeleteGroup({ id: this.group.id }));
+    this.store.dispatch(new DeleteGroupAction({ id: this.group.id }));
     this.goBack();
   }
 
   ngOnDestroy(): void {
-    this.store.dispatch(new ResetGroupForm());
+    this.store.dispatch(new ResetGroupFormAction());
   }
 }
 

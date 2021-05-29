@@ -1,3 +1,5 @@
+import { SearchParams } from '../abstract/master-grid/table.model';
+
 export const secondInMillseconds = 60000;
 export const minute = 60;
 export const hour = minute * 60;
@@ -14,3 +16,5 @@ export const defaultLogos = {
   institution: 'https://i.imgur.com/hB0OXas.png',
   user: 'https://i.imgur.com/XDZCq2b.png',
 };
+
+export const defaultSearchParams = new SearchParams();

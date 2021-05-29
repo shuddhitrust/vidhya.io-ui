@@ -63,6 +63,42 @@ export const INSTITUTION_MUTATIONS = {
   `,
 };
 
+export const GROUP_MUTATIONS = {
+  CREATE_GROUP: gql`
+    mutation createGroup($input: GroupInput!) {
+      createGroup(input: $input) {
+        ok
+        group {
+          id
+          name
+        }
+      }
+    }
+  `,
+  UPDATE_GROUP: gql`
+    mutation updateGroup($id: Int!, $input: GroupInput!) {
+      updateGroup(id: $id, input: $input) {
+        ok
+        group {
+          id
+          name
+        }
+      }
+    }
+  `,
+  DELETE_GROUP: gql`
+    mutation deleteGroup($id: ID!) {
+      deleteGroup(id: $id) {
+        ok
+        group {
+          id
+          name
+        }
+      }
+    }
+  `,
+};
+
 export const AUTH_MUTATIONS = {
   REGISTER: gql`
     mutation register(

@@ -10,8 +10,8 @@ import { Select, Store } from '@ngxs/store';
 import { ActivatedRoute } from '@angular/router';
 
 import {
-  CreateUpdateGroup,
-  GetGroup,
+  CreateUpdateGroupAction,
+  GetGroupAction,
 } from 'src/app/shared/state/groups/group.actions';
 import { GroupState } from 'src/app/shared/state/groups/group.state';
 import { Observable } from 'rxjs';
@@ -89,14 +89,9 @@ export class AddEditGroupComponent implements OnInit {
     return this.fb.group({
       id: [groupFormRecord?.id],
       name: [groupFormRecord?.name, Validators.required],
-      groupInstitutionId: [
-        groupFormRecord?.institution?.id,
-        Validators.required,
-      ],
-      type: [groupFormRecord?.type, Validators.required],
+      institution: [groupFormRecord?.institution, Validators.required],
+      groupType: [groupFormRecord?.groupType, Validators.required],
       description: [groupFormRecord?.description, Validators.required],
-      // admins: [groupFormRecord.admins],
-      members: [groupFormRecord?.members?.items?.map((m) => m.id)],
     });
   };
   ngOnInit(): void {
@@ -104,7 +99,7 @@ export class AddEditGroupComponent implements OnInit {
       this.params = params;
       const id = params['id'];
       if (id) {
-        this.store.dispatch(new GetGroup({ id }));
+        this.store.dispatch(new GetGroupAction({ id }));
       }
     });
   }
@@ -113,72 +108,11 @@ export class AddEditGroupComponent implements OnInit {
     this.location.back();
   }
 
-  calculateMemberChanges(form) {
-    let membersToAdd = [];
-    let membersToRemove = [];
-    const originalMemberList = this.groupFormRecord.members?.items
-      ? this.groupFormRecord.members?.items
-      : [];
-    const newMemberList = form.value.members ? form.value.members : [];
-    console.log(
-      'originalMemberList, newMemberList',
-      originalMemberList,
-      newMemberList
-    );
-
-    const originalIds = originalMemberList.map((m) => m.id);
-    const newIds = newMemberList;
-
-    let add = newMemberList.filter((m) => !originalIds.includes(m));
-    let remove = originalIds.filter((o) => !newIds.includes(o));
-    membersToAdd = add.map((id) =>
-      this.memberOptions.find((o) => o.value == id)
-    );
-    membersToRemove = remove.map((id) =>
-      this.memberOptions.find((o) => o.value == id)
-    );
-    console.log('After calculating member changes', {
-      membersToAdd,
-      membersToRemove,
-    });
-
-    return { membersToAdd, membersToRemove };
-  }
-
-  reviewMemberInfo(form: FormGroup, formDirective: FormGroupDirective) {
-    const { membersToAdd, membersToRemove } = this.calculateMemberChanges(form);
-    const addMemberIds = membersToAdd.map((m) => m.value);
-    const removeMemberIds = membersToRemove.map((m) => m.value);
-
-    if (membersToAdd.length || membersToRemove.length) {
-      const dialogRef = this.dialog.open(GroupMemberReviewDialog, {
-        data: {
-          membersToAdd,
-          membersToRemove,
-        },
-      });
-
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result == true) {
-          this.submitForm(form, formDirective, addMemberIds, removeMemberIds);
-        }
-      });
-    } else {
-      this.submitForm(form, formDirective, addMemberIds, removeMemberIds);
-    }
-  }
-  submitForm(
-    form: FormGroup,
-    formDirective: FormGroupDirective,
-    addMemberIds,
-    removeMemberIds
-  ) {
+  submitForm(form: FormGroup, formDirective: FormGroupDirective) {
     this.store.dispatch(
-      new CreateUpdateGroup({
+      new CreateUpdateGroupAction({
         form,
         formDirective,
-        addMemberIds,
-        removeMemberIds,
       })
     );
   }
