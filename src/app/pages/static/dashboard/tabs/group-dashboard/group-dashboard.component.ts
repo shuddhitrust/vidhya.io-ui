@@ -5,7 +5,10 @@ import { Observable } from 'rxjs';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { Group } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
-import { FetchGroupsAction } from 'src/app/shared/state/groups/group.actions';
+import {
+  FetchGroupsAction,
+  ResetGroupFormAction,
+} from 'src/app/shared/state/groups/group.actions';
 import { GroupState } from 'src/app/shared/state/groups/group.state';
 
 @Component({
@@ -32,6 +35,7 @@ export class GroupDashboardComponent implements OnInit {
   ngOnInit(): void {}
 
   createGroup() {
+    this.store.dispatch(new ResetGroupFormAction());
     this.router.navigateByUrl(uiroutes.GROUP_FORM_ROUTE);
   }
 

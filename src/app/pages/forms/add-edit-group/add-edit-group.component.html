@@ -30,7 +30,7 @@
     <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
       <mat-label>Institution</mat-label>
       <mat-select
-        formControlName="groupInstitutionId"
+        formControlName="institution"
         placeholder="The institution you belong to"
       >
         <mat-option
@@ -43,7 +43,7 @@
       <small
         class="validation-error"
         *ngIf="
-          groupForm.get('groupInstitutionId').hasError('required') &&
+          groupForm.get('institution').hasError('required') &&
           formDirective.submitted
         "
       >
@@ -54,7 +54,7 @@
     <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
       <mat-label>Group Type</mat-label>
       <mat-select
-        formControlName="type"
+        formControlName="groupType"
         required
         placeholder="The type of group this is"
       >
@@ -65,7 +65,8 @@
       <small
         class="validation-error"
         *ngIf="
-          groupForm.get('type').hasError('required') && formDirective.submitted
+          groupForm.get('groupType').hasError('required') &&
+          formDirective.submitted
         "
       >
         Group Type is required

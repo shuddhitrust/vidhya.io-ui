@@ -114,9 +114,9 @@ export class AnnouncementState {
 
     // Constructing the filter object
     let filter = {
-      ...searchParams?.columnFilters,
-      searchField: searchParams?.searchQuery
-        ? { contains: searchParams?.searchQuery.toLowerCase() }
+      ...searchParams.columnFilters,
+      searchField: searchParams.searchQuery
+        ? { contains: searchParams.searchQuery.toLowerCase() }
         : null,
     };
 
@@ -126,14 +126,14 @@ export class AnnouncementState {
     */
     // paginationObject = {
     //   ...paginationObject,
-    //   pageIndex: searchParams?.pageNumber
-    //     ? searchParams?.pageNumber
+    //   pageIndex: searchParams.pageNumber
+    //     ? searchParams.pageNumber
     //     : paginationObject.pageIndex,
     // };
     // Constructing the variables to be used in the Graphql Query
     // const variables = {
     //   filter,
-    //   limit: searchParams?.pageSize ? searchParams?.pageSize : defaultPageSize,
+    //   limit: searchParams.pageSize ? searchParams.pageSize : defaultPageSize,
     //   // limit: 1,
     //   // nextToken: setNextToken(paginationObject),
     // };

@@ -13,7 +13,7 @@ export const emptyGroupFormRecord: Group = {
   id: null,
   name: null,
   description: null,
-  institution: null,
+  institution: { id: null },
   members: [],
   admins: [],
   groupType: null,

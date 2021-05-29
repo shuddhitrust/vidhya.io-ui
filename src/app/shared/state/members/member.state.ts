@@ -23,6 +23,7 @@ import {
   getErrorMessageFromGraphQLResponse,
   updatePaginationObject,
 } from '../../common/functions';
+import { defaultSearchParams } from '../../common/constants';
 
 @State<MemberStateModel>({
   name: 'memberState',
@@ -82,7 +83,9 @@ export class MemberState {
   @Action(ForceRefetchMembersAction)
   forceRefetchMembers({ patchState }: StateContext<MemberStateModel>) {
     patchState({ fetchPolicy: 'network-only' });
-    this.store.dispatch(new FetchMembersAction({ searchParams: null }));
+    this.store.dispatch(
+      new FetchMembersAction({ searchParams: defaultSearchParams })
+    );
   }
 
   @Action(FetchMembersAction)
@@ -257,7 +260,9 @@ export class MemberState {
               })
             );
             this.store.dispatch(
-              new ForceRefetchMembersAction({ searchParams: null })
+              new ForceRefetchMembersAction({
+                searchParams: defaultSearchParams,
+              })
             );
           } else {
             this.store.dispatch(

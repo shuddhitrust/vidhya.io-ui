@@ -67,16 +67,15 @@ export class GroupProfileComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((result) => {
       console.log('close dialog result for announcment => ', result);
       if (result == true) {
-        this.deleteAnnouncement();
+        this.deleteGroup();
       }
     });
   }
-  deleteAnnouncement() {
+  deleteGroup() {
     console.log('payload before passing to action => ', {
       id: this.group.id,
     });
     this.store.dispatch(new DeleteGroupAction({ id: this.group.id }));
-    this.goBack();
   }
 
   ngOnDestroy(): void {

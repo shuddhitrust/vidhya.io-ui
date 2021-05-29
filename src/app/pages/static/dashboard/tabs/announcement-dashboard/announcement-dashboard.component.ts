@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
+import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { Announcement } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { FetchAnnouncements } from 'src/app/shared/state/announcements/announcement.actions';
@@ -20,7 +21,9 @@ export class AnnouncementDashboardComponent implements OnInit {
   isFetching$: Observable<boolean>;
 
   constructor(private store: Store, private router: Router) {
-    this.store.dispatch(new FetchAnnouncements({}));
+    this.store.dispatch(
+      new FetchAnnouncements({ searchParams: defaultSearchParams })
+    );
   }
 
   ngOnInit(): void {}

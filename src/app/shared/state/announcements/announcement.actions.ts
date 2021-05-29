@@ -5,13 +5,13 @@ import { idPayload } from '../../common/models';
 export class FetchAnnouncements {
   static readonly type = '[ANNOUNCEMENTS] Fetch';
 
-  constructor(public payload: { searchParams?: SearchParams }) {}
+  constructor(public payload: { searchParams: SearchParams }) {}
 }
 
 export class ForceRefetchAnnouncements {
   static readonly type = '[ANNOUNCEMENTS] Refetch from network';
 
-  constructor(public payload: { searchParams?: SearchParams }) {}
+  constructor(public payload: { searchParams: SearchParams }) {}
 }
 export class GetAnnouncement {
   static readonly type = '[ANNOUNCEMENT] Get';

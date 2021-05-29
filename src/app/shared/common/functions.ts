@@ -118,7 +118,7 @@ const convertKeyToLabel = (key: string): string => {
 export const autoGenOptions = (type: object): MatSelectOption[] => {
   const keys = Object.keys(type);
   return keys.map((key) => {
-    return { value: key, label: convertKeyToLabel(key) };
+    return { value: type[key], label: convertKeyToLabel(key) };
   });
 };
 

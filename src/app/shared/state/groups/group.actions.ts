@@ -5,13 +5,13 @@ import { idPayload } from '../../common/models';
 export class FetchGroupsAction {
   static readonly type = '[GROUPS] Fetch';
 
-  constructor(public payload: { searchParams?: SearchParams }) {}
+  constructor(public payload: { searchParams: SearchParams }) {}
 }
 
 export class ForceRefetchGroupsAction {
   static readonly type = '[GROUPS] Fetch from network';
 
-  constructor(public payload: { searchParams?: SearchParams }) {}
+  constructor(public payload: { searchParams: SearchParams }) {}
 }
 
 export class GetGroupAction {

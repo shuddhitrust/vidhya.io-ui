@@ -29,6 +29,7 @@ import {
   updatePaginationObject,
 } from '../../common/functions';
 import { Router } from '@angular/router';
+import { defaultSearchParams } from '../../common/constants';
 
 @State<InstitutionStateModel>({
   name: 'institutionState',
@@ -67,7 +68,7 @@ export class InstitutionState {
       };
       return option;
     });
-    console.log('options', options);
+    console.log('institution dropdown ptions', options);
     return options;
   }
 
@@ -96,7 +97,9 @@ export class InstitutionState {
     patchState,
   }: StateContext<InstitutionStateModel>) {
     patchState({ fetchPolicy: 'network-only' });
-    this.store.dispatch(new FetchInstitutionsAction({ searchParams: null }));
+    this.store.dispatch(
+      new FetchInstitutionsAction({ searchParams: defaultSearchParams })
+    );
   }
 
   @Action(FetchInstitutionsAction)
@@ -274,7 +277,9 @@ export class InstitutionState {
               })
             );
             this.store.dispatch(
-              new ForceRefetchInstitutionsAction({ searchParams: null })
+              new ForceRefetchInstitutionsAction({
+                searchParams: defaultSearchParams,
+              })
             );
           } else {
             this.store.dispatch(

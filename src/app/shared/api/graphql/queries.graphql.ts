@@ -100,13 +100,19 @@ export const GROUP_QUERIES = {
         id
         name
         description
+        institution {
+          id
+        }
+        groupType
         admins {
           id
-          name
+          firstName
+          lastName
         }
         members {
           id
-          name
+          firstName
+          lastName
         }
       }
     }

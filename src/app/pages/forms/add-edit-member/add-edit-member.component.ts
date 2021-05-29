@@ -32,6 +32,7 @@ import { MemberDeleteConfirmationDialog } from '../../modals/member-profile/memb
 import { OptionsState } from 'src/app/shared/state/options/options.state';
 import { OptionsStateModel } from 'src/app/shared/state/options/options.model';
 import { FetchGroupOptionsByInstitution } from 'src/app/shared/state/options/options.actions';
+import { defaultSearchParams } from 'src/app/shared/common/constants';
 
 @Component({
   selector: 'app-add-edit-member',
@@ -114,7 +115,9 @@ export class AddEditMemberComponent implements OnInit {
       });
     });
     this.checkIfFormContainsRecord();
-    this.store.dispatch(new FetchInstitutionsAction({}));
+    this.store.dispatch(
+      new FetchInstitutionsAction({ searchParams: defaultSearchParams })
+    );
     this.memberForm = this.setupMemberFormGroup();
     // this.memberFormRecord$.subscribe((val) => {
     //   this.memberFormRecord = val;

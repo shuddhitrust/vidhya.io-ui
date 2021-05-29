@@ -61,7 +61,9 @@ export type Group = {
   id: number;
   name: string;
   description: string;
-  institution: number;
+  institution: {
+    id: number;
+  };
   members: number[];
   admins: number[];
   groupType: string;

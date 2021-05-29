@@ -28,6 +28,7 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
+import { defaultSearchParams } from 'src/app/shared/common/constants';
 
 @Component({
   selector: 'app-add-edit-group',
@@ -79,8 +80,15 @@ export class AddEditGroupComponent implements OnInit {
       this.isFetchingMembers = val;
     });
 
-    this.store.dispatch(new FetchInstitutionsAction({}));
+    this.store.dispatch(
+      new FetchInstitutionsAction({ searchParams: defaultSearchParams })
+    );
     this.groupForm = this.setupGroupFormGroup();
+    this.groupFormRecord$.subscribe((val) => {
+      this.groupFormRecord = val;
+      this.groupForm = this.setupGroupFormGroup(this.groupFormRecord);
+    });
+    console.log('Group type options ', { groupTypeOptions });
   }
 
   setupGroupFormGroup = (
@@ -89,7 +97,7 @@ export class AddEditGroupComponent implements OnInit {
     return this.fb.group({
       id: [groupFormRecord?.id],
       name: [groupFormRecord?.name, Validators.required],
-      institution: [groupFormRecord?.institution, Validators.required],
+      institution: [groupFormRecord?.institution?.id, Validators.required],
       groupType: [groupFormRecord?.groupType, Validators.required],
       description: [groupFormRecord?.description, Validators.required],
     });

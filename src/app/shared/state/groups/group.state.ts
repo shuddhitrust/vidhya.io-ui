@@ -25,6 +25,7 @@ import {
   updatePaginationObject,
 } from '../../common/functions';
 import { Router } from '@angular/router';
+import { defaultSearchParams } from '../../common/constants';
 
 @State<GroupStateModel>({
   name: 'groupState',
@@ -88,7 +89,9 @@ export class GroupState {
   @Action(ForceRefetchGroupsAction)
   forceRefetchGroups({ patchState }: StateContext<GroupStateModel>) {
     patchState({ fetchPolicy: 'network-only' });
-    this.store.dispatch(new FetchGroupsAction({ searchParams: null }));
+    this.store.dispatch(
+      new FetchGroupsAction({ searchParams: defaultSearchParams })
+    );
   }
 
   @Action(FetchGroupsAction)
@@ -256,6 +259,7 @@ export class GroupState {
           const response = data.deleteGroup;
           console.log('from delete group ', { data });
           if (response.ok) {
+            this.router.navigateByUrl(GroupFormCloseURL);
             this.store.dispatch(
               new ShowNotificationAction({
                 message: 'Group deleted successfully!',
@@ -263,7 +267,9 @@ export class GroupState {
               })
             );
             this.store.dispatch(
-              new ForceRefetchGroupsAction({ searchParams: null })
+              new ForceRefetchGroupsAction({
+                searchParams: defaultSearchParams,
+              })
             );
           } else {
             this.store.dispatch(
