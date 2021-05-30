@@ -33,12 +33,8 @@ export const USER_QUERIES = {
     }
   `,
   GET_USERS: gql`
-    query users($searchField_Icontains: String, $limit: Int, $offset: Int) {
-      users(
-        searchField_Icontains: $searchField_Icontains
-        limit: $limit
-        offset: $offset
-      ) {
+    query users($searchField: String, $limit: Int, $offset: Int) {
+      users(searchField: $searchField, limit: $limit, offset: $offset) {
         username
         id
         nickName
@@ -72,16 +68,8 @@ export const INSTITUTION_QUERIES = {
     }
   `,
   GET_INSTITUTIONS: gql`
-    query institutions(
-      $searchField_Icontains: String
-      $limit: Int
-      $offset: Int
-    ) {
-      institutions(
-        searchField_Icontains: $searchField_Icontains
-        limit: $limit
-        offset: $offset
-      ) {
+    query institutions($searchField: String, $limit: Int, $offset: Int) {
+      institutions(searchField: $searchField, limit: $limit, offset: $offset) {
         id
         name
         location
@@ -118,12 +106,8 @@ export const GROUP_QUERIES = {
     }
   `,
   GET_GROUPS: gql`
-    query groups($searchField_Icontains: String, $limit: Int, $offset: Int) {
-      groups(
-        searchField_Icontains: $searchField_Icontains
-        limit: $limit
-        offset: $offset
-      ) {
+    query groups($searchField: String, $limit: Int, $offset: Int) {
+      groups(searchField: $searchField, limit: $limit, offset: $offset) {
         id
         name
         description
@@ -155,16 +139,8 @@ export const ANNOUNCEMENT_QUERIES = {
     }
   `,
   GET_ANNOUNCEMENTS: gql`
-    query announcements(
-      $searchField_Icontains: String
-      $limit: Int
-      $offset: Int
-    ) {
-      announcements(
-        searchField_Icontains: $searchField_Icontains
-        limit: $limit
-        offset: $offset
-      ) {
+    query announcements($searchField: String, $limit: Int, $offset: Int) {
+      announcements(searchField: $searchField, limit: $limit, offset: $offset) {
         id
         title
         author {

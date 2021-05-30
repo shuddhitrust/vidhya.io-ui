@@ -111,7 +111,7 @@ export class GroupState {
       newPageSize,
     });
     const variables = {
-      searchField_Icontains: searchQuery,
+      searchField: searchQuery,
       limit: newPaginationObject.pageSize,
       offset: newPaginationObject.offset,
     };

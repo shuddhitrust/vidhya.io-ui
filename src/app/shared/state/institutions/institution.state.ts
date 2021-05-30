@@ -121,7 +121,7 @@ export class InstitutionState {
       newPaginationObject,
     });
     const variables = {
-      searchField_Icontains: searchQuery,
+      searchField: searchQuery,
       limit: newPaginationObject.pageSize,
       offset: newPaginationObject.offset,
     };
