@@ -40,7 +40,7 @@ export const INSTITUTION_MUTATIONS = {
     }
   `,
   UPDATE_INSTITUTION: gql`
-    mutation updateInstitution($id: Int!, $input: InstitutionInput!) {
+    mutation updateInstitution($id: ID!, $input: InstitutionInput!) {
       updateInstitution(id: $id, input: $input) {
         ok
         institution {
@@ -76,7 +76,7 @@ export const GROUP_MUTATIONS = {
     }
   `,
   UPDATE_GROUP: gql`
-    mutation updateGroup($id: Int!, $input: GroupInput!) {
+    mutation updateGroup($id: ID!, $input: GroupInput!) {
       updateGroup(id: $id, input: $input) {
         ok
         group {
@@ -112,7 +112,7 @@ export const ANNOUNCEMENT_MUTATIONS = {
     }
   `,
   UPDATE_ANNOUNCEMENT: gql`
-    mutation updateAnnouncement($id: Int!, $input: AnnouncementInput!) {
+    mutation updateAnnouncement($id: ID!, $input: AnnouncementInput!) {
       updateAnnouncement(id: $id, input: $input) {
         ok
         announcement {
