@@ -6,12 +6,11 @@ import {
 } from '../../common/models';
 
 export const emptyAnnouncementFormRecord: Announcement = {
-  __typename: 'Announcement',
   id: null,
   title: null,
-  author: { id: null },
+  author: null,
   message: null,
-  institution: { id: null },
+  institution: null,
   groups: [],
 };
 export interface AnnouncementStateModel {

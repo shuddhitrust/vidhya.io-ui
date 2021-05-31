@@ -1,1 +1,28 @@
-<p>course-dashboard works!</p>
+<div class="feed-header-block">
+  <h2>Courses</h2>
+  <button
+    (click)="createCourse()"
+    class="floating-header-button-top"
+    mat-raised-button
+    color="primary"
+  >
+    Create Course
+  </button>
+</div>
+<span *ngIf="!(isFetching$ | async); else loading">
+  <span *ngIf="(courses$ | async).length > 0; else feedEmpty">
+    <div *ngFor="let course of courses$ | async">
+      <span class="feed-card" (click)="openCourse(course)">
+        {{ course.title }}
+      </span>
+    </div>
+  </span>
+</span>
+
+<ng-template #feedEmpty>
+  <p class="center-title">There are no courses for you!</p>
+</ng-template>
+
+<ng-template #loading>
+  <app-simple-loading-spinner></app-simple-loading-spinner>
+</ng-template>

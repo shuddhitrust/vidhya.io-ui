@@ -50,14 +50,26 @@ export const startingPaginationObject: PaginationObject = {
   offset: 0,
 };
 
-export type User = any;
+export type User = {
+  id: number;
+  nickName: string;
+  email: string;
+  avatar: string;
+  institution: Institution;
+  title: string;
+  bio: string;
+};
 
-export type Announcement = any;
-
-export type CreateGroupMemberInput = any;
+export type Announcement = {
+  id: number;
+  title: string;
+  author: User;
+  message: string;
+  institution: Institution;
+  groups: Group[];
+};
 
 export type Group = {
-  __typename: 'Group';
   id: number;
   name: string;
   description: string;
@@ -76,7 +88,6 @@ export const GroupType = {
 };
 
 export type Institution = {
-  __typename: string;
   id: number;
   name: string;
   location: string;
@@ -88,4 +99,17 @@ export type Institution = {
   invitecode: string;
 };
 
-export type MembershipStatus = any;
+export type Course = {
+  id: number;
+  title: string;
+  description: String;
+  instructor: User;
+  institutions: Institution[];
+};
+
+export type Assignment = {
+  id: number;
+  title: string;
+  instructions: string;
+  course: Course;
+};

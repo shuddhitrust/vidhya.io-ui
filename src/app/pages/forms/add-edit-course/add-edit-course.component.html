@@ -1,0 +1,75 @@
+<button mat-icon-button (click)="goBack()" class="floating-back-button">
+  <mat-icon>keyboard_backspace</mat-icon>
+</button>
+<h2 class="center-title">Course Form</h2>
+<div class="col-lg-8 col-sm-12 form-container">
+  <form
+    [formGroup]="courseForm"
+    novalidate
+    (submit)="submitForm(courseForm, formDirective)"
+    #formDirective="ngForm"
+  >
+    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Title</mat-label>
+      <input
+        matInput
+        formControlName="title"
+        required
+        placeholder="Title of the course"
+      />
+      <small
+        class="validation-error"
+        *ngIf="
+          courseForm.get('title').hasError('required') &&
+          formDirective.submitted
+        "
+      >
+        Title is required
+      </small>
+    </mat-form-field>
+
+    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Message</mat-label>
+      <input
+        matInput
+        formControlName="message"
+        required
+        placeholder="Course message"
+      />
+      <small
+        class="validation-error"
+        *ngIf="
+          courseForm.get('message').hasError('required') &&
+          formDirective.submitted
+        "
+      >
+        Message is required
+      </small>
+    </mat-form-field>
+
+    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Groups</mat-label>
+      <mat-select
+        multiple
+        formControlName="groups"
+        placeholder="The groups to make the course to"
+      >
+        <mat-option
+          *ngFor="let group of groupOptions$ | async"
+          [value]="group.value"
+        >
+          {{ group.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button
+      type="submit"
+      class="floating-button-bottom"
+      mat-raised-button
+      color="primary"
+      [disabled]="(formSubmitting$ | async) === true"
+    >
+      {{ (formSubmitting$ | async) === true ? "Submitting..." : "Submit" }}
+    </button>
+  </form>
+</div>

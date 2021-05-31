@@ -10,7 +10,6 @@ import { Select, Store } from '@ngxs/store';
 import { ShowNotificationAction } from '../state/notifications/notification.actions';
 import { AuthState } from '../state/auth/auth.state';
 import { AuthStateModel } from '../state/auth/auth.model';
-import { MembershipStatus } from '../common/models';
 import {
   HttpEvent,
   HttpHandler,
@@ -24,7 +23,6 @@ export class AuthenticationGuard implements CanActivate {
   @Select(AuthState)
   authState$: Observable<AuthStateModel>;
   authState: AuthStateModel;
-  membershipStatus: MembershipStatus;
   activeMember: boolean = false;
   isFullyAuthenticated: boolean = false;
   constructor(private _router: Router, private store: Store) {

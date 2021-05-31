@@ -21,11 +21,7 @@ import {
 } from 'src/app/shared/state/members/member.model';
 import { InstitutionState } from 'src/app/shared/state/institutions/institution.state';
 import { FetchInstitutionsAction } from 'src/app/shared/state/institutions/institution.actions';
-import {
-  MatSelectOption,
-  MembershipStatus,
-  User,
-} from 'src/app/shared/common/models';
+import { MatSelectOption, User } from 'src/app/shared/common/models';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { AuthStateModel } from 'src/app/shared/state/auth/auth.model';
 import { MemberDeleteConfirmationDialog } from '../../modals/member-profile/member-profile.component';
@@ -60,7 +56,6 @@ export class AddEditMemberComponent implements OnInit {
   authState$: Observable<AuthStateModel>;
   authState: AuthStateModel;
   isFullyAuthenticated: boolean;
-  membershipStatus: MembershipStatus;
   createForm: boolean;
   memberForm: FormGroup;
   isFetchingGroups: boolean;
@@ -109,7 +104,6 @@ export class AddEditMemberComponent implements OnInit {
       // this.createForm =
       //   this.membershipStatus == MembershipStatus.PENDING_REGISTRATION; // The form is set to createForm when user status is pending_registration
       console.log('current pending registration => ', {
-        membershipStatus: this.membershipStatus,
         createForm: this.createForm,
         authState: this.authState,
       });
@@ -155,16 +149,7 @@ export class AddEditMemberComponent implements OnInit {
       id: [memberFormRecord?.id],
       nickName: [memberFormRecord?.nickName, Validators.required],
       // email: [memberFormRecord.email, [Validators.required, Validators.email]],
-      type: [memberFormRecord?.type, Validators.required],
-      membershipStatus: [
-        memberFormRecord?.membershipStatus,
-        Validators.required,
-      ],
-      memberInstitutionId: [
-        memberFormRecord?.institution?.id,
-        Validators.required,
-      ],
-      groups: [null],
+      institution: [memberFormRecord?.institution?.id, Validators.required],
       title: [
         memberFormRecord?.title,
         Validators.maxLength(this.titleMaxLength),

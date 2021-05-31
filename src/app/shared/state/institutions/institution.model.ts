@@ -7,7 +7,6 @@ import {
 } from '../../common/models';
 
 export const emptyInstitutionFormRecord: Institution = {
-  __typename: 'Institution',
   id: null,
   name: null,
   location: null,

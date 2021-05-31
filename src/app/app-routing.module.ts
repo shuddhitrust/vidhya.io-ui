@@ -17,6 +17,8 @@ import { GroupProfileComponent } from './pages/profiles/group-profile/group-prof
 import { AnnouncementProfileComponent } from './pages/profiles/announcement-profile/announcement-profile.component';
 import { AddEditAnnouncementComponent } from './pages/forms/add-edit-announcement/add-edit-announcement.component';
 import { OwnProfileComponent } from './pages/profiles/own-user-profile/own-profile.component';
+import { AddEditCourseComponent } from './pages/forms/add-edit-course/add-edit-course.component';
+import { AddEditAssignmentComponent } from './pages/forms/add-edit-assignment/add-edit-assignment.component';
 
 const routes: Routes = [
   {
@@ -77,6 +79,19 @@ const routes: Routes = [
     canActivate: [AuthenticationGuard],
     pathMatch: 'full',
   },
+  {
+    path: uiroutes.COURSE_FORM_ROUTE,
+    component: AddEditCourseComponent,
+    canActivate: [AuthenticationGuard],
+    pathMatch: 'full',
+  },
+  {
+    path: uiroutes.ASSIGNMENT_FORM_ROUTE,
+    component: AddEditAssignmentComponent,
+    canActivate: [AuthenticationGuard],
+    pathMatch: 'full',
+  },
+
   {
     path: uiroutes.MEMBER_PROFILE_ROUTE,
     component: OwnProfileComponent,

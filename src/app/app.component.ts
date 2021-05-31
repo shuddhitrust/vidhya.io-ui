@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import Observable from 'zen-observable';
-import { MembershipStatus } from './shared/common/models';
 import { AuthenticationCheckAction } from './shared/state/auth/auth.actions';
 import { AuthStateModel } from './shared/state/auth/auth.model';
 import { AuthState } from './shared/state/auth/auth.state';

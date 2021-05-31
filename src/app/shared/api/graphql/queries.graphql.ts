@@ -153,3 +153,67 @@ export const ANNOUNCEMENT_QUERIES = {
     }
   `,
 };
+
+export const COURSE_QUERIES = {
+  GET_COURSE: gql`
+    query course($id: ID!) {
+      course(id: $id) {
+        id
+        title
+        instructor {
+          id
+          firstName
+          lastName
+        }
+        description
+        institutions {
+          id
+          name
+        }
+      }
+    }
+  `,
+  GET_COURSES: gql`
+    query courses($searchField: String, $limit: Int, $offset: Int) {
+      courses(searchField: $searchField, limit: $limit, offset: $offset) {
+        id
+        title
+        instructor {
+          id
+          firstName
+          lastName
+        }
+        description
+      }
+    }
+  `,
+};
+
+export const ASSIGNMENT_QUERIES = {
+  GET_ASSIGNMENT: gql`
+    query assignment($id: ID!) {
+      assignment(id: $id) {
+        id
+        title
+        description
+        course {
+          id
+          title
+        }
+      }
+    }
+  `,
+  GET_ASSIGNMENTS: gql`
+    query assignments($searchField: String, $limit: Int, $offset: Int) {
+      assignments(searchField: $searchField, limit: $limit, offset: $offset) {
+        id
+        title
+        description
+        course {
+          id
+          title
+        }
+      }
+    }
+  `,
+};

@@ -9,7 +9,6 @@ import {
 } from '../../common/models';
 
 export const emptyGroupFormRecord: Group = {
-  __typename: 'Group',
   id: null,
   name: null,
   description: null,

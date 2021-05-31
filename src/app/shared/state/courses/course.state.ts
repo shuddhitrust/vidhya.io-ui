@@ -1,88 +1,107 @@
 import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 import {
-  defaultMemberState,
-  emptyMemberFormRecord,
-  MemberStateModel,
-} from './member.model';
+  defaultCourseState,
+  emptyCourseFormRecord,
+  CourseFormCloseURL,
+  CourseStateModel,
+} from './course.model';
 
 import { Injectable } from '@angular/core';
 import {
-  CreateUpdateMemberAction,
-  DeleteMemberAction,
-  FetchMembersAction,
-  ForceRefetchMembersAction,
-  GetMemberAction,
-  ResetMemberFormAction,
-} from './member.actions';
-import { USER_QUERIES } from '../../api/graphql/queries.graphql';
+  CreateUpdateCourseAction,
+  DeleteCourseAction,
+  FetchCoursesAction,
+  ForceRefetchCoursesAction,
+  GetCourseAction,
+  ResetCourseFormAction,
+} from './course.actions';
+import { COURSE_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
-import { User, MatSelectOption, PaginationObject } from '../../common/models';
-import { USER_MUTATIONS } from '../../api/graphql/mutations.graphql';
+import { Course, MatSelectOption, PaginationObject } from '../../common/models';
+import { COURSE_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
   updatePaginationObject,
 } from '../../common/functions';
+import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
 
-@State<MemberStateModel>({
-  name: 'memberState',
-  defaults: defaultMemberState,
+@State<CourseStateModel>({
+  name: 'courseState',
+  defaults: defaultCourseState,
 })
 @Injectable()
-export class MemberState {
-  constructor(private apollo: Apollo, private store: Store) {}
+export class CourseState {
+  constructor(
+    private apollo: Apollo,
+    private store: Store,
+    private router: Router
+  ) {}
 
   @Selector()
-  static listMembers(state: MemberStateModel): User[] {
-    return state.members;
+  static listCourses(state: CourseStateModel): Course[] {
+    return state.courses;
   }
 
   @Selector()
-  static isFetching(state: MemberStateModel): boolean {
+  static isFetching(state: CourseStateModel): boolean {
     return state.isFetching;
   }
 
   @Selector()
-  static paginationObject(state: MemberStateModel): PaginationObject {
+  static paginationObject(state: CourseStateModel): PaginationObject {
     return state.paginationObject;
+  }
+  @Selector()
+  static listCourseOptions(state: CourseStateModel): MatSelectOption[] {
+    const options: MatSelectOption[] = state.courses.map((i) => {
+      const option: MatSelectOption = {
+        value: i.id,
+        label: i.title,
+      };
+      return option;
+    });
+    console.log('options', options);
+    return options;
   }
 
   @Selector()
-  static errorFetching(state: MemberStateModel): boolean {
+  static errorFetching(state: CourseStateModel): boolean {
     return state.errorFetching;
   }
 
   @Selector()
-  static formSubmitting(state: MemberStateModel): boolean {
+  static formSubmitting(state: CourseStateModel): boolean {
     return state.formSubmitting;
   }
 
   @Selector()
-  static errorSubmitting(state: MemberStateModel): boolean {
+  static errorSubmitting(state: CourseStateModel): boolean {
     return state.errorSubmitting;
   }
 
   @Selector()
-  static getMemberFormRecord(state: MemberStateModel): User {
-    return state.memberFormRecord;
+  static getCourseFormRecord(state: CourseStateModel): Course {
+    return state.courseFormRecord;
   }
 
-  @Action(ForceRefetchMembersAction)
-  forceRefetchMembers({ patchState }: StateContext<MemberStateModel>) {
+  @Action(ForceRefetchCoursesAction)
+  forceRefetchCourses({ patchState }: StateContext<CourseStateModel>) {
     patchState({ fetchPolicy: 'network-only' });
     this.store.dispatch(
-      new FetchMembersAction({ searchParams: defaultSearchParams })
+      new FetchCoursesAction({ searchParams: defaultSearchParams })
     );
   }
 
-  @Action(FetchMembersAction)
-  fetchMembers(
-    { getState, patchState }: StateContext<MemberStateModel>,
-    { payload }: FetchMembersAction
+  @Action(FetchCoursesAction)
+  fetchCourses(
+    { getState, patchState }: StateContext<CourseStateModel>,
+    { payload }: FetchCoursesAction
   ) {
+    console.log('Fetching courses from course state');
     patchState({ isFetching: true });
-    const { searchParams } = payload;
+    let { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, paginationObject } = state;
     const { searchQuery, newPageSize, newPageNumber } = searchParams;
@@ -91,63 +110,61 @@ export class MemberState {
       newPageNumber,
       newPageSize,
     });
-    console.log('new pagination object after the update method => ', {
-      newPaginationObject,
-    });
     const variables = {
       searchField: searchQuery,
       limit: newPaginationObject.pageSize,
       offset: newPaginationObject.offset,
     };
-    console.log('variables for members fetch ', { variables });
+    console.log('variables for courses fetch ', { variables });
     this.apollo
       .watchQuery({
-        query: USER_QUERIES.GET_USERS,
+        query: COURSE_QUERIES.GET_COURSES,
         variables,
         fetchPolicy,
       })
       .valueChanges.subscribe(({ data }: any) => {
-        const response = data.users;
+        console.log('resposne to get courses query ', { data });
+        const response = data.courses;
         const totalCount = response[0]?.totalCount
           ? response[0]?.totalCount
           : 0;
         newPaginationObject.totalCount = totalCount;
-        console.log('from after getting members', {
+        console.log('from after getting courses', {
           totalCount,
           response,
           newPaginationObject,
         });
         patchState({
-          members: response,
+          courses: response,
           paginationObject: newPaginationObject,
           isFetching: false,
         });
       });
   }
 
-  @Action(GetMemberAction)
-  getMember(
-    { patchState }: StateContext<MemberStateModel>,
-    { payload }: GetMemberAction
+  @Action(GetCourseAction)
+  getCourse(
+    { patchState }: StateContext<CourseStateModel>,
+    { payload }: GetCourseAction
   ) {
     const { id } = payload;
     patchState({ isFetching: true });
     this.apollo
       .watchQuery({
-        query: USER_QUERIES.GET_USER,
+        query: COURSE_QUERIES.GET_COURSE,
         variables: { id },
         fetchPolicy: 'network-only',
       })
       .valueChanges.subscribe(({ data }: any) => {
-        const response = data.member;
-        patchState({ memberFormRecord: response, isFetching: false });
+        const response = data.course;
+        patchState({ courseFormRecord: response, isFetching: false });
       });
   }
 
-  @Action(CreateUpdateMemberAction)
-  createUpdateMember(
-    { getState, patchState }: StateContext<MemberStateModel>,
-    { payload }: CreateUpdateMemberAction
+  @Action(CreateUpdateCourseAction)
+  createUpdateCourse(
+    { getState, patchState }: StateContext<CourseStateModel>,
+    { payload }: CreateUpdateCourseAction
   ) {
     const state = getState();
     const { form, formDirective } = payload;
@@ -156,7 +173,7 @@ export class MemberState {
       formSubmitting = true;
       patchState({ formSubmitting });
       const values = form.value;
-      console.log('Member Form values', values);
+      console.log('Course Form values', values);
       const updateForm = values.id == null ? false : true;
       const { id, ...sanitizedValues } = values;
       const variables = updateForm
@@ -169,19 +186,19 @@ export class MemberState {
       this.apollo
         .mutate({
           mutation: updateForm
-            ? USER_MUTATIONS.UPDATE_USER
-            : USER_MUTATIONS.CREATE_USER,
+            ? COURSE_MUTATIONS.UPDATE_COURSE
+            : COURSE_MUTATIONS.CREATE_COURSE,
           variables,
         })
         .subscribe(
           ({ data }: any) => {
-            const response = updateForm ? data.updateMember : data.createMember;
+            const response = updateForm ? data.updateCourse : data.createCourse;
             patchState({ formSubmitting: false });
-            console.log('update member ', { response });
+            console.log('update course ', { response });
             if (response.ok) {
               this.store.dispatch(
                 new ShowNotificationAction({
-                  message: `Member ${
+                  message: `Course ${
                     updateForm ? 'updated' : 'created'
                   } successfully!`,
                   action: 'success',
@@ -189,8 +206,9 @@ export class MemberState {
               );
               form.reset();
               formDirective.resetForm();
+              this.router.navigateByUrl(CourseFormCloseURL);
               patchState({
-                memberFormRecord: emptyMemberFormRecord,
+                courseFormRecord: emptyCourseFormRecord,
                 fetchPolicy: 'network-only',
               });
             } else {
@@ -201,7 +219,7 @@ export class MemberState {
                 })
               );
             }
-            console.log('From createUpdateMember', { response });
+            console.log('From createUpdateCourse', { response });
           },
           (error) => {
             console.log('Some error happened ', error);
@@ -225,30 +243,31 @@ export class MemberState {
     }
   }
 
-  @Action(DeleteMemberAction)
-  deleteMember(
-    {}: StateContext<MemberStateModel>,
-    { payload }: DeleteMemberAction
+  @Action(DeleteCourseAction)
+  deleteCourse(
+    {}: StateContext<CourseStateModel>,
+    { payload }: DeleteCourseAction
   ) {
     let { id } = payload;
     this.apollo
       .mutate({
-        mutation: USER_MUTATIONS.DELETE_USER,
+        mutation: COURSE_MUTATIONS.DELETE_COURSE,
         variables: { id },
       })
       .subscribe(
         ({ data }: any) => {
-          const response = data.deleteMember;
-          console.log('from delete member ', { data });
+          const response = data.deleteCourse;
+          console.log('from delete course ', { data });
           if (response.ok) {
+            this.router.navigateByUrl(CourseFormCloseURL);
             this.store.dispatch(
               new ShowNotificationAction({
-                message: 'Member deleted successfully!',
+                message: 'Course deleted successfully!',
                 action: 'success',
               })
             );
             this.store.dispatch(
-              new ForceRefetchMembersAction({
+              new ForceRefetchCoursesAction({
                 searchParams: defaultSearchParams,
               })
             );
@@ -272,10 +291,10 @@ export class MemberState {
       );
   }
 
-  @Action(ResetMemberFormAction)
-  resetMemberForm({ patchState }: StateContext<MemberStateModel>) {
+  @Action(ResetCourseFormAction)
+  resetCourseForm({ patchState }: StateContext<CourseStateModel>) {
     patchState({
-      memberFormRecord: emptyMemberFormRecord,
+      courseFormRecord: emptyCourseFormRecord,
       formSubmitting: false,
     });
   }

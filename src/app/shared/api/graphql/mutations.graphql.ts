@@ -135,6 +135,78 @@ export const ANNOUNCEMENT_MUTATIONS = {
   `,
 };
 
+export const COURSE_MUTATIONS = {
+  CREATE_COURSE: gql`
+    mutation createCourse($input: CourseInput!) {
+      createCourse(input: $input) {
+        ok
+        course {
+          id
+          title
+        }
+      }
+    }
+  `,
+  UPDATE_COURSE: gql`
+    mutation updateCourse($id: ID!, $input: CourseInput!) {
+      updateCourse(id: $id, input: $input) {
+        ok
+        course {
+          id
+          title
+        }
+      }
+    }
+  `,
+  DELETE_COURSE: gql`
+    mutation deleteCourse($id: ID!) {
+      deleteCourse(id: $id) {
+        ok
+        course {
+          id
+          title
+        }
+      }
+    }
+  `,
+};
+
+export const ASSIGNMENT_MUTATIONS = {
+  CREATE_ASSIGNMENT: gql`
+    mutation createAssignment($input: AssignmentInput!) {
+      createAssignment(input: $input) {
+        ok
+        assignment {
+          id
+          title
+        }
+      }
+    }
+  `,
+  UPDATE_ASSIGNMENT: gql`
+    mutation updateAssignment($id: ID!, $input: AssignmentInput!) {
+      updateAssignment(id: $id, input: $input) {
+        ok
+        assignment {
+          id
+          title
+        }
+      }
+    }
+  `,
+  DELETE_ASSIGNMENT: gql`
+    mutation deleteAssignment($id: ID!) {
+      deleteAssignment(id: $id) {
+        ok
+        assignment {
+          id
+          title
+        }
+      }
+    }
+  `,
+};
+
 export const AUTH_MUTATIONS = {
   REGISTER: gql`
     mutation register(

@@ -1,1 +1,28 @@
-<p>assignment-dashboard works!</p>
+<div class="feed-header-block">
+  <h2>Assignments</h2>
+  <button
+    (click)="createAssignment()"
+    class="floating-header-button-top"
+    mat-raised-button
+    color="primary"
+  >
+    Create Assignment
+  </button>
+</div>
+<span *ngIf="!(isFetching$ | async); else loading">
+  <span *ngIf="(assignments$ | async).length > 0; else feedEmpty">
+    <div *ngFor="let assignment of assignments$ | async">
+      <span class="feed-card" (click)="openAssignment(assignment)">
+        {{ assignment.title }}
+      </span>
+    </div>
+  </span>
+</span>
+
+<ng-template #feedEmpty>
+  <p class="center-title">There are no assignments for you!</p>
+</ng-template>
+
+<ng-template #loading>
+  <app-simple-loading-spinner></app-simple-loading-spinner>
+</ng-template>

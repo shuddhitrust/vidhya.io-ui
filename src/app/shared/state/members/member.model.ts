@@ -24,21 +24,13 @@ export interface MemberInput {
 }
 
 export const emptyMemberFormRecord: User = {
-  __typename: 'Member',
   id: null,
   nickName: null,
-  type: null,
+  email: null,
+  avatar: null,
   title: null,
   bio: null,
-  // membershipStatus: MembershipStatus.PENDING_REGISTRATION,
-  member: null,
-  groups: null,
-  // instructor: null,
-  // assistant: null,
-  // learner: null,
-  lastLogin: null,
-  createdAt: null,
-  updatedAt: null,
+  institution: null,
 };
 
 export interface MemberStateModel {

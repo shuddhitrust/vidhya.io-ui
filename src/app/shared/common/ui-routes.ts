@@ -10,4 +10,8 @@ export const uiroutes = {
   GROUP_PROFILE_ROUTE: 'group',
   ANNOUNCEMENT_FORM_ROUTE: 'announcement-form',
   ANNOUNCEMENT_PROFILE_ROUTE: 'announcement',
+  COURSE_FORM_ROUTE: 'course-form',
+  COURSE_PAGE_ROUTE: 'course',
+  ASSIGNMENT_FORM_ROUTE: 'assignment-form',
+  ASSIGNMENT_PAGE_ROUTE: 'assignment',
 };

@@ -64,7 +64,7 @@ export class AnnouncementState {
     const options: MatSelectOption[] = state.announcements.map((i) => {
       const option: MatSelectOption = {
         value: i.id,
-        label: i.name,
+        label: i.title,
       };
       return option;
     });

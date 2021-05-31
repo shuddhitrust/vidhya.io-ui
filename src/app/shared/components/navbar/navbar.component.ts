@@ -3,7 +3,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { Store, Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { LoginModalComponent } from 'src/app/pages/modals/login/login-modal.component';
-import { MembershipStatus } from '../../common/models';
 import { uiroutes } from '../../common/ui-routes';
 import { LoginAction, LogoutAction } from '../../state/auth/auth.actions';
 import { AuthStateModel } from '../../state/auth/auth.model';

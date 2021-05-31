@@ -72,7 +72,6 @@ import {
 import { AnnouncementState } from './shared/state/announcements/announcement.state';
 import { AwaitingModerationTableComponent } from './pages/tables/awaiting-moderation-table/awaiting-moderation-table.component';
 import { OptionsState } from './shared/state/options/options.state';
-import { GroupMemberState } from './shared/state/groupMembers/group-members.state';
 import { LoginModalComponent } from './pages/modals/login/login-modal.component';
 import { HotToastModule } from '@ngneat/hot-toast';
 import { PaginatorComponent } from './shared/abstract/master-grid/components/paginator/paginator.component';
@@ -84,6 +83,10 @@ registerLocaleData(en);
 
 /** config ng-zorro-antd i18n **/
 import { NZ_I18N, en_US } from 'ng-zorro-antd/i18n';
+import { CourseState } from './shared/state/courses/course.state';
+import { AssignmentState } from './shared/state/assignments/assignment.state';
+import { AddEditCourseComponent } from './pages/forms/add-edit-course/add-edit-course.component';
+import { AddEditAssignmentComponent } from './pages/forms/add-edit-assignment/add-edit-assignment.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -123,6 +126,8 @@ import { NZ_I18N, en_US } from 'ng-zorro-antd/i18n';
     GroupDeleteConfirmationDialog,
     MemberDeleteConfirmationDialog,
     MemberProfileComponent,
+    AddEditCourseComponent,
+    AddEditAssignmentComponent,
     OwnProfileComponent,
     GroupMemberReviewDialog,
     LoginModalComponent,
@@ -150,8 +155,9 @@ import { NZ_I18N, en_US } from 'ng-zorro-antd/i18n';
           InstitutionState,
           MemberState,
           GroupState,
-          GroupMemberState,
           AnnouncementState,
+          CourseState,
+          AssignmentState,
           OptionsState,
         ],
         {
