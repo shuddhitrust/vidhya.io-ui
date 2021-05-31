@@ -19,6 +19,9 @@ import { emptyCourseFormRecord } from 'src/app/shared/state/courses/course.model
 import { Course, MatSelectOption } from 'src/app/shared/common/models';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { GroupState } from 'src/app/shared/state/groups/group.state';
+import { InstitutionState } from 'src/app/shared/state/institutions/institution.state';
+import { FetchInstitutionsAction } from 'src/app/shared/state/institutions/institution.actions';
+import { defaultSearchParams } from 'src/app/shared/common/constants';
 @Component({
   selector: 'app-add-edit-course',
   templateUrl: './add-edit-course.component.html',
@@ -32,8 +35,8 @@ export class AddEditCourseComponent implements OnInit {
   params: object = {};
   @Select(CourseState.getCourseFormRecord)
   courseFormRecord$: Observable<Course>;
-  @Select(GroupState.listGroupOptions)
-  groupOptions$: Observable<MatSelectOption[]>;
+  @Select(InstitutionState.listInstitutionOptions)
+  institutionOptions$: Observable<MatSelectOption[]>;
   @Select(CourseState.formSubmitting)
   formSubmitting$: Observable<boolean>;
   @Select(AuthState.getCurrentMemberInstitutionId)
@@ -51,6 +54,9 @@ export class AddEditCourseComponent implements OnInit {
     private route: ActivatedRoute,
     private fb: FormBuilder
   ) {
+    this.store.dispatch(
+      new FetchInstitutionsAction({ searchParams: defaultSearchParams })
+    );
     this.courseForm = this.setupCourseFormGroup();
     this.courseFormRecord$.subscribe((val) => {
       this.courseFormRecord = val;

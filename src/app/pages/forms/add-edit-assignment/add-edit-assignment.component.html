@@ -29,39 +29,24 @@
     </mat-form-field>
 
     <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
-      <mat-label>Message</mat-label>
+      <mat-label>Instructions</mat-label>
       <input
         matInput
-        formControlName="message"
+        formControlName="instructions"
         required
-        placeholder="Assignment message"
+        placeholder="Assignment instructions"
       />
       <small
         class="validation-error"
         *ngIf="
-          assignmentForm.get('message').hasError('required') &&
+          assignmentForm.get('instructions').hasError('required') &&
           formDirective.submitted
         "
       >
-        Message is required
+        Instructions is required
       </small>
     </mat-form-field>
 
-    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
-      <mat-label>Groups</mat-label>
-      <mat-select
-        multiple
-        formControlName="groups"
-        placeholder="The groups to make the assignment to"
-      >
-        <mat-option
-          *ngFor="let group of groupOptions$ | async"
-          [value]="group.value"
-        >
-          {{ group.label }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
     <button
       type="submit"
       class="floating-button-bottom"

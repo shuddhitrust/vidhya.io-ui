@@ -29,36 +29,36 @@
     </mat-form-field>
 
     <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
-      <mat-label>Message</mat-label>
+      <mat-label>Description</mat-label>
       <input
         matInput
-        formControlName="message"
+        formControlName="description"
         required
-        placeholder="Course message"
+        placeholder="Course description"
       />
       <small
         class="validation-error"
         *ngIf="
-          courseForm.get('message').hasError('required') &&
+          courseForm.get('description').hasError('required') &&
           formDirective.submitted
         "
       >
-        Message is required
+        Description is required
       </small>
     </mat-form-field>
 
     <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
-      <mat-label>Groups</mat-label>
+      <mat-label>Institutions</mat-label>
       <mat-select
         multiple
-        formControlName="groups"
-        placeholder="The groups to make the course to"
+        formControlName="institutions"
+        placeholder="The institutions eligible for this course"
       >
         <mat-option
-          *ngFor="let group of groupOptions$ | async"
-          [value]="group.value"
+          *ngFor="let institution of institutionOptions$ | async"
+          [value]="institution.value"
         >
-          {{ group.label }}
+          {{ institution.label }}
         </mat-option>
       </mat-select>
     </mat-form-field>

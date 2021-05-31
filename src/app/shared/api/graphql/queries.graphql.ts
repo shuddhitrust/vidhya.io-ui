@@ -195,7 +195,7 @@ export const ASSIGNMENT_QUERIES = {
       assignment(id: $id) {
         id
         title
-        description
+        instructions
         course {
           id
           title
@@ -208,7 +208,7 @@ export const ASSIGNMENT_QUERIES = {
       assignments(searchField: $searchField, limit: $limit, offset: $offset) {
         id
         title
-        description
+        instructions
         course {
           id
           title
