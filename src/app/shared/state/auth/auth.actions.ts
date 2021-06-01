@@ -8,6 +8,14 @@ export class VerifyTokenAction {
   static readonly type = '[AUTH] Verify Token';
   constructor() {}
 }
+
+export class VerifyInvitecodeAction {
+  static readonly type = '[AUTH] Verify Invitecode';
+
+  constructor(
+    public payload: { form: FormGroup; formDirective: FormGroupDirective }
+  ) {}
+}
 export class RegisterAction {
   static readonly type = '[AUTH] Register';
 
@@ -16,20 +24,27 @@ export class RegisterAction {
   ) {}
 }
 
+export class AddInvitecodeAction {
+  static readonly type = '[AUTH] ADD INVITECODE';
+
+  constructor(public payload: { invitecode: string }) {}
+}
 export class VerifyAccountAction {
   static readonly type = '[AUTH] Verify Account';
 
-  constructor(
-    public payload: { form: FormGroup; formDirective: FormGroupDirective }
-  ) {}
+  constructor(public payload: { token: string }) {}
+}
+
+export class GetInstitutionByInvitecodeAction {
+  static readonly type = '[AUTH] GET INSTITUTION BY INVITECODE';
+
+  constructor() {}
 }
 
 export class ResendActivationEmailAction {
   static readonly type = '[AUTH] Resend Activation Email';
 
-  constructor(
-    public payload: { form: FormGroup; formDirective: FormGroupDirective }
-  ) {}
+  constructor() {}
 }
 export class LoginAction {
   static readonly type = '[AUTH] Login';

@@ -37,6 +37,7 @@ export class AuthenticationGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean> | Promise<boolean> | boolean {
+    // return this.isFullyAuthenticated;
     return true;
     // return Auth.currentAuthenticatedUser()
     //   .then(() => {
@@ -68,24 +69,26 @@ export class RegistrationFormAuthGuard implements CanActivate {
   @Select(AuthState)
   authState$: Observable<AuthStateModel>;
   authState: AuthStateModel;
+  isLoggedIn: boolean;
+  isVerified: boolean;
   isFullyAuthenticated: boolean;
   pendingRegistration: boolean;
   activeMember: boolean;
+  allow: boolean = false;
   constructor(private _router: Router, private store: Store) {
     this.authState$.subscribe((val) => {
       this.authState = val;
-      this.isFullyAuthenticated = this.authState.isFullyAuthenticated;
-      // this.pendingRegistration =
-      //   this.authState.membershipStatus ==
-      //   MembershipStatus.PENDING_REGISTRATION;
-      // this.activeMember =
-      //   this.authState.membershipStatus == MembershipStatus.ACTIVE;
+      this.isLoggedIn = this.authState.isLoggedIn;
+      this.isVerified = this.authState.currentMember?.verified;
+      this.allow = this.isLoggedIn && this.isVerified;
+      console.log('from RegistrationFormAuthGuard', { allow: this.allow });
     });
   }
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean> | Promise<boolean> | boolean {
+    // return this.allow;
     return true;
     // return Auth.currentAuthenticatedUser()
     //   .then(() => {

@@ -21,7 +21,11 @@ import {
 } from 'src/app/shared/state/members/member.model';
 import { InstitutionState } from 'src/app/shared/state/institutions/institution.state';
 import { FetchInstitutionsAction } from 'src/app/shared/state/institutions/institution.actions';
-import { MatSelectOption, User } from 'src/app/shared/common/models';
+import {
+  CurrentMember,
+  MatSelectOption,
+  User,
+} from 'src/app/shared/common/models';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { AuthStateModel } from 'src/app/shared/state/auth/auth.model';
 import { MemberDeleteConfirmationDialog } from '../../modals/member-profile/member-profile.component';
@@ -29,6 +33,10 @@ import { OptionsState } from 'src/app/shared/state/options/options.state';
 import { OptionsStateModel } from 'src/app/shared/state/options/options.model';
 import { FetchGroupOptionsByInstitution } from 'src/app/shared/state/options/options.actions';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
+import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
+import { UploadService } from 'src/app/shared/api/upload.service';
+import { environment } from 'src/environments/environment';
+import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 
 @Component({
   selector: 'app-add-edit-member',
@@ -66,6 +74,8 @@ export class AddEditMemberComponent implements OnInit {
   optionsState$: Observable<OptionsStateModel>;
   optionsState: OptionsStateModel;
   groupInstitutionId: string;
+  firstTimeSetup: boolean;
+  currentMember: User;
 
   // Static Options List
   membershipStatusOptions: MatSelectOption[] = membershipStatusOptions;
@@ -74,32 +84,27 @@ export class AddEditMemberComponent implements OnInit {
   titleMaxLength = 60;
   bioMaxLength = 150;
   updateForm: boolean = false;
+  avatarFile = null;
+  previewPath = null;
 
   constructor(
     private location: Location,
     private store: Store,
     private route: ActivatedRoute,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private uploadService: UploadService
   ) {
-    this.institutionOptions$.subscribe((options) => {
-      this.institutionOptions = options;
-    });
-    this.isFetchingInstitutions$.subscribe((val) => {
-      this.isFetchingInstitutions = val;
-    });
-    this.optionsState$.subscribe((val: OptionsStateModel) => {
-      this.optionsState = val;
-      this.isFetchingGroups = val.isFetchingGroupsByInstitution;
-      this.groupInstitutionId = val.groupInstitutionId;
-    });
-    this.groupOptions$.subscribe((val) => {
-      this.groupOptions = val;
-    });
+    console.log('from the member form component!');
     this.authState$.subscribe((val) => {
       console.log('is fully authenticated from member form ', val);
       this.authState = val;
       this.isFullyAuthenticated = this.authState.isFullyAuthenticated;
+      this.currentMember = this.authState.currentMember;
+      this.firstTimeSetup = this.authState.firstTimeSetup;
+      if (this.memberForm) {
+        this.populateInstitution();
+      }
       // this.membershipStatus = this.authState.membershipStatus;
       // this.createForm =
       //   this.membershipStatus == MembershipStatus.PENDING_REGISTRATION; // The form is set to createForm when user status is pending_registration
@@ -108,36 +113,42 @@ export class AddEditMemberComponent implements OnInit {
         authState: this.authState,
       });
     });
+    if (this.firstTimeSetup) {
+      const currentUser: User = {
+        id: this.currentMember.id,
+        username: this.currentMember.username,
+        firstName: this.currentMember.firstName,
+        lastName: this.currentMember.lastName,
+        email: this.currentMember.email,
+        avatar: this.currentMember.avatar,
+        institution: {
+          id: this.currentMember.institution?.id,
+          name: this.currentMember.institution?.name,
+        },
+      };
+      this.memberForm = this.setupMemberFormGroup(currentUser);
+      this.populateInstitution();
+    } else {
+      this.memberForm = this.setupMemberFormGroup();
+      this.institutionOptions$.subscribe((options) => {
+        this.institutionOptions = options;
+      });
+      this.isFetchingInstitutions$.subscribe((val) => {
+        this.isFetchingInstitutions = val;
+      });
+      this.optionsState$.subscribe((val: OptionsStateModel) => {
+        this.optionsState = val;
+        this.isFetchingGroups = val.isFetchingGroupsByInstitution;
+        this.groupInstitutionId = val.groupInstitutionId;
+      });
+      this.groupOptions$.subscribe((val) => {
+        this.groupOptions = val;
+      });
+    }
     this.checkIfFormContainsRecord();
     this.store.dispatch(
       new FetchInstitutionsAction({ searchParams: defaultSearchParams })
     );
-    this.memberForm = this.setupMemberFormGroup();
-    // this.memberFormRecord$.subscribe((val) => {
-    //   this.memberFormRecord = val;
-    //   this.memberForm = this.setupMemberFormGroup(this.memberFormRecord);
-    //   this.memberForm.valueChanges.subscribe((vals) => {
-    //     if (vals.memberInstitutionId != this.groupInstitutionId) {
-    //       this.store.dispatch(
-    //         new FetchGroupOptionsByInstitution({
-    //           groupInstitutionId: vals?.memberInstitutionId,
-    //           filter: { type: { eq: GroupType.CLASS } },
-    //         })
-    //       );
-    //     }
-    //   });
-    //   console.log('this.memberForm', {
-    //     memberFormRecord: this.memberFormRecord,
-    //     form: this.memberForm,
-    //   });
-    //   this.checkIfFormContainsRecord();
-    //   console.log('enableSubmitButton ', {
-    //     updateForm: this.updateForm,
-    //   });
-    //   // if (!this.updateForm) {
-    //   //   this.goHome();
-    //   // }
-    // });
   }
   checkIfFormContainsRecord() {
     this.updateForm = this.memberFormRecord.id != null;
@@ -145,10 +156,14 @@ export class AddEditMemberComponent implements OnInit {
   setupMemberFormGroup = (
     memberFormRecord: User = emptyMemberFormRecord
   ): FormGroup => {
-    return this.fb.group({
+    this.avatarFile = null;
+    this.previewPath = null;
+    const formGroup = this.fb.group({
       id: [memberFormRecord?.id],
-      nickName: [memberFormRecord?.nickName, Validators.required],
-      // email: [memberFormRecord.email, [Validators.required, Validators.email]],
+      firstName: [memberFormRecord?.firstName, [Validators.required]],
+      lastName: [memberFormRecord?.lastName, [Validators.required]],
+      avatar: [memberFormRecord?.avatar, [Validators.required]],
+      email: [memberFormRecord.email, [Validators.required, Validators.email]],
       institution: [memberFormRecord?.institution?.id, Validators.required],
       title: [
         memberFormRecord?.title,
@@ -156,6 +171,8 @@ export class AddEditMemberComponent implements OnInit {
       ],
       bio: [memberFormRecord?.bio, Validators.maxLength(this.bioMaxLength)],
     });
+    this.previewPath = formGroup.get('avatar').value;
+    return formGroup;
   };
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
@@ -167,20 +184,96 @@ export class AddEditMemberComponent implements OnInit {
     });
   }
 
+  populateInstitution() {
+    this.memberForm
+      .get('institution')
+      .setValue(this.currentMember?.institution?.id);
+    this.institutionOptions = [
+      {
+        value: this.currentMember.institution?.id,
+        label: this.currentMember.institution?.name,
+      },
+    ];
+    console.log(
+      'institution options => ',
+      this.institutionOptions,
+      'this.memberform.value',
+      this.memberForm.value
+    );
+  }
+
   goHome() {
     this.router.navigate(['/']);
+  }
+
+  onAvatarChange(event) {
+    if (event.target.files.length > 0) {
+      this.avatarFile = event.target.files[0];
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.previewPath = reader.result as string;
+      };
+      reader.readAsDataURL(this.avatarFile);
+    } else {
+      this.avatarFile = null;
+      this.previewPath = this.memberForm.get('avatar').value;
+    }
   }
 
   goBack() {
     this.location.back();
   }
 
+  imagePreview(e) {
+    const file = (e.target as HTMLInputElement).files[0];
+  }
+
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {
-    this.store.dispatch(
-      new CreateUpdateMemberAction({
-        form,
-        formDirective,
-      })
-    );
+    console.log('this.avatarFile on submit', this.avatarFile);
+    if (this.avatarFile) {
+      this.store.dispatch(
+        new ToggleLoadingScreen({
+          showLoadingScreen: true,
+          message: 'Uploading file',
+        })
+      );
+      const formData = new FormData();
+      formData.append('file', this.avatarFile);
+      this.uploadService.upload(formData).subscribe(
+        (res) => {
+          const url = `${environment.api_endpoint}${res.file}`;
+          form.get('avatar').setValue(url);
+          console.log('after setting the new url after upload ', {
+            formValue: form.value,
+          });
+          this.store.dispatch(
+            new CreateUpdateMemberAction({ form, formDirective })
+          );
+          this.store.dispatch(
+            new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+          );
+        },
+        (err) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: 'Unable to upload file. Reset and try again',
+              action: 'error',
+            })
+          );
+          return;
+        }
+      );
+    } else {
+      this.store.dispatch(
+        new CreateUpdateMemberAction({ form, formDirective })
+      );
+    }
+    // this.store.dispatch(
+    //   new CreateUpdateMemberAction({
+    //     form,
+    //     formDirective,
+    //   })
+    // );
   }
 }

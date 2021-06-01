@@ -1,19 +1,25 @@
 import { gql } from 'apollo-angular';
 
 export const USER_MUTATIONS = {
-  CREATE_USER: gql`
-    mutation createUser($input: UserInput!) {
-      createUser(input: $input) {
-        ok
-        user
-      }
-    }
-  `,
+  // CREATE_USER: gql`
+  //   mutation createUser($input: UserInput!) {
+  //     createUser(input: $input) {
+  //       ok
+  //       user {
+  //         id
+  //         firstName
+  //       }
+  //     }
+  //   }
+  // `,
   UPDATE_USER: gql`
     mutation updateUser($input: UserInput!) {
       updateUser(input: $input) {
         ok
-        user
+        user {
+          id
+          firstName
+        }
       }
     }
   `,
@@ -21,7 +27,10 @@ export const USER_MUTATIONS = {
     mutation deleteUser($id: ID!) {
       deleteUser(id: $id) {
         ok
-        user
+        user {
+          id
+          firstName
+        }
       }
     }
   `,
@@ -208,6 +217,20 @@ export const ASSIGNMENT_MUTATIONS = {
 };
 
 export const AUTH_MUTATIONS = {
+  VERIFY_INVITECODE: gql`
+    mutation verifyInvitecode($invitecode: String!) {
+      verifyInvitecode(invitecode: $invitecode) {
+        ok
+      }
+    }
+  `,
+  ADD_INVITECODE: gql`
+    mutation addInvitecode($invitecode: String!) {
+      addInvitecode(invitecode: $invitecode) {
+        ok
+      }
+    }
+  `,
   REGISTER: gql`
     mutation register(
       $username: String!
@@ -253,13 +276,14 @@ export const AUTH_MUTATIONS = {
         refreshToken
         user {
           username
-          nickName
+          firstName
           email
           institution {
             id
             name
           }
           lastLogin
+          verified
         }
       }
     }

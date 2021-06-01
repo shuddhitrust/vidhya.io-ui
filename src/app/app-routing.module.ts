@@ -98,6 +98,10 @@ const routes: Routes = [
     canActivate: [AuthenticationGuard],
     pathMatch: 'full',
   },
+  {
+    path: uiroutes.ACTIVATE_ACCOUNT,
+    component: HomeComponent,
+  },
   { path: '', component: HomeComponent, pathMatch: 'full' },
   { path: '**', redirectTo: '/', pathMatch: 'full' },
 ];

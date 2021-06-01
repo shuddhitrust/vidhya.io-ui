@@ -50,14 +50,36 @@ export const startingPaginationObject: PaginationObject = {
   offset: 0,
 };
 
-export type User = {
+export type CurrentMember = {
   id: number;
-  nickName: string;
+  username: string;
+  firstName: string;
+  lastName: string;
   email: string;
   avatar: string;
-  institution: Institution;
-  title: string;
-  bio: string;
+  invitecode?: string;
+  institution?: { id: number; name: string };
+  verified: boolean;
+  membershipStatus: string;
+};
+
+export const MembershipStatus = {
+  PENDING: 'PE',
+  APPROVED: 'AP',
+  SUSPENDED: 'SU',
+};
+
+export type User = {
+  id: number;
+  username?: string;
+  firstName: string;
+  lastName: string;
+  email?: string;
+  avatar?: string;
+  institution?: any;
+  invitecode?: string;
+  title?: string;
+  bio?: string;
 };
 
 export type Announcement = {
@@ -90,13 +112,13 @@ export const GroupType = {
 export type Institution = {
   id: number;
   name: string;
-  location: string;
-  city: string;
-  website: string;
-  phone: string;
-  logo: string;
-  bio: string;
-  invitecode: string;
+  location?: string;
+  city?: string;
+  website?: string;
+  phone?: string;
+  logo?: string;
+  bio?: string;
+  invitecode?: string;
 };
 
 export type Course = {

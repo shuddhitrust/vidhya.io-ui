@@ -87,6 +87,7 @@ import { CourseState } from './shared/state/courses/course.state';
 import { AssignmentState } from './shared/state/assignments/assignment.state';
 import { AddEditCourseComponent } from './pages/forms/add-edit-course/add-edit-course.component';
 import { AddEditAssignmentComponent } from './pages/forms/add-edit-assignment/add-edit-assignment.component';
+
 @NgModule({
   declarations: [
     AppComponent,

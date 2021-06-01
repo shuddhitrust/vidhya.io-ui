@@ -1,3 +1,5 @@
+import { CurrentMember, User } from '../../common/models';
+
 export interface AuthStateModel {
   token: string;
   expiresAt: number;
@@ -6,10 +8,13 @@ export interface AuthStateModel {
   isLoggedIn: boolean;
   lastLogin: string;
   isFullyAuthenticated: boolean;
-  userId: number;
-  currentMemberInstitutionId: number;
-  username: string;
-  nickName: string;
+  currentMember: CurrentMember;
+  firstTimeSetup: boolean;
+  // userId: number;
+  // currentMemberInstitutionId: number;
+  // username: string;
+  // firstName: string;
+  // lastName: string;
 }
 
 export const defaultAuthState: AuthStateModel = {
@@ -20,8 +25,11 @@ export const defaultAuthState: AuthStateModel = {
   isLoggedIn: false,
   lastLogin: null,
   isFullyAuthenticated: false,
-  userId: null,
-  currentMemberInstitutionId: null,
-  username: null,
-  nickName: null,
+  currentMember: null,
+  firstTimeSetup: false,
+  // userId: null,
+  // currentMemberInstitutionId: null,
+  // username: null,
+  // firstName: null,
+  // lastName: null,
 };

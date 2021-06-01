@@ -4,14 +4,28 @@ export const AUTH_QUERIES = {
   ME: gql`
     query me {
       me {
+        id
+        verified
         username
-        nickName
+        firstName
+        lastName
+        membershipStatus
+        avatar
+        invitecode
         email
         institution {
           id
           name
         }
         lastLogin
+      }
+    }
+  `,
+  GET_INSTITUTION_BY_INVITECODE: gql`
+    query institutionByInvitecode($invitecode: String!) {
+      institutionByInvitecode(invitecode: $invitecode) {
+        id
+        name
       }
     }
   `,
@@ -22,7 +36,8 @@ export const USER_QUERIES = {
     query user($id: ID!) {
       user(id: $id) {
         username
-        nickName
+        firstName
+        lastName
         email
         institution {
           id
@@ -35,11 +50,12 @@ export const USER_QUERIES = {
   GET_USERS: gql`
     query users($searchField: String, $limit: Int, $offset: Int) {
       users(searchField: $searchField, limit: $limit, offset: $offset) {
-        username
         id
-        nickName
+        firstName
+        lastName
         title
         bio
+        membershipStatus
         institution {
           id
           name

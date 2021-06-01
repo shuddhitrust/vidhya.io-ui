@@ -4,6 +4,9 @@
 <span *ngIf="showDialog == REGISTER">
   <ng-container *ngTemplateOutlet="registerTemplate"></ng-container>
 </span>
+<span *ngIf="showDialog == INVITECODE">
+  <ng-container *ngTemplateOutlet="invitecodeTemplate"></ng-container>
+</span>
 <span *ngIf="showDialog == FORGOT_PASSWORD">
   <ng-container *ngTemplateOutlet="forgotPasswordTemplate"></ng-container>
 </span>
@@ -86,6 +89,72 @@
       <p class="link-button" (click)="showForgotPassword()">Forgot password?</p>
       <p class="link-button" (click)="showRegister()">Register</p>
     </div>
+  </div>
+</ng-template>
+
+<ng-template #invitecodeTemplate>
+  <div mat-dialog-content class="invitecode-dialog-box">
+    <mat-card>
+      <mat-card-header class="form-title">
+        <mat-card-title>Enter Invite Code</mat-card-title>
+      </mat-card-header>
+      <form
+        [formGroup]="invitecodeForm"
+        novalidate
+        #formDirective="ngForm"
+        (submit)="verifyInvitecode(invitecodeForm, formDirective)"
+      >
+        <mat-form-field
+          class="col-lg-12 col-md-12 col-sm-12"
+          appearance="outline"
+        >
+          <mat-label>Invite Code</mat-label>
+          <input
+            matInput
+            formControlName="invitecode"
+            required
+            placeholder="Enter the invite code you received from your institution"
+          />
+          <small
+            class="validation-error"
+            *ngIf="
+              invitecodeForm.get('invitecode').hasError('required') &&
+              formDirective.submitted
+            "
+          >
+            Invite Code is required
+          </small>
+          <small
+            class="validation-error"
+            *ngIf="
+              (invitecodeForm.get('invitecode').hasError('maxlength') ||
+                invitecodeForm.get('invitecode').hasError('minlength')) &&
+              formDirective.submitted
+            "
+          >
+            Please enter a valid invite code
+          </small>
+        </mat-form-field>
+        <button
+          type="submit"
+          class="submit-button"
+          mat-raised-button
+          color="primary"
+          [disabled]="(isSubmittingForm$ | async) === true"
+        >
+          {{
+            (isSubmittingForm$ | async) === true
+              ? "Verifying..."
+              : "Verify invitation"
+          }}
+        </button>
+      </form>
+    </mat-card>
+    <div class="secondary-auth-options">
+      <p class="link-button" (click)="showForgotPassword()">Forgot password?</p>
+      <p class="link-button" (click)="showLogin()">Login</p>
+    </div>
+    <mat-dialog-actions class="card-actions"> </mat-dialog-actions>
   </div>
 </ng-template>
 

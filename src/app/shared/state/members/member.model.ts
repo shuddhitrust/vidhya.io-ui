@@ -6,6 +6,7 @@ import {
 import {
   FetchPolicy,
   MatSelectOption,
+  MembershipStatus,
   PaginationObject,
   startingPaginationObject,
   User,
@@ -14,7 +15,6 @@ import {
 export interface MemberInput {
   id: Number;
   institution: Number;
-  nickName: String;
   email: String;
   avatar: String;
   member: Number;
@@ -25,7 +25,8 @@ export interface MemberInput {
 
 export const emptyMemberFormRecord: User = {
   id: null,
-  nickName: null,
+  firstName: null,
+  lastName: null,
   email: null,
   avatar: null,
   title: null,
@@ -59,15 +60,10 @@ export const defaultMemberState: MemberStateModel = {
   errorSubmitting: false,
 };
 
-export const memberTypeOptions: MatSelectOption[] = []; // autoGenOptions(CognitoGroup);
-
-export const membershipStatusOptions: MatSelectOption[] = []; // autoGenOptions(MembershipStatus);
+export const membershipStatusOptions: MatSelectOption[] =
+  autoGenOptions(MembershipStatus); // autoGenOptions(MembershipStatus);
 
 export const memberColumns = [
-  {
-    field: 'nickName',
-    cellRenderer: 'memberRenderer',
-  },
   {
     field: 'firstName',
   },
@@ -88,3 +84,5 @@ export const memberColumns = [
     tooltipField: 'lastActive',
   },
 ];
+
+console.log('membershipStatusOptions', membershipStatusOptions);

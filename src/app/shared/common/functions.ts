@@ -128,6 +128,7 @@ export const getErrorMessageFromGraphQLResponse = (errors): string => {
   });
   const keys = Object.keys(errors);
   const message = errors[keys[0]][0]?.message;
+  console.log('object.keys(errors) => ', { errors, keys, message });
   return message
     ? message
     : 'Something went wrong! Action could not be completed successfully.';

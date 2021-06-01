@@ -1,6 +1,7 @@
 <div id="main">
   <app-navbar></app-navbar>
   <router-outlet *ngIf="showApp; else homePage"></router-outlet>
+  <!-- <router-outlet *ngIf="showApp; else homePage"></router-outlet> -->
 </div>
 
 <ng-template #homePage>

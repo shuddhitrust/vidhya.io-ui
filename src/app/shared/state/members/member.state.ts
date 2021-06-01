@@ -24,6 +24,7 @@ import {
   updatePaginationObject,
 } from '../../common/functions';
 import { defaultSearchParams } from '../../common/constants';
+import { GetCurrentUserAction } from '../auth/auth.actions';
 
 @State<MemberStateModel>({
   name: 'memberState',
@@ -157,33 +158,27 @@ export class MemberState {
       patchState({ formSubmitting });
       const values = form.value;
       console.log('Member Form values', values);
-      const updateForm = values.id == null ? false : true;
       const { id, ...sanitizedValues } = values;
-      const variables = updateForm
-        ? {
-            input: sanitizedValues,
-            id: values.id, // adding id to the mutation variables if it is an update mutation
-          }
-        : { input: sanitizedValues };
+      const variables = {
+        input: sanitizedValues,
+        // id: values.id, // adding id to the mutation variables if it is an update mutation
+      };
 
       this.apollo
         .mutate({
-          mutation: updateForm
-            ? USER_MUTATIONS.UPDATE_USER
-            : USER_MUTATIONS.CREATE_USER,
+          mutation: USER_MUTATIONS.UPDATE_USER,
           variables,
         })
         .subscribe(
           ({ data }: any) => {
-            const response = updateForm ? data.updateMember : data.createMember;
+            const response = data.updateUser;
             patchState({ formSubmitting: false });
             console.log('update member ', { response });
             if (response.ok) {
+              this.store.dispatch(new GetCurrentUserAction());
               this.store.dispatch(
                 new ShowNotificationAction({
-                  message: `Member ${
-                    updateForm ? 'updated' : 'created'
-                  } successfully!`,
+                  message: `Member updated successfully!`,
                   action: 'success',
                 })
               );

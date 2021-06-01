@@ -13,14 +13,14 @@ import { User } from 'src/app/shared/common/models';
   styleUrls: ['./own-profile.component.scss'],
 })
 export class OwnProfileComponent implements OnInit, OnDestroy {
-  // @Select(AuthState.getCurrentMember)
-  // currentMember$: Observable<Member>;
+  @Select(AuthState.getCurrentMember)
+  currentMember$: Observable<User>;
   currentMember: User;
 
   constructor(private location: Location, private router: Router) {
-    // this.currentMember$.subscribe((val) => {
-    //   this.currentMember = val;
-    // });
+    this.currentMember$.subscribe((val) => {
+      this.currentMember = val;
+    });
   }
 
   ngOnInit(): void {}

@@ -26,13 +26,17 @@ export class NotificationState {
     { payload }: ShowNotificationAction
   ) {
     const state = getState();
-    const { message, action } = payload;
-    patchState({ message, action });
+    let { message, action, autoClose } = payload;
+    autoClose =
+      autoClose != null || autoClose != undefined
+        ? autoClose
+        : this.defaultConfig.autoClose;
+    patchState({ message, action, autoClose });
     console.log('notification message ', {
       message,
       action,
       config: this.defaultConfig,
     });
-    this.toastService[action](message, this.defaultConfig);
+    this.toastService[action](message, { ...this.defaultConfig, autoClose });
   }
 }

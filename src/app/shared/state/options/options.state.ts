@@ -20,7 +20,7 @@ export class OptionsState {
   @Selector()
   static listMembersByInstitution(state: OptionsStateModel): MatSelectOption[] {
     const options = state.membersByInstitution.map((m) => {
-      return { value: m.id, label: m.nickName };
+      return { value: m.id, label: m.firstName };
     });
     console.log('members by institution options', options);
     return options;

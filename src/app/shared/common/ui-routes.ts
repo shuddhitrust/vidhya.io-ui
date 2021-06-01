@@ -1,4 +1,6 @@
 export const uiroutes = {
+  ACTIVATE_ACCOUNT: 'activate',
+  RESEND_ACTIVATION_EMAIL: 'resend-activatioin-email',
   DASHBOARD_ROUTE: 'dashboard',
   PROFILE_ROUTE: 'profile',
   ACCOUNT_ROUTE: 'account',

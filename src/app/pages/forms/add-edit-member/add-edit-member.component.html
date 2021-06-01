@@ -1,4 +1,9 @@
-<button mat-icon-button (click)="goBack()" class="floating-back-button">
+<button
+  mat-icon-button
+  (click)="goBack()"
+  *ngIf="!firstTimeSetup"
+  class="floating-back-button"
+>
   <mat-icon>keyboard_backspace</mat-icon>
 </button>
 <h2 class="center-title">Member Form</h2>
@@ -9,32 +14,79 @@
     (submit)="submitForm(memberForm, formDirective)"
     #formDirective="ngForm"
   >
-    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
-      <mat-label>Nick Name</mat-label>
+    <div class="col-lg-3 col-md-4 col-sm-12 floating-avatar">
+      <div
+        *ngIf="memberForm.get('avatar').value"
+        class="col-lg-12 col-md-12 col-sm-12"
+      >
+        <img
+          [src]="previewPath"
+          alt="Your avatar"
+          class="avatar-upload-preview"
+          (click)="avatarUpdate.click()"
+        />
+      </div>
+
+      <input matInput hidden />
+      <mat-label [hidden]="previewPath">Avatar</mat-label><br /><br />
+      <input
+        [hidden]="previewPath"
+        #avatarUpdate
+        id="avatar-choose-button"
+        type="file"
+        accept="image/*"
+        placeholder="Your avatar"
+        (change)="onAvatarChange($event)"
+      />
+    </div>
+    <mat-form-field class="col-lg-9 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>First Name</mat-label>
       <input
         matInput
-        readonly="createForm"
-        formControlName="nickName"
         required
-        placeholder="Choose a nick name for yourself"
+        formControlName="firstName"
+        placeholder="Your first name"
       />
       <small
         class="validation-error"
         *ngIf="
-          memberForm.get('nickName').hasError('required') &&
+          memberForm.get('firstName').hasError('required') &&
           formDirective.submitted
         "
       >
-        Nick name is required
+        First Name is required
       </small>
     </mat-form-field>
 
-    <!-- <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+    <mat-form-field class="col-lg-9 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Last Name</mat-label>
+      <input
+        matInput
+        required
+        formControlName="lastName"
+        placeholder="Your last name"
+      />
+      <small
+        class="validation-error"
+        *ngIf="
+          memberForm.get('lastName').hasError('required') &&
+          formDirective.submitted
+        "
+      >
+        Last Name is required
+      </small>
+    </mat-form-field>
+    <mat-form-field
+      class="col-lg-12 col-md-12 col-sm-12"
+      disabled
+      appearance="outline"
+    >
       <mat-label>Email ID</mat-label>
       <input
         matInput
         formControlName="email"
         required
+        readonly
         placeholder="Email ID"
       />
       <small
@@ -54,7 +106,7 @@
       >
         Please enter a valid email
       </small>
-    </mat-form-field> -->
+    </mat-form-field>
 
     <mat-form-field
       class="col-lg-12 col-md-12 col-sm-12"
@@ -63,13 +115,14 @@
     >
       <mat-label>Institution</mat-label>
       <mat-select
-        formControlName="memberInstitutionId"
+        formControlName="institution"
         required
         placeholder="The institution you belong to"
       >
         <mat-option
           *ngFor="let institution of institutionOptions"
           [value]="institution.value"
+          disabled
         >
           {{ institution.label }}
         </mat-option>
@@ -77,7 +130,7 @@
       <small
         class="validation-error"
         *ngIf="
-          memberForm.get('memberInstitutionId').hasError('required') &&
+          memberForm.get('institution').hasError('required') &&
           formDirective.submitted
         "
       >
@@ -107,7 +160,7 @@
       <textarea
         matInput
         formControlName="title"
-        placeholder="Your title, if any"
+        placeholder="Your title, if any (eg. Student at Shuddhi Vidhya)"
       ></textarea>
       <small
         class="validation-error"
@@ -138,7 +191,6 @@
     </mat-form-field>
 
     <button
-      *ngIf="updateForm"
       type="submit"
       class="floating-button-bottom"
       mat-raised-button

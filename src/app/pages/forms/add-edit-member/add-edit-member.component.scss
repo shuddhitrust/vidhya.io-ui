@@ -1,0 +1,23 @@
+.avatar-upload-preview {
+  height: 100%;
+  width: 100%;
+  max-height: 200px;
+  max-width: 200px;
+  min-height: 100px;
+  min-width: 100px;
+  cursor: pointer;
+}
+
+.floating-avatar {
+  float: left;
+}
+
+@media screen and (max-width: 768px) {
+  .floating-avatar {
+    float: none;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+}

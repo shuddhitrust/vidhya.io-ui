@@ -16,10 +16,12 @@ import {
   LoginAction,
   RegisterAction,
   SendPasswordResetEmailAction,
+  VerifyInvitecodeAction,
 } from 'src/app/shared/state/auth/auth.actions';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
-import Observable from 'zen-observable';
+import { Observable } from 'rxjs';
 
+const INVITECODE = 'INVITECODE';
 const REGISTER = 'REGISTER';
 const LOGIN = 'LOGIN';
 const FORGOT_PASSWORD = 'FORGOT_PASSWORD';
@@ -30,18 +32,23 @@ const FORGOT_PASSWORD = 'FORGOT_PASSWORD';
   styleUrls: ['./login-modal.component.scss'],
 })
 export class LoginModalComponent {
+  INVITECODE = INVITECODE;
   REGISTER = REGISTER;
   LOGIN = LOGIN;
   FORGOT_PASSWORD = FORGOT_PASSWORD;
   showDialog: string = LOGIN;
   loginForm: FormGroup;
   forgotPasswordForm: FormGroup;
+  invitecodeForm: FormGroup;
   registerForm: FormGroup;
   hide = true; // variable to store show/hide password toggle
   @Select(AuthState.getIsSubmittingForm)
   isSubmittingForm$: Observable<boolean>;
   @Select(AuthState.getIsLoggedIn)
   isLoggedIn$: Observable<boolean>;
+  @Select(AuthState.getInvited)
+  invited$: Observable<boolean>;
+  invited: boolean;
   isLoggedIn: boolean = false;
 
   constructor(
@@ -54,6 +61,13 @@ export class LoginModalComponent {
     this.setupLoginForm();
     this.setupForgotPasswordForm();
     this.setupRegisterForm();
+    this.setupInvitecodeForm();
+    this.invited$.subscribe((val) => {
+      this.invited = val;
+      if (this.invited && this.showDialog == INVITECODE) {
+        this.showDialog = REGISTER;
+      }
+    });
     this.isLoggedIn$.subscribe((val) => {
       this.isLoggedIn = val;
       if (this.isLoggedIn) {
@@ -71,6 +85,19 @@ export class LoginModalComponent {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
+    });
+  }
+
+  setupInvitecodeForm() {
+    this.invitecodeForm = this.fb.group({
+      invitecode: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(10),
+          Validators.minLength(10),
+        ],
+      ],
     });
   }
 
@@ -92,6 +119,10 @@ export class LoginModalComponent {
     this.store.dispatch(new LoginAction({ form, formDirective }));
   }
 
+  verifyInvitecode(form: FormGroup, formDirective: FormGroupDirective) {
+    this.store.dispatch(new VerifyInvitecodeAction({ form, formDirective }));
+  }
+
   register(form: FormGroup, formDirective: FormGroupDirective) {
     console.log('register button was clicked');
     this.store.dispatch(new RegisterAction({ form, formDirective }));
@@ -108,7 +139,11 @@ export class LoginModalComponent {
   }
 
   showRegister() {
-    this.showDialog = REGISTER;
+    if (this.invited) {
+      this.showDialog = REGISTER;
+    } else {
+      this.showDialog = INVITECODE;
+    }
   }
 
   showForgotPassword() {
