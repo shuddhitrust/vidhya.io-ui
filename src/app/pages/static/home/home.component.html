@@ -2,26 +2,6 @@
   <div style="text-align: center"><h1>Hero Block & Student Profiles</h1></div>
 </ng-template>
 
-<span *ngIf="showUnverifiedNotification">
-  <span *ngTemplateOutlet="unverifiedTemplate"></span>
-</span>
-
-<ng-template #unverifiedTemplate>
-  <mat-card class="announcement-card">
-    <mat-icon class="close-announcement-icon" (click)="closeAnnouncements()"
-      >cancel</mat-icon
-    >
-    <mat-icon class="announcement-icon">info</mat-icon>
-    <small>
-      Please verify your account by clicking on the activation link in the
-      activation email
-      <a class="link" (click)="resendActivationEmail()"
-        >Resend Activation Email?</a
-      >
-    </small>
-  </mat-card>
-</ng-template>
-
 <!-- <span *ngIf="pendingApproval && showAnnouncements">
   <span *ngTemplateOutlet="pendingApprovalTemplate"></span>
 </span>

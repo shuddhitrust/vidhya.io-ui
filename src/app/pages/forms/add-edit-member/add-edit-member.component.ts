@@ -114,16 +114,22 @@ export class AddEditMemberComponent implements OnInit {
       });
     });
     if (this.firstTimeSetup) {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message:
+            'Please fill this form and submit before being able to browse the application.',
+          action: 'show',
+        })
+      );
       const currentUser: User = {
-        id: this.currentMember.id,
         username: this.currentMember.username,
         firstName: this.currentMember.firstName,
         lastName: this.currentMember.lastName,
         email: this.currentMember.email,
         avatar: this.currentMember.avatar,
         institution: {
-          id: this.currentMember.institution?.id,
-          name: this.currentMember.institution?.name,
+          id: this.currentMember?.institution?.id,
+          name: this.currentMember?.institution?.name,
         },
       };
       this.memberForm = this.setupMemberFormGroup(currentUser);
@@ -190,8 +196,8 @@ export class AddEditMemberComponent implements OnInit {
       .setValue(this.currentMember?.institution?.id);
     this.institutionOptions = [
       {
-        value: this.currentMember.institution?.id,
-        label: this.currentMember.institution?.name,
+        value: this.currentMember?.institution?.id,
+        label: this.currentMember?.institution?.name,
       },
     ];
     console.log(

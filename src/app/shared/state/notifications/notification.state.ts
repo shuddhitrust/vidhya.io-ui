@@ -17,6 +17,7 @@ export class NotificationState {
     autoClose: defaultNotificationState.autoClose,
     dismissible: defaultNotificationState.dismissible,
     position: defaultNotificationState.position,
+    id: defaultNotificationState.id,
   };
   constructor(private toastService: HotToastService) {}
 
@@ -26,11 +27,12 @@ export class NotificationState {
     { payload }: ShowNotificationAction
   ) {
     const state = getState();
-    let { message, action, autoClose } = payload;
+    let { message, action, autoClose, id } = payload;
     autoClose =
       autoClose != null || autoClose != undefined
         ? autoClose
         : this.defaultConfig.autoClose;
+    id = id != null || id != undefined ? id : this.defaultConfig.id;
     patchState({ message, action, autoClose });
     console.log('notification message ', {
       message,

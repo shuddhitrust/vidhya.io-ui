@@ -15,16 +15,20 @@ import { Select, Store } from '@ngxs/store';
 import {
   LoginAction,
   RegisterAction,
+  ResendActivationEmailAction,
   SendPasswordResetEmailAction,
   VerifyInvitecodeAction,
 } from 'src/app/shared/state/auth/auth.actions';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { Observable } from 'rxjs';
+import { AuthStateModel } from 'src/app/shared/state/auth/auth.model';
 
 const INVITECODE = 'INVITECODE';
 const REGISTER = 'REGISTER';
 const LOGIN = 'LOGIN';
 const FORGOT_PASSWORD = 'FORGOT_PASSWORD';
+const TROUBLE_SIGNING_IN = 'TROUBLE_SIGNING_IN';
+const RESEND_ACTIVATION_EMAIL = 'RESEND_ACTIVATION_EMAIL';
 
 @Component({
   selector: 'app-login-modal',
@@ -35,22 +39,22 @@ export class LoginModalComponent {
   INVITECODE = INVITECODE;
   REGISTER = REGISTER;
   LOGIN = LOGIN;
+  TROUBLE_SIGNING_IN = TROUBLE_SIGNING_IN;
   FORGOT_PASSWORD = FORGOT_PASSWORD;
+  RESEND_ACTIVATION_EMAIL = RESEND_ACTIVATION_EMAIL;
   showDialog: string = LOGIN;
   loginForm: FormGroup;
-  forgotPasswordForm: FormGroup;
+  emailForm: FormGroup;
   invitecodeForm: FormGroup;
   registerForm: FormGroup;
   hide = true; // variable to store show/hide password toggle
-  @Select(AuthState.getIsSubmittingForm)
-  isSubmittingForm$: Observable<boolean>;
-  @Select(AuthState.getIsLoggedIn)
-  isLoggedIn$: Observable<boolean>;
-  @Select(AuthState.getInvited)
-  invited$: Observable<boolean>;
-  invited: boolean;
+  @Select(AuthState)
+  authState$: Observable<AuthStateModel>;
+  authState: AuthStateModel;
+  invited: string;
   isLoggedIn: boolean = false;
-
+  isSubmittingForm: boolean = false;
+  closeLoginForm: boolean = false;
   constructor(
     private store: Store,
     public dialog: MatDialog,
@@ -62,22 +66,28 @@ export class LoginModalComponent {
     this.setupForgotPasswordForm();
     this.setupRegisterForm();
     this.setupInvitecodeForm();
-    this.invited$.subscribe((val) => {
-      this.invited = val;
+    this.authState$.subscribe((val) => {
+      this.authState = val;
+      this.invited = this.authState?.currentMember?.invitecode;
+      this.isLoggedIn = this.authState.isLoggedIn;
+      this.isSubmittingForm = this.authState.isSubmittingForm;
+      if (
+        this.closeLoginForm != this.authState.closeLoginForm &&
+        this.authState.closeLoginForm
+      ) {
+        this.closeDialog();
+      }
+      // if (this.isLoggedIn) {
+      //   this.closeDialog();
+      // }
       if (this.invited && this.showDialog == INVITECODE) {
         this.showDialog = REGISTER;
-      }
-    });
-    this.isLoggedIn$.subscribe((val) => {
-      this.isLoggedIn = val;
-      if (this.isLoggedIn) {
-        this.closeDialog();
       }
     });
   }
 
   setupForgotPasswordForm() {
-    this.forgotPasswordForm = this.fb.group({
+    this.emailForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
     });
   }
@@ -134,6 +144,15 @@ export class LoginModalComponent {
     );
   }
 
+  sendAccountActivationEmail(
+    form: FormGroup,
+    formDirective: FormGroupDirective
+  ) {
+    this.store.dispatch(
+      new ResendActivationEmailAction({ form, formDirective })
+    );
+  }
+
   showLogin() {
     this.showDialog = LOGIN;
   }
@@ -146,7 +165,15 @@ export class LoginModalComponent {
     }
   }
 
+  showTroubleSigningIn() {
+    this.showDialog = TROUBLE_SIGNING_IN;
+  }
+
   showForgotPassword() {
     this.showDialog = FORGOT_PASSWORD;
+  }
+
+  showResendActivation() {
+    this.showDialog = RESEND_ACTIVATION_EMAIL;
   }
 }

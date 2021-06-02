@@ -4,12 +4,9 @@ export const AUTH_QUERIES = {
   ME: gql`
     query me {
       me {
-        id
-        verified
         username
         firstName
         lastName
-        membershipStatus
         avatar
         invitecode
         email
@@ -17,7 +14,7 @@ export const AUTH_QUERIES = {
           id
           name
         }
-        lastLogin
+        membershipStatus
       }
     }
   `,

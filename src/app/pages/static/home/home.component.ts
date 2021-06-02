@@ -1,17 +1,12 @@
-import { typeWithParameters } from '@angular/compiler/src/render3/util';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { MembershipStatus } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
-import {
-  ResendActivationEmailAction,
-  VerifyAccountAction,
-} from 'src/app/shared/state/auth/auth.actions';
+import { VerifyAccountAction } from 'src/app/shared/state/auth/auth.actions';
 import { AuthStateModel } from 'src/app/shared/state/auth/auth.model';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
-import { membershipStatusOptions } from 'src/app/shared/state/members/member.model';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 
 @Component({
@@ -21,64 +16,75 @@ import { ShowNotificationAction } from 'src/app/shared/state/notifications/notif
 })
 export class HomeComponent implements OnInit {
   url: string;
-  @Select(AuthState)
-  authState$: Observable<AuthStateModel>;
+  @Select(AuthState.getIsLoggedIn)
+  isLoggedIn$: Observable<boolean>;
+  @Select(AuthState.getCurrentMemberStatus)
+  membershipStatus$: Observable<string>;
+  @Select(AuthState.getFirstTimeSetup)
+  firstTimeSetup$: Observable<boolean>;
+  membershipStatus: string;
   authState: AuthStateModel;
   pendingApproval: boolean = false;
   suspended: boolean = false;
   showAnnouncements: boolean = true;
   isLoggedIn: boolean = false;
-  isVerified: boolean = false;
   firstTimeSetup: boolean = false;
   showUnverifiedNotification: boolean = false;
   constructor(private store: Store, private router: Router) {
-    this.authState$.subscribe((val) => {
-      this.authState = val;
-      this.isLoggedIn = this.authState?.isLoggedIn;
-      this.isVerified = this.authState.currentMember?.verified;
-      this.showUnverifiedNotification = this.isLoggedIn && !this.isVerified;
-      this.firstTimeSetup = this.authState.firstTimeSetup;
-      if (this.firstTimeSetup && this.isVerified) {
-        this.router.navigate([uiroutes.MEMBER_FORM_ROUTE]);
-        this.store.dispatch(
-          new ShowNotificationAction({
-            message:
-              'Please fill this form and submit before being able to browse the application.',
-            action: 'show',
-          })
-        );
-      }
-      this.pendingApproval =
-        this.authState.currentMember.membershipStatus ==
-        MembershipStatus.PENDING;
-      if (this.pendingApproval) {
-        this.store.dispatch(
-          new ShowNotificationAction({
-            message:
-              "Your account is pending approval by your institution's moderators. Please wait for them to approve you.",
-            action: 'show',
-            autoClose: false,
-          })
-        );
-      }
-      // this.pendingApproval =
-      //   this.authState.membershipStatus == MembershipStatus.PENDING_APPROVAL;
-      // this.suspended =
-      //   this.authState.membershipStatus == MembershipStatus.SUSPENDED;
-      console.log('from the home page => ', {
-        pendingApproval: this.pendingApproval,
-        suspended: this.suspended,
-      });
+    this.isLoggedIn$.subscribe((val) => {
+      this.isLoggedIn = val;
     });
+    this.membershipStatus$.subscribe((val) => {
+      console.log('*1* Membership status changed ', {
+        currentMembershipStatus: this.membershipStatus,
+        newMembershipStatus: val,
+      });
+      if (this.membershipStatus != val && val !== undefined) {
+        this.membershipStatus = val;
+        this.processMembershipStatus();
+      }
+    });
+
+    this.firstTimeSetup$.subscribe((val) => {
+      this.firstTimeSetup = val;
+      if (this.firstTimeSetup) {
+        // If this is the first time user is logging in, redirect to member form page
+        // to update their profile info.
+        this.router.navigate([uiroutes.MEMBER_FORM_ROUTE]);
+      }
+    });
+
+    // this.pendingApproval =
+    //   this.authState.membershipStatus == MembershipStatus.PENDING_APPROVAL;
+    // this.suspended =
+    //   this.authState.membershipStatus == MembershipStatus.SUSPENDED;
+    console.log('from the home page => ', {
+      pendingApproval: this.pendingApproval,
+      suspended: this.suspended,
+    });
+  }
+
+  processMembershipStatus() {
+    console.log(
+      '*1* Sending pending approval notification from processMembershipStatus',
+      { membershipStatus: this.membershipStatus }
+    );
+    if (this.membershipStatus == MembershipStatus.PENDING) {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message:
+            "Your account is pending approval by your institution's moderators. Please wait for them to approve you.",
+          action: 'show',
+          autoClose: false,
+          id: 'pendinig-approval',
+        })
+      );
+    }
   }
 
   closeAnnouncements() {
     console.log('clicked on close announcements');
     this.showAnnouncements = false;
-  }
-
-  resendActivationEmail() {
-    this.store.dispatch(new ResendActivationEmailAction());
   }
 
   activateAccount() {
@@ -87,7 +93,9 @@ export class HomeComponent implements OnInit {
     if (this.url.includes(uiroutes.ACTIVATE_ACCOUNT)) {
       console.log('account activation!!!');
       const token = this.url.split(uiroutes.ACTIVATE_ACCOUNT + '/')[1];
-      this.store.dispatch(new VerifyAccountAction({ token }));
+      if (token) {
+        this.store.dispatch(new VerifyAccountAction({ token }));
+      }
     }
   }
 

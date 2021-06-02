@@ -4,7 +4,11 @@ import { Store, Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { LoginModalComponent } from 'src/app/pages/modals/login/login-modal.component';
 import { uiroutes } from '../../common/ui-routes';
-import { LoginAction, LogoutAction } from '../../state/auth/auth.actions';
+import {
+  LoginAction,
+  LogoutAction,
+  OpenLoginFormAction,
+} from '../../state/auth/auth.actions';
 import { AuthStateModel } from '../../state/auth/auth.model';
 import { AuthState } from '../../state/auth/auth.state';
 
@@ -33,8 +37,8 @@ export class NavbarComponent implements OnInit {
   }
 
   login() {
+    this.store.dispatch(new OpenLoginFormAction());
     const dialogRef = this.dialog.open(LoginModalComponent);
-
     dialogRef.afterClosed().subscribe((result) => {
       console.log(`Dialog result: ${result}`);
     });

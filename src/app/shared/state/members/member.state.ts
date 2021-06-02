@@ -14,7 +14,7 @@ import {
   GetMemberAction,
   ResetMemberFormAction,
 } from './member.actions';
-import { USER_QUERIES } from '../../api/graphql/queries.graphql';
+import { AUTH_QUERIES, USER_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
 import { User, MatSelectOption, PaginationObject } from '../../common/models';
 import { USER_MUTATIONS } from '../../api/graphql/mutations.graphql';
@@ -24,7 +24,12 @@ import {
   updatePaginationObject,
 } from '../../common/functions';
 import { defaultSearchParams } from '../../common/constants';
-import { GetCurrentUserAction } from '../auth/auth.actions';
+import {
+  GetCurrentUserAction,
+  LogoutAction,
+  UpdateCurrentUserInStateAction,
+} from '../auth/auth.actions';
+import { Router } from '@angular/router';
 
 @State<MemberStateModel>({
   name: 'memberState',
@@ -32,7 +37,11 @@ import { GetCurrentUserAction } from '../auth/auth.actions';
 })
 @Injectable()
 export class MemberState {
-  constructor(private apollo: Apollo, private store: Store) {}
+  constructor(
+    private apollo: Apollo,
+    private store: Store,
+    private router: Router
+  ) {}
 
   @Selector()
   static listMembers(state: MemberStateModel): User[] {
@@ -175,19 +184,15 @@ export class MemberState {
             patchState({ formSubmitting: false });
             console.log('update member ', { response });
             if (response.ok) {
-              this.store.dispatch(new GetCurrentUserAction());
+              const user = response?.updateUser;
+              this.store.dispatch(new UpdateCurrentUserInStateAction({ user }));
               this.store.dispatch(
                 new ShowNotificationAction({
                   message: `Member updated successfully!`,
                   action: 'success',
                 })
               );
-              form.reset();
-              formDirective.resetForm();
-              patchState({
-                memberFormRecord: emptyMemberFormRecord,
-                fetchPolicy: 'network-only',
-              });
+              this.router.navigateByUrl('/');
             } else {
               this.store.dispatch(
                 new ShowNotificationAction({

@@ -9,6 +9,7 @@ export class ShowNotificationAction {
       message: string;
       action: HotToastStatus;
       autoClose?: boolean;
+      id?: string;
     }
   ) {}
 }

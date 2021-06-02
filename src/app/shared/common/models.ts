@@ -59,18 +59,18 @@ export type CurrentMember = {
   avatar: string;
   invitecode?: string;
   institution?: { id: number; name: string };
-  verified: boolean;
   membershipStatus: string;
 };
 
 export const MembershipStatus = {
+  UNINITIALIZED: 'UI',
   PENDING: 'PE',
   APPROVED: 'AP',
   SUSPENDED: 'SU',
 };
 
 export type User = {
-  id: number;
+  id?: number;
   username?: string;
   firstName: string;
   lastName: string;

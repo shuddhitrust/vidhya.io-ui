@@ -18,7 +18,17 @@ export const USER_MUTATIONS = {
         ok
         user {
           id
+          username
           firstName
+          lastName
+          avatar
+          invitecode
+          email
+          institution {
+            id
+            name
+          }
+          membershipStatus
         }
       }
     }
@@ -225,8 +235,8 @@ export const AUTH_MUTATIONS = {
     }
   `,
   ADD_INVITECODE: gql`
-    mutation addInvitecode($invitecode: String!) {
-      addInvitecode(invitecode: $invitecode) {
+    mutation addInvitecode($invitecode: String!, $email: String!) {
+      addInvitecode(invitecode: $invitecode, email: $email) {
         ok
       }
     }
@@ -246,8 +256,6 @@ export const AUTH_MUTATIONS = {
       ) {
         success
         errors
-        token
-        refreshToken
       }
     }
   `,
@@ -277,13 +285,15 @@ export const AUTH_MUTATIONS = {
         user {
           username
           firstName
+          lastName
+          avatar
+          invitecode
           email
           institution {
             id
             name
           }
-          lastLogin
-          verified
+          membershipStatus
         }
       }
     }

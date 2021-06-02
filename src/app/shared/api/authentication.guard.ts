@@ -36,9 +36,21 @@ export class AuthenticationGuard implements CanActivate {
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
-  ): Observable<boolean> | Promise<boolean> | boolean {
+  ): boolean {
     // return this.isFullyAuthenticated;
-    return true;
+    if (this.isFullyAuthenticated) {
+      return true;
+    } else {
+      this._router.navigateByUrl('');
+      // this.store.dispatch(
+      //   new ShowNotificationAction({
+      //     message: 'You are not authorized to access that page!',
+      //     action: 'error',
+      //   })
+      // );
+      return false;
+    }
+
     // return Auth.currentAuthenticatedUser()
     //   .then(() => {
     //     console.log('from authentication guard ', {
@@ -70,18 +82,14 @@ export class RegistrationFormAuthGuard implements CanActivate {
   authState$: Observable<AuthStateModel>;
   authState: AuthStateModel;
   isLoggedIn: boolean;
-  isVerified: boolean;
+  firstTimeSetup: boolean;
   isFullyAuthenticated: boolean;
-  pendingRegistration: boolean;
-  activeMember: boolean;
-  allow: boolean = false;
   constructor(private _router: Router, private store: Store) {
     this.authState$.subscribe((val) => {
       this.authState = val;
-      this.isLoggedIn = this.authState.isLoggedIn;
-      this.isVerified = this.authState.currentMember?.verified;
-      this.allow = this.isLoggedIn && this.isVerified;
-      console.log('from RegistrationFormAuthGuard', { allow: this.allow });
+      this.isLoggedIn = this.authState?.isLoggedIn;
+      this.firstTimeSetup = this.authState?.firstTimeSetup;
+      this.isFullyAuthenticated = this.authState?.isFullyAuthenticated;
     });
   }
   canActivate(
@@ -89,32 +97,18 @@ export class RegistrationFormAuthGuard implements CanActivate {
     state: RouterStateSnapshot
   ): Observable<boolean> | Promise<boolean> | boolean {
     // return this.allow;
-    return true;
-    // return Auth.currentAuthenticatedUser()
-    //   .then(() => {
-    //     console.log('this.pending registration ', {
-    //       pendingRegistration: this.pendingRegistration,
-    //       currentMember: this.authState.currentMember,
-    //     });
-    //     if (
-    //       !this.isFullyAuthenticated ||
-    //       this.pendingRegistration ||
-    //       this.activeMember
-    //     ) {
-    //       /** If the user is logged in, but not fully authenticated and their member Id is null, then they're pending registration.
-    //        */
-    //       return true;
-    //     } else throw false;
-    //   })
-    //   .catch(() => {
-    //     this._router.navigateByUrl('');
-    //     this.store.dispatch(
-    //       new ShowNotificationAction({
-    //         message: 'You are not authorized to access that page!',
-    //       })
-    //     );
-    //     return false;
-    //   });
+    if ((this.isLoggedIn && this.firstTimeSetup) || this.isFullyAuthenticated) {
+      return true;
+    } else {
+      this._router.navigateByUrl('');
+      // this.store.dispatch(
+      //   new ShowNotificationAction({
+      //     message: 'You are not authorized to access that page!',
+      //     action: 'error',
+      //   })
+      // );
+      return false;
+    }
   }
 }
 

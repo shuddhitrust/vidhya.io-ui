@@ -1,4 +1,5 @@
 import { FormGroup, FormGroupDirective } from '@angular/forms';
+import { CurrentMember, User } from '../../common/models';
 
 export class SetAuthSessionAction {
   static readonly type = '[AUTH] Set Auth Session';
@@ -27,7 +28,7 @@ export class RegisterAction {
 export class AddInvitecodeAction {
   static readonly type = '[AUTH] ADD INVITECODE';
 
-  constructor(public payload: { invitecode: string }) {}
+  constructor(public payload: { invitecode: string; email: string }) {}
 }
 export class VerifyAccountAction {
   static readonly type = '[AUTH] Verify Account';
@@ -38,13 +39,15 @@ export class VerifyAccountAction {
 export class GetInstitutionByInvitecodeAction {
   static readonly type = '[AUTH] GET INSTITUTION BY INVITECODE';
 
-  constructor() {}
+  constructor(public payload: { currentMember: CurrentMember }) {}
 }
 
 export class ResendActivationEmailAction {
   static readonly type = '[AUTH] Resend Activation Email';
 
-  constructor() {}
+  constructor(
+    public payload: { form: FormGroup; formDirective: FormGroupDirective }
+  ) {}
 }
 export class LoginAction {
   static readonly type = '[AUTH] Login';
@@ -90,6 +93,12 @@ export class GetCurrentUserAction {
   constructor() {}
 }
 
+export class UpdateCurrentUserInStateAction {
+  static readonly type = '[AUTH] Update Current User in state';
+
+  constructor(public payload: { user: CurrentMember }) {}
+}
+
 export class AuthenticationCheckAction {
   static readonly type = '[AUTH] Check Authentication';
 
@@ -104,6 +113,12 @@ export class RefreshTokenAction {
 
 export class CompleteLogoutAction {
   static readonly type = '[AUTH] Finish Logging out';
+
+  constructor() {}
+}
+
+export class OpenLoginFormAction {
+  static readonly type = '[AUTH] Open Login form';
 
   constructor() {}
 }

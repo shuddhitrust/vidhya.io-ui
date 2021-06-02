@@ -28,6 +28,8 @@ import {
   VerifyInvitecodeAction,
   AddInvitecodeAction,
   GetInstitutionByInvitecodeAction,
+  UpdateCurrentUserInStateAction,
+  OpenLoginFormAction,
 } from './auth.actions';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import { Apollo } from 'apollo-angular';
@@ -42,7 +44,6 @@ import {
 import jwtDecode from 'jwt-decode';
 import { Observable } from 'rxjs';
 import { ToggleLoadingScreen } from '../loading/loading.actions';
-import { CursorError } from '@angular/compiler/src/ml_parser/lexer';
 
 /**
  * Auth flow steps:-
@@ -109,6 +110,10 @@ export class AuthState {
     return state.isLoggedIn;
   }
   @Selector()
+  static getFirstTimeSetup(state: AuthStateModel): boolean {
+    return state.firstTimeSetup;
+  }
+  @Selector()
   static getInvited(state: AuthStateModel): string {
     return state.currentMember?.invitecode;
   }
@@ -117,8 +122,12 @@ export class AuthState {
     return state.isSubmittingForm;
   }
   @Selector()
-  static getCurrentMember(state: AuthStateModel): User {
+  static getCurrentMember(state: AuthStateModel): CurrentMember {
     return state.currentMember;
+  }
+  @Selector()
+  static getCurrentMemberStatus(state: AuthStateModel): string {
+    return state.currentMember.membershipStatus;
   }
   @Selector()
   static getCurrentMemberInstitutionId(state: AuthStateModel): number {
@@ -187,6 +196,10 @@ export class AuthState {
             const { expiresAt, userId } = getDecodedToken(token);
             console.log('decodedToken');
             currentMember = { ...currentMember, id: userId };
+            console.log('*1* Updating current member from verifyToken', {
+              currentMember,
+            });
+
             patchState({
               currentMember,
               token,
@@ -303,52 +316,77 @@ export class AuthState {
   @Action(GetCurrentUserAction)
   getCurrentUser({ getState, patchState }: StateContext<AuthStateModel>) {
     const state = getState();
-    const { isLoggedIn } = state;
-    this.store.dispatch(
-      new ToggleLoadingScreen({
-        showLoadingScreen: true,
-        message: 'Fetching user info...',
-      })
-    );
-    this.apollo
-      .watchQuery({ query: AUTH_QUERIES.ME })
-      .valueChanges.subscribe(({ data }: any) => {
-        this.store.dispatch(
-          new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
-        );
-        console.log('***********From getCurrentUser => ', { data });
-        const user = data.me;
+    const { isFetchingCurrentMember } = state;
+    if (!isFetchingCurrentMember) {
+      this.store.dispatch(
+        new ToggleLoadingScreen({
+          showLoadingScreen: true,
+          message: 'Fetching user info...',
+        })
+      );
+      patchState({ isFetchingCurrentMember: true });
+      this.apollo
+        .watchQuery({ query: AUTH_QUERIES.ME })
+        .valueChanges.subscribe(({ data }: any) => {
+          patchState({ isFetchingCurrentMember: false });
 
-        const currentMember = {
-          id: user?.id,
-          username: user?.usersname,
-          firstName: user?.firstName,
-          lastName: user?.lastName,
-          email: user?.email,
-          avatar: user?.avatar,
-          invitecode: user?.invitecode,
-          institution: {
-            id: user?.institution?.id,
-            name: user?.institution?.name,
-          },
-          verified: user?.verified,
-          membershipStatus: user?.membershipStatus,
-        };
-        const firstTimeSetup = calculateFirstTiimeSetup(currentMember);
-
-        const isFullyAuthenticated =
-          isLoggedIn == true &&
-          currentMember.verified == true &&
-          currentMember.membershipStatus == MembershipStatus.APPROVED;
-        patchState({
-          isFullyAuthenticated,
-          currentMember,
-          firstTimeSetup,
+          this.store.dispatch(
+            new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+          );
+          console.log('***********From getCurrentUser => ', { data });
+          const user = data.me;
+          console.log(
+            'initiating UpdateCurrentUserInStateAction from getCurrentUser'
+          );
+          this.store.dispatch(new UpdateCurrentUserInStateAction({ user }));
         });
-        if (firstTimeSetup) {
-          this.store.dispatch(new GetInstitutionByInvitecodeAction());
-        }
+    }
+  }
+
+  @Action(UpdateCurrentUserInStateAction)
+  updateCurrentUserInState(
+    { getState, patchState }: StateContext<AuthStateModel>,
+    { payload }: UpdateCurrentUserInStateAction
+  ) {
+    const { user } = payload;
+    console.log('running UpdateCurrentUserInState', { user });
+    const state = getState();
+    const { isLoggedIn, currentMember } = state;
+    const newCurrentMember: CurrentMember = {
+      id: user?.id ? user?.id : currentMember?.id,
+      username: user?.username,
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+      email: user?.email,
+      avatar: user?.avatar,
+      invitecode: user?.invitecode,
+      institution: {
+        id: user?.institution?.id,
+        name: user?.institution?.name,
+      },
+      membershipStatus: user?.membershipStatus,
+    };
+    console.log('newCurrentMember ', { currentMember: newCurrentMember });
+    const firstTimeSetup = calculateFirstTiimeSetup(newCurrentMember);
+    if (firstTimeSetup) {
+      this.store.dispatch(
+        new GetInstitutionByInvitecodeAction({
+          currentMember: newCurrentMember,
+        })
+      );
+    } else {
+      const isFullyAuthenticated =
+        isLoggedIn == true &&
+        newCurrentMember?.membershipStatus == MembershipStatus.APPROVED;
+      console.log('*1* Updating current member from updateCurrentUserInState', {
+        currentMember: newCurrentMember,
       });
+      patchState({
+        isFullyAuthenticated,
+        currentMember: newCurrentMember,
+        firstTimeSetup,
+      });
+    }
   }
 
   @Action(LoginAction)
@@ -388,27 +426,17 @@ export class AuthState {
               formDirective.resetForm();
               const token = response?.token;
               const { expiresAt, userId } = getDecodedToken(token);
-              const currentMember: CurrentMember = {
-                id: userId,
-                username: response?.user?.username,
-                firstName: response?.user?.firstName,
-                lastName: response?.user?.lastName,
-                email: response?.user?.email,
-                avatar: response?.user?.avatar,
-                institution: {
-                  id: response?.user?.institution?.id,
-                  name: response?.user?.institution?.name,
-                },
-                verified: response?.user?.verified,
-                membershipStatus: response?.user?.membershipStatus,
-              };
-              const firstTimeSetup = calculateFirstTiimeSetup(currentMember);
+              let user = response.user;
+              user.id = userId;
+              console.log(
+                'initiating UpdateCurrentUserInStateAction from login'
+              );
+              this.store.dispatch(new UpdateCurrentUserInStateAction({ user }));
               patchState({
+                closeLoginForm: true,
                 token,
                 expiresAt,
                 refreshToken: response?.refreshToken,
-                currentMember,
-                firstTimeSetup,
                 lastLogin: response?.user?.lastLogin,
               });
               this.store.dispatch(
@@ -529,6 +557,7 @@ export class AuthState {
       );
       isSubmittingForm = true;
       const values = form.value;
+      const email = values.email;
       patchState({ isSubmittingForm });
       this.apollo
         .mutate({
@@ -556,6 +585,7 @@ export class AuthState {
               form.reset();
               formDirective.resetForm();
               patchState({
+                closeLoginForm: true,
                 token: response?.token,
                 refreshToken: response?.refreshToken,
               });
@@ -563,9 +593,10 @@ export class AuthState {
               this.store.dispatch(
                 new AddInvitecodeAction({
                   invitecode: state.currentMember?.invitecode,
+                  email,
                 })
               );
-              this.store.dispatch(new VerifyTokenAction());
+              // this.store.dispatch(new VerifyTokenAction());
               this.store.dispatch(
                 new ShowNotificationAction({
                   message:
@@ -664,55 +695,74 @@ export class AuthState {
   }
 
   @Action(ResendActivationEmailAction)
-  resendActivationEmail({
-    getState,
-    patchState,
-  }: StateContext<AuthStateModel>) {
-    console.log('Resending activation email... from auth.state action');
+  resendActivationEmail(
+    { getState, patchState }: StateContext<AuthStateModel>,
+    { payload }: ResendActivationEmailAction
+  ) {
     const state = getState();
-    const { currentMember } = state;
-    this.apollo
-      .mutate({
-        mutation: AUTH_MUTATIONS.RESEND_ACTIVATION_EMAIL,
-        variables: {
-          email: currentMember.email,
-        },
-      })
-      .subscribe(
-        ({ data }: any) => {
-          console.log(
-            'Resending activation email... response from auth.state after querying',
-            { data }
-          );
-          const response = data.resendActivationEmail;
-
-          if (response.success) {
+    const { form, formDirective } = payload;
+    let { isSubmittingForm } = state;
+    if (form.valid) {
+      isSubmittingForm = true;
+      const values = form.value;
+      patchState({ isSubmittingForm });
+      this.apollo
+        .mutate({
+          mutation: AUTH_MUTATIONS.RESEND_ACTIVATION_EMAIL,
+          variables: {
+            email: values.email,
+          },
+        })
+        .subscribe(
+          ({ data }: any) => {
+            const response = data.resendActivationEmail;
+            isSubmittingForm = false;
+            patchState({ isSubmittingForm });
+            console.log('got data', { data });
+            if (response.success) {
+              form.reset();
+              formDirective.resetForm();
+              patchState({
+                activationEmailSent: new Date(),
+                closeLoginForm: true,
+              });
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message:
+                    'If there is an account with this email ID, an email with further instructions should be delivered at this email ID. Please check.',
+                  action: 'success',
+                })
+              );
+            } else {
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message: getErrorMessageFromGraphQLResponse(response?.errors),
+                  action: 'error',
+                })
+              );
+            }
+          },
+          (error) => {
+            console.error('There was an error ', error);
+            isSubmittingForm = false;
+            patchState({ isSubmittingForm });
             this.store.dispatch(
               new ShowNotificationAction({
-                message:
-                  'Your activation email has been resent. Please check your email inbox.',
-                action: 'success',
-              })
-            );
-          } else {
-            this.store.dispatch(
-              new ShowNotificationAction({
-                message: getErrorMessageFromGraphQLResponse(response?.errors),
+                message: 'There was an error in submitting your form!',
                 action: 'error',
               })
             );
           }
-        },
-        (error) => {
-          console.error('There was an error ', error);
-          this.store.dispatch(
-            new ShowNotificationAction({
-              message: 'There was an error in submitting your form!',
-              action: 'error',
-            })
-          );
-        }
+        );
+    } else {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message:
+            'Please make sure there are no errors in the form before attempting to submit!',
+          action: 'error',
+        })
       );
+    }
   }
 
   @Action(SendPasswordResetEmailAction)
@@ -746,6 +796,7 @@ export class AuthState {
               patchState({
                 token: response?.token,
                 refreshToken: response?.refreshToken,
+                closeLoginForm: true,
               });
               this.store.dispatch(
                 new ShowNotificationAction({
@@ -969,6 +1020,10 @@ export class AuthState {
             if (response?.ok) {
               form.reset();
               formDirective.resetForm();
+              console.log('*1* Updating current member from verifyInviteCode', {
+                currentMember: { ...state.currentMember, invitecode },
+              });
+
               patchState({
                 currentMember: { ...state.currentMember, invitecode },
               });
@@ -1010,12 +1065,15 @@ export class AuthState {
     }
   }
   @Action(GetInstitutionByInvitecodeAction)
-  getInstitutionByInvitecode({
-    patchState,
-    getState,
-  }: StateContext<AuthStateModel>) {
-    const state = getState();
-    let { currentMember } = state;
+  getInstitutionByInvitecode(
+    { patchState, getState }: StateContext<AuthStateModel>,
+    { payload }: GetInstitutionByInvitecodeAction
+  ) {
+    let { currentMember } = payload;
+    console.log(
+      'Got currentMember from GetInstitutionByInvitecodeAction payload',
+      { currentMember }
+    );
     const invitecode = currentMember.invitecode;
     console.log('From GetInstitutionByInviteCodeAction', { invitecode });
     if (invitecode) {
@@ -1030,12 +1088,18 @@ export class AuthState {
           ({ data }: any) => {
             const response = data.institutionByInvitecode;
             console.log('got data GetInstitutionByInviteCodeAction', { data });
+
             currentMember = {
               ...currentMember,
               institution: { id: response?.id, name: response?.name },
             };
+            console.log(
+              '*1* Updating current member from updateCurrentUserInState',
+              { currentMember }
+            );
             patchState({
               currentMember,
+              firstTimeSetup: true,
             });
           },
           (error) => {
@@ -1052,8 +1116,12 @@ export class AuthState {
   }
 
   @Action(AddInvitecodeAction)
-  addInviteCode({ patchState, getState }: StateContext<AuthStateModel>) {
+  addInviteCode(
+    { patchState, getState }: StateContext<AuthStateModel>,
+    { payload }: AddInvitecodeAction
+  ) {
     const state = getState();
+    const { email } = payload;
     let { currentMember } = state;
     const invitecode = currentMember.invitecode;
     if (invitecode) {
@@ -1062,12 +1130,13 @@ export class AuthState {
           mutation: AUTH_MUTATIONS.ADD_INVITECODE,
           variables: {
             invitecode: currentMember.invitecode,
+            email,
           },
         })
         .subscribe(
           ({ data }: any) => {
             const response = data.addInvitecode;
-            console.log('got data', { data });
+            console.log('Added invitecode to User', { data });
           },
           (error) => {
             console.error('There was an error ', error);
@@ -1080,6 +1149,11 @@ export class AuthState {
           }
         );
     }
+  }
+
+  @Action(OpenLoginFormAction)
+  openLogiinForm({ patchState }: StateContext<OpenLoginFormAction>) {
+    patchState({ closeLoginForm: false });
   }
 }
 
@@ -1098,12 +1172,7 @@ const getDecodedToken = (token) => {
 
 const calculateFirstTiimeSetup = (currentMember: CurrentMember): boolean => {
   const firstTimeSetup =
-    !currentMember?.firstName?.length ||
-    !currentMember?.lastName?.length ||
-    !currentMember?.institution?.id;
-  console.log('currentMember and firsttimesetup ', {
-    currentMember,
-    firstTimeSetup,
-  });
+    currentMember?.membershipStatus == MembershipStatus.UNINITIALIZED;
+  console.log('firsttimesetup calculated => ', { firstTimeSetup });
   return firstTimeSetup;
 };

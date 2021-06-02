@@ -7,6 +7,14 @@
 <span *ngIf="showDialog == INVITECODE">
   <ng-container *ngTemplateOutlet="invitecodeTemplate"></ng-container>
 </span>
+<span *ngIf="showDialog == TROUBLE_SIGNING_IN">
+  <ng-container *ngTemplateOutlet="troubleSigningInTemplate"></ng-container>
+</span>
+<span *ngIf="showDialog == RESEND_ACTIVATION_EMAIL">
+  <ng-container
+    *ngTemplateOutlet="resendActivationEmailTemplate"
+  ></ng-container>
+</span>
 <span *ngIf="showDialog == FORGOT_PASSWORD">
   <ng-container *ngTemplateOutlet="forgotPasswordTemplate"></ng-container>
 </span>
@@ -79,14 +87,16 @@
           class="submit-button"
           mat-raised-button
           color="primary"
-          [disabled]="(isSubmittingForm$ | async) === true"
+          [disabled]="isSubmittingForm === true"
         >
-          {{ (isSubmittingForm$ | async) === true ? "Logging in..." : "Login" }}
+          {{ isSubmittingForm === true ? "Logging in..." : "Login" }}
         </button>
       </form>
     </mat-card>
     <div class="secondary-auth-options">
-      <p class="link-button" (click)="showForgotPassword()">Forgot password?</p>
+      <p class="link-button" (click)="showTroubleSigningIn()">
+        Trouble Signing in?
+      </p>
       <p class="link-button" (click)="showRegister()">Register</p>
     </div>
   </div>
@@ -140,13 +150,9 @@
           class="submit-button"
           mat-raised-button
           color="primary"
-          [disabled]="(isSubmittingForm$ | async) === true"
+          [disabled]="isSubmittingForm === true"
         >
-          {{
-            (isSubmittingForm$ | async) === true
-              ? "Verifying..."
-              : "Verify invitation"
-          }}
+          {{ isSubmittingForm === true ? "Verifying..." : "Verify invitation" }}
         </button>
       </form>
     </mat-card>
@@ -281,11 +287,9 @@
           class="submit-button"
           mat-raised-button
           color="primary"
-          [disabled]="(isSubmittingForm$ | async) === true"
+          [disabled]="isSubmittingForm === true"
         >
-          {{
-            (isSubmittingForm$ | async) === true ? "Registering..." : "Register"
-          }}
+          {{ isSubmittingForm === true ? "Registering..." : "Register" }}
         </button>
       </form>
     </mat-card>
@@ -298,7 +302,7 @@
 </ng-template>
 
 <ng-template #forgotPasswordTemplate>
-  <div mat-dialog-content class="forgot-password-dialog-box">
+  <div mat-dialog-content class="email-input-dialog-box">
     <mat-card>
       <mat-card-header class="form-title">
         <mat-card-title>Send Password Reset Email</mat-card-title>
@@ -312,10 +316,10 @@
       </mat-card-header>
 
       <form
-        [formGroup]="forgotPasswordForm"
+        [formGroup]="emailForm"
         novalidate
         #formDirective="ngForm"
-        (submit)="sendPasswordResetEmail(forgotPasswordForm, formDirective)"
+        (submit)="sendPasswordResetEmail(emailForm, formDirective)"
       >
         <mat-form-field
           class="col-lg-12 col-md-12 col-sm-12"
@@ -331,7 +335,7 @@
           <small
             class="validation-error"
             *ngIf="
-              forgotPasswordForm.get('email').hasError('required') &&
+              emailForm.get('email').hasError('required') &&
               formDirective.submitted
             "
           >
@@ -340,7 +344,7 @@
           <small
             class="validation-error"
             *ngIf="
-              forgotPasswordForm.get('email').hasError('email') &&
+              emailForm.get('email').hasError('email') &&
               formDirective.submitted
             "
           >
@@ -351,15 +355,111 @@
           class="submit-button"
           mat-raised-button
           color="primary"
-          [disabled]="(isSubmittingForm$ | async) === true"
+          [disabled]="isSubmittingForm === true"
         >
           {{
-            (isSubmittingForm$ | async) === true
+            isSubmittingForm === true
               ? "Sending Reset Email..."
               : "Send Reset Instructions"
           }}
         </button>
       </form>
+    </mat-card>
+    <div class="secondary-auth-options">
+      <p class="link-button" (click)="showLogin()">Login</p>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #resendActivationEmailTemplate>
+  <div mat-dialog-content class="email-input-dialog-box">
+    <mat-card>
+      <mat-card-header class="form-title">
+        <mat-card-title>Resend activation Email</mat-card-title>
+        <hr />
+        <mat-card-subtitle style="text-align: left"
+          ><p>
+            Enter the email ID you used to register and submit this form to
+            receive instructions to activate your account.
+          </p></mat-card-subtitle
+        >
+      </mat-card-header>
+
+      <form
+        [formGroup]="emailForm"
+        novalidate
+        #formDirective="ngForm"
+        (submit)="sendAccountActivationEmail(emailForm, formDirective)"
+      >
+        <mat-form-field
+          class="col-lg-12 col-md-12 col-sm-12"
+          appearance="outline"
+        >
+          <mat-label>Email ID</mat-label>
+          <input
+            matInput
+            formControlName="email"
+            required
+            placeholder="Email ID"
+          />
+          <small
+            class="validation-error"
+            *ngIf="
+              emailForm.get('email').hasError('required') &&
+              formDirective.submitted
+            "
+          >
+            Email is required
+          </small>
+          <small
+            class="validation-error"
+            *ngIf="
+              emailForm.get('email').hasError('email') &&
+              formDirective.submitted
+            "
+          >
+            Please enter a valid email
+          </small>
+        </mat-form-field>
+        <button
+          class="submit-button"
+          mat-raised-button
+          color="primary"
+          [disabled]="isSubmittingForm === true"
+        >
+          {{
+            isSubmittingForm === true
+              ? "Sending Activation Email..."
+              : "Send Activation Instructions"
+          }}
+        </button>
+      </form>
+    </mat-card>
+    <div class="secondary-auth-options">
+      <p class="link-button" (click)="showLogin()">Login</p>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #troubleSigningInTemplate>
+  <div mat-dialog-content class="email-input-dialog-box">
+    <mat-card>
+      <mat-card-header class="form-title">
+        <mat-card-title>What issue are you having?</mat-card-title>
+        <hr />
+      </mat-card-header>
+      <hr />
+      <button
+        (click)="showResendActivation()"
+        mat-raised-button
+        color="primary"
+      >
+        I did not receive my account activation email
+      </button>
+      <hr />
+      <button (click)="showForgotPassword()" mat-raised-button color="primary">
+        I forgot my password
+      </button>
     </mat-card>
     <div class="secondary-auth-options">
       <p class="link-button" (click)="showLogin()">Login</p>

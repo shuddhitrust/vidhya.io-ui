@@ -6,6 +6,7 @@ export interface NotificationStateModel {
   autoClose: boolean;
   dismissible: boolean;
   position: HotToastPositionOptions;
+  id: string;
 }
 
 export const defaultNotificationState: NotificationStateModel = {
@@ -14,4 +15,5 @@ export const defaultNotificationState: NotificationStateModel = {
   autoClose: true,
   dismissible: true,
   position: 'bottom-center',
+  id: null,
 };
