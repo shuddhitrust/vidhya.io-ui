@@ -77,9 +77,6 @@ export class AddEditMemberComponent implements OnInit {
   firstTimeSetup: boolean;
   currentMember: User;
 
-  // Static Options List
-  membershipStatusOptions: MatSelectOption[] = membershipStatusOptions;
-
   // Validation Constants
   titleMaxLength = 60;
   bioMaxLength = 150;
@@ -102,59 +99,56 @@ export class AddEditMemberComponent implements OnInit {
       this.isFullyAuthenticated = this.authState.isFullyAuthenticated;
       this.currentMember = this.authState.currentMember;
       this.firstTimeSetup = this.authState.firstTimeSetup;
-      if (this.memberForm) {
+      if (this.firstTimeSetup) {
+        this.store.dispatch(
+          new ShowNotificationAction({
+            message:
+              'Please fill this form and submit before being able to browse the application.',
+            action: 'show',
+          })
+        );
+        const currentUser: User = {
+          username: this.currentMember.username,
+          firstName: this.currentMember.firstName,
+          lastName: this.currentMember.lastName,
+          email: this.currentMember.email,
+          avatar: this.currentMember.avatar,
+          institution: {
+            id: this.currentMember?.institution?.id,
+            name: this.currentMember?.institution?.name,
+          },
+        };
+        this.memberForm = this.setupMemberFormGroup(currentUser);
         this.populateInstitution();
+      } else {
+        this.memberForm = this.setupMemberFormGroup();
+        this.institutionOptions$.subscribe((options) => {
+          this.institutionOptions = options;
+        });
+        this.isFetchingInstitutions$.subscribe((val) => {
+          this.isFetchingInstitutions = val;
+        });
+        this.optionsState$.subscribe((val: OptionsStateModel) => {
+          this.optionsState = val;
+          this.isFetchingGroups = val.isFetchingGroupsByInstitution;
+          this.groupInstitutionId = val.groupInstitutionId;
+        });
+        this.groupOptions$.subscribe((val) => {
+          this.groupOptions = val;
+        });
+        this.store.dispatch(
+          new FetchInstitutionsAction({ searchParams: defaultSearchParams })
+        );
       }
       // this.membershipStatus = this.authState.membershipStatus;
       // this.createForm =
       //   this.membershipStatus == MembershipStatus.PENDING_REGISTRATION; // The form is set to createForm when user status is pending_registration
-      console.log('current pending registration => ', {
-        createForm: this.createForm,
-        authState: this.authState,
-      });
+      // console.log('current pending registration => ', {
+      //   createForm: this.createForm,
+      //   authState: this.authState,
+      // });
     });
-    if (this.firstTimeSetup) {
-      this.store.dispatch(
-        new ShowNotificationAction({
-          message:
-            'Please fill this form and submit before being able to browse the application.',
-          action: 'show',
-        })
-      );
-      const currentUser: User = {
-        username: this.currentMember.username,
-        firstName: this.currentMember.firstName,
-        lastName: this.currentMember.lastName,
-        email: this.currentMember.email,
-        avatar: this.currentMember.avatar,
-        institution: {
-          id: this.currentMember?.institution?.id,
-          name: this.currentMember?.institution?.name,
-        },
-      };
-      this.memberForm = this.setupMemberFormGroup(currentUser);
-      this.populateInstitution();
-    } else {
-      this.memberForm = this.setupMemberFormGroup();
-      this.institutionOptions$.subscribe((options) => {
-        this.institutionOptions = options;
-      });
-      this.isFetchingInstitutions$.subscribe((val) => {
-        this.isFetchingInstitutions = val;
-      });
-      this.optionsState$.subscribe((val: OptionsStateModel) => {
-        this.optionsState = val;
-        this.isFetchingGroups = val.isFetchingGroupsByInstitution;
-        this.groupInstitutionId = val.groupInstitutionId;
-      });
-      this.groupOptions$.subscribe((val) => {
-        this.groupOptions = val;
-      });
-    }
     this.checkIfFormContainsRecord();
-    this.store.dispatch(
-      new FetchInstitutionsAction({ searchParams: defaultSearchParams })
-    );
   }
   checkIfFormContainsRecord() {
     this.updateForm = this.memberFormRecord.id != null;
