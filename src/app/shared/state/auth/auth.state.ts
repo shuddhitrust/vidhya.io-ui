@@ -431,7 +431,6 @@ export class AuthState {
               console.log(
                 'initiating UpdateCurrentUserInStateAction from login'
               );
-              this.store.dispatch(new UpdateCurrentUserInStateAction({ user }));
               patchState({
                 closeLoginForm: true,
                 token,
@@ -439,6 +438,7 @@ export class AuthState {
                 refreshToken: response?.refreshToken,
                 lastLogin: response?.user?.lastLogin,
               });
+              this.store.dispatch(new UpdateCurrentUserInStateAction({ user }));
               this.store.dispatch(
                 new ToggleLoadingScreen({
                   showLoadingScreen: false,
