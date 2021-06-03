@@ -19,6 +19,8 @@ import { AddEditAnnouncementComponent } from './pages/forms/add-edit-announcemen
 import { OwnProfileComponent } from './pages/profiles/own-user-profile/own-profile.component';
 import { AddEditCourseComponent } from './pages/forms/add-edit-course/add-edit-course.component';
 import { AddEditAssignmentComponent } from './pages/forms/add-edit-assignment/add-edit-assignment.component';
+import { InstitutionProfileComponent } from './pages/profiles/institution-profile/institution-profile.component';
+// import { InstitutionProfileComponent } from './pages/modals/institution-profile/institution-profile.component';
 
 const routes: Routes = [
   {
@@ -95,6 +97,12 @@ const routes: Routes = [
   {
     path: uiroutes.MEMBER_PROFILE_ROUTE,
     component: OwnProfileComponent,
+    canActivate: [AuthenticationGuard],
+    pathMatch: 'full',
+  },
+  {
+    path: uiroutes.INSTITUTION_PROFILE_ROUTE,
+    component: InstitutionProfileComponent,
     canActivate: [AuthenticationGuard],
     pathMatch: 'full',
   },

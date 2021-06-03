@@ -7,6 +7,7 @@ import {
   PaginationObject,
   startingPaginationObject,
 } from '../../common/models';
+import { uiroutes } from '../../common/ui-routes';
 
 export const emptyGroupFormRecord: Group = {
   id: null,
@@ -41,7 +42,6 @@ export const defaultGroupState: GroupStateModel = {
   errorSubmitting: false,
 };
 
-export const GroupFormCloseURL =
-  'dashboard?adminSection=Institutions&tab=Groups';
+export const GroupFormCloseURL = uiroutes.DASHBOARD_ROUTE + '?tab=Groups';
 
 export const groupTypeOptions: MatSelectOption[] = autoGenOptions(GroupType);

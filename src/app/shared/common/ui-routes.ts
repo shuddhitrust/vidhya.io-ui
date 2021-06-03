@@ -5,6 +5,7 @@ export const uiroutes = {
   PROFILE_ROUTE: 'profile',
   ACCOUNT_ROUTE: 'account',
   SUPPORT_ROUTE: 'support',
+  INSTITUTION_PROFILE_ROUTE: 'institution',
   INSTITUTION_FORM_ROUTE: 'institution-form',
   MEMBER_FORM_ROUTE: 'member-form',
   MEMBER_PROFILE_ROUTE: 'member-profile',
@@ -13,7 +14,7 @@ export const uiroutes = {
   ANNOUNCEMENT_FORM_ROUTE: 'announcement-form',
   ANNOUNCEMENT_PROFILE_ROUTE: 'announcement',
   COURSE_FORM_ROUTE: 'course-form',
-  COURSE_PAGE_ROUTE: 'course',
+  COURSE_PROFILE_ROUTE: 'course',
   ASSIGNMENT_FORM_ROUTE: 'assignment-form',
-  ASSIGNMENT_PAGE_ROUTE: 'assignment',
+  ASSIGNMENT_PROFILE_ROUTE: 'assignment',
 };

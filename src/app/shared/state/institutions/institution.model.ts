@@ -5,6 +5,7 @@ import {
   PaginationObject,
   startingPaginationObject,
 } from '../../common/models';
+import { uiroutes } from '../../common/ui-routes';
 
 export const emptyInstitutionFormRecord: Institution = {
   id: null,
@@ -41,4 +42,5 @@ export const defaultInstitutionState: InstitutionStateModel = {
   errorSubmitting: false,
 };
 
-export const InstitutionFormCloseURL = 'dashboard?adminSection=Institutions';
+export const InstitutionFormCloseURL =
+  uiroutes.DASHBOARD_ROUTE + '?adminSection=Institutions';

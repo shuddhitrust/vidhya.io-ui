@@ -18,6 +18,12 @@
 
 <ng-template #loggedInMenu>
   <ng-container *ngIf="isFullyAuthenticated; else pendingApproval">
+    <img
+      [src]="currentMember.avatar"
+      alt="user-avatar"
+      (click)="onAvatarClick()"
+      id="mini-user-avatar"
+    />
     <button
       [matMenuTriggerFor]="menu"
       class="example-icon"

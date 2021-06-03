@@ -14,7 +14,7 @@ import {
   ResetInstitutionFormAction,
 } from 'src/app/shared/state/institutions/institution.actions';
 import { InstitutionState } from 'src/app/shared/state/institutions/institution.state';
-import { InstitutionProfileComponent } from '../../modals/institution-profile/institution-profile.component';
+import { InstitutionModalComponent } from '../../modals/institution-modal/institution-modal.component';
 
 @Component({
   selector: 'app-institutions-table',
@@ -76,7 +76,7 @@ export class InstitutionsTableComponent implements OnInit {
   }
 
   openInstitutionProfile(rowData) {
-    const dialogRef = this.dialog.open(InstitutionProfileComponent, {
+    const dialogRef = this.dialog.open(InstitutionModalComponent, {
       data: rowData,
     });
 

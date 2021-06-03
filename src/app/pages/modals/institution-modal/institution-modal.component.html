@@ -1,7 +1,9 @@
 <div mat-dialog-content class="dialog-box">
   <mat-card>
     <mat-card-header>
-      <mat-card-title>{{ profileData.name }}</mat-card-title>
+      <mat-card-title class="title-link" (click)="onClickInstitutionName()">{{
+        profileData.name
+      }}</mat-card-title>
       <mat-card-subtitle>{{ profileData.location }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>

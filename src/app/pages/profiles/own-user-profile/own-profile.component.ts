@@ -30,8 +30,11 @@ export class OwnProfileComponent implements OnInit, OnDestroy {
   }
 
   editMember() {
-    this.router.navigate([uiroutes.MEMBER_FORM_ROUTE], {
-      queryParams: { id: this.currentMember.id },
+    this.router.navigate([uiroutes.MEMBER_FORM_ROUTE]);
+  }
+  onClickInstitution() {
+    this.router.navigate([uiroutes.INSTITUTION_PROFILE_ROUTE], {
+      queryParams: { id: this.currentMember?.institution?.id },
       queryParamsHandling: 'merge',
       skipLocationChange: false,
     });

@@ -36,7 +36,7 @@ export class AssignmentDashboardComponent implements OnInit {
   }
 
   openAssignment(assignment) {
-    this.router.navigate([uiroutes.ASSIGNMENT_PAGE_ROUTE], {
+    this.router.navigate([uiroutes.ASSIGNMENT_PROFILE_ROUTE], {
       queryParams: { id: assignment.id },
     });
   }

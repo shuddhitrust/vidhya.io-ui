@@ -1,21 +1,25 @@
 <button mat-icon-button (click)="goBack()" class="floating-back-button">
   <mat-icon>keyboard_backspace</mat-icon>
 </button>
-
+<button
+  mat-raised-button
+  color="warn"
+  class="profile-button"
+  (click)="deleteConfirmation()"
+>
+  Delete
+</button>
 <button
   mat-raised-button
   color="info"
   class="profile-button"
-  (click)="editMember()"
+  (click)="editInstitution()"
 >
   Edit
 </button>
-<div class="member-card">
-  <h2>{{ currentMember?.firstName }}</h2>
-  <p>{{ currentMember?.bio }}</p>
-  <p class="title-link" (click)="onClickInstitution()">
-    {{ currentMember?.institution.name }}
-  </p>
+<div class="institution-card">
+  <h2>{{ institution?.name }}</h2>
+  <p>{{ institution?.bio }}</p>
 </div>
 
 <ng-template #loading>

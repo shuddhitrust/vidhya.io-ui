@@ -4,6 +4,7 @@ import {
   PaginationObject,
   startingPaginationObject,
 } from '../../common/models';
+import { uiroutes } from '../../common/ui-routes';
 
 export const emptyCourseFormRecord: Course = {
   id: null,
@@ -36,5 +37,4 @@ export const defaultCourseState: CourseStateModel = {
   errorSubmitting: false,
 };
 
-export const CourseFormCloseURL =
-  'dashboard?adminSection=Institutions&tab=Courses';
+export const CourseFormCloseURL = uiroutes.DASHBOARD_ROUTE + '?tab=Courses';

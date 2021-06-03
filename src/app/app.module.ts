@@ -35,10 +35,10 @@ import { AgGridModule } from 'ag-grid-angular';
 import { AddEditInstitutionComponent } from './pages/forms/add-edit-institution/add-edit-institution.component';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InstitutionProfileRendererComponent } from './shared/cell-renderers/institution-profile/institution-profile-renderer.component';
-import {
-  InstitutionDeleteConfirmationDialog,
-  InstitutionProfileComponent,
-} from './pages/modals/institution-profile/institution-profile.component';
+// import {
+//   InstitutionDeleteConfirmationDialog,
+//   InstitutionProfileComponent,
+// } from './pages/modals/institution-profile/institution-profile.component';
 import { InstitutionState } from './shared/state/institutions/institution.state';
 import { InstitutionsTableComponent } from './pages/tables/institutions-table/institutions-table.component';
 import { MembersTableComponent } from './pages/tables/members-table/members-table.component';
@@ -87,6 +87,14 @@ import { CourseState } from './shared/state/courses/course.state';
 import { AssignmentState } from './shared/state/assignments/assignment.state';
 import { AddEditCourseComponent } from './pages/forms/add-edit-course/add-edit-course.component';
 import { AddEditAssignmentComponent } from './pages/forms/add-edit-assignment/add-edit-assignment.component';
+import {
+  InstitutionDeleteConfirmationDialog,
+  InstitutionProfileComponent,
+} from './pages/profiles/institution-profile/institution-profile.component';
+import {
+  InstitutionDeleteConfirmationDialogModal,
+  InstitutionModalComponent,
+} from './pages/modals/institution-modal/institution-modal.component';
 
 @NgModule({
   declarations: [
@@ -107,7 +115,6 @@ import { AddEditAssignmentComponent } from './pages/forms/add-edit-assignment/ad
     ReportDashboardComponent,
     AddEditInstitutionComponent,
     InstitutionProfileRendererComponent,
-    InstitutionProfileComponent,
     MasterGridComponent,
     InstitutionsTableComponent,
     AwaitingModerationTableComponent,
@@ -119,6 +126,7 @@ import { AddEditAssignmentComponent } from './pages/forms/add-edit-assignment/ad
     MemberProfileComponent,
     AddEditMemberComponent,
     AddEditGroupComponent,
+    InstitutionProfileComponent,
     InstitutionDeleteConfirmationDialog,
     GroupProfileComponent,
     AddEditAnnouncementComponent,
@@ -133,6 +141,8 @@ import { AddEditAssignmentComponent } from './pages/forms/add-edit-assignment/ad
     GroupMemberReviewDialog,
     LoginModalComponent,
     PaginatorComponent,
+    InstitutionModalComponent,
+    InstitutionDeleteConfirmationDialogModal,
   ],
   imports: [
     BrowserModule,

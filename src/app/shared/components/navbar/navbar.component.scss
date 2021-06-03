@@ -21,6 +21,14 @@
   height: 42px;
 }
 
+#mini-user-avatar {
+  cursor: pointer;
+  height: var(--navbar-height);
+  padding: 5px;
+  margin-top: 5px;
+  border-radius: 99px;
+}
+
 #login-button {
   text-decoration: none;
   margin-right: 10px;

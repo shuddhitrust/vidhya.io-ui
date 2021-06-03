@@ -99,6 +99,19 @@ export class AddEditMemberComponent implements OnInit {
       this.isFullyAuthenticated = this.authState.isFullyAuthenticated;
       this.currentMember = this.authState.currentMember;
       this.firstTimeSetup = this.authState.firstTimeSetup;
+      const currentUser: User = {
+        username: this.currentMember.username,
+        firstName: this.currentMember.firstName,
+        lastName: this.currentMember.lastName,
+        email: this.currentMember.email,
+        avatar: this.currentMember.avatar,
+        institution: {
+          id: this.currentMember?.institution?.id,
+          name: this.currentMember?.institution?.name,
+        },
+      };
+      this.memberForm = this.setupMemberFormGroup(currentUser);
+      this.populateInstitution();
       if (this.firstTimeSetup) {
         this.store.dispatch(
           new ShowNotificationAction({
@@ -107,27 +120,14 @@ export class AddEditMemberComponent implements OnInit {
             action: 'show',
           })
         );
-        const currentUser: User = {
-          username: this.currentMember.username,
-          firstName: this.currentMember.firstName,
-          lastName: this.currentMember.lastName,
-          email: this.currentMember.email,
-          avatar: this.currentMember.avatar,
-          institution: {
-            id: this.currentMember?.institution?.id,
-            name: this.currentMember?.institution?.name,
-          },
-        };
-        this.memberForm = this.setupMemberFormGroup(currentUser);
-        this.populateInstitution();
       } else {
-        this.memberForm = this.setupMemberFormGroup();
-        this.institutionOptions$.subscribe((options) => {
-          this.institutionOptions = options;
-        });
-        this.isFetchingInstitutions$.subscribe((val) => {
-          this.isFetchingInstitutions = val;
-        });
+        // this.memberForm = this.setupMemberFormGroup();
+        // this.institutionOptions$.subscribe((options) => {
+        //   this.institutionOptions = options;
+        // });
+        // this.isFetchingInstitutions$.subscribe((val) => {
+        //   this.isFetchingInstitutions = val;
+        // });
         this.optionsState$.subscribe((val: OptionsStateModel) => {
           this.optionsState = val;
           this.isFetchingGroups = val.isFetchingGroupsByInstitution;
@@ -136,9 +136,9 @@ export class AddEditMemberComponent implements OnInit {
         this.groupOptions$.subscribe((val) => {
           this.groupOptions = val;
         });
-        this.store.dispatch(
-          new FetchInstitutionsAction({ searchParams: defaultSearchParams })
-        );
+        // this.store.dispatch(
+        //   new FetchInstitutionsAction({ searchParams: defaultSearchParams })
+        // );
       }
       // this.membershipStatus = this.authState.membershipStatus;
       // this.createForm =

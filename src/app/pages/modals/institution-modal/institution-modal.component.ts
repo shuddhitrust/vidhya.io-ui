@@ -10,16 +10,16 @@ import { Institution } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { DeleteInstitutionAction } from 'src/app/shared/state/institutions/institution.actions';
 @Component({
-  selector: 'app-institution-profile',
-  templateUrl: './institution-profile.component.html',
-  styleUrls: ['./institution-profile.component.scss'],
+  selector: 'app-institution-modal',
+  templateUrl: './institution-modal.component.html',
+  styleUrls: ['./institution-modal.component.scss'],
 })
-export class InstitutionProfileComponent {
+export class InstitutionModalComponent {
   profileData: Institution;
 
   constructor(
     public dialog: MatDialog,
-    public dialogRef: MatDialogRef<InstitutionProfileComponent>,
+    public dialogRef: MatDialogRef<InstitutionModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private route: ActivatedRoute,
     private router: Router,
@@ -31,7 +31,15 @@ export class InstitutionProfileComponent {
   closeDialog(): void {
     this.dialogRef.close();
   }
-
+  onClickInstitutionName() {
+    this.closeDialog();
+    const id = this.profileData.id;
+    this.router.navigate([uiroutes.INSTITUTION_PROFILE_ROUTE], {
+      queryParams: { id },
+      queryParamsHandling: 'merge',
+      skipLocationChange: false,
+    });
+  }
   editInstitution() {
     this.closeDialog();
     const id = this.profileData.id;
@@ -44,9 +52,12 @@ export class InstitutionProfileComponent {
   }
 
   deleteConfirmation() {
-    const dialogRef = this.dialog.open(InstitutionDeleteConfirmationDialog, {
-      data: this.profileData,
-    });
+    const dialogRef = this.dialog.open(
+      InstitutionDeleteConfirmationDialogModal,
+      {
+        data: this.profileData,
+      }
+    );
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result == true) {
@@ -63,12 +74,12 @@ export class InstitutionProfileComponent {
 }
 
 @Component({
-  selector: 'institution-delete-confirmation-dialog',
+  selector: 'institution-delete-confirmation-dialog-modal',
   templateUrl: 'delete-confirmation-dialog.html',
 })
-export class InstitutionDeleteConfirmationDialog {
+export class InstitutionDeleteConfirmationDialogModal {
   constructor(
-    public dialogRef: MatDialogRef<InstitutionDeleteConfirmationDialog>,
+    public dialogRef: MatDialogRef<InstitutionDeleteConfirmationDialogModal>,
     @Inject(MAT_DIALOG_DATA) public data: Institution
   ) {}
 }

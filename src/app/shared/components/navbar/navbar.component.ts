@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Store, Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { LoginModalComponent } from 'src/app/pages/modals/login/login-modal.component';
+import { CurrentMember } from '../../common/models';
 import { uiroutes } from '../../common/ui-routes';
 import {
   LoginAction,
@@ -25,15 +27,25 @@ export class NavbarComponent implements OnInit {
   @Select(AuthState)
   authState$: Observable<AuthStateModel>;
   authState: AuthStateModel;
+  currentMember: CurrentMember;
   isLoggedIn: boolean;
   isFullyAuthenticated: Boolean;
 
-  constructor(private store: Store, public dialog: MatDialog) {
+  constructor(
+    private store: Store,
+    public dialog: MatDialog,
+    private router: Router
+  ) {
     this.authState$.subscribe((val) => {
       this.authState = val;
       this.isLoggedIn = this.authState.isLoggedIn;
       this.isFullyAuthenticated = this.authState.isFullyAuthenticated;
+      this.currentMember = this.authState.currentMember;
     });
+  }
+
+  onAvatarClick() {
+    this.router.navigateByUrl(uiroutes.MEMBER_PROFILE_ROUTE);
   }
 
   login() {

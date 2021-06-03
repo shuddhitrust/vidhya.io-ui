@@ -1,7 +1,15 @@
-import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
+import {
+  Action,
+  Select,
+  Selector,
+  State,
+  StateContext,
+  Store,
+} from '@ngxs/store';
 import {
   defaultMemberState,
   emptyMemberFormRecord,
+  MemberFormCloseURL,
   MemberStateModel,
 } from './member.model';
 
@@ -30,6 +38,8 @@ import {
   UpdateCurrentUserInStateAction,
 } from '../auth/auth.actions';
 import { Router } from '@angular/router';
+import { AuthState } from '../auth/auth.state';
+import Observable from 'zen-observable';
 
 @State<MemberStateModel>({
   name: 'memberState',
@@ -37,11 +47,18 @@ import { Router } from '@angular/router';
 })
 @Injectable()
 export class MemberState {
+  firstTimeSetup: boolean = false;
+  @Select(AuthState.getFirstTimeSetup)
+  firstTimeSetup$: Observable<boolean>;
   constructor(
     private apollo: Apollo,
     private store: Store,
     private router: Router
-  ) {}
+  ) {
+    this.firstTimeSetup$.subscribe((val) => {
+      this.firstTimeSetup = val;
+    });
+  }
 
   @Selector()
   static listMembers(state: MemberStateModel): User[] {
@@ -184,7 +201,8 @@ export class MemberState {
             patchState({ formSubmitting: false });
             console.log('update member ', { response });
             if (response.ok) {
-              const user = response?.updateUser;
+              const user = response?.user;
+              console.log('from after updating the user ', { data, user });
               this.store.dispatch(new UpdateCurrentUserInStateAction({ user }));
               this.store.dispatch(
                 new ShowNotificationAction({
@@ -192,7 +210,11 @@ export class MemberState {
                   action: 'success',
                 })
               );
-              this.router.navigateByUrl('/');
+              if (this.firstTimeSetup) {
+                this.router.navigateByUrl('/');
+              } else {
+                this.router.navigate([MemberFormCloseURL]);
+              }
             } else {
               this.store.dispatch(
                 new ShowNotificationAction({

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ICellRendererParams } from 'ag-grid-community';
-import { InstitutionProfileComponent } from 'src/app/pages/modals/institution-profile/institution-profile.component';
+import { InstitutionModalComponent } from 'src/app/pages/modals/institution-modal/institution-modal.component';
 
 @Component({
   selector: 'app-institution-profile',
@@ -34,7 +34,7 @@ export class InstitutionProfileRendererComponent {
     this.params.context.componentParent.openInstitutionProfile(this.rowData);
   }
   openDialog() {
-    const dialogRef = this.dialog.open(InstitutionProfileComponent, {
+    const dialogRef = this.dialog.open(InstitutionModalComponent, {
       data: this.rowData,
     });
 

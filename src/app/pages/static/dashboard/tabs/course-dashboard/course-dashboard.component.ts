@@ -36,7 +36,7 @@ export class CourseDashboardComponent implements OnInit {
   }
 
   openCourse(course) {
-    this.router.navigate([uiroutes.COURSE_PAGE_ROUTE], {
+    this.router.navigate([uiroutes.COURSE_PROFILE_ROUTE], {
       queryParams: { id: course.id },
     });
   }

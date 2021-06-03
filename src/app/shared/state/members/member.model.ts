@@ -11,6 +11,7 @@ import {
   startingPaginationObject,
   User,
 } from '../../common/models';
+import { uiroutes } from '../../common/ui-routes';
 
 export interface MemberInput {
   id: Number;
@@ -85,4 +86,4 @@ export const memberColumns = [
   },
 ];
 
-console.log('membershipStatusOptions', membershipStatusOptions);
+export const MemberFormCloseURL = uiroutes.MEMBER_PROFILE_ROUTE;
