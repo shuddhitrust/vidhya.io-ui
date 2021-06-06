@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 
 const MODERATION = 'Moderation';
+const USER_ROLES = 'User Roles';
 const INSTITUTIONS = 'Institutions';
 const MEMBERS = 'Members';
 const INSTITUTION_ADMINS = 'Institution Admins';
@@ -11,6 +12,7 @@ const LEARNERS = 'Learners';
 
 const entities = [
   MODERATION,
+  USER_ROLES,
   INSTITUTIONS,
   MEMBERS,
   INSTITUTION_ADMINS,
@@ -29,6 +31,7 @@ export class AdminDashboardComponent implements OnInit {
   opened: boolean = true;
   entities: string[] = entities;
   moderation: string = MODERATION;
+  userRoles: string = USER_ROLES;
   institutions: string = INSTITUTIONS;
   members: string = MEMBERS;
   institutionAdmins: string = INSTITUTION_ADMINS;

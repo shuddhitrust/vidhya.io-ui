@@ -9,6 +9,8 @@ export const uiroutes = {
   INSTITUTION_FORM_ROUTE: 'institution-form',
   MEMBER_FORM_ROUTE: 'member-form',
   MEMBER_PROFILE_ROUTE: 'member-profile',
+  USER_ROLE_FORM_ROUTE: 'user-role-form',
+  USER_ROLE_PROFILE_ROUTE: 'user-role-profile',
   GROUP_FORM_ROUTE: 'group-form',
   GROUP_PROFILE_ROUTE: 'group',
   ANNOUNCEMENT_FORM_ROUTE: 'announcement-form',

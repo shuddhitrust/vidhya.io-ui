@@ -20,6 +20,7 @@ import { OwnProfileComponent } from './pages/profiles/own-user-profile/own-profi
 import { AddEditCourseComponent } from './pages/forms/add-edit-course/add-edit-course.component';
 import { AddEditAssignmentComponent } from './pages/forms/add-edit-assignment/add-edit-assignment.component';
 import { InstitutionProfileComponent } from './pages/profiles/institution-profile/institution-profile.component';
+import { AddEditUserRoleComponent } from './pages/forms/add-edit-user-role/add-edit-user-role.component';
 // import { InstitutionProfileComponent } from './pages/modals/institution-profile/institution-profile.component';
 
 const routes: Routes = [
@@ -103,6 +104,12 @@ const routes: Routes = [
   {
     path: uiroutes.INSTITUTION_PROFILE_ROUTE,
     component: InstitutionProfileComponent,
+    canActivate: [AuthenticationGuard],
+    pathMatch: 'full',
+  },
+  {
+    path: uiroutes.USER_ROLE_FORM_ROUTE,
+    component: AddEditUserRoleComponent,
     canActivate: [AuthenticationGuard],
     pathMatch: 'full',
   },

@@ -1,0 +1,15 @@
+<app-master-grid
+  [defaultColDef]="defaultColDef"
+  [columns]="columns"
+  [rows]="rows$ | async"
+  [isFetching]="isFetching$ | async"
+  [errorFetching]="errorFetching$ | async"
+  [tableTitle]="tableTitle"
+  [frameworkComponents]="frameworkComponents"
+  [gridOptions]="gridOptions"
+  [paginationObject$]="paginationObject$"
+  (fetchMethod)="fetchUserRoles($event[0])"
+  [columnFilters]="columnFilters"
+  (refreshData)="forceRefetchUserRoles($event[0])"
+  (createMethod)="createUserRole()"
+></app-master-grid>

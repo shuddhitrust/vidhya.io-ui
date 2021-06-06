@@ -108,9 +108,9 @@ export class MasterGridComponent implements OnInit, OnChanges {
   ngOnChanges(changes) {
     if (changes.paginationObject$) {
       this.paginationObject$.subscribe((val) => {
-        this.totalRecords = val.totalCount;
-        this.pageSize = val.pageSize;
-        this.currentPage = val.currentPage;
+        this.totalRecords = val?.totalCount;
+        this.pageSize = val?.pageSize;
+        this.currentPage = val?.currentPage;
       });
     }
     if (changes.isFetching) {

@@ -95,6 +95,13 @@ import {
   InstitutionDeleteConfirmationDialogModal,
   InstitutionModalComponent,
 } from './pages/modals/institution-modal/institution-modal.component';
+import { RolesTableComponent } from './pages/tables/roles-table/roles-table.component';
+import {
+  RoleDeleteConfirmationDialog,
+  RoleProfileComponent,
+} from './pages/modals/role-profile/role-profile.component';
+import { UserRoleState } from './shared/state/userRoles/userRole.state';
+import { AddEditUserRoleComponent } from './pages/forms/add-edit-user-role/add-edit-user-role.component';
 
 @NgModule({
   declarations: [
@@ -143,6 +150,10 @@ import {
     PaginatorComponent,
     InstitutionModalComponent,
     InstitutionDeleteConfirmationDialogModal,
+    RolesTableComponent,
+    RoleProfileComponent,
+    RoleDeleteConfirmationDialog,
+    AddEditUserRoleComponent,
   ],
   imports: [
     BrowserModule,
@@ -170,6 +181,7 @@ import {
           CourseState,
           AssignmentState,
           OptionsState,
+          UserRoleState,
         ],
         {
           developmentMode: !environment.production,

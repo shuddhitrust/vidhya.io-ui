@@ -63,9 +63,9 @@
   [totalRecords]="totalRecords"
   [pageSize]="pageSize"
   [currentPage]="currentPage"
-  [rowsShowing]="rows.length"
+  [rowsShowing]="rows?.length"
   [staticTable]="staticTable"
-  [searchQuery]="searchParams.searchQuery"
+  [searchQuery]="searchParams?.searchQuery"
   (onPageSizeChange)="onPageSizeChange($event)"
   (onPageChange)="onPageChange($event)"
 >

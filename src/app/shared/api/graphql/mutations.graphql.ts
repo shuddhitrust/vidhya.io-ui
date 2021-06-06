@@ -46,6 +46,42 @@ export const USER_MUTATIONS = {
   `,
 };
 
+export const USER_ROLE_MUTATIONS = {
+  CREATE_USER_ROLE: gql`
+    mutation createUserRole($input: RoleInput!) {
+      createUserRole(input: $input) {
+        ok
+        role {
+          id
+          name
+        }
+      }
+    }
+  `,
+  UPDATE_USER_ROLE: gql`
+    mutation updateUserRole($id: ID!, $input: RoleInput!) {
+      updateUserRole(id: $id, input: $input) {
+        ok
+        role {
+          id
+          name
+        }
+      }
+    }
+  `,
+  DELETE_USER_ROLE: gql`
+    mutation deleteUserRole($id: ID!) {
+      deleteUserRole(id: $id) {
+        ok
+        role {
+          id
+          name
+        }
+      }
+    }
+  `,
+};
+
 export const INSTITUTION_MUTATIONS = {
   CREATE_INSTITUTION: gql`
     mutation createInstitution($input: InstitutionInput!) {

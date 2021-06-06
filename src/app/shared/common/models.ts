@@ -82,6 +82,13 @@ export type User = {
   bio?: string;
 };
 
+export type UserRole = {
+  id?: number;
+  name: string;
+  description: string;
+  permissions: object;
+};
+
 export type Announcement = {
   id: number;
   title: string;

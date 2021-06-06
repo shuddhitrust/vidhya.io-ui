@@ -23,6 +23,8 @@
     *ngIf="selectedEntity == moderation"
   ></app-awaiting-moderation-table>
 
+  <app-roles-table *ngIf="selectedEntity == userRoles"></app-roles-table>
+
   <app-institutions-table
     *ngIf="selectedEntity == institutions"
   ></app-institutions-table>

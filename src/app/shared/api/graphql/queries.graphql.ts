@@ -64,6 +64,26 @@ export const USER_QUERIES = {
   `,
 };
 
+export const USER_ROLE_QUERIES = {
+  GET_USER_ROLE: gql`
+    query userRole($id: ID!) {
+      userRole(id: $id) {
+        id
+        name
+        permissions
+      }
+    }
+  `,
+  GET_USER_ROLES: gql`
+    query userRoles($searchField: String, $limit: Int, $offset: Int) {
+      userRoles(searchField: $searchField, limit: $limit, offset: $offset) {
+        id
+        name
+      }
+    }
+  `,
+};
+
 export const INSTITUTION_QUERIES = {
   GET_INSTITUTION: gql`
     query institution($id: ID!) {
