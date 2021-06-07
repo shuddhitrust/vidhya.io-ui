@@ -15,6 +15,7 @@ import {
 } from 'src/app/shared/state/institutions/institution.actions';
 import { InstitutionState } from 'src/app/shared/state/institutions/institution.state';
 import { InstitutionModalComponent } from '../../modals/institution-modal/institution-modal.component';
+import { INSTITUTIONS } from '../../static/dashboard/tabs/admin-dashboard/admin-dashboard.component';
 
 @Component({
   selector: 'app-institutions-table',
@@ -22,7 +23,7 @@ import { InstitutionModalComponent } from '../../modals/institution-modal/instit
   styleUrls: ['./institutions-table.component.scss'],
 })
 export class InstitutionsTableComponent implements OnInit {
-  tableTitle: string = 'Institutions';
+  tableTitle: string = INSTITUTIONS;
   institutions: object[];
   @Select(InstitutionState.listInstitutions)
   rows$: Observable<Institution[]>;

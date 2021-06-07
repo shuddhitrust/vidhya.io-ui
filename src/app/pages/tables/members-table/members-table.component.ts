@@ -15,6 +15,7 @@ import {
 import { memberColumns } from 'src/app/shared/state/members/member.model';
 import { MemberState } from 'src/app/shared/state/members/member.state';
 import { MemberProfileComponent } from '../../modals/member-profile/member-profile.component';
+import { MEMBERS } from '../../static/dashboard/tabs/admin-dashboard/admin-dashboard.component';
 
 @Component({
   selector: 'app-members-table',
@@ -22,7 +23,7 @@ import { MemberProfileComponent } from '../../modals/member-profile/member-profi
   styleUrls: ['./members-table.component.scss'],
 })
 export class MembersTableComponent implements OnInit {
-  tableTitle: string = 'Members';
+  tableTitle: string = MEMBERS;
   members: object[];
   @Select(MemberState.listMembers)
   rows$: Observable<User[]>;

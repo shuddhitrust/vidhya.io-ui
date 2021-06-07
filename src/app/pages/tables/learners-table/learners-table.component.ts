@@ -14,6 +14,7 @@ import {
 import { memberColumns } from 'src/app/shared/state/members/member.model';
 import { MemberState } from 'src/app/shared/state/members/member.state';
 import { MemberProfileComponent } from '../../modals/member-profile/member-profile.component';
+import { LEARNERS } from '../../static/dashboard/tabs/admin-dashboard/admin-dashboard.component';
 
 @Component({
   selector: 'app-learners-table',
@@ -21,7 +22,7 @@ import { MemberProfileComponent } from '../../modals/member-profile/member-profi
   styleUrls: ['./learners-table.component.scss'],
 })
 export class LearnersTableComponent implements OnInit {
-  tableTitle: string = 'Learners';
+  tableTitle: string = LEARNERS;
   members: object[];
   @Select(MemberState.listMembers)
   rows$: Observable<User[]>;
