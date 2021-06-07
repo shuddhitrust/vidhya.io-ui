@@ -102,7 +102,7 @@ const humanReadableTime = (time) => {
   } else return '';
 };
 
-const convertKeyToLabel = (key: string): string => {
+export const convertKeyToLabel = (key: string): string => {
   return key
     .replace('_', ' ')
     .split(' ')

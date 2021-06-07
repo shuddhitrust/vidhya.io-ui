@@ -1,3 +1,4 @@
+import { INSTITUTIONS } from 'src/app/pages/static/dashboard/tabs/admin-dashboard/admin-dashboard.component';
 import { defaultLogos } from '../../common/constants';
 import {
   FetchPolicy,
@@ -43,4 +44,4 @@ export const defaultInstitutionState: InstitutionStateModel = {
 };
 
 export const InstitutionFormCloseURL =
-  uiroutes.DASHBOARD_ROUTE + '?adminSection=Institutions';
+  uiroutes.DASHBOARD_ROUTE + '?adminSection=' + INSTITUTIONS;

@@ -15,8 +15,19 @@ import {
 } from 'src/app/shared/state/userRoles/userRole.actions';
 import { UserRoleState } from 'src/app/shared/state/userRoles/userRole.state';
 import { Observable } from 'rxjs';
-import { emptyUserRoleFormRecord } from 'src/app/shared/state/userRoles/userRole.model';
-import { UserRole } from 'src/app/shared/common/models';
+import {
+  defaultPermissions,
+  emptyUserRoleFormRecord,
+} from 'src/app/shared/state/userRoles/userRole.model';
+import {
+  CREATE,
+  DELETE,
+  LIST,
+  UPDATE,
+  UserRole,
+  VIEW,
+} from 'src/app/shared/common/models';
+import { convertKeyToLabel } from 'src/app/shared/common/functions';
 
 @Component({
   selector: 'app-add-edit-user-role',
@@ -27,6 +38,11 @@ import { UserRole } from 'src/app/shared/common/models';
   ],
 })
 export class AddEditUserRoleComponent implements OnInit {
+  VIEW = VIEW;
+  LIST = LIST;
+  CREATE = CREATE;
+  UPDATE = UPDATE;
+  DELETE = DELETE;
   formSubmitting: boolean = false;
   params: object = {};
   @Select(UserRoleState.getUserRoleFormRecord)
@@ -35,7 +51,12 @@ export class AddEditUserRoleComponent implements OnInit {
   @Select(UserRoleState.formSubmitting)
   formSubmitting$: Observable<boolean>;
   userRoleForm: FormGroup;
-
+  permissionsObject: object = defaultPermissions;
+  permissionsTable: object[] = convertPermissionsToTable(
+    this.permissionsObject
+  );
+  scopes: string[] = ['resource', VIEW, LIST, CREATE, UPDATE, DELETE];
+  permissionItems: string[] = Object.keys(defaultPermissions);
   constructor(
     private location: Location,
     private store: Store,
@@ -48,6 +69,7 @@ export class AddEditUserRoleComponent implements OnInit {
       this.userRoleFormRecord = val;
       this.userRoleForm = this.setupUserRoleFormGroup(this.userRoleFormRecord);
     });
+    console.log('Permissions Table => ', this.permissionsTable);
   }
 
   setupUserRoleFormGroup = (
@@ -59,7 +81,19 @@ export class AddEditUserRoleComponent implements OnInit {
       id: [userRoleFormRecord.id],
       name: [userRoleFormRecord.name, Validators.required],
       description: [userRoleFormRecord.description, Validators.required],
-      permissions: [userRoleFormRecord.permissions, Validators.required],
+      permissions: [
+        userRoleFormRecord.permissions
+          ? userRoleFormRecord.permissions
+          : defaultPermissions,
+        Validators.required,
+      ],
+    });
+    this.permissionsObject = formGroup.get('permissions').value;
+    this.permissionItems = Object.keys(this.permissionsObject);
+    this.permissionsTable = convertPermissionsToTable(this.permissionsObject);
+    console.log('before setting the table => ', {
+      permissionsObject: this.permissionsObject,
+      permissionsTable: this.permissionsTable,
     });
     return formGroup;
   };
@@ -73,13 +107,56 @@ export class AddEditUserRoleComponent implements OnInit {
     });
   }
 
+  keyToLabel(key) {
+    return convertKeyToLabel(key);
+  }
+
+  togglePermission(item, action) {
+    let newPermissionsObject = Object.assign({}, this.permissionsObject);
+    console.log('from togglePermission => ', {
+      item,
+      action,
+      newPermissionsObject,
+    });
+    const index = this.permissionsObject[item].indexOf(action);
+    console.log('index of ', action, ' in ', item, ' => ', index);
+    if (index > -1) {
+      newPermissionsObject[item].splice(index, 1);
+    } else {
+      let itemActions = Object.assign([], newPermissionsObject[item]);
+      itemActions.push(action);
+      console.log('itemActions => ', { itemActions });
+      newPermissionsObject[item] = itemActions;
+    }
+    this.permissionsObject = newPermissionsObject;
+    this.permissionsTable = convertPermissionsToTable(this.permissionsObject);
+  }
+
   goBack() {
     this.location.back();
   }
 
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {
+    this.userRoleForm.get('permissions').setValue(this.permissionsObject);
     this.store.dispatch(
       new CreateUpdateUserRoleAction({ form, formDirective })
     );
   }
 }
+
+const convertPermissionsToTable = (permissionsObject: object): object[] => {
+  let permissionsTableData = [];
+  const permissionItems = Object.keys(permissionsObject);
+  for (let i = 0; i < permissionItems.length; i++) {
+    const resource = permissionItems[i];
+    permissionsTableData[i] = {
+      resource,
+      VIEW: permissionsObject[resource].includes[VIEW] ? true : true,
+      LIST: permissionsObject[resource].includes[LIST] ? true : false,
+      CREATE: permissionsObject[resource].includes[CREATE] ? true : false,
+      UPDATE: permissionsObject[resource].includes[UPDATE] ? true : false,
+      DELETE: permissionsObject[resource].includes[DELETE ? true : false],
+    };
+  }
+  return permissionsTableData;
+};

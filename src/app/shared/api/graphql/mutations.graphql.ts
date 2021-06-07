@@ -48,10 +48,10 @@ export const USER_MUTATIONS = {
 
 export const USER_ROLE_MUTATIONS = {
   CREATE_USER_ROLE: gql`
-    mutation createUserRole($input: RoleInput!) {
+    mutation createUserRole($input: UserRoleInput!) {
       createUserRole(input: $input) {
         ok
-        role {
+        userRole {
           id
           name
         }
@@ -59,10 +59,10 @@ export const USER_ROLE_MUTATIONS = {
     }
   `,
   UPDATE_USER_ROLE: gql`
-    mutation updateUserRole($id: ID!, $input: RoleInput!) {
+    mutation updateUserRole($id: ID!, $input: UserRoleInput!) {
       updateUserRole(id: $id, input: $input) {
         ok
-        role {
+        userRole {
           id
           name
         }
@@ -73,7 +73,7 @@ export const USER_ROLE_MUTATIONS = {
     mutation deleteUserRole($id: ID!) {
       deleteUserRole(id: $id) {
         ok
-        role {
+        userRole {
           id
           name
         }

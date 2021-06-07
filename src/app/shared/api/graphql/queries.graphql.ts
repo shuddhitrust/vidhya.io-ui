@@ -70,6 +70,7 @@ export const USER_ROLE_QUERIES = {
       userRole(id: $id) {
         id
         name
+        description
         permissions
       }
     }
@@ -79,6 +80,7 @@ export const USER_ROLE_QUERIES = {
       userRoles(searchField: $searchField, limit: $limit, offset: $offset) {
         id
         name
+        description
       }
     }
   `,

@@ -82,6 +82,12 @@ export type User = {
   bio?: string;
 };
 
+export const CREATE = 'CREATE';
+export const LIST = 'LIST';
+export const VIEW = 'VIEW';
+export const UPDATE = 'UPDATE';
+export const DELETE = 'DELETE';
+
 export type UserRole = {
   id?: number;
   name: string;

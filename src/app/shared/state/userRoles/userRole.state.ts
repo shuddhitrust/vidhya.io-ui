@@ -171,85 +171,16 @@ export class UserRoleState {
         fetchPolicy: 'network-only',
       })
       .valueChanges.subscribe(({ data }: any) => {
-        const response = data.userRole;
-        patchState({ userRoleFormRecord: response, isFetching: false });
+        let response = data.userRole;
+        const permissions = JSON.parse(response.permissions);
+        const userRoleFormRecord = {
+          id: response.id,
+          name: response.name,
+          description: response.description,
+          permissions,
+        };
+        patchState({ userRoleFormRecord, isFetching: false });
       });
-  }
-
-  @Action(CreateUpdateUserRoleAction)
-  createUpdateRole(
-    { getState, patchState }: StateContext<UserRoleStateModel>,
-    { payload }: CreateUpdateUserRoleAction
-  ) {
-    const state = getState();
-    const { form, formDirective } = payload;
-    let { formSubmitting } = state;
-    if (form.valid) {
-      formSubmitting = true;
-      patchState({ formSubmitting });
-      const values = form.value;
-      console.log('Role Form values', values);
-      const { id, ...sanitizedValues } = values;
-      const variables = {
-        input: sanitizedValues,
-        // id: values.id, // adding id to the mutation variables if it is an update mutation
-      };
-
-      this.apollo
-        .mutate({
-          mutation: USER_ROLE_MUTATIONS.UPDATE_USER_ROLE,
-          variables,
-        })
-        .subscribe(
-          ({ data }: any) => {
-            const response = data.updateUserRole;
-            patchState({ formSubmitting: false });
-            console.log('update role ', { response });
-            if (response.ok) {
-              const user = response?.user;
-              console.log('from after updating the user ', { data, user });
-              this.store.dispatch(new UpdateCurrentUserInStateAction({ user }));
-              this.store.dispatch(
-                new ShowNotificationAction({
-                  message: `Role updated successfully!`,
-                  action: 'success',
-                })
-              );
-              if (this.firstTimeSetup) {
-                this.router.navigateByUrl('/');
-              } else {
-                this.router.navigate([UserRoleFormCloseURL]);
-              }
-            } else {
-              this.store.dispatch(
-                new ShowNotificationAction({
-                  message: getErrorMessageFromGraphQLResponse(response?.errors),
-                  action: 'error',
-                })
-              );
-            }
-            console.log('From createUpdateRole', { response });
-          },
-          (error) => {
-            console.log('Some error happened ', error);
-            this.store.dispatch(
-              new ShowNotificationAction({
-                message: getErrorMessageFromGraphQLResponse(error),
-                action: 'error',
-              })
-            );
-            patchState({ formSubmitting: false });
-          }
-        );
-    } else {
-      this.store.dispatch(
-        new ShowNotificationAction({
-          message:
-            'Please make sure there are no errors in the form before attempting to submit!',
-          action: 'error',
-        })
-      );
-    }
   }
 
   @Action(CreateUpdateUserRoleAction)

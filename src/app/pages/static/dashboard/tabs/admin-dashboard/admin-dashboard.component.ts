@@ -2,13 +2,13 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 
-const MODERATION = 'Moderation';
-const USER_ROLES = 'User Roles';
-const INSTITUTIONS = 'Institutions';
-const MEMBERS = 'Members';
-const INSTITUTION_ADMINS = 'Institution Admins';
-const CLASS_ADMINS = 'Class Admins';
-const LEARNERS = 'Learners';
+export const MODERATION = 'Moderation';
+export const USER_ROLES = 'User Roles';
+export const INSTITUTIONS = 'Institutions';
+export const MEMBERS = 'Members';
+export const INSTITUTION_ADMINS = 'Institution Admins';
+export const CLASS_ADMINS = 'Class Admins';
+export const LEARNERS = 'Learners';
 
 const entities = [
   MODERATION,

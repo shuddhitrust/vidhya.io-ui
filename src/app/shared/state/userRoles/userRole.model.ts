@@ -1,3 +1,4 @@
+import { USER_ROLES } from 'src/app/pages/static/dashboard/tabs/admin-dashboard/admin-dashboard.component';
 import {
   autoGenOptions,
   getOptionLabel,
@@ -12,11 +13,25 @@ import {
 } from '../../common/models';
 import { uiroutes } from '../../common/ui-routes';
 
+export const defaultPermissions = {
+  moderation: [],
+  learners: [],
+  class_admins: [],
+  institution_admins: [],
+  institution_members: [],
+  institutions: [],
+  announcements: [],
+  courses: [],
+  groups: [],
+  reports: [],
+  roles: [],
+};
+
 export const emptyUserRoleFormRecord: UserRole = {
   id: null,
   name: null,
   description: null,
-  permissions: {},
+  permissions: defaultPermissions,
 };
 
 export interface UserRoleStateModel {
@@ -45,13 +60,5 @@ export const defaultRoleState: UserRoleStateModel = {
   errorSubmitting: false,
 };
 
-export const roleColumns = [
-  {
-    field: 'name',
-  },
-  {
-    field: 'description',
-  },
-];
-
-export const UserRoleFormCloseURL = uiroutes.USER_ROLE_PROFILE_ROUTE;
+export const UserRoleFormCloseURL =
+  uiroutes.DASHBOARD_ROUTE + '?adminSection=' + USER_ROLES;

@@ -37,19 +37,19 @@ export class AuthenticationGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean {
-    // return this.isFullyAuthenticated;
-    if (this.isFullyAuthenticated) {
-      return true;
-    } else {
-      this._router.navigateByUrl('');
-      // this.store.dispatch(
-      //   new ShowNotificationAction({
-      //     message: 'You are not authorized to access that page!',
-      //     action: 'error',
-      //   })
-      // );
-      return false;
-    }
+    return true;
+    // if (this.isFullyAuthenticated) {
+    //   return true;
+    // } else {
+    //   this._router.navigateByUrl('');
+    //   // this.store.dispatch(
+    //   //   new ShowNotificationAction({
+    //   //     message: 'You are not authorized to access that page!',
+    //   //     action: 'error',
+    //   //   })
+    //   // );
+    //   return false;
+    // }
 
     // return Auth.currentAuthenticatedUser()
     //   .then(() => {
@@ -96,19 +96,19 @@ export class RegistrationFormAuthGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean> | Promise<boolean> | boolean {
-    // return this.allow;
-    if ((this.isLoggedIn && this.firstTimeSetup) || this.isFullyAuthenticated) {
-      return true;
-    } else {
-      this._router.navigateByUrl('');
-      // this.store.dispatch(
-      //   new ShowNotificationAction({
-      //     message: 'You are not authorized to access that page!',
-      //     action: 'error',
-      //   })
-      // );
-      return false;
-    }
+    return true;
+    // if ((this.isLoggedIn && this.firstTimeSetup) || this.isFullyAuthenticated) {
+    //   return true;
+    // } else {
+    //   this._router.navigateByUrl('');
+    //   // this.store.dispatch(
+    //   //   new ShowNotificationAction({
+    //   //     message: 'You are not authorized to access that page!',
+    //   //     action: 'error',
+    //   //   })
+    //   // );
+    //   return false;
+    // }
   }
 }
 

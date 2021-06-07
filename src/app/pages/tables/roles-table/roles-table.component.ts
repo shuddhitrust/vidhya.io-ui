@@ -11,8 +11,8 @@ import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   FetchUserRolesAction,
   ForceRefetchUserRolesAction,
+  ResetUserRoleFormAction,
 } from 'src/app/shared/state/userRoles/userRole.actions';
-import { roleColumns } from 'src/app/shared/state/userRoles/userRole.model';
 import { UserRoleState } from 'src/app/shared/state/userRoles/userRole.state';
 import { RoleProfileComponent } from '../../modals/role-profile/role-profile.component';
 
@@ -39,9 +39,17 @@ export class RolesTableComponent implements OnInit {
   columnFilters = {
     // roleshipStatus: { eq: RoleshipStatus.PENDING_APPROVAL },
   };
-  columns = roleColumns;
+  columns = [
+    {
+      field: 'name',
+      cellRenderer: 'userRoleRenderer',
+    },
+    {
+      field: 'description',
+    },
+  ];
   frameworkComponents = {
-    roleRenderer: RoleProfileRendererComponent,
+    userRoleRenderer: RoleProfileRendererComponent,
   };
   gridOptions: GridOptions;
 
@@ -66,6 +74,7 @@ export class RolesTableComponent implements OnInit {
   }
 
   createUserRole() {
+    this.store.dispatch(new ResetUserRoleFormAction());
     this.router.navigateByUrl(uiroutes.USER_ROLE_FORM_ROUTE);
   }
 

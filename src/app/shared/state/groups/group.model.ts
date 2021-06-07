@@ -8,6 +8,7 @@ import {
   startingPaginationObject,
 } from '../../common/models';
 import { uiroutes } from '../../common/ui-routes';
+import { GROUPS } from './../../../pages/static/dashboard/dashboard.component';
 
 export const emptyGroupFormRecord: Group = {
   id: null,
@@ -42,6 +43,6 @@ export const defaultGroupState: GroupStateModel = {
   errorSubmitting: false,
 };
 
-export const GroupFormCloseURL = uiroutes.DASHBOARD_ROUTE + '?tab=Groups';
+export const GroupFormCloseURL = uiroutes.DASHBOARD_ROUTE + '?tab=' + GROUPS;
 
 export const groupTypeOptions: MatSelectOption[] = autoGenOptions(GroupType);

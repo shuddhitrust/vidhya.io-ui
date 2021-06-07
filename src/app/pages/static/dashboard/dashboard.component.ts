@@ -2,12 +2,12 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { uiroutes } from '../../../shared/common/ui-routes';
 
-const ADMIN = 'Admin';
-const ANNOUNCEMENTS = 'Announcements';
-const ASSIGNMENTS = 'Assignments';
-const COURSES = 'Courses';
-const GROUPS = 'Groups';
-const REPORTS = 'Reports';
+export const ADMIN = 'Admin';
+export const ANNOUNCEMENTS = 'Announcements';
+export const ASSIGNMENTS = 'Assignments';
+export const COURSES = 'Courses';
+export const GROUPS = 'Groups';
+export const REPORTS = 'Reports';
 
 const tabIndexList = {
   0: ADMIN,

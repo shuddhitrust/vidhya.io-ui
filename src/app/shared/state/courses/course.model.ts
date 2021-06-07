@@ -1,3 +1,4 @@
+import { COURSES } from 'src/app/pages/static/dashboard/dashboard.component';
 import {
   FetchPolicy,
   Course,
@@ -37,4 +38,4 @@ export const defaultCourseState: CourseStateModel = {
   errorSubmitting: false,
 };
 
-export const CourseFormCloseURL = uiroutes.DASHBOARD_ROUTE + '?tab=Courses';
+export const CourseFormCloseURL = uiroutes.DASHBOARD_ROUTE + '?tab=' + COURSES;
