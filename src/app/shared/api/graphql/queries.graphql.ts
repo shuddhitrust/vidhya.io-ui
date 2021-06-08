@@ -256,3 +256,45 @@ export const ASSIGNMENT_QUERIES = {
     }
   `,
 };
+
+export const CHAT_QUERIES = {
+  GET_CHAT: gql`
+    query chat($id: ID!) {
+      chat(id: $id) {
+        id
+        name
+        admins {
+          firstName
+          lastName
+        }
+        members {
+          firstName
+          lastName
+        }
+        chatmessageSet {
+          message
+          author {
+            firstName
+          }
+          createdAt
+          seenBy {
+            firstName
+          }
+        }
+        createdAt
+      }
+    }
+  `,
+  GET_CHATS: gql`
+    query chats($searchField: String, $limit: Int, $offset: Int) {
+      chats(searchField: $searchField, limit: $limit, offset: $offset) {
+        id
+        name
+        location
+        city
+        bio
+        totalCount
+      }
+    }
+  `,
+};

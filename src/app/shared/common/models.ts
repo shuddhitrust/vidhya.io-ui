@@ -36,6 +36,13 @@ export type HotToastStatus =
 
 export type MatSelectOption = { label: string; value: number | string };
 
+export type Chat = {
+  name: string;
+  admins: number[];
+  members: number[];
+  created: string;
+};
+
 export type PaginationObject = {
   currentPage: number;
   totalCount: number;
