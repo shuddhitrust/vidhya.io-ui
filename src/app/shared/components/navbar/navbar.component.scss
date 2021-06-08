@@ -24,9 +24,13 @@
 #mini-user-avatar {
   cursor: pointer;
   height: var(--navbar-height);
-  padding: 5px;
-  margin-top: 5px;
+  margin: -20px;
+  padding: 4px;
   border-radius: 99px;
+}
+
+.nav-button {
+  margin: 0px 3px;
 }
 
 #login-button {

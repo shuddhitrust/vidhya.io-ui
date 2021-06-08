@@ -14,6 +14,10 @@ export const AUTH_QUERIES = {
           id
           name
         }
+        role {
+          name
+          permissions
+        }
         membershipStatus
       }
     }

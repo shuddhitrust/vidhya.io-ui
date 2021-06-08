@@ -21,6 +21,7 @@ import { AddEditCourseComponent } from './pages/forms/add-edit-course/add-edit-c
 import { AddEditAssignmentComponent } from './pages/forms/add-edit-assignment/add-edit-assignment.component';
 import { InstitutionProfileComponent } from './pages/profiles/institution-profile/institution-profile.component';
 import { AddEditUserRoleComponent } from './pages/forms/add-edit-user-role/add-edit-user-role.component';
+import { ChatComponent } from './pages/static/chat/chat.component';
 // import { InstitutionProfileComponent } from './pages/modals/institution-profile/institution-profile.component';
 
 const routes: Routes = [
@@ -110,6 +111,12 @@ const routes: Routes = [
   {
     path: uiroutes.USER_ROLE_FORM_ROUTE,
     component: AddEditUserRoleComponent,
+    canActivate: [AuthenticationGuard],
+    pathMatch: 'full',
+  },
+  {
+    path: uiroutes.CHAT_ROUTE,
+    component: ChatComponent,
     canActivate: [AuthenticationGuard],
     pathMatch: 'full',
   },

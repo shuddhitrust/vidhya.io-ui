@@ -48,6 +48,10 @@ export class NavbarComponent implements OnInit {
     this.router.navigateByUrl(uiroutes.MEMBER_PROFILE_ROUTE);
   }
 
+  onChatClick() {
+    this.router.navigateByUrl(uiroutes.CHAT_ROUTE);
+  }
+
   login() {
     this.store.dispatch(new OpenLoginFormAction());
     const dialogRef = this.dialog.open(LoginModalComponent);

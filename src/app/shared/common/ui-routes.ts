@@ -19,4 +19,5 @@ export const uiroutes = {
   COURSE_PROFILE_ROUTE: 'course',
   ASSIGNMENT_FORM_ROUTE: 'assignment-form',
   ASSIGNMENT_PROFILE_ROUTE: 'assignment',
+  CHAT_ROUTE: 'chat',
 };

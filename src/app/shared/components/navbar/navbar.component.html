@@ -18,16 +18,26 @@
 
 <ng-template #loggedInMenu>
   <ng-container *ngIf="isFullyAuthenticated; else pendingApproval">
-    <img
-      [src]="currentMember.avatar"
-      alt="user-avatar"
-      (click)="onAvatarClick()"
-      id="mini-user-avatar"
-    />
     <button
+      class="nav-button"
+      aria-label="Chat button"
+      mat-icon-button
+      (click)="onChatClick()"
+    >
+      <mat-icon>chat</mat-icon>
+    </button>
+    <button class="nav-button" mat-mini-fab aria-label="Avatar button">
+      <img
+        [src]="currentMember.avatar"
+        alt="user-avatar"
+        (click)="onAvatarClick()"
+        id="mini-user-avatar"
+      />
+    </button>
+    <button
+      class="nav-button"
       [matMenuTriggerFor]="menu"
-      class="example-icon"
-      aria-label="Example icon-button with a menu"
+      aria-label="Menu Button"
       mat-icon-button
     >
       <mat-icon>menu</mat-icon>

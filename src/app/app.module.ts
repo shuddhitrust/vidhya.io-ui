@@ -102,6 +102,7 @@ import {
 } from './pages/modals/role-profile/role-profile.component';
 import { UserRoleState } from './shared/state/userRoles/userRole.state';
 import { AddEditUserRoleComponent } from './pages/forms/add-edit-user-role/add-edit-user-role.component';
+import {ChatComponent} from './pages/static/chat/chat.component';
 
 @NgModule({
   declarations: [
@@ -154,6 +155,7 @@ import { AddEditUserRoleComponent } from './pages/forms/add-edit-user-role/add-e
     RoleProfileComponent,
     RoleDeleteConfirmationDialog,
     AddEditUserRoleComponent,
+    ChatComponent
   ],
   imports: [
     BrowserModule,

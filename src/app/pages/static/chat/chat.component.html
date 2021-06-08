@@ -1,0 +1,40 @@
+<button mat-icon-button (click)="drawer.toggle()" id="drawer-puller">
+  <mat-icon>{{
+    opened === true ? "navigate_before" : "navigate_next"
+  }}</mat-icon>
+</button>
+<mat-drawer-container class="drawer-container">
+  <mat-drawer #drawer mode="side" [(opened)]="opened" class="drawer-content">
+    <mat-selection-list [multiple]="false">
+      <mat-list-option
+        [ngClass]="
+          selectedChat === chat ? 'selectedSection' : 'unselectedSection'
+        "
+        *ngFor="let chat of chats"
+        [value]="chat"
+        (click)="onSelectChat(chat)"
+      >
+        {{ chat?.name }}
+      </mat-list-option>
+    </mat-selection-list>
+  </mat-drawer>
+  <div id="main-container">
+    <h2 style="text-align: center">{{ selectedChat?.name }}</h2>
+    <mat-form-field id="chat-input" appearance="outline">
+      <textarea
+        matInput
+        [(ngModel)]="draft"
+        placeholder="Start typing..."
+      ></textarea>
+      <button
+        id="send-button"
+        class="nav-button"
+        (click)="sendMessage()"
+        aria-label="Send Button"
+        mat-icon-button
+      >
+        <mat-icon>send</mat-icon>
+      </button>
+    </mat-form-field>
+  </div>
+</mat-drawer-container>
