@@ -41,6 +41,16 @@ export type Chat = {
   name: string;
   admins: number[];
   members: number[];
+  chatmessageSet: ChatMessage[];
+};
+
+export type ChatMessage = {
+  message: string;
+  author: {
+    id: number;
+    firstName: string;
+  };
+  createdAt: string;
 };
 
 export type PaginationObject = {

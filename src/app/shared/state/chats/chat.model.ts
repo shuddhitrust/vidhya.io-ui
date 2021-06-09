@@ -12,6 +12,7 @@ export const emptyChatFormRecord: Chat = {
   name: null,
   admins: [],
   members: [],
+  chatmessageSet: [],
 };
 export interface ChatStateModel {
   chats: Chat[];

@@ -50,7 +50,7 @@
     <ul *ngFor="let chatmessage of chat.chatmessageSet">
       <li>
         {{ chatmessage.message }} <br />
-        by {{ chatmessage.author?.name }} on
+        by {{ chatmessage.author?.firstName }} on
         {{ chatmessage.createdAt }}
       </li>
     </ul>
