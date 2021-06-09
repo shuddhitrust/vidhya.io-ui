@@ -13,7 +13,7 @@ import {
 } from '../../common/models';
 import { uiroutes } from '../../common/ui-routes';
 
-export const defaultPermissions = {
+export const defaultResourcePermissions = {
   moderation: [],
   learners: [],
   class_admins: [],
@@ -27,11 +27,22 @@ export const defaultPermissions = {
   roles: [],
 };
 
+export const defaultChatPermissions = {
+  otherInstitutionAdmins: false,
+  otherInstitutionMembers: false,
+  ownInstitutionAdmins: false,
+  ownInstitutioonMembers: false,
+  ownClassMembers: false,
+  ownTeamMembers: false,
+  otherClassMembers: false,
+  otherTeamMembers: false,
+};
+
 export const emptyUserRoleFormRecord: UserRole = {
   id: null,
   name: null,
   description: null,
-  permissions: defaultPermissions,
+  resourcePermissions: defaultResourcePermissions,
 };
 
 export interface UserRoleStateModel {

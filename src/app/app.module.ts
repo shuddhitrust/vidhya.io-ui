@@ -75,7 +75,7 @@ import { OptionsState } from './shared/state/options/options.state';
 import { LoginModalComponent } from './pages/modals/login/login-modal.component';
 import { HotToastModule } from '@ngneat/hot-toast';
 import { PaginatorComponent } from './shared/abstract/master-grid/components/paginator/paginator.component';
-import { NzPaginationModule } from 'ng-zorro-antd/pagination';
+
 /** config angular i18n **/
 import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
@@ -102,7 +102,8 @@ import {
 } from './pages/modals/role-profile/role-profile.component';
 import { UserRoleState } from './shared/state/userRoles/userRole.state';
 import { AddEditUserRoleComponent } from './pages/forms/add-edit-user-role/add-edit-user-role.component';
-import {ChatComponent} from './pages/static/chat/chat.component';
+import { ChatComponent } from './pages/static/chat/chat.component';
+import { ChatState } from './shared/state/chats/chat.state';
 
 @NgModule({
   declarations: [
@@ -155,7 +156,7 @@ import {ChatComponent} from './pages/static/chat/chat.component';
     RoleProfileComponent,
     RoleDeleteConfirmationDialog,
     AddEditUserRoleComponent,
-    ChatComponent
+    ChatComponent,
   ],
   imports: [
     BrowserModule,
@@ -169,7 +170,6 @@ import {ChatComponent} from './pages/static/chat/chat.component';
     BrowserAnimationsModule,
     AgGridModule.withComponents([]),
     HotToastModule.forRoot(),
-    NzPaginationModule,
     [
       NgxsModule.forRoot(
         [
@@ -184,6 +184,7 @@ import {ChatComponent} from './pages/static/chat/chat.component';
           AssignmentState,
           OptionsState,
           UserRoleState,
+          ChatState,
         ],
         {
           developmentMode: !environment.production,

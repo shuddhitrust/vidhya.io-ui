@@ -172,12 +172,12 @@ export class UserRoleState {
       })
       .valueChanges.subscribe(({ data }: any) => {
         let response = data.userRole;
-        const permissions = JSON.parse(response.permissions);
+        const resourcePermissions = JSON.parse(response.resourcePermissions);
         const userRoleFormRecord = {
           id: response.id,
           name: response.name,
           description: response.description,
-          permissions,
+          resourcePermissions,
         };
         patchState({ userRoleFormRecord, isFetching: false });
       });

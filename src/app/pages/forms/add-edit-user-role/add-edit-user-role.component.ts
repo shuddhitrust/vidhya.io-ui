@@ -16,7 +16,7 @@ import {
 import { UserRoleState } from 'src/app/shared/state/userRoles/userRole.state';
 import { Observable } from 'rxjs';
 import {
-  defaultPermissions,
+  defaultResourcePermissions,
   emptyUserRoleFormRecord,
 } from 'src/app/shared/state/userRoles/userRole.model';
 import {
@@ -51,12 +51,12 @@ export class AddEditUserRoleComponent implements OnInit {
   @Select(UserRoleState.formSubmitting)
   formSubmitting$: Observable<boolean>;
   userRoleForm: FormGroup;
-  permissionsObject: object = defaultPermissions;
+  permissionsObject: object = defaultResourcePermissions;
   permissionsTable: object[] = convertPermissionsToTable(
     this.permissionsObject
   );
   scopes: string[] = ['resource', VIEW, LIST, CREATE, UPDATE, DELETE];
-  permissionItems: string[] = Object.keys(defaultPermissions);
+  permissionItems: string[] = Object.keys(defaultResourcePermissions);
   constructor(
     private location: Location,
     private store: Store,
@@ -82,9 +82,9 @@ export class AddEditUserRoleComponent implements OnInit {
       name: [userRoleFormRecord.name, Validators.required],
       description: [userRoleFormRecord.description, Validators.required],
       permissions: [
-        userRoleFormRecord.permissions
-          ? userRoleFormRecord.permissions
-          : defaultPermissions,
+        userRoleFormRecord.resourcePermissions
+          ? userRoleFormRecord.resourcePermissions
+          : defaultResourcePermissions,
         Validators.required,
       ],
     });

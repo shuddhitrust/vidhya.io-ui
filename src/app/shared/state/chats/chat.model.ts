@@ -1,26 +1,22 @@
-import { CHATS } from 'src/app/pages/static/dashboard/tabs/admin-dashboard/admin-dashboard.component';
-import { defaultLogos } from '../../common/constants';
 import {
   FetchPolicy,
   Chat,
   PaginationObject,
   startingPaginationObject,
+  User,
 } from '../../common/models';
 import { uiroutes } from '../../common/ui-routes';
 
 export const emptyChatFormRecord: Chat = {
   id: null,
   name: null,
-  location: null,
-  city: null,
-  website: null,
-  phone: null,
-  logo: defaultLogos.chat,
-  bio: null,
-  invitecode: null,
+  admins: [],
+  members: [],
 };
 export interface ChatStateModel {
   chats: Chat[];
+  chatMembers: User[];
+  isFetchingChatMembers: boolean;
   fetchPolicy: FetchPolicy;
   paginationObject: PaginationObject;
   chatFormId: number;
@@ -33,6 +29,8 @@ export interface ChatStateModel {
 
 export const defaultChatState: ChatStateModel = {
   chats: [],
+  chatMembers: [],
+  isFetchingChatMembers: false,
   fetchPolicy: null,
   paginationObject: startingPaginationObject,
   chatFormId: null,
@@ -43,5 +41,4 @@ export const defaultChatState: ChatStateModel = {
   errorSubmitting: false,
 };
 
-export const ChatFormCloseURL =
-  uiroutes.DASHBOARD_ROUTE + '?adminSection=' + CHATS;
+export const ChatFormCloseURL = uiroutes.CHAT_ROUTE;

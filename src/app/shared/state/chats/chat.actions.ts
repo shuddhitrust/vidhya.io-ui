@@ -8,12 +8,28 @@ export class FetchChatsAction {
   constructor(public payload: { searchParams: SearchParams }) {}
 }
 
+export class SearchChatMembersAction {
+  static readonly type = '[CHATS] Search Members to Chat with';
+
+  constructor(public payload: { query: string }) {}
+}
 export class ForceRefetchChatsAction {
   static readonly type = '[CHATS] Fetch from network';
 
   constructor(public payload: { searchParams: SearchParams }) {}
 }
 
+export class ClearChatMembers {
+  static readonly type = '[CHAT] Clear Chat Members';
+
+  constructor() {}
+}
+
+export class GetIntoChatAction {
+  static readonly type = '[CHAT] Get with Member ID';
+
+  constructor(public payload: idPayload) {}
+}
 export class GetChatAction {
   static readonly type = '[CHAT] Get';
 

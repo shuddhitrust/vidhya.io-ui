@@ -290,10 +290,19 @@ export const CHAT_QUERIES = {
       chats(searchField: $searchField, limit: $limit, offset: $offset) {
         id
         name
-        location
-        city
-        bio
-        totalCount
+      }
+    }
+  `,
+  GET_CHAT_MEMBERS: gql`
+    query chatMembers($query: String) {
+      chatMembers(query: $query) {
+        id
+        firstName
+        avatar
+        institution {
+          name
+        }
+        lastActive
       }
     }
   `,

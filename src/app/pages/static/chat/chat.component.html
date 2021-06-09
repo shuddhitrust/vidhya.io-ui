@@ -5,6 +5,33 @@
 </button>
 <mat-drawer-container class="drawer-container">
   <mat-drawer #drawer mode="side" [(opened)]="opened" class="drawer-content">
+    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <input matInput #searchMember placeholder="Search a member..." />
+
+      <button mat-icon-button matSuffix (click)="clearSearchMember()">
+        <mat-icon>{{ query.length ? "close" : "search" }}</mat-icon>
+      </button>
+      <mat-hint *ngIf="showSearchMemberError" align="start"
+        >Enter at least 3 characters</mat-hint
+      >
+    </mat-form-field>
+
+    <nz-list
+      *ngIf="chatMembers.length"
+      nzItemLayout="horizontal"
+      [nzLoading]="isFetchingChatMembers"
+    >
+      <p class="search-info-text">Click to start chatting</p>
+      <nz-list-item *ngFor="let member of chatMembers">
+        <nz-list-item-meta
+          (click)="getIntoChat(member)"
+          [nzAvatar]="member.avatar"
+          [nzDescription]="member.firstName"
+        >
+        </nz-list-item-meta>
+      </nz-list-item>
+    </nz-list>
+
     <mat-selection-list [multiple]="false">
       <mat-list-option
         [ngClass]="
@@ -20,6 +47,13 @@
   </mat-drawer>
   <div id="main-container">
     <h2 style="text-align: center">{{ selectedChat?.name }}</h2>
+    <ul *ngFor="let chatmessage of chat.chatmessageSet">
+      <li>
+        {{ chatmessage.message }} <br />
+        by {{ chatmessage.author?.name }} on
+        {{ chatmessage.createdAt }}
+      </li>
+    </ul>
     <mat-form-field id="chat-input" appearance="outline">
       <textarea
         matInput

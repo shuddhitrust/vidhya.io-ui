@@ -8,16 +8,24 @@ import {
 
 import { Injectable } from '@angular/core';
 import {
+  ClearChatMembers,
   CreateUpdateChatAction,
   DeleteChatAction,
   FetchChatsAction,
   ForceRefetchChatsAction,
   GetChatAction,
+  GetIntoChatAction,
   ResetChatFormAction,
+  SearchChatMembersAction,
 } from './chat.actions';
 import { CHAT_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
-import { Chat, MatSelectOption, PaginationObject } from '../../common/models';
+import {
+  Chat,
+  MatSelectOption,
+  PaginationObject,
+  User,
+} from '../../common/models';
 import { CHAT_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
@@ -45,6 +53,16 @@ export class ChatState {
   }
 
   @Selector()
+  static listChatMembers(state: ChatStateModel): User[] {
+    return state.chatMembers;
+  }
+
+  @Selector()
+  static getIsFetchingChatMembers(state: ChatStateModel): boolean {
+    return state.isFetchingChatMembers;
+  }
+
+  @Selector()
   static isFetching(state: ChatStateModel): boolean {
     return state.isFetching;
   }
@@ -58,7 +76,7 @@ export class ChatState {
     const options: MatSelectOption[] = state.chats.map((i) => {
       const option: MatSelectOption = {
         value: i.id,
-        label: `${i.name} (${i.location})`,
+        label: `${i.name}`,
       };
       return option;
     });
@@ -92,6 +110,31 @@ export class ChatState {
     this.store.dispatch(
       new FetchChatsAction({ searchParams: defaultSearchParams })
     );
+  }
+
+  @Action(SearchChatMembersAction)
+  searchChatMembers(
+    { getState, patchState }: StateContext<ChatStateModel>,
+    { payload }: SearchChatMembersAction
+  ) {
+    const { query } = payload;
+    const state = getState();
+    const { fetchPolicy } = state;
+    patchState({ isFetchingChatMembers: true });
+    this.apollo
+      .watchQuery({
+        query: CHAT_QUERIES.GET_CHAT_MEMBERS,
+        variables: { query },
+        fetchPolicy,
+      })
+      .valueChanges.subscribe(({ data }: any) => {
+        const response = data.chatMembers;
+
+        patchState({
+          chatMembers: response,
+          isFetchingChatMembers: false,
+        });
+      });
   }
 
   @Action(FetchChatsAction)
@@ -153,6 +196,25 @@ export class ChatState {
     this.apollo
       .watchQuery({
         query: CHAT_QUERIES.GET_CHAT,
+        variables: { id },
+        fetchPolicy: 'network-only',
+      })
+      .valueChanges.subscribe(({ data }: any) => {
+        const response = data.chat;
+        patchState({ chatFormRecord: response, isFetching: false });
+      });
+  }
+
+  @Action(GetIntoChatAction)
+  getIntoChat(
+    { patchState }: StateContext<ChatStateModel>,
+    { payload }: GetIntoChatAction
+  ) {
+    const { id } = payload;
+    patchState({ isFetching: true });
+    this.apollo
+      .watchQuery({
+        query: CHAT_MUTATIONS.CHAT_WITH_MEMBER,
         variables: { id },
         fetchPolicy: 'network-only',
       })
@@ -286,6 +348,13 @@ export class ChatState {
           );
         }
       );
+  }
+
+  @Action(ClearChatMembers)
+  clearChatMembers({ patchState }: StateContext<ChatStateModel>) {
+    patchState({
+      chatMembers: [],
+    });
   }
 
   @Action(ResetChatFormAction)

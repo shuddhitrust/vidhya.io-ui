@@ -54,3 +54,23 @@
 .unselectedSelection {
   border-right: inherit;
 }
+
+.ant-list-item-meta-description {
+  color: #000;
+  font-weight: bold;
+}
+.ant-list-item-meta-title {
+  color: rgba(0, 0, 0, 0.05);
+  font-size: 0.8em;
+}
+.mini-user-avatar {
+  background-size: cover;
+  height: 100px;
+}
+
+.search-info-text {
+  font-size: 0.8em;
+  text-align: center;
+  padding: 0px;
+  margin: 0px;
+}

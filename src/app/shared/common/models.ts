@@ -37,10 +37,10 @@ export type HotToastStatus =
 export type MatSelectOption = { label: string; value: number | string };
 
 export type Chat = {
+  id: number;
   name: string;
   admins: number[];
   members: number[];
-  created: string;
 };
 
 export type PaginationObject = {
@@ -99,7 +99,7 @@ export type UserRole = {
   id?: number;
   name: string;
   description: string;
-  permissions: object;
+  resourcePermissions: object;
 };
 
 export type Announcement = {

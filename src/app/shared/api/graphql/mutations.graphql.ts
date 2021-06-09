@@ -262,6 +262,72 @@ export const ASSIGNMENT_MUTATIONS = {
   `,
 };
 
+export const CHAT_MUTATIONS = {
+  CREATE_CHAT: gql`
+    mutation createChat($input: ChatInput!) {
+      createChat(input: $input) {
+        ok
+        chat {
+          id
+          name
+        }
+      }
+    }
+  `,
+  UPDATE_CHAT: gql`
+    mutation updateChat($id: ID!, $input: ChatInput!) {
+      updateChat(id: $id, input: $input) {
+        ok
+        chat {
+          id
+          name
+        }
+      }
+    }
+  `,
+  DELETE_CHAT: gql`
+    mutation deleteChat($id: ID!) {
+      deleteChat(id: $id) {
+        ok
+        chat {
+          id
+          name
+        }
+      }
+    }
+  `,
+  CHAT_WITH_MEMBER: gql`
+    mutation chatWithMember($id: ID!) {
+      chatWithMember(id: $id) {
+        ok
+        chat {
+          id
+          name
+          admins {
+            firstName
+            lastName
+          }
+          members {
+            firstName
+            lastName
+          }
+          chatmessageSet {
+            message
+            author {
+              firstName
+            }
+            createdAt
+            seenBy {
+              firstName
+            }
+          }
+          createdAt
+        }
+      }
+    }
+  `,
+};
+
 export const AUTH_MUTATIONS = {
   VERIFY_INVITECODE: gql`
     mutation verifyInvitecode($invitecode: String!) {

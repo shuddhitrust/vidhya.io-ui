@@ -15,6 +15,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
 
+// Zorro
+import { NzPaginationModule } from 'ng-zorro-antd/pagination';
+import { NzListModule } from 'ng-zorro-antd/list';
+
 const components = [
   MatToolbarModule,
   MatIconModule,
@@ -31,6 +35,8 @@ const components = [
   MatSelectModule,
   MatCheckboxModule,
   MatTableModule,
+  NzPaginationModule,
+  NzListModule,
 ];
 
 @NgModule({
