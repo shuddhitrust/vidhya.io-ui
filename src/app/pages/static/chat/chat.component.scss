@@ -15,13 +15,17 @@
 // }
 
 #chat-input {
-  position: absolute;
-  bottom: 0px;
+  // position: fixed;
+  // background: #fff;
+  // bottom: 0px;
+  // width: 100%;
+  // padding-right: 100px;
+  // padding-left: 20px;
+  // padding-bottom: 0px;
+  // margin: 0px;
   width: 100%;
-  padding-right: 100px;
-  padding-left: 20px;
-  padding-bottom: 0px;
-  margin: 0px;
+  margin-left: 0px;
+  padding: 0px;
 }
 
 #send-button {
@@ -73,4 +77,65 @@
   text-align: center;
   padding: 0px;
   margin: 0px;
+}
+
+#main-container {
+  height: calc(100vh-var(--navbar-height));
+  background: red;
+  overflow-y: auto;
+}
+
+#chat-messages {
+  height: calc(100vh-var(--navbar-height));
+  overflow-y: auto;
+}
+
+:host {
+  text-align: center;
+}
+
+nz-header,
+nz-footer {
+  background: #fff;
+  // color: #fff;
+}
+
+nz-footer {
+  line-height: 1.5;
+  padding: 5px;
+  width: 90%;
+}
+
+.own-message {
+  text-align: right;
+  display: inline-block;
+}
+
+.others-message {
+  text-align: left;
+  display: inline-block;
+}
+
+nz-sider {
+  background: #fff;
+  // color: #fff;
+  line-height: 120px;
+  height: calc(100vh-var(--navbar-height));
+}
+
+nz-content {
+  text-align: left;
+  // background: rgba(16, 142, 233, 1);
+  color: #fff;
+  min-height: 300px;
+  max-height: 420px;
+  overflow: auto;
+}
+
+nz-layout {
+  min-height: calc(100vh-var(--navbar-height));
+}
+
+nz-layout:last-child {
+  margin: 0;
 }

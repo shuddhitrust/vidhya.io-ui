@@ -18,6 +18,7 @@ import { MatTableModule } from '@angular/material/table';
 // Zorro
 import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzListModule } from 'ng-zorro-antd/list';
+import { NzLayoutModule } from 'ng-zorro-antd/layout';
 
 const components = [
   MatToolbarModule,
@@ -37,6 +38,7 @@ const components = [
   MatTableModule,
   NzPaginationModule,
   NzListModule,
+  NzLayoutModule,
 ];
 
 @NgModule({

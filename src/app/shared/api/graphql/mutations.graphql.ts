@@ -304,24 +304,91 @@ export const CHAT_MUTATIONS = {
           id
           name
           admins {
+            id
             firstName
             lastName
           }
           members {
+            id
             firstName
             lastName
           }
           chatmessageSet {
             message
             author {
+              id
               firstName
+              lastName
+              avatar
             }
             createdAt
             seenBy {
+              id
               firstName
+              lastName
             }
           }
           createdAt
+        }
+      }
+    }
+  `,
+};
+
+export const CHAT_MESSAGE_MUTATIONS = {
+  CREATE_CHAT_MESSAGE: gql`
+    mutation createChatMessage($chat: ID!, $message: String!, $author: ID!) {
+      createChatMessage(chat: $chat, message: $message, author: $author) {
+        ok
+        chatMessage {
+          id
+          chat {
+            id
+            name
+            chatmessageSet {
+              message
+              author {
+                id
+                firstName
+                lastName
+                avatar
+              }
+              createdAt
+              seenBy {
+                firstName
+              }
+            }
+          }
+        }
+      }
+    }
+  `,
+  UPDATE_CHAT_MESSAGE: gql`
+    mutation updateChatMessage($id: ID!, $input: ChatInput!) {
+      updateChatMessage(id: $id, input: $input) {
+        ok
+        chatMessages {
+          id
+          message
+          author {
+            id
+            firstName
+          }
+        }
+      }
+    }
+  `,
+  DELETE_CHAT_MESSAGE: gql`
+    mutation deleteChatMessage($id: ID!) {
+      deleteChatMessage(id: $id) {
+        ok
+        chatMessages {
+          id
+          message
+          author {
+            id
+            firstName
+          }
         }
       }
     }

@@ -55,3 +55,9 @@ export class DeleteChatAction {
 
   constructor(public payload: idPayload) {}
 }
+
+export class CreateChatMessageAction {
+  static readonly type = '[CHAT] Create Chat Message';
+
+  constructor(public payload: { id: number; message: string }) {}
+}

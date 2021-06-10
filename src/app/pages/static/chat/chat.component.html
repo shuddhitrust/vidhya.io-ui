@@ -1,10 +1,111 @@
-<button mat-icon-button (click)="drawer.toggle()" id="drawer-puller">
+<nz-layout>
+  <nz-sider>
+    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <input matInput #searchMember placeholder="Search a member..." />
+
+      <button mat-icon-button matSuffix (click)="clearSearchMember()">
+        <mat-icon>{{ query.length ? "close" : "search" }}</mat-icon>
+      </button>
+      <mat-hint *ngIf="showSearchMemberError" align="start"
+        >Enter at least 3 characters</mat-hint
+      >
+    </mat-form-field>
+
+    <nz-list
+      *ngIf="chatMembers.length"
+      nzItemLayout="horizontal"
+      [nzLoading]="isFetchingChatMembers"
+    >
+      <p class="search-info-text">Click to start chatting</p>
+      <nz-list-item *ngFor="let member of chatMembers">
+        <nz-list-item-meta
+          (click)="getIntoChat(member)"
+          [nzAvatar]="member.avatar"
+          [nzDescription]="member.firstName"
+        >
+        </nz-list-item-meta>
+      </nz-list-item>
+    </nz-list>
+
+    <mat-selection-list [multiple]="false">
+      <mat-list-option
+        [ngClass]="
+          selectedChat === chat ? 'selectedSection' : 'unselectedSection'
+        "
+        *ngFor="let chat of chats"
+        [value]="chat"
+        (click)="onSelectChat(chat)"
+      >
+        {{ chatName }}
+      </mat-list-option>
+    </mat-selection-list></nz-sider
+  >
+  <nz-layout>
+    <nz-header>{{ chatName }}</nz-header>
+    <nz-content>
+      <div id="chat-messages">
+        <nz-list nzItemLayout="vertical">
+          <nz-list-item *ngFor="let chatMessage of chat.chatmessageSet">
+            <nz-list-item-meta
+              [ngClass]="
+                chatMessage?.author?.id == currentMember?.id
+                  ? 'own-message'
+                  : 'others-message'
+              "
+            >
+              <nz-list-item-meta-avatar [nzSrc]="chatMessage.author?.avatar">
+              </nz-list-item-meta-avatar>
+              <nz-list-item-meta-title
+                [ngClass]="
+                  chatMessage?.author?.id == currentMember?.id
+                    ? 'own-message'
+                    : 'others-message'
+                "
+              >
+                {{ chatMessage.author.firstName }}
+              </nz-list-item-meta-title>
+              <nz-list-item-meta-description>
+                {{ chatMessage.message }}
+              </nz-list-item-meta-description>
+            </nz-list-item-meta>
+          </nz-list-item>
+        </nz-list>
+      </div></nz-content
+    >
+    <nz-footer>
+      <mat-form-field *ngIf="chat.id" id="chat-input" appearance="outline">
+        <textarea
+          matInput
+          [(ngModel)]="draft"
+          placeholder="Start typing..."
+        ></textarea>
+        <button
+          id="send-button"
+          class="nav-button"
+          [disabled]="isCreatingNewChatMessage"
+          (click)="sendMessage()"
+          aria-label="Send Button"
+          mat-icon-button
+        >
+          <mat-icon>send</mat-icon>
+        </button>
+      </mat-form-field></nz-footer
+    >
+  </nz-layout>
+</nz-layout>
+
+<!-- <button mat-icon-button (click)="drawer.toggle()" id="drawer-puller">
   <mat-icon>{{
     opened === true ? "navigate_before" : "navigate_next"
   }}</mat-icon>
 </button>
 <mat-drawer-container class="drawer-container">
-  <mat-drawer #drawer mode="side" [(opened)]="opened" class="drawer-content">
+  <mat-drawer
+    #drawer
+    mode="side"
+    [(opened)]="opened"
+    class="drawer-content col-lg-3 col-md-3 col-sm-3"
+  >
     <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
       <input matInput #searchMember placeholder="Search a member..." />
 
@@ -45,16 +146,19 @@
       </mat-list-option>
     </mat-selection-list>
   </mat-drawer>
-  <div id="main-container">
-    <h2 style="text-align: center">{{ selectedChat?.name }}</h2>
-    <ul *ngFor="let chatmessage of chat.chatmessageSet">
-      <li>
-        {{ chatmessage.message }} <br />
-        by {{ chatmessage.author?.firstName }} on
-        {{ chatmessage.createdAt }}
-      </li>
-    </ul>
-    <mat-form-field id="chat-input" appearance="outline">
+  <div id="main-container" class="col-lg-9 col-md-9 col-sm-9">
+    <div id="chat-messages">
+      <h2 style="text-align: center">{{ selectedChat?.name }}</h2>
+      <ul *ngFor="let chatmessage of chat.chatmessageSet">
+        <li>
+          {{ chatmessage.message }} <br />
+          by {{ chatmessage.author?.firstName }} on
+          {{ chatmessage.createdAt }}
+        </li>
+      </ul>
+    </div>
+
+    <mat-form-field *ngIf="chat.id" id="chat-input" appearance="outline">
       <textarea
         matInput
         [(ngModel)]="draft"
@@ -63,6 +167,7 @@
       <button
         id="send-button"
         class="nav-button"
+        [disabled]="isCreatingNewChatMessage"
         (click)="sendMessage()"
         aria-label="Send Button"
         mat-icon-button
@@ -71,4 +176,4 @@
       </button>
     </mat-form-field>
   </div>
-</mat-drawer-container>
+</mat-drawer-container> -->

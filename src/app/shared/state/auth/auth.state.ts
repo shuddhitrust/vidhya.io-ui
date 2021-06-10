@@ -1165,7 +1165,8 @@ const getDecodedToken = (token) => {
     origIat: new Date(decodedToken.origIat * 1000),
   });
   return {
-    userId: parseInt(decodedToken.sub, 10),
+    userId: decodedToken.sub,
+    // userId: parseInt(decodedToken.sub, 10),
     expiresAt: decodedToken.exp,
   };
 };

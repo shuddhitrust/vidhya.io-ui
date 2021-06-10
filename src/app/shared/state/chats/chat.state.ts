@@ -1,4 +1,11 @@
-import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
+import {
+  Action,
+  Select,
+  Selector,
+  State,
+  StateContext,
+  Store,
+} from '@ngxs/store';
 import {
   defaultChatState,
   emptyChatFormRecord,
@@ -9,6 +16,7 @@ import {
 import { Injectable } from '@angular/core';
 import {
   ClearChatMembers,
+  CreateChatMessageAction,
   CreateUpdateChatAction,
   DeleteChatAction,
   FetchChatsAction,
@@ -22,11 +30,15 @@ import { CHAT_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
 import {
   Chat,
+  ChatMessage,
   MatSelectOption,
   PaginationObject,
   User,
 } from '../../common/models';
-import { CHAT_MUTATIONS } from '../../api/graphql/mutations.graphql';
+import {
+  CHAT_MUTATIONS,
+  CHAT_MESSAGE_MUTATIONS,
+} from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
@@ -34,6 +46,8 @@ import {
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
+import { AuthState } from '../auth/auth.state';
+import { Observable } from 'rxjs';
 
 @State<ChatStateModel>({
   name: 'chatState',
@@ -41,11 +55,19 @@ import { defaultSearchParams } from '../../common/constants';
 })
 @Injectable()
 export class ChatState {
+  @Select(AuthState.getCurrentMember)
+  currentMember$: Observable<User>;
+  currentMember: User;
+
   constructor(
     private apollo: Apollo,
     private store: Store,
     private router: Router
-  ) {}
+  ) {
+    this.currentMember$.subscribe((val) => {
+      this.currentMember = val;
+    });
+  }
 
   @Selector()
   static listChats(state: ChatStateModel): Chat[] {
@@ -66,6 +88,13 @@ export class ChatState {
   static isFetching(state: ChatStateModel): boolean {
     return state.isFetching;
   }
+
+  @Selector()
+  static isCreatingNewChatMessage(state: ChatStateModel): boolean {
+    return state.isCreatingNewChatMessage;
+  }
+
+  isCreatingNewChatMessage;
 
   @Selector()
   static paginationObject(state: ChatStateModel): PaginationObject {
@@ -201,6 +230,7 @@ export class ChatState {
       })
       .valueChanges.subscribe(({ data }: any) => {
         const response = data.chat;
+        console.log('Response for getChat => ', { data });
         patchState({ chatFormRecord: response, isFetching: false });
       });
   }
@@ -213,15 +243,30 @@ export class ChatState {
     const { id } = payload;
     patchState({ isFetching: true });
     this.apollo
-      .watchQuery({
-        query: CHAT_MUTATIONS.CHAT_WITH_MEMBER,
+      .mutate({
+        mutation: CHAT_MUTATIONS.CHAT_WITH_MEMBER,
         variables: { id },
-        fetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(({ data }: any) => {
-        const response = data.chat;
-        patchState({ chatFormRecord: response, isFetching: false });
-      });
+      .subscribe(
+        ({ data }: any) => {
+          const response = data.chatWithMember;
+          if (response.ok) {
+            const chat = response.chat;
+            patchState({
+              chatFormRecord: chat,
+              isFetching: false,
+            });
+          }
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+        }
+      );
   }
 
   @Action(CreateUpdateChatAction)
@@ -348,6 +393,36 @@ export class ChatState {
           );
         }
       );
+  }
+
+  @Action(CreateChatMessageAction)
+  createChatMessage(
+    { getState, patchState }: StateContext<ChatStateModel>,
+    { payload }: CreateChatMessageAction
+  ) {
+    const { id, message } = payload;
+    const state = getState();
+    console.log('From createChatMessageAction => ', { payload });
+    patchState({ isCreatingNewChatMessage: true });
+    this.apollo
+      .mutate({
+        mutation: CHAT_MESSAGE_MUTATIONS.CREATE_CHAT_MESSAGE,
+        variables: {
+          chat: id,
+          message,
+          author: this.currentMember.id,
+        },
+      })
+      .subscribe(({ data }: any) => {
+        patchState({ isCreatingNewChatMessage: false });
+
+        const response = data.createChatMessage;
+        if (response.ok) {
+          const chat = response.chatMessage?.chat;
+          patchState({ chatFormRecord: chat });
+        }
+        console.log('from creating the chat ', { data });
+      });
   }
 
   @Action(ClearChatMembers)

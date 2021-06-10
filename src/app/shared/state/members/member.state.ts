@@ -39,7 +39,7 @@ import {
 } from '../auth/auth.actions';
 import { Router } from '@angular/router';
 import { AuthState } from '../auth/auth.state';
-import Observable from 'zen-observable';
+import { Observable } from 'rxjs';
 
 @State<MemberStateModel>({
   name: 'memberState',

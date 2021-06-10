@@ -3,6 +3,7 @@ import { Select, Store } from '@ngxs/store';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import {
   ClearChatMembers,
+  CreateChatMessageAction,
   FetchChatsAction,
   GetIntoChatAction,
   SearchChatMembersAction,
@@ -17,6 +18,7 @@ import {
   distinctUntilChanged,
   tap,
 } from 'rxjs/operators';
+import { AuthState } from 'src/app/shared/state/auth/auth.state';
 
 @Component({
   selector: 'app-chat',
@@ -34,6 +36,14 @@ export class ChatComponent implements OnInit, AfterViewInit {
   @Select(ChatState.getChatFormRecord)
   chat$: Observable<Chat>;
   chat: Chat;
+  @Select(ChatState.isCreatingNewChatMessage)
+  isCreatingNewChatMessage$: Observable<boolean>;
+  isCreatingNewChatMessage: boolean;
+  @Select(AuthState.getCurrentMember)
+  currentMember$: Observable<User>;
+  currentMember;
+  chatName;
+  memberList;
   isFetchingChatMembers = false;
   chatMembers: User[];
   opened: boolean = true;
@@ -46,6 +56,15 @@ export class ChatComponent implements OnInit, AfterViewInit {
   constructor(private store: Store) {
     this.chat$.subscribe((val) => {
       this.chat = val;
+      this.draft = '';
+      this.constructChatName();
+      console.log('Chat changed => ', { chat: this.chat });
+    });
+    this.currentMember$.subscribe((val) => {
+      this.currentMember = val;
+    });
+    this.isCreatingNewChatMessage$.subscribe((val) => {
+      this.isCreatingNewChatMessage = val;
     });
     this.chatMembers$.subscribe((val) => {
       this.chatMembers = val;
@@ -83,6 +102,21 @@ export class ChatComponent implements OnInit, AfterViewInit {
   }
   ngOnInit(): void {}
 
+  constructChatName() {
+    const chatName = this.chat.name;
+    let memberList = '';
+    console.log('getting chatname from ', { chat: this.chat });
+    this.chat.members.forEach((m) => {
+      console.log('m in foreach array ', {
+        m,
+        currentUser: this.currentMember,
+      });
+      memberList += m?.id === this.currentMember?.id ? '' : m.firstName;
+    });
+    this.chatName = chatName;
+    this.memberList = memberList;
+    console.log('After constructing the chat name ', { chatName, memberList });
+  }
   clearSearchMember() {
     this.searchMember.nativeElement.value = '';
     this.query = '';
@@ -100,5 +134,10 @@ export class ChatComponent implements OnInit, AfterViewInit {
   }
   sendMessage() {
     console.log('Mesage to be sent => ', { draft: this.draft });
+    if (!this.isCreatingNewChatMessage) {
+      this.store.dispatch(
+        new CreateChatMessageAction({ id: this.chat?.id, message: this.draft })
+      );
+    }
   }
 }

@@ -39,16 +39,18 @@ export type MatSelectOption = { label: string; value: number | string };
 export type Chat = {
   id: number;
   name: string;
-  admins: number[];
-  members: number[];
+  admins: any[];
+  members: any[];
   chatmessageSet: ChatMessage[];
 };
 
 export type ChatMessage = {
+  id: number;
   message: string;
   author: {
     id: number;
     firstName: string;
+    avatar: string;
   };
   createdAt: string;
 };
