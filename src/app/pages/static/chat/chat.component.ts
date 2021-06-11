@@ -6,6 +6,7 @@ import {
   ClearChatMembers,
   CreateChatMessageAction,
   FetchChatsAction,
+  GetChatAction,
   GetIntoChatAction,
   SearchChatMembersAction,
 } from 'src/app/shared/state/chats/chat.actions';
@@ -27,6 +28,7 @@ import { AuthState } from 'src/app/shared/state/auth/auth.state';
   styleUrls: ['./chat.component.scss'],
 })
 export class ChatComponent implements OnInit, AfterViewInit {
+  @ViewChild('chatWindow', { static: false }) chatWindow: ElementRef;
   @ViewChild('searchMember') searchMember: ElementRef;
   @Select(ChatState.listChats)
   chats$: Observable<Chat[]>;
@@ -48,7 +50,6 @@ export class ChatComponent implements OnInit, AfterViewInit {
   isFetchingChatMembers = false;
   chatMembers: User[];
   opened: boolean = true;
-  selectedChat = null;
   draft = '';
   chats: Chat[] = [];
   query: string = '';
@@ -60,6 +61,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
       this.draft = '';
       this.constructChatName();
       console.log('Chat changed => ', { chat: this.chat });
+      this.scrollToBottom();
     });
     this.currentMember$.subscribe((val) => {
       this.currentMember = val;
@@ -75,6 +77,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
     });
     this.chats$.subscribe((val) => {
       this.chats = val;
+      console.log('chats => ', { chats: val });
     });
     this.store.dispatch(
       new FetchChatsAction({ searchParams: defaultSearchParams })
@@ -102,21 +105,51 @@ export class ChatComponent implements OnInit, AfterViewInit {
       .subscribe();
   }
   ngOnInit(): void {}
-
+  scrollToBottom(): void {
+    console.log('ChatWindow exists => ', { chatWindow: this.chatWindow });
+    if (this.chatWindow) {
+      this.chatWindow.nativeElement.scroll({
+        top: this.chatWindow.nativeElement.scrollHeight,
+        behavior: 'smooth',
+      });
+      this.chatWindow.nativeElement.scrollTop =
+        this.chatWindow.nativeElement.scrollHeight;
+    }
+    // try {
+    //   this.chatWindowContainer.nativeElement.scrollTop =
+    //     this.chatWindowContainer.nativeElement.scrollHeight;
+    // } catch (err) {}
+  }
   constructChatName() {
     const chatName = this.chat.name;
     let memberList = '';
     console.log('getting chatname from ', { chat: this.chat });
-    this.chat.members.forEach((m) => {
+    this.chat?.members?.forEach((m) => {
       console.log('m in foreach array ', {
         m,
         currentUser: this.currentMember,
       });
-      memberList += m?.id === this.currentMember?.id ? '' : m.firstName;
+      memberList +=
+        m?.id.toString() === this.currentMember?.id.toString()
+          ? ''
+          : m.firstName;
     });
     this.chatName = chatName ? chatName : memberList;
     this.memberList = memberList;
     console.log('After constructing the chat name ', { chatName, memberList });
+  }
+  getChatNameFromChat(chat) {
+    console.log('chat in chats ', { chat });
+    let chatName = chat.name;
+    let memberList = '';
+    chat.members.forEach((m) => {
+      memberList +=
+        m?.id.toString() === this.currentMember?.id.toString()
+          ? ''
+          : m.firstName;
+    });
+    chatName = chatName ? chatName : memberList;
+    return chatName;
   }
   clearSearchMember() {
     this.searchMember.nativeElement.value = '';
@@ -142,7 +175,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
   }
 
   onSelectChat(chat) {
-    this.selectedChat = chat;
+    this.store.dispatch(new GetChatAction({ id: chat.id }));
     this.draft = '';
   }
   getIntoChat(member) {
@@ -150,6 +183,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
     this.store.dispatch(new GetIntoChatAction({ id: member.id }));
   }
   sendMessage() {
+    this.scrollToBottom();
     console.log('Mesage to be sent => ', { draft: this.draft });
     if (!this.isCreatingNewChatMessage) {
       this.store.dispatch(

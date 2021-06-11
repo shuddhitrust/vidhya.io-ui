@@ -176,18 +176,10 @@ export class ChatState {
     const state = getState();
     const { fetchPolicy, paginationObject } = state;
     const { searchQuery, newPageSize, newPageNumber } = searchParams;
-    const newPaginationObject = updatePaginationObject({
-      paginationObject,
-      newPageNumber,
-      newPageSize,
-    });
-    console.log('new pagination object after the update method => ', {
-      newPaginationObject,
-    });
     const variables = {
       searchField: searchQuery,
-      limit: newPaginationObject.pageSize,
-      offset: newPaginationObject.offset,
+      limit: 30,
+      offset: 0,
     };
     console.log('variables for chats fetch ', { variables });
     this.apollo
@@ -198,18 +190,8 @@ export class ChatState {
       })
       .valueChanges.subscribe(({ data }: any) => {
         const response = data.chats;
-        const totalCount = response[0]?.totalCount
-          ? response[0]?.totalCount
-          : 0;
-        newPaginationObject.totalCount = totalCount;
-        console.log('from after getting chats', {
-          totalCount,
-          response,
-          newPaginationObject,
-        });
         patchState({
           chats: response,
-          paginationObject: newPaginationObject,
           isFetching: false,
         });
       });
@@ -419,6 +401,7 @@ export class ChatState {
         const response = data.createChatMessage;
         if (response.ok) {
           const chat = response.chatMessage?.chat;
+          console.log('SETTIING NEW CHAT TO THE CHATFORMRECORD ', { chat });
           patchState({ chatFormRecord: chat });
         }
         console.log('from creating the chat ', { data });

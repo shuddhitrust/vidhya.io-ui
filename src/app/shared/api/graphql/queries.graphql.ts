@@ -264,17 +264,21 @@ export const CHAT_QUERIES = {
         id
         name
         admins {
+          id
           firstName
           lastName
         }
         members {
+          id
           firstName
           lastName
         }
         chatmessageSet {
           message
           author {
+            id
             firstName
+            avatar
           }
           createdAt
           seenBy {
@@ -290,6 +294,11 @@ export const CHAT_QUERIES = {
       chats(searchField: $searchField, limit: $limit, offset: $offset) {
         id
         name
+        members {
+          id
+          firstName
+          lastName
+        }
       }
     }
   `,

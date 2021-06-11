@@ -314,6 +314,7 @@ export const CHAT_MUTATIONS = {
             lastName
           }
           chatmessageSet {
+            id
             message
             author {
               id
@@ -345,13 +346,25 @@ export const CHAT_MESSAGE_MUTATIONS = {
           chat {
             id
             name
+            members {
+              id
+              firstName
+              lastName
+            }
             chatmessageSet {
+              id
               message
               author {
                 id
                 firstName
                 lastName
                 avatar
+              }
+              createdAt
+              seenBy {
+                id
+                firstName
+                lastName
               }
               createdAt
               seenBy {
