@@ -76,7 +76,7 @@ export const parseLastModified = (date: string) => {
   return hrt;
 };
 
-const humanReadableTime = (time) => {
+export const humanReadableTime = (time) => {
   if (time < 2 * minute) {
     return `moments ago`;
   } else if (time >= 2 * minute && time < hour) {

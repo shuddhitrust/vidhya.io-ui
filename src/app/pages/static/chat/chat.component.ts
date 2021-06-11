@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
+import { parseDateTime } from 'src/app/shared/common/functions';
 import {
   ClearChatMembers,
   CreateChatMessageAction,
@@ -113,7 +114,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
       });
       memberList += m?.id === this.currentMember?.id ? '' : m.firstName;
     });
-    this.chatName = chatName;
+    this.chatName = chatName ? chatName : memberList;
     this.memberList = memberList;
     console.log('After constructing the chat name ', { chatName, memberList });
   }
@@ -122,6 +123,22 @@ export class ChatComponent implements OnInit, AfterViewInit {
     this.query = '';
     this.chatMembers = [];
     this.store.dispatch(new ClearChatMembers());
+  }
+
+  ownMessageOrNot(chatMessage) {
+    console.log(
+      'chat id => ',
+      chatMessage?.author?.id,
+      'currentMember id => ',
+      this.currentMember?.id
+    );
+    return (
+      chatMessage?.author?.id.toString() == this.currentMember?.id.toString()
+    );
+  }
+
+  parseDateTimeMethod(timestamp) {
+    return parseDateTime(timestamp);
   }
 
   onSelectChat(chat) {

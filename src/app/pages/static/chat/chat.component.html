@@ -46,28 +46,26 @@
       <div id="chat-messages">
         <nz-list nzItemLayout="vertical">
           <nz-list-item *ngFor="let chatMessage of chat.chatmessageSet">
-            <nz-list-item-meta
+            <mat-card
               [ngClass]="
-                chatMessage?.author?.id == currentMember?.id
-                  ? 'own-message'
-                  : 'others-message'
+                ownMessageOrNot(chatMessage) ? 'own-message' : 'others-message'
               "
             >
-              <nz-list-item-meta-avatar [nzSrc]="chatMessage.author?.avatar">
-              </nz-list-item-meta-avatar>
-              <nz-list-item-meta-title
-                [ngClass]="
-                  chatMessage?.author?.id == currentMember?.id
-                    ? 'own-message'
-                    : 'others-message'
-                "
-              >
+              <p>
+                <img
+                  [src]="chatMessage.author?.avatar"
+                  class="
+                    ant-avatar ant-avatar-circle ant-avatar-image
+                    ng-star-inserted
+                  "
+                />
                 {{ chatMessage.author.firstName }}
-              </nz-list-item-meta-title>
-              <nz-list-item-meta-description>
-                {{ chatMessage.message }}
-              </nz-list-item-meta-description>
-            </nz-list-item-meta>
+              </p>
+              <p>{{ chatMessage.message }}</p>
+              <small class="chat-time-stamp">
+                Sent on {{ parseDateTimeMethod(chatMessage.createdAt) }}</small
+              >
+            </mat-card>
           </nz-list-item>
         </nz-list>
       </div></nz-content

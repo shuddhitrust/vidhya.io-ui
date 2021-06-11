@@ -90,8 +90,31 @@
   overflow-y: auto;
 }
 
-:host {
-  text-align: center;
+.own-message,
+.others-message {
+  display: block;
+  min-width: 50vw;
+  max-width: 70vw;
+  margin: 0px 5px;
+}
+
+.own-message {
+  margin-left: auto;
+  margin-right: 5px;
+}
+
+.others-message {
+  margin-left: 5px;
+  margin-right: auto;
+}
+
+.own-message::after,
+others-message::after {
+  clear: both;
+}
+
+.chat-time-stamp {
+  float: right;
 }
 
 nz-header,
@@ -101,39 +124,37 @@ nz-footer {
 }
 
 nz-footer {
-  line-height: 1.5;
+  // line-height: 1.5;
   padding: 5px;
   width: 90%;
+  height: 100px;
 }
 
-.own-message {
-  text-align: right;
-  display: inline-block;
-}
-
-.others-message {
-  text-align: left;
-  display: inline-block;
+nz-header {
+  text-align: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  height: 50px;
 }
 
 nz-sider {
   background: #fff;
   // color: #fff;
   line-height: 120px;
-  height: calc(100vh-var(--navbar-height));
+  height: calc(100vh - var(--navbar-height) - 50px);
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 nz-content {
   text-align: left;
   // background: rgba(16, 142, 233, 1);
   color: #fff;
-  min-height: 300px;
-  max-height: 420px;
+  max-height: calc(100vh - 225px);
   overflow: auto;
 }
 
 nz-layout {
-  min-height: calc(100vh-var(--navbar-height));
+  min-height: calc(100vh - var(--navbar-height) - 50px);
+  background: #fff;
 }
 
 nz-layout:last-child {
