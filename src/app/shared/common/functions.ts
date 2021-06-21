@@ -38,7 +38,7 @@ export const parseDateTime = (dateTime: string): string => {
     'Jan',
     'Feb',
     'Mar',
-    'apr',
+    'Apr',
     'May',
     'Jun',
     'Jul',
