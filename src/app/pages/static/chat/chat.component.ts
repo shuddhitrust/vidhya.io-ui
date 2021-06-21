@@ -144,7 +144,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
     let memberList = '';
     chat.members.forEach((m) => {
       memberList +=
-        m?.id.toString() === this.currentMember?.id.toString()
+        m?.id?.toString() === this.currentMember?.id?.toString()
           ? ''
           : m.firstName;
     });
