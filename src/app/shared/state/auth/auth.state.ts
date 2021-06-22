@@ -380,6 +380,8 @@ export class AuthState {
         newCurrentMember?.membershipStatus == MembershipStatus.APPROVED;
       console.log('*1* Updating current member from updateCurrentUserInState', {
         currentMember: newCurrentMember,
+        isFullyAuthenticated,
+        isLoggedIn,
       });
       patchState({
         isFullyAuthenticated,
@@ -432,6 +434,7 @@ export class AuthState {
                 'initiating UpdateCurrentUserInStateAction from login'
               );
               patchState({
+                isLoggedIn: true,
                 closeLoginForm: true,
                 token,
                 expiresAt,

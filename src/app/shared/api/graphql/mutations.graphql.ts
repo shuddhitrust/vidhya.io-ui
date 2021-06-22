@@ -475,6 +475,10 @@ export const AUTH_MUTATIONS = {
             id
             name
           }
+          role {
+            name
+            permissions
+          }
           membershipStatus
         }
       }
