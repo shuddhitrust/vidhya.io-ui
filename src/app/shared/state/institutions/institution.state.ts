@@ -28,6 +28,7 @@ import { INSTITUTION_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
+  subscriptionUpdater,
   updatePaginationObject,
 } from '../../common/functions';
 import { Router } from '@angular/router';
@@ -170,47 +171,16 @@ export class InstitutionState {
       })
       .subscribe((result: any) => {
         const state = getState();
-        let { paginationObject } = state;
         console.log('institution subscription result ', { result });
         const method = result?.data?.notifyInstitution?.method;
         const institution = result?.data?.notifyInstitution?.institution;
-        if (method == SUBSCRIPTION_METHODS.CREATE_METHOD && institution) {
-          paginationObject = {
-            ...paginationObject,
-            totalCount: paginationObject.totalCount + 1,
-          };
-          patchState({
-            institutions: [institution, ...state.institutions],
-            paginationObject,
-          });
-        } else if (
-          method == SUBSCRIPTION_METHODS.UPDATE_METHOD &&
-          institution
-        ) {
-          const newInstitutions = state.institutions.map((i) =>
-            i.id == institution.id ? institution : i
-          );
-
-          patchState({ institutions: newInstitutions });
-        } else if (
-          method == SUBSCRIPTION_METHODS.DELETE_METHOD &&
-          institution
-        ) {
-          const newInstitutions = state.institutions.filter(
-            (i) => i.id != institution.id
-          );
-          console.log('paginationObject before modification', {
-            paginationObject,
-          });
-          paginationObject = {
-            ...paginationObject,
-            totalCount: paginationObject.totalCount - 1,
-          };
-          console.log('paginationObject after modification', {
-            paginationObject,
-          });
-          patchState({ institutions: newInstitutions, paginationObject });
-        }
+        const { items, paginationObject } = subscriptionUpdater({
+          items: state.institutions,
+          method,
+          subscriptionItem: institution,
+          paginationObject: state.paginationObject,
+        });
+        patchState({ institutions: items, paginationObject });
       });
   }
 

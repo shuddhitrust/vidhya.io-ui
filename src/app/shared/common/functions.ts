@@ -1,4 +1,8 @@
-import { MatSelectOption, PaginationObject } from './models';
+import {
+  MatSelectOption,
+  PaginationObject,
+  SUBSCRIPTION_METHODS,
+} from './models';
 import { day, hour, minute, month, week, year } from './constants';
 
 export const getOptionLabel = (
@@ -9,6 +13,32 @@ export const getOptionLabel = (
   if (option) {
     return option.label;
   } else return undefined;
+};
+
+export const subscriptionUpdater = ({
+  items,
+  method,
+  subscriptionItem,
+  paginationObject,
+}) => {
+  if (subscriptionItem && method) {
+    if (method == SUBSCRIPTION_METHODS.CREATE_METHOD) {
+      paginationObject = {
+        ...paginationObject,
+        totalCount: paginationObject.totalCount + 1,
+      };
+      items = [subscriptionItem, ...items];
+    } else if (method == SUBSCRIPTION_METHODS.UPDATE_METHOD) {
+      items = items.map((i) => (i.id == i.id ? subscriptionItem : i));
+    } else if (method == SUBSCRIPTION_METHODS.DELETE_METHOD) {
+      items = items.filter((i) => i.id != subscriptionItem.id);
+      paginationObject = {
+        ...paginationObject,
+        totalCount: paginationObject.totalCount - 1,
+      };
+    }
+  }
+  return { items, paginationObject };
 };
 
 export const updatePaginationObject = ({
