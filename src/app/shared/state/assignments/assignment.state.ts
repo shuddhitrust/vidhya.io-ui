@@ -108,14 +108,15 @@ export class AssignmentState {
     let { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, paginationObject } = state;
-    const { searchQuery, newPageSize, newPageNumber } = searchParams;
+    const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
     const newPaginationObject = updatePaginationObject({
       paginationObject,
       newPageNumber,
       newPageSize,
+      newSearchQuery,
     });
     const variables = {
-      searchField: searchQuery,
+      searchField: newSearchQuery,
       limit: newPaginationObject.pageSize,
       offset: newPaginationObject.offset,
     };

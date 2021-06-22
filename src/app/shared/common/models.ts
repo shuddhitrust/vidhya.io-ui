@@ -60,6 +60,7 @@ export type PaginationObject = {
   totalCount: number;
   pageSize: number;
   offset: number; // the number of records in all pages prior to current page combined
+  searchQuery: string;
 };
 
 export const startingPaginationObject: PaginationObject = {
@@ -67,6 +68,7 @@ export const startingPaginationObject: PaginationObject = {
   totalCount: defaultPageSize,
   pageSize: defaultPageSize,
   offset: 0,
+  searchQuery: '',
 };
 
 export type CurrentMember = {

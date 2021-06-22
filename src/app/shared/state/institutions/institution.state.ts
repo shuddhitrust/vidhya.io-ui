@@ -28,6 +28,7 @@ import { INSTITUTION_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
+  paginationChanged,
   subscriptionUpdater,
   updatePaginationObject,
 } from '../../common/functions';
@@ -112,21 +113,25 @@ export class InstitutionState {
     { payload }: FetchInstitutionsAction
   ) {
     const state = getState();
-    const { fetchPolicy, paginationObject, fetchedOnce } = state;
-    if (!fetchedOnce) {
+    const { institutionsSubscribed, paginationObject } = state;
+    const { searchParams } = payload;
+    const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
+    let newPaginationObject = updatePaginationObject({
+      paginationObject,
+      newPageNumber,
+      newPageSize,
+      newSearchQuery,
+    });
+    if (
+      paginationChanged({ paginationObject, newPaginationObject }) ||
+      !institutionsSubscribed
+    ) {
       patchState({ isFetching: true });
-      const { searchParams } = payload;
-      const { searchQuery, newPageSize, newPageNumber } = searchParams;
-      let newPaginationObject = updatePaginationObject({
-        paginationObject,
-        newPageNumber,
-        newPageSize,
-      });
       console.log('new pagination object after the update method => ', {
         newPaginationObject,
       });
       const variables = {
-        searchField: searchQuery,
+        searchField: newSearchQuery,
         limit: newPaginationObject.pageSize,
         offset: newPaginationObject.offset,
       };
@@ -144,13 +149,8 @@ export class InstitutionState {
             : 0;
 
           newPaginationObject = { ...newPaginationObject, totalCount };
-          console.log('from after getting institutions', {
-            totalCount,
-            response,
-            newPaginationObject,
-          });
+          console.log('new institutions from fetch ', response);
           patchState({
-            fetchedOnce: true,
             institutions: response,
             paginationObject: newPaginationObject,
             isFetching: false,
@@ -165,23 +165,33 @@ export class InstitutionState {
     getState,
     patchState,
   }: StateContext<InstitutionStateModel>) {
-    this.apollo
-      .subscribe({
-        query: SUBSCRIPTIONS.institution,
-      })
-      .subscribe((result: any) => {
-        const state = getState();
-        console.log('institution subscription result ', { result });
-        const method = result?.data?.notifyInstitution?.method;
-        const institution = result?.data?.notifyInstitution?.institution;
-        const { items, paginationObject } = subscriptionUpdater({
-          items: state.institutions,
-          method,
-          subscriptionItem: institution,
-          paginationObject: state.paginationObject,
+    const state = getState();
+    if (!state.institutionsSubscribed) {
+      this.apollo
+        .subscribe({
+          query: SUBSCRIPTIONS.institution,
+        })
+        .subscribe((result: any) => {
+          const state = getState();
+          console.log('institution subscription result ', {
+            institutions: state.institutions,
+            result,
+          });
+          const method = result?.data?.notifyInstitution?.method;
+          const institution = result?.data?.notifyInstitution?.institution;
+          const { items, paginationObject } = subscriptionUpdater({
+            items: state.institutions,
+            method,
+            subscriptionItem: institution,
+            paginationObject: state.paginationObject,
+          });
+          patchState({
+            institutions: items,
+            paginationObject,
+            institutionsSubscribed: true,
+          });
         });
-        patchState({ institutions: items, paginationObject });
-      });
+    }
   }
 
   @Action(GetInstitutionAction)
@@ -230,7 +240,7 @@ export class InstitutionState {
           mutation: updateForm
             ? INSTITUTION_MUTATIONS.UPDATE_INSTITUTION
             : INSTITUTION_MUTATIONS.CREATE_INSTITUTION,
-          variables: { ...variables },
+          variables,
         })
         .subscribe(
           ({ data }: any) => {
@@ -253,7 +263,6 @@ export class InstitutionState {
               this.router.navigateByUrl(InstitutionFormCloseURL);
               patchState({
                 institutionFormRecord: emptyInstitutionFormRecord,
-                fetchPolicy: 'network-only',
               });
             } else {
               this.store.dispatch(
@@ -296,7 +305,7 @@ export class InstitutionState {
     this.apollo
       .mutate({
         mutation: INSTITUTION_MUTATIONS.DELETE_INSTITUTION,
-        variables: { id, fetchPolicy: 'no-cache' },
+        variables: { id },
       })
       .subscribe(
         ({ data }: any) => {

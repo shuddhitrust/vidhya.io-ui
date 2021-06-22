@@ -175,9 +175,9 @@ export class ChatState {
     const { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, paginationObject } = state;
-    const { searchQuery, newPageSize, newPageNumber } = searchParams;
+    const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
     const variables = {
-      searchField: searchQuery,
+      searchField: newSearchQuery,
       limit: 30,
       offset: 0,
     };

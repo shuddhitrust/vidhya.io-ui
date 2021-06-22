@@ -112,17 +112,18 @@ export class MemberState {
     const { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, paginationObject } = state;
-    const { searchQuery, newPageSize, newPageNumber } = searchParams;
+    const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
     const newPaginationObject = updatePaginationObject({
       paginationObject,
       newPageNumber,
       newPageSize,
+      newSearchQuery,
     });
     console.log('new pagination object after the update method => ', {
       newPaginationObject,
     });
     const variables = {
-      searchField: searchQuery,
+      searchField: newSearchQuery,
       limit: newPaginationObject.pageSize,
       offset: newPaginationObject.offset,
     };

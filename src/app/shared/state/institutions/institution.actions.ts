@@ -9,7 +9,7 @@ export class FetchInstitutionsAction {
 }
 
 export class InstitutionSubscriptionAction {
-  static readonly type = '[ INSTITUTIONS] Subscribe';
+  static readonly type = '[INSTITUTIONS] Subscribe';
 
   constructor() {}
 }

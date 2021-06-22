@@ -21,6 +21,12 @@ export const subscriptionUpdater = ({
   subscriptionItem,
   paginationObject,
 }) => {
+  console.log('From SubscriptionUpdater method =>', {
+    items,
+    method,
+    subscriptionItem,
+    paginationObject,
+  });
   if (subscriptionItem && method) {
     if (method == SUBSCRIPTION_METHODS.CREATE_METHOD) {
       paginationObject = {
@@ -38,16 +44,37 @@ export const subscriptionUpdater = ({
       };
     }
   }
+  console.log('After updating items =>', { items, paginationObject });
   return { items, paginationObject };
+};
+
+export const paginationChanged = ({
+  paginationObject,
+  newPaginationObject,
+}: {
+  paginationObject: PaginationObject;
+  newPaginationObject: PaginationObject;
+}): boolean => {
+  if (
+    paginationObject.currentPage != newPaginationObject.currentPage ||
+    paginationObject.pageSize != newPaginationObject.pageSize ||
+    paginationObject.offset != newPaginationObject.offset ||
+    paginationObject.searchQuery != newPaginationObject.searchQuery
+  ) {
+    return true;
+  }
+  return false;
 };
 
 export const updatePaginationObject = ({
   paginationObject,
   newPageNumber,
   newPageSize,
+  newSearchQuery,
 }) => {
   // Update paginationTokens
-  let { currentPage, totalCount, pageSize, offset } = paginationObject;
+  let { currentPage, totalCount, pageSize, offset, searchQuery } =
+    paginationObject;
   console.log('from updatePaginationObject => ', {
     paginationObject,
     newPageNumber,
@@ -55,8 +82,15 @@ export const updatePaginationObject = ({
   });
   pageSize = newPageSize;
   currentPage = newPageNumber;
+  searchQuery = newSearchQuery;
   offset = (currentPage - 1) * pageSize;
-  const newPaginationObject = { currentPage, totalCount, pageSize, offset };
+  const newPaginationObject = {
+    currentPage,
+    totalCount,
+    pageSize,
+    offset,
+    searchQuery,
+  };
   return Object.assign({}, newPaginationObject);
 };
 
