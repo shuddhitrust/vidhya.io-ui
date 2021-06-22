@@ -13,10 +13,11 @@ import {
   FetchInstitutionsAction,
   ForceRefetchInstitutionsAction,
   GetInstitutionAction,
+  InstitutionSubscriptionAction,
   ResetInstitutionFormAction,
 } from './institution.actions';
 import { INSTITUTION_QUERIES } from './../../api/graphql/queries.graphql';
-import { Apollo } from 'apollo-angular';
+import { Apollo, Subscription } from 'apollo-angular';
 import {
   Institution,
   MatSelectOption,
@@ -30,6 +31,7 @@ import {
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
+import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
 
 @State<InstitutionStateModel>({
   name: 'institutionState',
@@ -148,6 +150,18 @@ export class InstitutionState {
           paginationObject: newPaginationObject,
           isFetching: false,
         });
+        this.store.dispatch(new InstitutionSubscriptionAction());
+      });
+  }
+
+  @Action(InstitutionSubscriptionAction)
+  subscribeToInstitutions({ patchState }: StateContext<InstitutionStateModel>) {
+    this.apollo
+      .subscribe({
+        query: SUBSCRIPTIONS.institution,
+      })
+      .subscribe((result) => {
+        console.log('notifyInstitutions result => ', { result });
       });
   }
 
