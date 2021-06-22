@@ -21,6 +21,7 @@ export const emptyInstitutionFormRecord: Institution = {
 };
 export interface InstitutionStateModel {
   institutions: Institution[];
+  fetchedOnce: boolean;
   fetchPolicy: FetchPolicy;
   paginationObject: PaginationObject;
   institutionFormId: number;
@@ -33,6 +34,7 @@ export interface InstitutionStateModel {
 
 export const defaultInstitutionState: InstitutionStateModel = {
   institutions: [],
+  fetchedOnce: false,
   fetchPolicy: null,
   paginationObject: startingPaginationObject,
   institutionFormId: null,

@@ -81,6 +81,12 @@ export type CurrentMember = {
   membershipStatus: string;
 };
 
+export const SUBSCRIPTION_METHODS = {
+  CREATE_METHOD: 'CREATE',
+  UPDATE_METHOD: 'UPDATE',
+  DELETE_METHOD: 'DELETE',
+};
+
 export const MembershipStatus = {
   UNINITIALIZED: 'UI',
   PENDING: 'PE',

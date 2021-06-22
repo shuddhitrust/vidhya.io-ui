@@ -27,7 +27,7 @@ export const updatePaginationObject = ({
   currentPage = newPageNumber;
   offset = (currentPage - 1) * pageSize;
   const newPaginationObject = { currentPage, totalCount, pageSize, offset };
-  return newPaginationObject;
+  return Object.assign({}, newPaginationObject);
 };
 
 export const parseDateTime = (dateTime: string): string => {

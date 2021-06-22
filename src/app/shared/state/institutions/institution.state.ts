@@ -22,6 +22,7 @@ import {
   Institution,
   MatSelectOption,
   PaginationObject,
+  SUBSCRIPTION_METHODS,
 } from '../../common/models';
 import { INSTITUTION_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
@@ -109,59 +110,107 @@ export class InstitutionState {
     { getState, patchState }: StateContext<InstitutionStateModel>,
     { payload }: FetchInstitutionsAction
   ) {
-    patchState({ isFetching: true });
-    const { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, paginationObject } = state;
-    const { searchQuery, newPageSize, newPageNumber } = searchParams;
-    const newPaginationObject = updatePaginationObject({
-      paginationObject,
-      newPageNumber,
-      newPageSize,
-    });
-    console.log('new pagination object after the update method => ', {
-      newPaginationObject,
-    });
-    const variables = {
-      searchField: searchQuery,
-      limit: newPaginationObject.pageSize,
-      offset: newPaginationObject.offset,
-    };
-    console.log('variables for institutions fetch ', { variables });
-    this.apollo
-      .watchQuery({
-        query: INSTITUTION_QUERIES.GET_INSTITUTIONS,
-        variables,
-        fetchPolicy,
-      })
-      .valueChanges.subscribe(({ data }: any) => {
-        const response = data.institutions;
-        const totalCount = response[0]?.totalCount
-          ? response[0]?.totalCount
-          : 0;
-        newPaginationObject.totalCount = totalCount;
-        console.log('from after getting institutions', {
-          totalCount,
-          response,
-          newPaginationObject,
-        });
-        patchState({
-          institutions: response,
-          paginationObject: newPaginationObject,
-          isFetching: false,
-        });
-        this.store.dispatch(new InstitutionSubscriptionAction());
+    const { fetchPolicy, paginationObject, fetchedOnce } = state;
+    if (!fetchedOnce) {
+      patchState({ isFetching: true });
+      const { searchParams } = payload;
+      const { searchQuery, newPageSize, newPageNumber } = searchParams;
+      let newPaginationObject = updatePaginationObject({
+        paginationObject,
+        newPageNumber,
+        newPageSize,
       });
+      console.log('new pagination object after the update method => ', {
+        newPaginationObject,
+      });
+      const variables = {
+        searchField: searchQuery,
+        limit: newPaginationObject.pageSize,
+        offset: newPaginationObject.offset,
+      };
+      console.log('variables for institutions fetch ', { variables });
+      this.apollo
+        .watchQuery({
+          query: INSTITUTION_QUERIES.GET_INSTITUTIONS,
+          variables,
+          fetchPolicy: 'network-only',
+        })
+        .valueChanges.subscribe(({ data }: any) => {
+          const response = data.institutions;
+          const totalCount = response[0]?.totalCount
+            ? response[0]?.totalCount
+            : 0;
+
+          newPaginationObject = { ...newPaginationObject, totalCount };
+          console.log('from after getting institutions', {
+            totalCount,
+            response,
+            newPaginationObject,
+          });
+          patchState({
+            fetchedOnce: true,
+            institutions: response,
+            paginationObject: newPaginationObject,
+            isFetching: false,
+          });
+          this.store.dispatch(new InstitutionSubscriptionAction());
+        });
+    }
   }
 
   @Action(InstitutionSubscriptionAction)
-  subscribeToInstitutions({ patchState }: StateContext<InstitutionStateModel>) {
+  subscribeToInstitutions({
+    getState,
+    patchState,
+  }: StateContext<InstitutionStateModel>) {
     this.apollo
       .subscribe({
         query: SUBSCRIPTIONS.institution,
       })
-      .subscribe((result) => {
-        console.log('notifyInstitutions result => ', { result });
+      .subscribe((result: any) => {
+        const state = getState();
+        let { paginationObject } = state;
+        console.log('institution subscription result ', { result });
+        const method = result?.data?.notifyInstitution?.method;
+        const institution = result?.data?.notifyInstitution?.institution;
+        if (method == SUBSCRIPTION_METHODS.CREATE_METHOD && institution) {
+          paginationObject = {
+            ...paginationObject,
+            totalCount: paginationObject.totalCount + 1,
+          };
+          patchState({
+            institutions: [institution, ...state.institutions],
+            paginationObject,
+          });
+        } else if (
+          method == SUBSCRIPTION_METHODS.UPDATE_METHOD &&
+          institution
+        ) {
+          const newInstitutions = state.institutions.map((i) =>
+            i.id == institution.id ? institution : i
+          );
+
+          patchState({ institutions: newInstitutions });
+        } else if (
+          method == SUBSCRIPTION_METHODS.DELETE_METHOD &&
+          institution
+        ) {
+          const newInstitutions = state.institutions.filter(
+            (i) => i.id != institution.id
+          );
+          console.log('paginationObject before modification', {
+            paginationObject,
+          });
+          paginationObject = {
+            ...paginationObject,
+            totalCount: paginationObject.totalCount - 1,
+          };
+          console.log('paginationObject after modification', {
+            paginationObject,
+          });
+          patchState({ institutions: newInstitutions, paginationObject });
+        }
       });
   }
 
@@ -211,7 +260,7 @@ export class InstitutionState {
           mutation: updateForm
             ? INSTITUTION_MUTATIONS.UPDATE_INSTITUTION
             : INSTITUTION_MUTATIONS.CREATE_INSTITUTION,
-          variables,
+          variables: { ...variables },
         })
         .subscribe(
           ({ data }: any) => {
@@ -277,7 +326,7 @@ export class InstitutionState {
     this.apollo
       .mutate({
         mutation: INSTITUTION_MUTATIONS.DELETE_INSTITUTION,
-        variables: { id },
+        variables: { id, fetchPolicy: 'no-cache' },
       })
       .subscribe(
         ({ data }: any) => {
@@ -290,11 +339,11 @@ export class InstitutionState {
                 action: 'success',
               })
             );
-            this.store.dispatch(
-              new ForceRefetchInstitutionsAction({
-                searchParams: defaultSearchParams,
-              })
-            );
+            // this.store.dispatch(
+            //   new ForceRefetchInstitutionsAction({
+            //     searchParams: defaultSearchParams,
+            //   })
+            // );
           } else {
             this.store.dispatch(
               new ShowNotificationAction({
