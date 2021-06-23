@@ -3,7 +3,10 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { GraphQLModule } from './shared/api/graphql/graphql.module';
+import {
+  GraphQLModule,
+  TokenUpdater,
+} from './shared/api/graphql/graphql.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Styling } from './styling.imports';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -192,6 +195,7 @@ import { ChatState } from './shared/state/chats/chat.state';
       ),
       NgxsReduxDevtoolsPluginModule.forRoot(),
     ],
+    TokenUpdater,
   ],
   providers: [
     AuthenticationGuard,

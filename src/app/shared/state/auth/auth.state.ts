@@ -106,6 +106,11 @@ export class AuthState {
   }
 
   @Selector()
+  static getToken(state: AuthStateModel): string {
+    return state.token;
+  }
+
+  @Selector()
   static getIsLoggedIn(state: AuthStateModel): boolean {
     return state.isLoggedIn;
   }
