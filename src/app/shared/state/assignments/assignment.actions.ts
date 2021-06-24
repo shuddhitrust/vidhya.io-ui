@@ -8,6 +8,12 @@ export class FetchAssignmentsAction {
   constructor(public payload: { searchParams: SearchParams }) {}
 }
 
+export class AssignmentSubscriptionAction {
+  static readonly type = '[ASSIGNMENTS] Subscribe';
+
+  constructor() {}
+}
+
 export class ForceRefetchAssignmentsAction {
   static readonly type = '[ASSIGNMENTS] Fetch from network';
 

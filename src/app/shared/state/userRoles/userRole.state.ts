@@ -21,6 +21,7 @@ import {
   ForceRefetchUserRolesAction,
   GetUserRoleAction,
   ResetUserRoleFormAction,
+  UserRoleSubscriptionAction,
 } from './userRole.actions';
 import { USER_ROLE_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
@@ -34,6 +35,8 @@ import { USER_ROLE_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
+  paginationChanged,
+  subscriptionUpdater,
   updatePaginationObject,
 } from '../../common/functions';
 import { defaultSearchParams } from '../../common/constants';
@@ -45,6 +48,7 @@ import {
 import { Router } from '@angular/router';
 import { AuthState } from '../auth/auth.state';
 import { Observable } from 'rxjs';
+import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
 
 @State<UserRoleStateModel>({
   name: 'roleState',
@@ -113,49 +117,89 @@ export class UserRoleState {
     { getState, patchState }: StateContext<UserRoleStateModel>,
     { payload }: FetchUserRolesAction
   ) {
-    patchState({ isFetching: true });
     const { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, paginationObject } = state;
+    const { fetchPolicy, paginationObject, userRolesSubscribed } = state;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
-    const newPaginationObject = updatePaginationObject({
+    let newPaginationObject = updatePaginationObject({
       paginationObject,
       newPageNumber,
       newPageSize,
       newSearchQuery,
     });
-    console.log('new pagination object after the update method => ', {
-      newPaginationObject,
-    });
-    const variables = {
-      searchField: newSearchQuery,
-      limit: newPaginationObject.pageSize,
-      offset: newPaginationObject.offset,
-    };
-    console.log('variables for roles fetch ', { variables });
-    this.apollo
-      .watchQuery({
-        query: USER_ROLE_QUERIES.GET_USER_ROLES,
-        variables,
-        fetchPolicy,
-      })
-      .valueChanges.subscribe(({ data }: any) => {
-        const response = data.userRoles;
-        const totalCount = response[0]?.totalCount
-          ? response[0]?.totalCount
-          : 0;
-        newPaginationObject.totalCount = totalCount;
-        console.log('from after getting roles', {
-          totalCount,
-          response,
-          newPaginationObject,
-        });
-        patchState({
-          roles: response,
-          paginationObject: newPaginationObject,
-          isFetching: false,
-        });
+    if (
+      paginationChanged({ paginationObject, newPaginationObject }) ||
+      !userRolesSubscribed
+    ) {
+      patchState({ isFetching: true });
+      console.log('new pagination object after the update method => ', {
+        newPaginationObject,
       });
+      const variables = {
+        searchField: newSearchQuery,
+        limit: newPaginationObject.pageSize,
+        offset: newPaginationObject.offset,
+      };
+      console.log('variables for roles fetch ', { variables });
+      this.apollo
+        .watchQuery({
+          query: USER_ROLE_QUERIES.GET_USER_ROLES,
+          variables,
+          fetchPolicy,
+        })
+        .valueChanges.subscribe(({ data }: any) => {
+          const response = data.userRoles;
+          const totalCount = response[0]?.totalCount
+            ? response[0]?.totalCount
+            : 0;
+          newPaginationObject = { ...newPaginationObject, totalCount };
+          console.log('from after getting roles', {
+            totalCount,
+            response,
+            newPaginationObject,
+          });
+          patchState({
+            roles: response,
+            paginationObject: newPaginationObject,
+            isFetching: false,
+          });
+          this.store.dispatch(new UserRoleSubscriptionAction());
+        });
+    }
+  }
+
+  @Action(UserRoleSubscriptionAction)
+  subscribeToUserRoles({
+    getState,
+    patchState,
+  }: StateContext<UserRoleStateModel>) {
+    const state = getState();
+    if (!state.userRolesSubscribed) {
+      this.apollo
+        .subscribe({
+          query: SUBSCRIPTIONS.userRole,
+        })
+        .subscribe((result: any) => {
+          const state = getState();
+          console.log('userRole subscription result ', {
+            userRoles: state.roles,
+            result,
+          });
+          const method = result?.data?.notifyUser?.method;
+          const member = result?.data?.notifyUser?.member;
+          const { items, paginationObject } = subscriptionUpdater({
+            items: state.roles,
+            method,
+            subscriptionItem: member,
+            paginationObject: state.paginationObject,
+          });
+          patchState({
+            roles: items,
+            paginationObject,
+            userRolesSubscribed: true,
+          });
+        });
+    }
   }
 
   @Action(GetUserRoleAction)

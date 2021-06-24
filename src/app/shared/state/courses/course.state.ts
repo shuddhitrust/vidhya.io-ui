@@ -8,6 +8,7 @@ import {
 
 import { Injectable } from '@angular/core';
 import {
+  CourseSubscriptionAction,
   CreateUpdateCourseAction,
   DeleteCourseAction,
   FetchCoursesAction,
@@ -22,10 +23,13 @@ import { COURSE_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
+  paginationChanged,
+  subscriptionUpdater,
   updatePaginationObject,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
+import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
 
 @State<CourseStateModel>({
   name: 'courseState',
@@ -100,12 +104,11 @@ export class CourseState {
     { payload }: FetchCoursesAction
   ) {
     console.log('Fetching courses from course state');
-    patchState({ isFetching: true });
     let { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, paginationObject } = state;
+    const { fetchPolicy, paginationObject, coursesSubscribed } = state;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
-    const newPaginationObject = updatePaginationObject({
+    let newPaginationObject = updatePaginationObject({
       paginationObject,
       newPageNumber,
       newPageSize,
@@ -116,31 +119,69 @@ export class CourseState {
       limit: newPaginationObject.pageSize,
       offset: newPaginationObject.offset,
     };
-    console.log('variables for courses fetch ', { variables });
-    this.apollo
-      .watchQuery({
-        query: COURSE_QUERIES.GET_COURSES,
-        variables,
-        fetchPolicy,
-      })
-      .valueChanges.subscribe(({ data }: any) => {
-        console.log('resposne to get courses query ', { data });
-        const response = data.courses;
-        const totalCount = response[0]?.totalCount
-          ? response[0]?.totalCount
-          : 0;
-        newPaginationObject.totalCount = totalCount;
-        console.log('from after getting courses', {
-          totalCount,
-          response,
-          newPaginationObject,
+    if (
+      paginationChanged({ paginationObject, newPaginationObject }) ||
+      !coursesSubscribed
+    ) {
+      patchState({ isFetching: true });
+      console.log('variables for courses fetch ', { variables });
+      this.apollo
+        .watchQuery({
+          query: COURSE_QUERIES.GET_COURSES,
+          variables,
+          fetchPolicy,
+        })
+        .valueChanges.subscribe(({ data }: any) => {
+          console.log('resposne to get courses query ', { data });
+          const response = data.courses;
+          const totalCount = response[0]?.totalCount
+            ? response[0]?.totalCount
+            : 0;
+          newPaginationObject = { ...newPaginationObject, totalCount };
+          console.log('from after getting courses', {
+            totalCount,
+            response,
+            newPaginationObject,
+          });
+          patchState({
+            courses: response,
+            paginationObject: newPaginationObject,
+            isFetching: false,
+          });
+          this.store.dispatch(new CourseSubscriptionAction());
         });
-        patchState({
-          courses: response,
-          paginationObject: newPaginationObject,
-          isFetching: false,
+    }
+  }
+
+  @Action(CourseSubscriptionAction)
+  subscribeToCourses({ getState, patchState }: StateContext<CourseStateModel>) {
+    const state = getState();
+    if (!state.coursesSubscribed) {
+      this.apollo
+        .subscribe({
+          query: SUBSCRIPTIONS.course,
+        })
+        .subscribe((result: any) => {
+          const state = getState();
+          console.log('course subscription result ', {
+            courses: state.courses,
+            result,
+          });
+          const method = result?.data?.notifyCourse?.method;
+          const course = result?.data?.notifyCourse?.course;
+          const { items, paginationObject } = subscriptionUpdater({
+            items: state.courses,
+            method,
+            subscriptionItem: course,
+            paginationObject: state.paginationObject,
+          });
+          patchState({
+            courses: items,
+            paginationObject,
+            coursesSubscribed: true,
+          });
         });
-      });
+    }
   }
 
   @Action(GetCourseAction)

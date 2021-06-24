@@ -8,6 +8,7 @@ import {
 
 import { Injectable } from '@angular/core';
 import {
+  AssignmentSubscriptionAction,
   CreateUpdateAssignmentAction,
   DeleteAssignmentAction,
   FetchAssignmentsAction,
@@ -26,10 +27,13 @@ import { ASSIGNMENT_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
+  paginationChanged,
+  subscriptionUpdater,
   updatePaginationObject,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
+import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
 
 @State<AssignmentStateModel>({
   name: 'assignmentState',
@@ -104,12 +108,11 @@ export class AssignmentState {
     { payload }: FetchAssignmentsAction
   ) {
     console.log('Fetching assignments from assignment state');
-    patchState({ isFetching: true });
     let { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, paginationObject } = state;
+    const { fetchPolicy, paginationObject, assignmentsSubscribed } = state;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
-    const newPaginationObject = updatePaginationObject({
+    let newPaginationObject = updatePaginationObject({
       paginationObject,
       newPageNumber,
       newPageSize,
@@ -120,31 +123,72 @@ export class AssignmentState {
       limit: newPaginationObject.pageSize,
       offset: newPaginationObject.offset,
     };
-    console.log('variables for assignments fetch ', { variables });
-    this.apollo
-      .watchQuery({
-        query: ASSIGNMENT_QUERIES.GET_ASSIGNMENTS,
-        variables,
-        fetchPolicy,
-      })
-      .valueChanges.subscribe(({ data }: any) => {
-        console.log('resposne to get assignments query ', { data });
-        const response = data.assignments;
-        const totalCount = response[0]?.totalCount
-          ? response[0]?.totalCount
-          : 0;
-        newPaginationObject.totalCount = totalCount;
-        console.log('from after getting assignments', {
-          totalCount,
-          response,
-          newPaginationObject,
+    if (
+      paginationChanged({ paginationObject, newPaginationObject }) ||
+      !assignmentsSubscribed
+    ) {
+      patchState({ isFetching: true });
+      console.log('variables for assignments fetch ', { variables });
+      this.apollo
+        .watchQuery({
+          query: ASSIGNMENT_QUERIES.GET_ASSIGNMENTS,
+          variables,
+          fetchPolicy,
+        })
+        .valueChanges.subscribe(({ data }: any) => {
+          console.log('resposne to get assignments query ', { data });
+          const response = data.assignments;
+          const totalCount = response[0]?.totalCount
+            ? response[0]?.totalCount
+            : 0;
+          newPaginationObject = { ...newPaginationObject, totalCount };
+          console.log('from after getting assignments', {
+            totalCount,
+            response,
+            newPaginationObject,
+          });
+          patchState({
+            assignments: response,
+            paginationObject: newPaginationObject,
+            isFetching: false,
+          });
+          this.store.dispatch(new AssignmentSubscriptionAction());
         });
-        patchState({
-          assignments: response,
-          paginationObject: newPaginationObject,
-          isFetching: false,
+    }
+  }
+
+  @Action(AssignmentSubscriptionAction)
+  subscribeToAssignments({
+    getState,
+    patchState,
+  }: StateContext<AssignmentStateModel>) {
+    const state = getState();
+    if (!state.assignmentsSubscribed) {
+      this.apollo
+        .subscribe({
+          query: SUBSCRIPTIONS.assignment,
+        })
+        .subscribe((result: any) => {
+          const state = getState();
+          console.log('assignment subscription result ', {
+            assignments: state.assignments,
+            result,
+          });
+          const method = result?.data?.notifyAssignment?.method;
+          const assignment = result?.data?.notifyAssignment?.assignment;
+          const { items, paginationObject } = subscriptionUpdater({
+            items: state.assignments,
+            method,
+            subscriptionItem: assignment,
+            paginationObject: state.paginationObject,
+          });
+          patchState({
+            assignments: items,
+            paginationObject,
+            assignmentsSubscribed: true,
+          });
         });
-      });
+    }
   }
 
   @Action(GetAssignmentAction)

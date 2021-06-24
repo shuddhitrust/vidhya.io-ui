@@ -20,6 +20,7 @@ import {
   FetchMembersAction,
   ForceRefetchMembersAction,
   GetMemberAction,
+  MemberSubscriptionAction,
   ResetMemberFormAction,
 } from './member.actions';
 import { AUTH_QUERIES, USER_QUERIES } from '../../api/graphql/queries.graphql';
@@ -29,6 +30,8 @@ import { USER_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
+  paginationChanged,
+  subscriptionUpdater,
   updatePaginationObject,
 } from '../../common/functions';
 import { defaultSearchParams } from '../../common/constants';
@@ -40,6 +43,7 @@ import {
 import { Router } from '@angular/router';
 import { AuthState } from '../auth/auth.state';
 import { Observable } from 'rxjs';
+import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
 
 @State<MemberStateModel>({
   name: 'memberState',
@@ -108,49 +112,86 @@ export class MemberState {
     { getState, patchState }: StateContext<MemberStateModel>,
     { payload }: FetchMembersAction
   ) {
-    patchState({ isFetching: true });
-    const { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, paginationObject } = state;
+    const { searchParams } = payload;
+    const { fetchPolicy, paginationObject, membersSubscribed } = state;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
-    const newPaginationObject = updatePaginationObject({
+    let newPaginationObject = updatePaginationObject({
       paginationObject,
       newPageNumber,
       newPageSize,
       newSearchQuery,
     });
-    console.log('new pagination object after the update method => ', {
-      newPaginationObject,
-    });
-    const variables = {
-      searchField: newSearchQuery,
-      limit: newPaginationObject.pageSize,
-      offset: newPaginationObject.offset,
-    };
-    console.log('variables for members fetch ', { variables });
-    this.apollo
-      .watchQuery({
-        query: USER_QUERIES.GET_USERS,
-        variables,
-        fetchPolicy,
-      })
-      .valueChanges.subscribe(({ data }: any) => {
-        const response = data.users;
-        const totalCount = response[0]?.totalCount
-          ? response[0]?.totalCount
-          : 0;
-        newPaginationObject.totalCount = totalCount;
-        console.log('from after getting members', {
-          totalCount,
-          response,
-          newPaginationObject,
-        });
-        patchState({
-          members: response,
-          paginationObject: newPaginationObject,
-          isFetching: false,
-        });
+    if (
+      paginationChanged({ paginationObject, newPaginationObject }) ||
+      !membersSubscribed
+    ) {
+      patchState({ isFetching: true });
+      console.log('new pagination object after the update method => ', {
+        newPaginationObject,
       });
+      const variables = {
+        searchField: newSearchQuery,
+        limit: newPaginationObject.pageSize,
+        offset: newPaginationObject.offset,
+      };
+      console.log('variables for members fetch ', { variables });
+      this.apollo
+        .watchQuery({
+          query: USER_QUERIES.GET_USERS,
+          variables,
+          fetchPolicy,
+        })
+        .valueChanges.subscribe(({ data }: any) => {
+          const response = data.users;
+          const totalCount = response[0]?.totalCount
+            ? response[0]?.totalCount
+            : 0;
+          newPaginationObject = { ...newPaginationObject, totalCount };
+          console.log('from after getting members', {
+            totalCount,
+            response,
+            newPaginationObject,
+          });
+          patchState({
+            members: response,
+            paginationObject: newPaginationObject,
+            isFetching: false,
+          });
+          this.store.dispatch(new MemberSubscriptionAction());
+        });
+    }
+  }
+
+  @Action(MemberSubscriptionAction)
+  subscribeToMembers({ getState, patchState }: StateContext<MemberStateModel>) {
+    const state = getState();
+    if (!state.membersSubscribed) {
+      this.apollo
+        .subscribe({
+          query: SUBSCRIPTIONS.user,
+        })
+        .subscribe((result: any) => {
+          const state = getState();
+          console.log('member subscription result ', {
+            members: state.members,
+            result,
+          });
+          const method = result?.data?.notifyUser?.method;
+          const member = result?.data?.notifyUser?.member;
+          const { items, paginationObject } = subscriptionUpdater({
+            items: state.members,
+            method,
+            subscriptionItem: member,
+            paginationObject: state.paginationObject,
+          });
+          patchState({
+            members: items,
+            paginationObject,
+            membersSubscribed: true,
+          });
+        });
+    }
   }
 
   @Action(GetMemberAction)

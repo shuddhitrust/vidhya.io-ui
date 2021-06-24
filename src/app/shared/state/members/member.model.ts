@@ -37,6 +37,7 @@ export const emptyMemberFormRecord: User = {
 
 export interface MemberStateModel {
   members: User[];
+  membersSubscribed: boolean;
   fetchPolicy: FetchPolicy;
   paginationObject: PaginationObject;
   memberFormId: string;
@@ -50,6 +51,7 @@ export interface MemberStateModel {
 
 export const defaultMemberState: MemberStateModel = {
   members: [],
+  membersSubscribed: false,
   fetchPolicy: null,
   paginationObject: startingPaginationObject,
   memberFormId: null,

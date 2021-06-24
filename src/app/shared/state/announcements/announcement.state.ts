@@ -8,6 +8,7 @@ import {
 
 import { Injectable } from '@angular/core';
 import {
+  AnnouncementSubscriptionAction,
   CreateUpdateAnnouncementAction,
   DeleteAnnouncementAction,
   FetchAnnouncementsAction,
@@ -26,10 +27,13 @@ import { ANNOUNCEMENT_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
+  paginationChanged,
+  subscriptionUpdater,
   updatePaginationObject,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
+import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
 
 @State<AnnouncementStateModel>({
   name: 'announcementState',
@@ -110,12 +114,11 @@ export class AnnouncementState {
     { payload }: FetchAnnouncementsAction
   ) {
     console.log('Fetching announcements from announcement state');
-    patchState({ isFetching: true });
     let { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, paginationObject } = state;
+    const { fetchPolicy, paginationObject, announcementsSubscribed } = state;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
-    const newPaginationObject = updatePaginationObject({
+    let newPaginationObject = updatePaginationObject({
       paginationObject,
       newPageNumber,
       newPageSize,
@@ -126,31 +129,72 @@ export class AnnouncementState {
       limit: newPaginationObject.pageSize,
       offset: newPaginationObject.offset,
     };
-    console.log('variables for announcements fetch ', { variables });
-    this.apollo
-      .watchQuery({
-        query: ANNOUNCEMENT_QUERIES.GET_ANNOUNCEMENTS,
-        variables,
-        fetchPolicy,
-      })
-      .valueChanges.subscribe(({ data }: any) => {
-        console.log('resposne to get announcements query ', { data });
-        const response = data.announcements;
-        const totalCount = response[0]?.totalCount
-          ? response[0]?.totalCount
-          : 0;
-        newPaginationObject.totalCount = totalCount;
-        console.log('from after getting announcements', {
-          totalCount,
-          response,
-          newPaginationObject,
+    if (
+      paginationChanged({ paginationObject, newPaginationObject }) ||
+      !announcementsSubscribed
+    ) {
+      patchState({ isFetching: true });
+      console.log('variables for announcements fetch ', { variables });
+      this.apollo
+        .watchQuery({
+          query: ANNOUNCEMENT_QUERIES.GET_ANNOUNCEMENTS,
+          variables,
+          fetchPolicy,
+        })
+        .valueChanges.subscribe(({ data }: any) => {
+          console.log('resposne to get announcements query ', { data });
+          const response = data.announcements;
+          const totalCount = response[0]?.totalCount
+            ? response[0]?.totalCount
+            : 0;
+          newPaginationObject = { ...newPaginationObject, totalCount };
+          console.log('from after getting announcements', {
+            totalCount,
+            response,
+            newPaginationObject,
+          });
+          patchState({
+            announcements: response,
+            paginationObject: newPaginationObject,
+            isFetching: false,
+          });
+          this.store.dispatch(new AnnouncementSubscriptionAction());
         });
-        patchState({
-          announcements: response,
-          paginationObject: newPaginationObject,
-          isFetching: false,
+    }
+  }
+
+  @Action(AnnouncementSubscriptionAction)
+  subscribeToAnnouncements({
+    getState,
+    patchState,
+  }: StateContext<AnnouncementStateModel>) {
+    const state = getState();
+    if (!state.announcementsSubscribed) {
+      this.apollo
+        .subscribe({
+          query: SUBSCRIPTIONS.announcement,
+        })
+        .subscribe((result: any) => {
+          const state = getState();
+          console.log('announcement subscription result ', {
+            announcements: state.announcements,
+            result,
+          });
+          const method = result?.data?.notifyAnnouncement?.method;
+          const announcement = result?.data?.notifyAnnouncement?.announcement;
+          const { items, paginationObject } = subscriptionUpdater({
+            items: state.announcements,
+            method,
+            subscriptionItem: announcement,
+            paginationObject: state.paginationObject,
+          });
+          patchState({
+            announcements: items,
+            paginationObject,
+            announcementsSubscribed: true,
+          });
         });
-      });
+    }
   }
 
   @Action(GetAnnouncementAction)

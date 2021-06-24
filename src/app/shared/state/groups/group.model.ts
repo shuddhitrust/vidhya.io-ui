@@ -21,6 +21,7 @@ export const emptyGroupFormRecord: Group = {
 };
 export interface GroupStateModel {
   groups: Group[];
+  groupsSubscribed: boolean;
   fetchPolicy: FetchPolicy;
   paginationObject: PaginationObject;
   groupFormId: number;
@@ -33,6 +34,7 @@ export interface GroupStateModel {
 
 export const defaultGroupState: GroupStateModel = {
   groups: [],
+  groupsSubscribed: false,
   fetchPolicy: null,
   paginationObject: startingPaginationObject,
   groupFormId: null,

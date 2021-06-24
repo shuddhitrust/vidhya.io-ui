@@ -8,6 +8,12 @@ export class FetchChatsAction {
   constructor(public payload: { searchParams: SearchParams }) {}
 }
 
+export class ChatMessageSubscriptionAction {
+  static readonly type = '[CHAT MESSAGES] Subscribe';
+
+  constructor() {}
+}
+
 export class SearchChatMembersAction {
   static readonly type = '[CHATS] Search Members to Chat with';
 

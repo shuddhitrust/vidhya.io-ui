@@ -8,6 +8,12 @@ export class FetchGroupsAction {
   constructor(public payload: { searchParams: SearchParams }) {}
 }
 
+export class GroupSubscriptionAction {
+  static readonly type = '[GROUPS] Subscribe';
+
+  constructor() {}
+}
+
 export class ForceRefetchGroupsAction {
   static readonly type = '[GROUPS] Fetch from network';
 

@@ -16,6 +16,7 @@ export const emptyChatFormRecord: Chat = {
 };
 export interface ChatStateModel {
   chats: Chat[];
+  chatsSubscribed: boolean;
   chatMembers: User[];
   isFetchingChatMembers: boolean;
   fetchPolicy: FetchPolicy;
@@ -31,6 +32,7 @@ export interface ChatStateModel {
 
 export const defaultChatState: ChatStateModel = {
   chats: [],
+  chatsSubscribed: false,
   chatMembers: [],
   isFetchingChatMembers: false,
   fetchPolicy: null,

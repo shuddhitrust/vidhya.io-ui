@@ -8,6 +8,11 @@ export class FetchUserRolesAction {
   constructor(public payload: { searchParams: SearchParams }) {}
 }
 
+export class UserRoleSubscriptionAction {
+  static readonly type = '[ROLES] Subscribe';
+
+  constructor() {}
+}
 export class ForceRefetchUserRolesAction {
   static readonly type = '[ROLES] Fetch from network';
 

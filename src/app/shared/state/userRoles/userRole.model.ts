@@ -47,6 +47,7 @@ export const emptyUserRoleFormRecord: UserRole = {
 
 export interface UserRoleStateModel {
   roles: UserRole[];
+  userRolesSubscribed: boolean;
   fetchPolicy: FetchPolicy;
   paginationObject: PaginationObject;
   userRoleFormId: string;
@@ -60,6 +61,7 @@ export interface UserRoleStateModel {
 
 export const defaultRoleState: UserRoleStateModel = {
   roles: [],
+  userRolesSubscribed: false,
   fetchPolicy: null,
   paginationObject: startingPaginationObject,
   userRoleFormId: null,

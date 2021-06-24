@@ -35,7 +35,9 @@ export const subscriptionUpdater = ({
       };
       items = [subscriptionItem, ...items];
     } else if (method == SUBSCRIPTION_METHODS.UPDATE_METHOD) {
-      items = items.map((i) => (i.id == i.id ? subscriptionItem : i));
+      items = items.map((i) =>
+        i.id == subscriptionItem.id ? subscriptionItem : i
+      );
     } else if (method == SUBSCRIPTION_METHODS.DELETE_METHOD) {
       items = items.filter((i) => i.id != subscriptionItem.id);
       paginationObject = {
@@ -84,7 +86,7 @@ export const updatePaginationObject = ({
   currentPage = newPageNumber;
   searchQuery = newSearchQuery;
   offset = (currentPage - 1) * pageSize;
-  const newPaginationObject = {
+  let newPaginationObject = {
     currentPage,
     totalCount,
     pageSize,

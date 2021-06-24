@@ -13,6 +13,7 @@ import {
   FetchGroupsAction,
   ForceRefetchGroupsAction,
   GetGroupAction,
+  GroupSubscriptionAction,
   ResetGroupFormAction,
 } from './group.actions';
 import { GROUP_QUERIES } from '../../api/graphql/queries.graphql';
@@ -22,10 +23,13 @@ import { GROUP_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
+  paginationChanged,
+  subscriptionUpdater,
   updatePaginationObject,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
+import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
 
 @State<GroupStateModel>({
   name: 'groupState',
@@ -100,12 +104,11 @@ export class GroupState {
     { payload }: FetchGroupsAction
   ) {
     console.log('Fetching groups from group state');
-    patchState({ isFetching: true });
     let { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, paginationObject } = state;
+    const { fetchPolicy, paginationObject, groupsSubscribed } = state;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
-    const newPaginationObject = updatePaginationObject({
+    let newPaginationObject = updatePaginationObject({
       paginationObject,
       newPageNumber,
       newPageSize,
@@ -116,31 +119,69 @@ export class GroupState {
       limit: newPaginationObject.pageSize,
       offset: newPaginationObject.offset,
     };
-    console.log('variables for groups fetch ', { variables });
-    this.apollo
-      .watchQuery({
-        query: GROUP_QUERIES.GET_GROUPS,
-        variables,
-        fetchPolicy,
-      })
-      .valueChanges.subscribe(({ data }: any) => {
-        console.log('resposne to get groups query ', { data });
-        const response = data.groups;
-        const totalCount = response[0]?.totalCount
-          ? response[0]?.totalCount
-          : 0;
-        newPaginationObject.totalCount = totalCount;
-        console.log('from after getting groups', {
-          totalCount,
-          response,
-          newPaginationObject,
+    if (
+      paginationChanged({ paginationObject, newPaginationObject }) ||
+      !groupsSubscribed
+    ) {
+      patchState({ isFetching: true });
+      console.log('variables for groups fetch ', { variables });
+      this.apollo
+        .watchQuery({
+          query: GROUP_QUERIES.GET_GROUPS,
+          variables,
+          fetchPolicy,
+        })
+        .valueChanges.subscribe(({ data }: any) => {
+          console.log('resposne to get groups query ', { data });
+          const response = data.groups;
+          const totalCount = response[0]?.totalCount
+            ? response[0]?.totalCount
+            : 0;
+          newPaginationObject = { ...newPaginationObject, totalCount };
+          console.log('from after getting groups', {
+            totalCount,
+            response,
+            newPaginationObject,
+          });
+          patchState({
+            groups: response,
+            paginationObject: newPaginationObject,
+            isFetching: false,
+          });
+          this.store.dispatch(new GroupSubscriptionAction());
         });
-        patchState({
-          groups: response,
-          paginationObject: newPaginationObject,
-          isFetching: false,
+    }
+  }
+
+  @Action(GroupSubscriptionAction)
+  subscribeToGroups({ getState, patchState }: StateContext<GroupStateModel>) {
+    const state = getState();
+    if (!state.groupsSubscribed) {
+      this.apollo
+        .subscribe({
+          query: SUBSCRIPTIONS.group,
+        })
+        .subscribe((result: any) => {
+          const state = getState();
+          console.log('group subscription result ', {
+            groups: state.groups,
+            result,
+          });
+          const method = result?.data?.notifyGroup?.method;
+          const group = result?.data?.notifyGroup?.group;
+          const { items, paginationObject } = subscriptionUpdater({
+            items: state.groups,
+            method,
+            subscriptionItem: group,
+            paginationObject: state.paginationObject,
+          });
+          patchState({
+            groups: items,
+            paginationObject,
+            groupsSubscribed: true,
+          });
         });
-      });
+    }
   }
 
   @Action(GetGroupAction)
