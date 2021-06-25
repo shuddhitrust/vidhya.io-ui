@@ -5,10 +5,12 @@ import { parseDateTime } from 'src/app/shared/common/functions';
 import {
   ClearChatMembers,
   CreateChatMessageAction,
+  FetchChatMessagesAction,
   FetchChatsAction,
   GetChatAction,
   GetIntoChatAction,
   SearchChatMembersAction,
+  SelectChatAction,
 } from 'src/app/shared/state/chats/chat.actions';
 import { ChatState } from 'src/app/shared/state/chats/chat.state';
 import { Observable, fromEvent } from 'rxjs';
@@ -57,7 +59,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
 
   constructor(private store: Store) {
     this.chat$.subscribe((val) => {
-      this.chat = val;
+      this.chat = this.prepChat(val);
       this.draft = '';
       this.constructChatName();
       console.log('Chat changed => ', { chat: this.chat });
@@ -120,6 +122,16 @@ export class ChatComponent implements OnInit, AfterViewInit {
     //     this.chatWindowContainer.nativeElement.scrollHeight;
     // } catch (err) {}
   }
+  prepChat(chat: Chat): Chat {
+    console.log('from prepChat ', { chat });
+    if (chat?.chatmessageSet?.length > 1) {
+      let newChat = Object.assign({}, chat);
+      return {
+        ...newChat,
+        chatmessageSet: newChat?.chatmessageSet?.slice().reverse(),
+      };
+    } else return chat;
+  }
   constructChatName() {
     const chatName = this.chat.name;
     let memberList = '';
@@ -139,7 +151,6 @@ export class ChatComponent implements OnInit, AfterViewInit {
     console.log('After constructing the chat name ', { chatName, memberList });
   }
   getChatNameFromChat(chat) {
-    console.log('chat in chats ', { chat });
     let chatName = chat.name;
     let memberList = '';
     chat.members.forEach((m) => {
@@ -175,7 +186,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
   }
 
   onSelectChat(chat) {
-    this.store.dispatch(new GetChatAction({ id: chat.id }));
+    this.store.dispatch(new SelectChatAction({ id: chat.id }));
     this.draft = '';
   }
   getIntoChat(member) {

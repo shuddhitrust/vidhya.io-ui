@@ -16,11 +16,13 @@ export const emptyChatFormRecord: Chat = {
 };
 export interface ChatStateModel {
   chats: Chat[];
-  chatsSubscribed: boolean;
+  chatMessagesSubscribed: boolean;
   chatMembers: User[];
   isFetchingChatMembers: boolean;
+  isFetchingChatMessages: boolean;
   fetchPolicy: FetchPolicy;
   paginationObject: PaginationObject;
+  chatMessagesPaginationObject: PaginationObject;
   chatFormId: number;
   isCreatingNewChatMessage: boolean;
   chatFormRecord: Chat;
@@ -32,11 +34,13 @@ export interface ChatStateModel {
 
 export const defaultChatState: ChatStateModel = {
   chats: [],
-  chatsSubscribed: false,
+  chatMessagesSubscribed: false,
   chatMembers: [],
   isFetchingChatMembers: false,
+  isFetchingChatMessages: false,
   fetchPolicy: null,
   paginationObject: startingPaginationObject,
+  chatMessagesPaginationObject: startingPaginationObject,
   chatFormId: null,
   chatFormRecord: emptyChatFormRecord,
   isCreatingNewChatMessage: false,

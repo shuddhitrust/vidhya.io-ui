@@ -20,6 +20,11 @@ export const subscriptionUpdater = ({
   method,
   subscriptionItem,
   paginationObject,
+}: {
+  items: any[];
+  method: string;
+  subscriptionItem: any;
+  paginationObject: PaginationObject;
 }) => {
   console.log('From SubscriptionUpdater method =>', {
     items,

@@ -8,6 +8,11 @@ export class FetchChatsAction {
   constructor(public payload: { searchParams: SearchParams }) {}
 }
 
+export class FetchChatMessagesAction {
+  static readonly type = '[CHAT MESSAGES] Fetch';
+
+  constructor(public payload: { chatId: number; searchParams: SearchParams }) {}
+}
 export class ChatMessageSubscriptionAction {
   static readonly type = '[CHAT MESSAGES] Subscribe';
 
@@ -33,6 +38,12 @@ export class ClearChatMembers {
 
 export class GetIntoChatAction {
   static readonly type = '[CHAT] Get with Member ID';
+
+  constructor(public payload: idPayload) {}
+}
+
+export class SelectChatAction {
+  static readonly type = '[CHAT] Select Chat';
 
   constructor(public payload: idPayload) {}
 }

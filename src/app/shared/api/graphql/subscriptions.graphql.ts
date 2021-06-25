@@ -132,6 +132,7 @@ export const SUBSCRIPTIONS = {
           seenBy {
             id
           }
+          createdAt
         }
         method
       }

@@ -44,7 +44,7 @@
     <nz-content>
       <div id="chat-messages" #chatWindow>
         <nz-list nzItemLayout="vertical">
-          <nz-list-item *ngFor="let chatMessage of chat.chatmessageSet">
+          <nz-list-item *ngFor="let chatMessage of chat?.chatmessageSet">
             <mat-card
               [ngClass]="
                 ownMessageOrNot(chatMessage) ? 'own-message' : 'others-message'
@@ -52,17 +52,17 @@
             >
               <p>
                 <img
-                  [src]="chatMessage.author?.avatar"
+                  [src]="chatMessage?.author?.avatar"
                   class="
                     ant-avatar ant-avatar-circle ant-avatar-image
                     ng-star-inserted
                   "
                 />
-                {{ chatMessage.author.firstName }}
+                {{ chatMessage?.author?.firstName }}
               </p>
-              <p>{{ chatMessage.message }}</p>
+              <p>{{ chatMessage?.message }}</p>
               <small class="chat-time-stamp">
-                Sent on {{ parseDateTimeMethod(chatMessage.createdAt) }}</small
+                Sent on {{ parseDateTimeMethod(chatMessage?.createdAt) }}</small
               >
             </mat-card>
           </nz-list-item>

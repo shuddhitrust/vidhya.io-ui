@@ -298,7 +298,33 @@ export const CHAT_QUERIES = {
           id
           firstName
           lastName
+          avatar
         }
+      }
+    }
+  `,
+  GET_CHAT_MESSAGES: gql`
+    query chatMessages(
+      $chatId: ID
+      $searchField: String
+      $limit: Int!
+      $offset: Int!
+    ) {
+      chatMessages(
+        chatId: $chatId
+        searchField: $searchField
+        limit: $limit
+        offset: $offset
+      ) {
+        id
+        message
+        author {
+          id
+          firstName
+          lastName
+          avatar
+        }
+        createdAt
       }
     }
   `,

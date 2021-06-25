@@ -20,12 +20,14 @@ import {
   CreateChatMessageAction,
   CreateUpdateChatAction,
   DeleteChatAction,
+  FetchChatMessagesAction,
   FetchChatsAction,
   ForceRefetchChatsAction,
   GetChatAction,
   GetIntoChatAction,
   ResetChatFormAction,
   SearchChatMembersAction,
+  SelectChatAction,
 } from './chat.actions';
 import { CHAT_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
@@ -177,7 +179,7 @@ export class ChatState {
     { payload }: FetchChatsAction
   ) {
     const state = getState();
-    const { chatsSubscribed, paginationObject } = state;
+    const { paginationObject } = state;
     const { searchParams } = payload;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
     let newPaginationObject = updatePaginationObject({
@@ -186,85 +188,49 @@ export class ChatState {
       newPageSize,
       newSearchQuery,
     });
-    if (
-      paginationChanged({ paginationObject, newPaginationObject }) ||
-      !chatsSubscribed
-    ) {
-      patchState({ isFetching: true });
-      const variables = {
-        searchField: newSearchQuery,
-        limit: newPaginationObject.pageSize,
-        offset: newPaginationObject.offset,
-      };
-      this.apollo
-        .watchQuery({
-          query: CHAT_QUERIES.GET_CHATS,
-          variables,
-          fetchPolicy: 'network-only',
-        })
-        .valueChanges.subscribe(({ data }: any) => {
-          const response = data.chats;
-          const totalCount = response[0]?.totalCount
-            ? response[0]?.totalCount
-            : 0;
-          newPaginationObject = { ...newPaginationObject, totalCount };
+    patchState({ isFetching: true });
+    const variables = {
+      searchField: newSearchQuery,
+      limit: newPaginationObject.pageSize,
+      offset: newPaginationObject.offset,
+    };
+    this.apollo
+      .watchQuery({
+        query: CHAT_QUERIES.GET_CHATS,
+        variables,
+        fetchPolicy: 'network-only',
+      })
+      .valueChanges.subscribe(({ data }: any) => {
+        const response = data.chats;
+        const totalCount = response[0]?.totalCount
+          ? response[0]?.totalCount
+          : 0;
+        newPaginationObject = { ...newPaginationObject, totalCount };
 
-          patchState({
-            chats: response,
-            paginationObject: newPaginationObject,
-            isFetching: false,
-          });
-          this.store.dispatch(new ChatMessageSubscriptionAction());
+        patchState({
+          chats: response,
+          paginationObject: newPaginationObject,
+          isFetching: false,
         });
-    }
+        this.store.dispatch(new ChatMessageSubscriptionAction());
+      });
   }
-  @Action(ChatMessageSubscriptionAction)
-  subscribeToChatMessage({
-    getState,
-    patchState,
-  }: StateContext<ChatStateModel>) {
+
+  @Action(SelectChatAction)
+  selectChat(
+    { getState, patchState }: StateContext<ChatStateModel>,
+    { payload }: GetChatAction
+  ) {
+    const { id } = payload;
     const state = getState();
-    if (!state.chatsSubscribed) {
-      this.apollo
-        .subscribe({
-          query: SUBSCRIPTIONS.chatMessage,
-        })
-        .subscribe((result: any) => {
-          const state = getState();
-          console.log('chat subscription result ', {
-            chats: state.chats,
-            result,
-          });
-          const method = result?.data?.notifyChatMessage?.method;
-          const chatMessage = result?.data?.notifyChatMessage?.chatMessage;
-          if (chatMessage) {
-            let chat: Chat = state.chats.find(
-              (c) => c.id == chatMessage?.chat?.id
-            );
-            if (chat) {
-              const chatMessages = chat.chatmessageSet;
-              const { items, paginationObject } = subscriptionUpdater({
-                items: chatMessages,
-                method,
-                subscriptionItem: chatMessage,
-                paginationObject: state.paginationObject,
-              });
-              chat = { ...chat, chatmessageSet: items };
-              let chats = state.chats.filter((c) => c.id != chat.id);
-              chats = [chat, ...chats];
-              patchState({
-                chats: chats,
-                paginationObject,
-                chatsSubscribed: true,
-              });
-            } else {
-              this.store.dispatch(
-                new GetChatAction({ id: chatMessage?.chat?.id })
-              );
-            }
-          }
-        });
-    }
+    const chat = state.chats.find((c) => c.id == id);
+    patchState({ chatFormRecord: chat });
+    this.store.dispatch(
+      new FetchChatMessagesAction({
+        chatId: chat.id,
+        searchParams: defaultSearchParams,
+      })
+    );
   }
 
   @Action(GetChatAction)
@@ -449,6 +415,117 @@ export class ChatState {
       );
   }
 
+  @Action(FetchChatMessagesAction)
+  fetchChatMessages(
+    { getState, patchState }: StateContext<ChatStateModel>,
+    { payload }: FetchChatMessagesAction
+  ) {
+    const state = getState();
+    const { chatMessagesPaginationObject } = state;
+    const { searchParams, chatId } = payload;
+    const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
+    let newPaginationObject = updatePaginationObject({
+      paginationObject: chatMessagesPaginationObject,
+      newPageNumber,
+      newPageSize,
+      newSearchQuery,
+    });
+    if (
+      paginationChanged({
+        paginationObject: chatMessagesPaginationObject,
+        newPaginationObject,
+      })
+    ) {
+      patchState({ isFetchingChatMessages: true });
+      const variables = {
+        chatId,
+        searchField: newSearchQuery,
+        limit: newPaginationObject.pageSize,
+        offset: newPaginationObject.offset,
+      };
+      this.apollo
+        .watchQuery({
+          query: CHAT_QUERIES.GET_CHAT_MESSAGES,
+          variables,
+          fetchPolicy: 'network-only',
+        })
+        .valueChanges.subscribe(({ data }: any) => {
+          const response = data.chatMessages;
+          const totalCount = response[0]?.totalCount
+            ? response[0]?.totalCount
+            : 0;
+          newPaginationObject = { ...newPaginationObject, totalCount };
+          let chat: Chat = state.chats.find((c) => c.id == chatId);
+          if (chat) {
+            console.log('line 460 from chat state => ', { chat });
+            const chatMessages = chat.chatmessageSet ? chat.chatmessageSet : [];
+            const newChatMessages = response.concat(chatMessages);
+            chat = { ...chat, chatmessageSet: newChatMessages };
+            let chats = state.chats.filter((c) => c.id != chat.id);
+            chats = [chat, ...chats];
+            let formRecord =
+              state.chatFormRecord.id == chat.id ? chat : state.chatFormRecord;
+
+            patchState({
+              chats: chats,
+              chatFormRecord: formRecord,
+              chatMessagesPaginationObject: newPaginationObject,
+            });
+          }
+        });
+    }
+  }
+
+  @Action(ChatMessageSubscriptionAction)
+  subscribeToChatMessage({
+    getState,
+    patchState,
+  }: StateContext<ChatStateModel>) {
+    const state = getState();
+    if (!state.chatMessagesSubscribed) {
+      this.apollo
+        .subscribe({
+          query: SUBSCRIPTIONS.chatMessage,
+        })
+        .subscribe((result: any) => {
+          const state = getState();
+          console.log('chat subscription result ', {
+            chats: state.chats,
+            result,
+          });
+          const method = result?.data?.notifyChatMessage?.method;
+          const chatMessage = result?.data?.notifyChatMessage?.chatMessage;
+          if (chatMessage) {
+            let chat: Chat = state.chats.find(
+              (c) => c.id == chatMessage?.chat?.id
+            );
+            if (chat) {
+              const chatMessages = chat.chatmessageSet;
+              const { items, paginationObject } = subscriptionUpdater({
+                items: chatMessages,
+                method,
+                subscriptionItem: chatMessage,
+                paginationObject: state.paginationObject,
+              });
+              chat = { ...chat, chatmessageSet: items };
+              let chats = state.chats.filter((c) => c.id != chat.id);
+              chats = [chat, ...chats];
+              patchState({
+                chats: chats,
+                chatFormRecord: chat,
+                paginationObject,
+                chatMessagesSubscribed: true,
+              });
+            } else {
+              this.store.dispatch(
+                new GetChatAction({ id: chatMessage?.chat?.id })
+              );
+            }
+          }
+        });
+    }
+  }
+
   @Action(CreateChatMessageAction)
   createChatMessage(
     { getState, patchState }: StateContext<ChatStateModel>,
@@ -471,11 +548,11 @@ export class ChatState {
         patchState({ isCreatingNewChatMessage: false });
 
         const response = data.createChatMessage;
-        if (response.ok) {
-          const chat = response.chatMessage?.chat;
-          console.log('SETTIING NEW CHAT TO THE CHATFORMRECORD ', { chat });
-          patchState({ chatFormRecord: chat });
-        }
+        // if (response.ok) {
+        //   const chat = response.chatMessage?.chat;
+        //   console.log('SETTIING NEW CHAT TO THE CHATFORMRECORD ', { chat });
+        //   patchState({ chatFormRecord: chat });
+        // }
         console.log('from creating the chat ', { data });
       });
   }
