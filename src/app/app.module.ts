@@ -107,6 +107,7 @@ import { UserRoleState } from './shared/state/userRoles/userRole.state';
 import { AddEditUserRoleComponent } from './pages/forms/add-edit-user-role/add-edit-user-role.component';
 import { ChatComponent } from './pages/static/chat/chat.component';
 import { ChatState } from './shared/state/chats/chat.state';
+import { PasswordResetComponent } from './pages/forms/password-reset/password-reset.component';
 
 @NgModule({
   declarations: [
@@ -160,6 +161,7 @@ import { ChatState } from './shared/state/chats/chat.state';
     RoleDeleteConfirmationDialog,
     AddEditUserRoleComponent,
     ChatComponent,
+    PasswordResetComponent,
   ],
   imports: [
     BrowserModule,

@@ -22,6 +22,7 @@ import { AddEditAssignmentComponent } from './pages/forms/add-edit-assignment/ad
 import { InstitutionProfileComponent } from './pages/profiles/institution-profile/institution-profile.component';
 import { AddEditUserRoleComponent } from './pages/forms/add-edit-user-role/add-edit-user-role.component';
 import { ChatComponent } from './pages/static/chat/chat.component';
+import { PasswordResetComponent } from './pages/forms/password-reset/password-reset.component';
 // import { InstitutionProfileComponent } from './pages/modals/institution-profile/institution-profile.component';
 
 const routes: Routes = [
@@ -121,8 +122,14 @@ const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path: uiroutes.ACTIVATE_ACCOUNT,
+    path: `${uiroutes.ACTIVATE_ACCOUNT}/:token`,
     component: HomeComponent,
+    pathMatch: 'full',
+  },
+  {
+    path: `${uiroutes.PASSWORD_RESET}/:token`,
+    component: PasswordResetComponent,
+    pathMatch: 'full',
   },
   { path: '', component: HomeComponent, pathMatch: 'full' },
   { path: '**', redirectTo: '/', pathMatch: 'full' },
