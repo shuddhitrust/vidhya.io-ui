@@ -1,3 +1,5 @@
+$left-panel-width: 320px;
+
 * {
   margin: 0px;
   padding: 0px;
@@ -123,7 +125,7 @@ input[type="checkbox"] {
   position: absolute;
   width: 30%;
   min-width: 240px;
-  max-width: 320px;
+  max-width: $left-panel-width;
   height: 100%;
   z-index: 3;
   display: none;
@@ -131,7 +133,7 @@ input[type="checkbox"] {
 
 .menu {
   position: relative;
-  left: -320px;
+  left: -$left-panel-width;
   width: 100%;
   height: 100vh;
   float: left;
@@ -426,8 +428,8 @@ nav button > span {
   position: relative;
   display: inline-block;
   left: 0px;
-  width: 320px;
-  height: 100vh;
+  width: $left-panel-width;
+  height: calc(100vh - 70px);
   float: left;
   background: #fff;
   border-right: 1px solid #ddd;
@@ -482,7 +484,8 @@ header {
 
 .chats {
   width: 100%;
-  height: calc(100vh - 70px);
+  // height: calc(100vh - 70px);
+  height: 100%;
   float: left;
   overflow-x: hidden;
   overflow-y: auto;
@@ -612,7 +615,8 @@ div[class~="onTop"] > .count {
 .rightPanel {
   float: left;
   width: calc(100% - 321px);
-  height: 100vh;
+  // height: 100vh;
+  height: calc(100vh - 100px);
   background: #999;
 }
 
@@ -679,21 +683,25 @@ div[class~="onTop"] > .count {
 }
 
 /* THE CONVERSATION HISTORY CSS */
-
+.search-member-input {
+  margin: 0px 10px;
+}
 .convHistory {
   float: left;
   position: relative;
   width: 100%;
-  height: calc(100vh - 140px);
+  height: calc(100vh - 190px);
+  // height: 100%;
   background: #333;
   overflow-x: hidden;
   overflow-y: auto;
+  margin-top: -11px;
 }
 
-.userBg {
-  background: url("https://images.unsplash.com/photo-1463058837219-41e13a132b7d?dpr=1&auto=format&fit=crop&w=1500&h=1000&q=80&cs=tinysrgb&crop=&bg=")
-    100% center;
-}
+// .userBg {
+//   background: url("https://images.unsplash.com/photo-1463058837219-41e13a132b7d?dpr=1&auto=format&fit=crop&w=1500&h=1000&q=80&cs=tinysrgb&crop=&bg=")
+//     100% center;
+// }
 
 .msg {
   position: relative;
@@ -750,10 +758,12 @@ div[class~="onTop"] > .count {
 /* THE REPLY BAR CSS */
 
 .replyBar {
-  width: 100%;
+  width: calc(100vw - 320px);
   height: 70px;
   float: left;
   background: #fff;
+  position: absolute;
+  bottom: 0;
 }
 
 .replyBar .attach {
@@ -801,103 +811,33 @@ div[class~="onTop"] > .count {
   background: #fff;
 }
 
-.emoticonType {
-  width: 100%;
-  height: 50px;
+.mainApp {
+  // padding-top: 100px;
+  height: calc(100vh - 100px);
 }
 
-.emoticonType button {
-  width: 105px;
-  height: 36px;
-  font-weight: 600;
-  color: #555;
-  background: none;
+.own-message,
+.others-message {
+  display: block;
+  min-width: 30vw;
+  max-width: 50vw;
+  margin: 5px;
 }
 
-.emoticonType button:hover {
-  color: #fff;
-  background: #419fd9;
+.own-message {
+  margin-left: auto;
+  margin-right: 5px;
 }
 
-.emojiList,
-.stickerList {
-  width: 100%;
-  height: 150px;
-  overflow-x: hidden;
-  overflow-y: auto;
+.others-message {
+  margin-left: 5px;
+  margin-right: auto;
 }
 
-.emojiList .pick {
-  width: 50px;
-  height: 50px;
-  background: transparent;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 70%;
-  transition: all 0.15s ease-in-out;
+.own-message::after,
+others-message::after {
+  clear: both;
 }
-
-.emojiList .pick:hover {
-  background: #ddd;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 70%;
-}
-
-.stickerList .pick {
-  width: 80px;
-  height: 80px;
-  background: transparent;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 65%;
-  transition: all 0.15s ease-in-out;
-}
-
-.stickerList .pick:hover {
-  background: #ddd;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 65%;
-}
-
-/* hidden, while not complete */
-.stickerList {
-  display: none;
-}
-
-/* CSS FOR THE EMOJI IMAGES, JUST SOME */
-
-#smileface {
-  background-image: url(https://emojipedia-us.s3.amazonaws.com/thumbs/120/apple/96/grinning-face_1f600.png);
-}
-
-#grinningface {
-  background-image: url(https://emojipedia-us.s3.amazonaws.com/thumbs/120/apple/96/grinning-face-with-smiling-eyes_1f601.png);
-}
-
-#tearjoyface {
-  background-image: url(https://emojipedia-us.s3.amazonaws.com/thumbs/120/apple/96/face-with-tears-of-joy_1f602.png);
-}
-
-#rofl {
-  background-image: url(https://emojipedia-us.s3.amazonaws.com/thumbs/120/apple/96/rolling-on-the-floor-laughing_1f923.png);
-}
-
-#somface {
-  background-image: url(https://emojipedia-us.s3.amazonaws.com/thumbs/120/apple/96/smiling-face-with-open-mouth_1f603.png);
-}
-
-#swfface {
-  background-image: url(https://emojipedia-us.s3.amazonaws.com/thumbs/120/apple/96/smiling-face-with-open-mouth-and-smiling-eyes_1f604.png);
-}
-
-/* NIGHT MODE THEMING */
-.DarkTheme,
-.DarkTheme .mainApp {
-  background: #222;
-}
-
 /* SOLVING RESPONSIVE DESIGN ISSUES */
 @media screen and (max-width: 1180px) {
   .config {
@@ -925,10 +865,13 @@ div[class~="onTop"] > .count {
   .leftPanel {
     width: 80px;
   }
-
-  .rightPanel {
-    width: calc(100% - 81px);
+  .replyBar {
+    width: calc(100% - 80px);
   }
+
+  // .rightPanel {
+  //   width: calc(100% - 81px);
+  // }
 
   .msg {
     width: auto;

@@ -439,11 +439,14 @@ export class AuthState {
                 'initiating UpdateCurrentUserInStateAction from login'
               );
               patchState({
+                token,
+                refreshToken: response?.refreshToken,
+              });
+              this.store.dispatch(new SetAuthSessionAction());
+              patchState({
                 isLoggedIn: true,
                 closeLoginForm: true,
-                token,
                 expiresAt,
-                refreshToken: response?.refreshToken,
                 lastLogin: response?.user?.lastLogin,
               });
               this.store.dispatch(new UpdateCurrentUserInStateAction({ user }));
@@ -453,7 +456,7 @@ export class AuthState {
                   message: '',
                 })
               );
-              this.store.dispatch(new SetAuthSessionAction());
+
               this.store.dispatch(new AuthenticationCheckAction());
               this.store.dispatch(
                 new ShowNotificationAction({

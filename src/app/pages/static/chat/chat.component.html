@@ -10,56 +10,59 @@ LICENSE: https://creativecommons.org/licenses/by/3.0/
 <section class="mainApp">
   <div class="leftPanel">
     <header>
-      <button class="trigger">
-        <svg viewBox="0 0 24 24">
-          <path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" />
-        </svg>
-      </button>
+      <mat-form-field
+        class="search-member-input col-lg-11 col-md-11 col-sm-11"
+        appearance="outline"
+      >
+        <input matInput #searchMember placeholder="Search a member..." />
 
-      <input class="searchChats" type="search" placeholder="Search..." />
+        <button mat-icon-button matSuffix (click)="clearSearchMember()">
+          <mat-icon>{{ query.length ? "close" : "search" }}</mat-icon>
+        </button>
+        <mat-hint *ngIf="showSearchMemberError" align="start"
+          >Enter at least 3 characters</mat-hint
+        >
+      </mat-form-field>
     </header>
-    <div class="chats">
-      <div class="chatButton active">
+    <div class="chats" *ngIf="chatMembers.length">
+      <span *ngFor="let member of chatMembers">
+        <div class="chatButton active">
+          <div class="chatInfo">
+            <img
+              src="member.avatar"
+              class="image my-image"
+              alt="Member Avatar"
+            />
+
+            <p class="name">{{ member.firstName + " " + member.lastName }}</p>
+          </div>
+
+          <div class="status onTop">
+            <!-- <p class="date">{{ member.lastActive }}</p> -->
+          </div>
+        </div>
+      </span>
+    </div>
+    <div *ngFor="let chatItem of chats">
+      <div
+        class="chatButton"
+        [ngClass]="chatItem.id == chat.id ? 'chatButton active' : 'chatButton'"
+        (click)="onSelectChat(chatItem)"
+      >
         <div class="chatInfo">
-          <div class="image my-image"></div>
+          <!-- <img src="member.avatar" class="image my-image" alt="Member Avatar" /> -->
 
-          <p class="name">Renan Mayrinck</p>
-
-          <p class="message">Actually, more ...</p>
+          <p class="name">{{ getChatNameFromChat(chatItem) }}</p>
         </div>
 
         <div class="status onTop">
-          <p class="date">00:02</p>
-          <p class="count">10</p>
-          <i class="material-icons read">done_all</i>
-          <svg class="fixed" viewBox="0 0 24 24">
-            <path
-              d="M16,12V4H17V2H7V4H8V12L6,14V16H11.2V22H12.8V16H18V14L16,12Z"
-            />
-          </svg>
-        </div>
-      </div>
-
-      <div class="chatButton">
-        <div class="chatInfo">
-          <div class="image"></div>
-
-          <p class="name">Doge</p>
-
-          <p class="message">Wow!</p>
-        </div>
-
-        <div class="status normal">
-          <p class="date">Now</p>
-          <p class="count">42</p>
-          <i class="material-icons read">done_all</i>
-          <i class="material-icons fixed">loyalty</i>
+          <!-- <p class="date">{{ member.lastActive }}</p> -->
         </div>
       </div>
     </div>
   </div>
 
-  <div class="rightPanel">
+  <div *ngIf="chat.id" class="rightPanel">
     <div class="topBar">
       <div class="rightSide">
         <button class="tbButton search">
@@ -71,31 +74,35 @@ LICENSE: https://creativecommons.org/licenses/by/3.0/
       </div>
 
       <div class="leftSide">
-        <p class="chatName">Renan Mayrinck <span>@Renan.Designs</span></p>
-        <p class="chatStatus">Online</p>
+        <p class="chatName">{{ chatName }}</p>
       </div>
     </div>
 
-    <div
-      *ngFor="let chatMessage of chat?.chatmessageSet"
-      class="convHistory userBg"
-    >
+    <div class="convHistory userBg">
       <!-- CONVERSATION GOES HERE! -->
-
-      <div
-        class="msg messageSent"
-        [ngClass]="
-          ownMessageOrNot(chatMessage)
-            ? 'msg messageSent'
-            : 'msg messageReceived'
-        "
-      >
-        {{ chatMessage?.message }}
-        <i class="material-icons readStatus">done_all</i>
-        <span class="timestamp">{{
-          parseDateTimeMethod(chatMessage?.createdAt)
-        }}</span>
+      <div *ngFor="let chatMessage of chat?.chatmessageSet">
+        <mat-card
+          [ngClass]="
+            ownMessageOrNot(chatMessage) ? 'own-message' : 'others-message'
+          "
+        >
+          <p>
+            <img
+              [src]="chatMessage?.author?.avatar"
+              class="
+                ant-avatar ant-avatar-circle ant-avatar-image
+                ng-star-inserted
+              "
+            />
+            {{ chatMessage?.author?.firstName }}
+          </p>
+          <p>{{ chatMessage?.message }}</p>
+          <small class="chat-time-stamp">
+            Sent on {{ parseDateTimeMethod(chatMessage?.createdAt) }}</small
+          >
+        </mat-card>
       </div>
+      <br />
     </div>
 
     <div class="replyBar">
