@@ -60,10 +60,12 @@ export class ChatComponent implements OnInit, AfterViewInit {
   constructor(private store: Store) {
     this.chat$.subscribe((val) => {
       this.chat = this.prepChat(val);
+      setTimeout(() => {
+        this.scrollToBottom();
+      }, 0);
       this.draft = '';
       this.constructChatName();
       console.log('Chat changed => ', { chat: this.chat });
-      this.scrollToBottom();
     });
     this.currentMember$.subscribe((val) => {
       this.currentMember = val;
@@ -85,6 +87,9 @@ export class ChatComponent implements OnInit, AfterViewInit {
       new FetchChatsAction({ searchParams: defaultSearchParams })
     );
   }
+  validSearchQueryExists(): boolean {
+    return this.query.length >= 3;
+  }
   ngAfterViewInit() {
     // server-side search
     fromEvent(this.searchMember.nativeElement, 'keyup')
@@ -94,7 +99,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
         distinctUntilChanged(),
         tap((text) => {
           this.query = this.searchMember.nativeElement.value;
-          if (this.query.length > 0 && this.query.length < 3) {
+          if (this.query.length > 0 && !this.validSearchQueryExists()) {
             this.showSearchMemberError = true;
           } else {
             this.showSearchMemberError = false;
@@ -110,17 +115,9 @@ export class ChatComponent implements OnInit, AfterViewInit {
   scrollToBottom(): void {
     console.log('ChatWindow exists => ', { chatWindow: this.chatWindow });
     if (this.chatWindow) {
-      this.chatWindow.nativeElement.scroll({
-        top: this.chatWindow.nativeElement.scrollHeight,
-        behavior: 'smooth',
-      });
       this.chatWindow.nativeElement.scrollTop =
         this.chatWindow.nativeElement.scrollHeight;
     }
-    // try {
-    //   this.chatWindowContainer.nativeElement.scrollTop =
-    //     this.chatWindowContainer.nativeElement.scrollHeight;
-    // } catch (err) {}
   }
   prepChat(chat: Chat): Chat {
     console.log('from prepChat ', { chat });
@@ -133,7 +130,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
     } else return chat;
   }
   constructChatName() {
-    const chatName = this.chat.name;
+    const chatName = this.chat?.name;
     let memberList = '';
     console.log('getting chatname from ', { chat: this.chat });
     this.chat?.members?.forEach((m) => {
@@ -151,9 +148,9 @@ export class ChatComponent implements OnInit, AfterViewInit {
     console.log('After constructing the chat name ', { chatName, memberList });
   }
   getChatNameFromChat(chat) {
-    let chatName = chat.name;
+    let chatName = chat?.name;
     let memberList = '';
-    chat.members.forEach((m) => {
+    chat?.members.forEach((m) => {
       memberList +=
         m?.id?.toString() === this.currentMember?.id?.toString()
           ? ''
@@ -170,12 +167,12 @@ export class ChatComponent implements OnInit, AfterViewInit {
   }
 
   ownMessageOrNot(chatMessage) {
-    console.log(
-      'chat id => ',
-      chatMessage?.author?.id,
-      'currentMember id => ',
-      this.currentMember?.id
-    );
+    // console.log(
+    //   'chat id => ',
+    //   chatMessage?.author?.id,
+    //   'currentMember id => ',
+    //   this.currentMember?.id
+    // );
     return (
       chatMessage?.author?.id.toString() == this.currentMember?.id.toString()
     );
@@ -186,20 +183,34 @@ export class ChatComponent implements OnInit, AfterViewInit {
   }
 
   onSelectChat(chat) {
-    this.store.dispatch(new SelectChatAction({ id: chat.id }));
-    this.draft = '';
+    console.log('on select chat => ', { chat, thisChat: this.chat });
+    if (chat.id != this.chat.id) {
+      this.store.dispatch(new SelectChatAction({ id: chat?.id }));
+      this.draft = '';
+    }
   }
   getIntoChat(member) {
     console.log('starting chat with ', member.firstName);
     this.store.dispatch(new GetIntoChatAction({ id: member.id }));
   }
+  showChat() {
+    return this.chat?.id != undefined;
+  }
+  resetChat() {
+    this.store.dispatch(new SelectChatAction({ id: null }));
+  }
   sendMessage() {
-    this.scrollToBottom();
-    console.log('Mesage to be sent => ', { draft: this.draft });
-    if (!this.isCreatingNewChatMessage) {
-      this.store.dispatch(
-        new CreateChatMessageAction({ id: this.chat?.id, message: this.draft })
-      );
+    console.log('sending message...', { draft: this.draft });
+    if (this.draft.length) {
+      console.log('Mesage to be sent => ', { draft: this.draft });
+      if (!this.isCreatingNewChatMessage) {
+        this.store.dispatch(
+          new CreateChatMessageAction({
+            id: this.chat?.id,
+            message: this.draft,
+          })
+        );
+      }
     }
   }
 }

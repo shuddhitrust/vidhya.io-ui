@@ -222,15 +222,20 @@ export class ChatState {
     { payload }: GetChatAction
   ) {
     const { id } = payload;
-    const state = getState();
-    const chat = state.chats.find((c) => c.id == id);
-    patchState({ chatFormRecord: chat });
-    this.store.dispatch(
-      new FetchChatMessagesAction({
-        chatId: chat.id,
-        searchParams: defaultSearchParams,
-      })
-    );
+    console.log('id from select Chat action ', { id });
+    if (id) {
+      const state = getState();
+      const chat = state.chats.find((c) => c.id == id);
+      patchState({ chatFormRecord: chat });
+      this.store.dispatch(
+        new FetchChatMessagesAction({
+          chatId: chat.id,
+          searchParams: defaultSearchParams,
+        })
+      );
+    } else {
+      patchState({ chatFormRecord: emptyChatFormRecord });
+    }
   }
 
   @Action(GetChatAction)

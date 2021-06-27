@@ -1,12 +1,3 @@
-<!-- 
-Reference image: https://telegram.org/file/811140968/3/UfbcOfXv2YU.118417/b230905e577f9cc2de 
-
-LICENSE: https://creativecommons.org/licenses/by/3.0/
--->
-
-<!-- -------- -->
-<!-- MAIN APP -->
-<!-- -------- -->
 <section class="mainApp">
   <div class="leftPanel">
     <header>
@@ -24,15 +15,14 @@ LICENSE: https://creativecommons.org/licenses/by/3.0/
         >
       </mat-form-field>
     </header>
-    <div class="chats" *ngIf="chatMembers.length">
+    <div class="chats" *ngIf="validSearchQueryExists(); else activechats">
+      <small style="text-align: center" *ngIf="chatMembers.length < 1"
+        >No results for "{{ query }}"</small
+      >
       <span *ngFor="let member of chatMembers">
-        <div class="chatButton active">
+        <div class="chatButton">
           <div class="chatInfo">
-            <img
-              src="member.avatar"
-              class="image my-image"
-              alt="Member Avatar"
-            />
+            <img src="member.avatar" class="image" alt="Member Avatar" />
 
             <p class="name">{{ member.firstName + " " + member.lastName }}</p>
           </div>
@@ -43,26 +33,30 @@ LICENSE: https://creativecommons.org/licenses/by/3.0/
         </div>
       </span>
     </div>
-    <div *ngFor="let chatItem of chats">
-      <div
-        class="chatButton"
-        [ngClass]="chatItem.id == chat.id ? 'chatButton active' : 'chatButton'"
-        (click)="onSelectChat(chatItem)"
-      >
-        <div class="chatInfo">
-          <!-- <img src="member.avatar" class="image my-image" alt="Member Avatar" /> -->
+    <ng-template #activechats>
+      <div *ngFor="let chatItem of chats">
+        <div
+          class="chatButton"
+          [ngClass]="
+            chatItem.id == chat?.id ? 'chatButton active' : 'chatButton'
+          "
+          (click)="onSelectChat(chatItem)"
+        >
+          <div class="chatInfo">
+            <!-- <img src="member.avatar" class="image my-image" alt="Member Avatar" /> -->
 
-          <p class="name">{{ getChatNameFromChat(chatItem) }}</p>
-        </div>
+            <p class="name">{{ getChatNameFromChat(chatItem) }}</p>
+          </div>
 
-        <div class="status onTop">
-          <!-- <p class="date">{{ member.lastActive }}</p> -->
+          <div class="status onTop">
+            <!-- <p class="date">{{ member.lastActive }}</p> -->
+          </div>
         </div>
       </div>
-    </div>
+    </ng-template>
   </div>
 
-  <div *ngIf="chat.id" class="rightPanel">
+  <div *ngIf="showChat()" class="rightPanel">
     <div class="topBar">
       <div class="rightSide">
         <button class="tbButton search">
@@ -71,6 +65,9 @@ LICENSE: https://creativecommons.org/licenses/by/3.0/
         <button class="tbButton otherOptions">
           <i class="material-icons">more_vert</i>
         </button>
+        <button class="tbButton otherOptions" (click)="resetChat()">
+          <i class="material-icons">close</i>
+        </button>
       </div>
 
       <div class="leftSide">
@@ -78,7 +75,7 @@ LICENSE: https://creativecommons.org/licenses/by/3.0/
       </div>
     </div>
 
-    <div class="convHistory userBg">
+    <div class="convHistory userBg" #chatWindow>
       <!-- CONVERSATION GOES HERE! -->
       <div *ngFor="let chatMessage of chat?.chatmessageSet">
         <mat-card
@@ -111,43 +108,20 @@ LICENSE: https://creativecommons.org/licenses/by/3.0/
       </button>
 
       <input
+        autofocus="autofocus"
         type="text"
+        [(ngModel)]="draft"
         class="replyMessage"
+        (keyup.enter)="sendMessage()"
         placeholder="Type your message..."
       />
 
-      <div class="emojiBar">
-        <div class="emoticonType">
-          <button id="panelEmoji">Emoji</button>
-          <button id="panelStickers">Stickers</button>
-          <button id="panelGIFs">GIFs</button>
-        </div>
-
-        <!-- Emoji panel -->
-        <div class="emojiList">
-          <button id="smileface" class="pick"></button>
-          <button id="grinningface" class="pick"></button>
-          <button id="tearjoyface" class="pick"></button>
-          <button id="rofl" class="pick"></button>
-          <button id="somface" class="pick"></button>
-          <button id="swfface" class="pick"></button>
-        </div>
-
-        <!-- the best part of telegram ever: STICKERS!! -->
-        <div class="stickerList">
-          <button id="smileface" class="pick"></button>
-          <button id="grinningface" class="pick"></button>
-          <button id="tearjoyface" class="pick"></button>
-        </div>
-      </div>
-
       <div class="otherTools">
-        <!-- <button class="toolButtons emoji">
-          <i class="material-icons">face</i>
-        </button> -->
-
         <button class="toolButtons audio">
           <i class="material-icons">mic</i>
+        </button>
+        <button class="toolButtons send" (click)="sendMessage()">
+          <i class="material-icons">send</i>
         </button>
       </div>
     </div>
