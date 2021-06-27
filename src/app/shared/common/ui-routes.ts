@@ -1,4 +1,5 @@
 export const uiroutes = {
+  HOME: '/',
   ACTIVATE_ACCOUNT: 'activate',
   PASSWORD_RESET: 'password-reset',
   RESEND_ACTIVATION_EMAIL: 'resend-activatioin-email',

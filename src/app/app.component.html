@@ -1,11 +1,14 @@
 <div id="main">
   <app-navbar></app-navbar>
-  <router-outlet *ngIf="showApp; else homePage"></router-outlet>
+  <router-outlet *ngIf="showApp; else otherStuff"></router-outlet>
   <!-- <router-outlet *ngIf="showApp; else homePage"></router-outlet> -->
 </div>
 
-<ng-template #homePage>
-  <app-home></app-home>
+<ng-template #otherStuff>
+  <app-password-reset
+    *ngIf="showUnprotectedPage(uiroutes.PASSWORD_RESET)"
+  ></app-password-reset>
+  <app-home *ngIf="showUnprotectedPage(uiroutes.HOME)"></app-home>
 </ng-template>
 
 <app-loading></app-loading>
