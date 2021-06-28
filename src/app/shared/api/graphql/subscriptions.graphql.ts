@@ -53,9 +53,18 @@ export const SUBSCRIPTIONS = {
         announcement {
           id
           title
-          author
+          author {
+            id
+            firstName
+            lastName
+            avatar
+          }
           message
-          seenBy
+          seenBy {
+            id
+            firstName
+            lastName
+          }
         }
         method
       }
