@@ -150,6 +150,7 @@ export const GROUP_QUERIES = {
         id
         name
         description
+        createdAt
       }
     }
   `,
@@ -188,6 +189,7 @@ export const ANNOUNCEMENT_QUERIES = {
           lastName
         }
         message
+        createdAt
       }
     }
   `,

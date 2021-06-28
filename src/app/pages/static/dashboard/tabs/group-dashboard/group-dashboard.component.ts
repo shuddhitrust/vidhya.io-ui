@@ -3,7 +3,8 @@ import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
-import { Group } from 'src/app/shared/common/models';
+import { parseDateTime } from 'src/app/shared/common/functions';
+import { Group, User } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   FetchGroupsAction,
@@ -33,6 +34,15 @@ export class GroupDashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {}
+
+  clip(string) {
+    const clipLength = 50;
+    return string.slice(0, clipLength);
+  }
+
+  parseDate(date) {
+    return parseDateTime(date);
+  }
 
   createGroup() {
     this.store.dispatch(new ResetGroupFormAction());

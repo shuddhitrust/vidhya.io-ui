@@ -13,7 +13,13 @@
   <span *ngIf="(announcements$ | async).length > 0; else feedEmpty">
     <div *ngFor="let announcement of announcements$ | async">
       <span class="feed-card" (click)="openAnnouncement(announcement)">
-        {{ announcement.title }}
+        <h2>{{ announcement.title }}</h2>
+        <p>{{ clip(announcement.message) }}</p>
+        <small style="font-style: italic"
+          >Posted by {{ announcement?.author?.firstName }}
+          {{ announcement?.author?.lastName }} at
+          {{ parseDate(announcement.createdAt) }}</small
+        >
       </span>
     </div>
   </span>

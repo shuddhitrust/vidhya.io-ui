@@ -42,6 +42,8 @@ export type Chat = {
   admins: any[];
   members: any[];
   chatmessageSet: ChatMessage[];
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type ChatMessage = {
@@ -52,7 +54,8 @@ export type ChatMessage = {
     firstName: string;
     avatar: string;
   };
-  createdAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type PaginationObject = {
@@ -81,6 +84,8 @@ export type CurrentMember = {
   invitecode?: string;
   institution?: { id: number; name: string };
   membershipStatus: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export const SUBSCRIPTION_METHODS = {
@@ -107,6 +112,8 @@ export type User = {
   invitecode?: string;
   title?: string;
   bio?: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export const CREATE = 'CREATE';
@@ -120,6 +127,8 @@ export type UserRole = {
   name: string;
   description: string;
   resourcePermissions: object;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type Announcement = {
@@ -129,6 +138,8 @@ export type Announcement = {
   message: string;
   institution: Institution;
   groups: Group[];
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type Group = {
@@ -141,6 +152,8 @@ export type Group = {
   members: number[];
   admins: number[];
   groupType: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export const GroupType = {
@@ -159,6 +172,8 @@ export type Institution = {
   logo?: string;
   bio?: string;
   invitecode?: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type Course = {
@@ -167,6 +182,8 @@ export type Course = {
   description: String;
   instructor: User;
   institutions: Institution[];
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type Assignment = {
@@ -174,4 +191,6 @@ export type Assignment = {
   title: string;
   instructions: string;
   course: Course;
+  createdAt?: string;
+  updatedAt?: string;
 };

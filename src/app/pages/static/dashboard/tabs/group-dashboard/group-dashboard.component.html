@@ -14,7 +14,11 @@
   <span *ngIf="(groups$ | async).length > 0; else feedEmpty">
     <div *ngFor="let group of groups$ | async">
       <span class="feed-card" (click)="openGroup(group)">
-        {{ group.name }}
+        <h2>{{ group.name }}</h2>
+        <p>{{ clip(group.description) }}</p>
+        <small style="font-style: italic"
+          >Created on {{ parseDate(group.createdAt) }}</small
+        >
       </span>
     </div>
   </span>

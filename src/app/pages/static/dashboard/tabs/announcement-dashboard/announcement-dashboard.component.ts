@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
+import { parseDateTime } from 'src/app/shared/common/functions';
 import { Announcement } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { FetchAnnouncementsAction } from 'src/app/shared/state/announcements/announcement.actions';
@@ -33,6 +34,14 @@ export class AnnouncementDashboardComponent implements OnInit {
 
   createAnnouncement() {
     this.router.navigateByUrl(uiroutes.ANNOUNCEMENT_FORM_ROUTE);
+  }
+  clip(string) {
+    const clipLength = 50;
+    return string.slice(0, clipLength);
+  }
+
+  parseDate(date) {
+    return parseDateTime(date);
   }
 
   openAnnouncement(announcement) {
