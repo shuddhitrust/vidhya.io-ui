@@ -261,13 +261,13 @@ export class AuthState {
               console.log('token refreshed successfully', { token });
               const { userId, expiresAt } = getDecodedToken(token);
               const currentMember = { ...state.currentMember, id: userId };
+              patchState({ token, refreshToken });
+              this.store.dispatch(new SetAuthSessionAction());
+
               patchState({
-                token,
-                refreshToken,
                 expiresAt,
                 isLoggedIn: true,
               });
-              this.store.dispatch(new SetAuthSessionAction());
               console.log({ state: getState() });
               if (!currentMember.username) {
                 this.store.dispatch(new GetCurrentUserAction());
