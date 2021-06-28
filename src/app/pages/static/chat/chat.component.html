@@ -16,13 +16,15 @@
       </mat-form-field>
     </header>
     <div class="chats" *ngIf="validSearchQueryExists(); else activechats">
-      <small style="text-align: center" *ngIf="chatMembers.length < 1"
-        >No results for "{{ query }}"</small
-      >
+      <div style="text-align: center">
+        <small *ngIf="chatMembers.length < 1"
+          >No results for "{{ query }}"</small
+        >
+      </div>
       <span *ngFor="let member of chatMembers">
-        <div class="chatButton">
+        <div class="chatButton" (click)="getIntoChat(member)">
           <div class="chatInfo">
-            <img src="member.avatar" class="image" alt="Member Avatar" />
+            <!-- <img src="member.avatar" class="image" alt="Member Avatar" /> -->
 
             <p class="name">{{ member.firstName + " " + member.lastName }}</p>
           </div>
