@@ -141,6 +141,7 @@ export const GROUP_QUERIES = {
           firstName
           lastName
         }
+        createdAt
       }
     }
   `,
@@ -175,6 +176,7 @@ export const ANNOUNCEMENT_QUERIES = {
           id
           name
         }
+        createdAt
       }
     }
   `,

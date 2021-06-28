@@ -13,7 +13,12 @@
   </button>
   <div class="announcement-card">
     <h2>{{ announcement.title }}</h2>
-    <p>{{ announcement.message }}</p>
+    <p class="left">{{ announcement.message }}</p>
+    <small class="left" style="font-style: italic"
+      >Posted by {{ announcement?.author?.firstName }}
+      {{ announcement?.author?.lastName }} at
+      {{ parseDate(announcement.createdAt) }}</small
+    >
   </div>
 </span>
 

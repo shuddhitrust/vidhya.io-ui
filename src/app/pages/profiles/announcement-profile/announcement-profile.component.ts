@@ -15,6 +15,7 @@ import {
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { Announcement } from 'src/app/shared/common/models';
+import { parseDateTime } from 'src/app/shared/common/functions';
 
 @Component({
   selector: 'app-announcement-profile',
@@ -62,6 +63,11 @@ export class AnnouncementProfileComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  parseDate(date) {
+    return parseDateTime(date);
+  }
+
   deleteAnnouncement() {
     console.log('payload before passing to action => ', {
       id: this.announcement.id,
