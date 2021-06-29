@@ -30,6 +30,7 @@ import {
   GetInstitutionByInvitecodeAction,
   UpdateCurrentUserInStateAction,
   OpenLoginFormAction,
+  UpdateTokenAction,
 } from './auth.actions';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import { Apollo } from 'apollo-angular';
@@ -143,6 +144,25 @@ export class AuthState {
     return state.currentMember?.id;
   }
 
+  @Action(UpdateTokenAction)
+  updateToken(
+    { getState, patchState }: StateContext<AuthStateModel>,
+    { payload }: UpdateTokenAction
+  ) {
+    const state = getState();
+    let { currentMember } = state;
+    const { token, refreshToken } = payload;
+    const { expiresAt, userId } = getDecodedToken(token);
+    currentMember = { ...currentMember, id: userId };
+
+    patchState({
+      currentMember,
+      expiresAt,
+      token,
+      refreshToken,
+    });
+    this.store.dispatch(new SetAuthSessionAction());
+  }
   @Action(AuthenticationCheckAction)
   checkAuthentication({ patchState }: StateContext<AuthStateModel>) {
     this.store.dispatch(
@@ -155,7 +175,7 @@ export class AuthState {
     const localStorageRefreshToken = localStorage.getItem(
       AUTH_REFRESH_TOKEN_KEY
     );
-    if (localStorageToken || localStorageRefreshToken) {
+    if (localStorageToken && localStorageRefreshToken) {
       patchState({
         token: localStorageToken,
         refreshToken: localStorageRefreshToken,
@@ -207,8 +227,6 @@ export class AuthState {
 
             patchState({
               currentMember,
-              token,
-              refreshToken,
               expiresAt,
               isLoggedIn: true,
             });
@@ -261,8 +279,9 @@ export class AuthState {
               console.log('token refreshed successfully', { token });
               const { userId, expiresAt } = getDecodedToken(token);
               const currentMember = { ...state.currentMember, id: userId };
-              patchState({ token, refreshToken });
-              this.store.dispatch(new SetAuthSessionAction());
+              this.store.dispatch(
+                new UpdateTokenAction({ token, refreshToken })
+              );
 
               patchState({
                 expiresAt,
@@ -432,17 +451,13 @@ export class AuthState {
               form.reset();
               formDirective.resetForm();
               const token = response?.token;
+              const refreshToken = response?.refreshToken;
               const { expiresAt, userId } = getDecodedToken(token);
               let user = response.user;
               user.id = userId;
-              console.log(
-                'initiating UpdateCurrentUserInStateAction from login'
+              this.store.dispatch(
+                new UpdateTokenAction({ token, refreshToken })
               );
-              patchState({
-                token,
-                refreshToken: response?.refreshToken,
-              });
-              this.store.dispatch(new SetAuthSessionAction());
               patchState({
                 isLoggedIn: true,
                 closeLoginForm: true,
@@ -595,11 +610,15 @@ export class AuthState {
             if (response?.success) {
               form.reset();
               formDirective.resetForm();
+              const token = response?.token;
+              const refreshToken = response?.refreshToken;
+              this.store.dispatch(
+                new UpdateTokenAction({ token, refreshToken })
+              );
               patchState({
                 closeLoginForm: true,
-                token: response?.token,
-                refreshToken: response?.refreshToken,
               });
+              this.store.dispatch(new SetAuthSessionAction());
               state = getState();
               this.store.dispatch(
                 new AddInvitecodeAction({
@@ -804,11 +823,15 @@ export class AuthState {
             if (response.success) {
               form.reset();
               formDirective.resetForm();
+              const token = response?.token;
+              const refreshToken = response?.refreshToken;
+              this.store.dispatch(
+                new UpdateTokenAction({ token, refreshToken })
+              );
               patchState({
-                token: response?.token,
-                refreshToken: response?.refreshToken,
                 closeLoginForm: true,
               });
+              this.store.dispatch(new SetAuthSessionAction());
               this.store.dispatch(
                 new ShowNotificationAction({
                   message:
@@ -946,10 +969,11 @@ export class AuthState {
             if (response.success) {
               form.reset();
               formDirective.resetForm();
-              patchState({
-                token: response?.token,
-                refreshToken: response?.refreshToken,
-              });
+              const token = response?.token;
+              const refreshToken = response?.refreshToken;
+              this.store.dispatch(
+                new UpdateTokenAction({ token, refreshToken })
+              );
               this.store.dispatch(
                 new ShowNotificationAction({
                   message: 'Password Changed successfully!',

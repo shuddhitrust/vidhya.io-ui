@@ -5,6 +5,11 @@ export class SetAuthSessionAction {
   static readonly type = '[AUTH] Set Auth Session';
   constructor() {}
 }
+
+export class UpdateTokenAction {
+  static readonly type = '[AUTH] Set Token to state';
+  constructor(public payload: { token: string; refreshToken: string }) {}
+}
 export class VerifyTokenAction {
   static readonly type = '[AUTH] Verify Token';
   constructor() {}
