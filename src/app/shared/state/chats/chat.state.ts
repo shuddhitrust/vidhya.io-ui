@@ -281,6 +281,12 @@ export class ChatState {
               chatFormRecord: chat,
               isFetching: false,
             });
+            this.store.dispatch(
+              new FetchChatMessagesAction({
+                chatId: chat.id,
+                searchParams: defaultSearchParams,
+              })
+            );
           }
         },
         (error) => {

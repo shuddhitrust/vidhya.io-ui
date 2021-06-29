@@ -83,6 +83,7 @@ input[type="checkbox"] {
   left: 0px;
   width: $left-panel-width;
   height: calc(100vh - 70px);
+  overflow: auto;
   float: left;
   background: #fff;
   border-right: 1px solid #ddd;

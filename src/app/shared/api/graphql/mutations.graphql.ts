@@ -313,22 +313,6 @@ export const CHAT_MUTATIONS = {
             firstName
             lastName
           }
-          chatmessageSet {
-            id
-            message
-            author {
-              id
-              firstName
-              lastName
-              avatar
-            }
-            createdAt
-            seenBy {
-              id
-              firstName
-              lastName
-            }
-          }
           createdAt
         }
       }

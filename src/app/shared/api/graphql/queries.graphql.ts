@@ -337,6 +337,7 @@ export const CHAT_QUERIES = {
       chatMembers(query: $query) {
         id
         firstName
+        lastName
         avatar
         institution {
           name

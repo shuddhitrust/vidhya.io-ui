@@ -24,7 +24,7 @@
       <span *ngFor="let member of chatMembers">
         <div class="chatButton" (click)="getIntoChat(member)">
           <div class="chatInfo">
-            <!-- <img src="member.avatar" class="image" alt="Member Avatar" /> -->
+            <img [src]="member.avatar" class="image" alt="Member Avatar" />
 
             <p class="name">{{ member.firstName + " " + member.lastName }}</p>
           </div>
@@ -45,7 +45,11 @@
           (click)="onSelectChat(chatItem)"
         >
           <div class="chatInfo">
-            <!-- <img src="member.avatar" class="image my-image" alt="Member Avatar" /> -->
+            <!-- <img
+              [src]="chatItem.avatar"
+              class="image my-image"
+              alt="Member Avatar"
+            /> -->
 
             <p class="name">{{ getChatNameFromChat(chatItem) }}</p>
           </div>

@@ -75,6 +75,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
     });
     this.chatMembers$.subscribe((val) => {
       this.chatMembers = val;
+      console.log('chatMembers => ', { chatMebmers: this.chatMembers });
     });
     this.isFetchingChatMembers$.subscribe((val) => {
       this.isFetchingChatMembers = val;
