@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
-import { defaultSearchParams } from 'src/app/shared/common/constants';
+import {
+  defaultLogos,
+  defaultSearchParams,
+} from 'src/app/shared/common/constants';
 import { parseDateTime } from 'src/app/shared/common/functions';
 import {
   ClearChatMembers,
@@ -14,7 +17,7 @@ import {
 } from 'src/app/shared/state/chats/chat.actions';
 import { ChatState } from 'src/app/shared/state/chats/chat.state';
 import { Observable, fromEvent } from 'rxjs';
-import { Chat, User } from 'src/app/shared/common/models';
+import { Chat, ChatTypes, User } from 'src/app/shared/common/models';
 import { ElementRef, AfterViewInit, ViewChild } from '@angular/core';
 import {
   filter,
@@ -24,6 +27,13 @@ import {
 } from 'rxjs/operators';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
 
+interface ChatUIObject {
+  id: number;
+  name: string;
+  subtitle: string;
+  avatar: string;
+  chatmessageSet: any[];
+}
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
@@ -40,31 +50,28 @@ export class ChatComponent implements OnInit, AfterViewInit {
   isFetchingChatMembers$: Observable<boolean>;
   @Select(ChatState.getChatFormRecord)
   chat$: Observable<Chat>;
-  chat: Chat;
+  chat: ChatUIObject;
   @Select(ChatState.isCreatingNewChatMessage)
   isCreatingNewChatMessage$: Observable<boolean>;
   isCreatingNewChatMessage: boolean;
   @Select(AuthState.getCurrentMember)
   currentMember$: Observable<User>;
   currentMember;
-  chatName;
-  memberList;
   isFetchingChatMembers = false;
   chatMembers: User[];
   opened: boolean = true;
   draft = '';
-  chats: Chat[] = [];
+  chats: ChatUIObject[] = [];
   query: string = '';
   showSearchMemberError: boolean = false;
 
   constructor(private store: Store) {
     this.chat$.subscribe((val) => {
-      this.chat = this.prepChat(val);
+      this.chat = this.prepCurrentChat(val);
       setTimeout(() => {
         this.scrollToBottom();
       }, 0);
       this.draft = '';
-      this.constructChatName();
       console.log('Chat changed => ', { chat: this.chat });
     });
     this.currentMember$.subscribe((val) => {
@@ -81,7 +88,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
       this.isFetchingChatMembers = val;
     });
     this.chats$.subscribe((val) => {
-      this.chats = val;
+      this.chats = val.map((c) => this.prepChat(c));
       console.log('chats => ', { chats: val });
     });
     this.store.dispatch(
@@ -120,46 +127,68 @@ export class ChatComponent implements OnInit, AfterViewInit {
         this.chatWindow.nativeElement.scrollHeight;
     }
   }
-  prepChat(chat: Chat): Chat {
-    console.log('from prepChat ', { chat });
+  prepCurrentChat(chat: Chat): ChatUIObject {
+    console.log('from prepCurrentChat ', { chat });
     if (chat?.chatmessageSet?.length > 1) {
-      let newChat = Object.assign({}, chat);
+      let newChat = Object.assign({}, this.prepChat(chat));
       return {
         ...newChat,
         chatmessageSet: newChat?.chatmessageSet?.slice().reverse(),
       };
-    } else return chat;
+    } else return this.prepChat(chat);
   }
-  constructChatName() {
-    const chatName = this.chat?.name;
-    let memberList = '';
-    console.log('getting chatname from ', { chat: this.chat });
-    this.chat?.members?.forEach((m) => {
-      console.log('m in foreach array ', {
-        m,
-        currentUser: this.currentMember,
-      });
-      memberList +=
-        m?.id.toString() === this.currentMember?.id.toString()
-          ? ''
-          : m.firstName;
-    });
-    this.chatName = chatName ? chatName : memberList;
-    this.memberList = memberList;
-    console.log('After constructing the chat name ', { chatName, memberList });
+  prepChat(chat: Chat): ChatUIObject {
+    let preppedChat;
+    if (chat.chatType == ChatTypes.INDIVIDUAL) {
+      let member;
+      if (chat.individualMemberOne?.id == this.currentMember?.id) {
+        member = chat.individualMemberTwo;
+      } else if (chat.individualMemberTwo?.id == this.currentMember?.id) {
+        member = chat.individualMemberOne;
+      }
+      preppedChat = {
+        id: chat.id,
+        name: member.firstName + ' ' + member.lastName,
+        subtitle: this.parseDateTimeMethod(member.lastActive),
+        avatar: member.avatar,
+        chatmessageSet: chat.chatmessageSet,
+      };
+    } else if (chat.chatType == ChatTypes.GROUP) {
+      preppedChat = {
+        id: chat.id,
+        name: chat.name,
+        subtitle: `${chat.members.length} members`,
+        avatar: defaultLogos.user,
+        chatmessageSet: chat.chatmessageSet,
+      };
+    }
+    return preppedChat;
   }
-  getChatNameFromChat(chat) {
-    let chatName = chat?.name;
-    let memberList = '';
-    chat?.members.forEach((m) => {
-      memberList +=
-        m?.id?.toString() === this.currentMember?.id?.toString()
-          ? ''
-          : m.firstName;
-    });
-    chatName = chatName ? chatName : memberList;
-    return chatName;
-  }
+
+  // getChatNameFromChat(chat) {
+  //   let chatName = chat?.name;
+  //   let memberList = '';
+  //   chat?.members.forEach((m) => {
+  //     memberList +=
+  //       m?.id?.toString() === this.currentMember?.id?.toString()
+  //         ? ''
+  //         : m.firstName;
+  //   });
+  //   chatName = chatName ? chatName : memberList;
+  //   return chatName;
+  // }
+  // getAvatarFromChat(chat: Chat): string {
+  //   const members = chat?.members;
+  //   let otherPerson;
+  //   if (members?.length == 2) {
+  //     otherPerson = members.find((m) => m.id != this.currentMember.id);
+  //   }
+  //   if (otherPerson?.avatar) {
+  //     return otherPerson.avatar;
+  //   } else {
+  //     return defaultLogos.user;
+  //   }
+  // }
   clearSearchMember() {
     this.searchMember.nativeElement.value = '';
     this.query = '';
@@ -185,7 +214,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
 
   onSelectChat(chat) {
     console.log('on select chat => ', { chat, thisChat: this.chat });
-    if (chat.id != this.chat.id) {
+    if (chat.id != this.chat?.id) {
       this.store.dispatch(new SelectChatAction({ id: chat?.id }));
       this.draft = '';
     }

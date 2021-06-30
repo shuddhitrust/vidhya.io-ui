@@ -39,8 +39,11 @@ export type MatSelectOption = { label: string; value: number | string };
 export type Chat = {
   id: number;
   name: string;
+  chatType: string;
   admins: any[];
   members: any[];
+  individualMemberOne: User;
+  individualMemberTwo: User;
   chatmessageSet: ChatMessage[];
   createdAt?: string;
   updatedAt?: string;
@@ -92,6 +95,11 @@ export const SUBSCRIPTION_METHODS = {
   CREATE_METHOD: 'CREATE',
   UPDATE_METHOD: 'UPDATE',
   DELETE_METHOD: 'DELETE',
+};
+
+export const ChatTypes = {
+  INDIVIDUAL: 'IL',
+  GROUP: 'GP',
 };
 
 export const MembershipStatus = {

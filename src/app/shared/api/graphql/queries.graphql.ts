@@ -267,27 +267,25 @@ export const CHAT_QUERIES = {
       chat(id: $id) {
         id
         name
-        admins {
+        chatType
+        individualMemberOne {
           id
           firstName
           lastName
+          avatar
+          lastActive
+        }
+        individualMemberTwo {
+          id
+          firstName
+          lastName
+          avatar
+          lastActive
         }
         members {
           id
           firstName
           lastName
-        }
-        chatmessageSet {
-          message
-          author {
-            id
-            firstName
-            avatar
-          }
-          createdAt
-          seenBy {
-            firstName
-          }
         }
         createdAt
       }
@@ -298,11 +296,27 @@ export const CHAT_QUERIES = {
       chats(searchField: $searchField, limit: $limit, offset: $offset) {
         id
         name
+        chatType
+        individualMemberOne {
+          id
+          firstName
+          lastName
+          avatar
+          lastActive
+        }
+        individualMemberTwo {
+          id
+          firstName
+          lastName
+          avatar
+          lastActive
+        }
         members {
           id
           firstName
           lastName
           avatar
+          lastActive
         }
       }
     }
@@ -322,6 +336,9 @@ export const CHAT_QUERIES = {
       ) {
         id
         message
+        chat {
+          id
+        }
         author {
           id
           firstName

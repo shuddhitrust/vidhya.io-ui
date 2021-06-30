@@ -511,7 +511,8 @@ export class ChatState {
               (c) => c.id == chatMessage?.chat?.id
             );
             if (chat) {
-              const chatMessages = chat.chatmessageSet;
+              const chatMessages = chat.chatmessageSet ? ;
+              console.log('Chat, chatmessages => ', { chat, chatMessages });
               const { items, paginationObject } = subscriptionUpdater({
                 items: chatMessages,
                 method,

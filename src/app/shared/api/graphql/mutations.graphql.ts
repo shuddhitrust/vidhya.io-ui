@@ -302,16 +302,20 @@ export const CHAT_MUTATIONS = {
         ok
         chat {
           id
-          name
-          admins {
+          chatType
+          individualMemberOne {
             id
             firstName
             lastName
+            avatar
+            lastActive
           }
-          members {
+          individualMemberTwo {
             id
             firstName
             lastName
+            avatar
+            lastActive
           }
           createdAt
         }

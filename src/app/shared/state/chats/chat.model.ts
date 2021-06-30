@@ -10,8 +10,11 @@ import { uiroutes } from '../../common/ui-routes';
 export const emptyChatFormRecord: Chat = {
   id: null,
   name: null,
+  chatType: null,
   admins: [],
   members: [],
+  individualMemberOne: null,
+  individualMemberTwo: null,
   chatmessageSet: [],
 };
 export interface ChatStateModel {
