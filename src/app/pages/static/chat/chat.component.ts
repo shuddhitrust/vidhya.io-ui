@@ -141,14 +141,16 @@ export class ChatComponent implements OnInit, AfterViewInit {
     let preppedChat;
     if (chat.chatType == ChatTypes.INDIVIDUAL) {
       let member;
+      console.log('Chat => ', chat);
       if (chat.individualMemberOne?.id == this.currentMember?.id) {
         member = chat.individualMemberTwo;
       } else if (chat.individualMemberTwo?.id == this.currentMember?.id) {
         member = chat.individualMemberOne;
       }
+      console.log('member => ', member);
       preppedChat = {
         id: chat.id,
-        name: member.firstName + ' ' + member.lastName,
+        name: member?.firstName + ' ' + member?.lastName,
         subtitle: this.parseDateTimeMethod(member.lastActive),
         avatar: member.avatar,
         chatmessageSet: chat.chatmessageSet,
@@ -197,12 +199,6 @@ export class ChatComponent implements OnInit, AfterViewInit {
   }
 
   ownMessageOrNot(chatMessage) {
-    // console.log(
-    //   'chat id => ',
-    //   chatMessage?.author?.id,
-    //   'currentMember id => ',
-    //   this.currentMember?.id
-    // );
     return (
       chatMessage?.author?.id.toString() == this.currentMember?.id.toString()
     );

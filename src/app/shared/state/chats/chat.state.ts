@@ -36,6 +36,7 @@ import {
   ChatMessage,
   MatSelectOption,
   PaginationObject,
+  startingPaginationObject,
   User,
 } from '../../common/models';
 import {
@@ -206,9 +207,11 @@ export class ChatState {
           ? response[0]?.totalCount
           : 0;
         newPaginationObject = { ...newPaginationObject, totalCount };
-
+        const chats = response.map((c) => {
+          return { ...c, chatmessageSet: [] };
+        });
         patchState({
-          chats: response,
+          chats,
           paginationObject: newPaginationObject,
           isFetching: false,
         });
@@ -226,7 +229,10 @@ export class ChatState {
     if (id) {
       const state = getState();
       const chat = state.chats.find((c) => c.id == id);
-      patchState({ chatFormRecord: chat });
+      patchState({
+        chatFormRecord: chat,
+        chatMessagesPaginationObject: startingPaginationObject,
+      });
       this.store.dispatch(
         new FetchChatMessagesAction({
           chatId: chat.id,
@@ -262,7 +268,7 @@ export class ChatState {
 
   @Action(GetIntoChatAction)
   getIntoChat(
-    { patchState }: StateContext<ChatStateModel>,
+    { getState, patchState }: StateContext<ChatStateModel>,
     { payload }: GetIntoChatAction
   ) {
     const { id } = payload;
@@ -276,9 +282,12 @@ export class ChatState {
         ({ data }: any) => {
           const response = data.chatWithMember;
           if (response.ok) {
-            const chat = response.chat;
+            const chat = { ...response.chat, chatmessageSet: [] };
+            const state = getState();
             patchState({
               chatFormRecord: chat,
+              chats: [chat].concat(state.chats),
+              chatMessagesPaginationObject: startingPaginationObject,
               isFetching: false,
             });
             this.store.dispatch(
@@ -468,10 +477,8 @@ export class ChatState {
           newPaginationObject = { ...newPaginationObject, totalCount };
           let chat: Chat = state.chats.find((c) => c.id == chatId);
           if (chat) {
-            console.log('line 460 from chat state => ', { chat });
-            const chatMessages = chat.chatmessageSet ? chat.chatmessageSet : [];
-            const newChatMessages = response.concat(chatMessages);
-            chat = { ...chat, chatmessageSet: newChatMessages };
+            console.log('line 460 from chat state => ', { chat, response });
+            chat = { ...chat, chatmessageSet: response };
             let chats = state.chats.filter((c) => c.id != chat.id);
             chats = [chat, ...chats];
             let formRecord =
