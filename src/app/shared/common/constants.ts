@@ -13,8 +13,9 @@ export const AUTH_REFRESH_TOKEN_KEY = 'AUTH_REFRESH_TOKEN';
 export const EXPIRATION_KEY = 'EXPIRES_AT';
 
 export const defaultLogos = {
-  institution: 'https://i.imgur.com/hB0OXas.png',
-  user: 'https://i.imgur.com/XDZCq2b.png',
+  institution: 'https://i.imgur.com/dPO1MlY.png',
+  user: 'https://i.imgur.com/KHtECqa.png',
+  group: 'https://i.imgur.com/hNdMk4c.png',
 };
 
 export const defaultSearchParams = new SearchParams();

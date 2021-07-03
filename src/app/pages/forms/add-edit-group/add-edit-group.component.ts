@@ -21,7 +21,10 @@ import {
 } from 'src/app/shared/state/groups/group.model';
 import { InstitutionState } from 'src/app/shared/state/institutions/institution.state';
 import { Group, MatSelectOption } from 'src/app/shared/common/models';
-import { FetchInstitutionsAction } from 'src/app/shared/state/institutions/institution.actions';
+import {
+  CreateUpdateInstitutionAction,
+  FetchInstitutionsAction,
+} from 'src/app/shared/state/institutions/institution.actions';
 import { OptionsState } from 'src/app/shared/state/options/options.state';
 import {
   MatDialog,
@@ -29,6 +32,10 @@ import {
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
+import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
+import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
+import { environment } from 'src/environments/environment';
+import { UploadService } from 'src/app/shared/api/upload.service';
 
 @Component({
   selector: 'app-add-edit-group',
@@ -49,6 +56,8 @@ export class AddEditGroupComponent implements OnInit {
   formSubmitting$: Observable<boolean>;
   groupFormRecord: Group = emptyGroupFormRecord;
   groupForm: FormGroup;
+  logoFile = null;
+  previewPath = null;
 
   @Select(InstitutionState.listInstitutionOptions)
   institutionOptions$: Observable<MatSelectOption[]>;
@@ -67,7 +76,8 @@ export class AddEditGroupComponent implements OnInit {
     private location: Location,
     private store: Store,
     private route: ActivatedRoute,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private uploadService: UploadService
   ) {
     this.institutionOptions$.subscribe((options) => {
       this.institutionOptions = options;
@@ -94,14 +104,39 @@ export class AddEditGroupComponent implements OnInit {
   setupGroupFormGroup = (
     groupFormRecord: Group = emptyGroupFormRecord
   ): FormGroup => {
-    return this.fb.group({
+    this.logoFile = null;
+    this.previewPath = null;
+    const formGroup = this.fb.group({
       id: [groupFormRecord?.id],
+      avatar: [groupFormRecord?.avatar],
       name: [groupFormRecord?.name, Validators.required],
       institution: [groupFormRecord?.institution?.id, Validators.required],
       groupType: [groupFormRecord?.groupType, Validators.required],
       description: [groupFormRecord?.description, Validators.required],
     });
+    this.previewPath = formGroup.get('avatar').value;
+    return formGroup;
   };
+
+  onLogoChange(event) {
+    if (event.target.files.length > 0) {
+      this.logoFile = event.target.files[0];
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.previewPath = reader.result as string;
+      };
+      reader.readAsDataURL(this.logoFile);
+    } else {
+      this.logoFile = null;
+      this.previewPath = this.groupForm.get('avatar').value;
+    }
+  }
+
+  imagePreview(e) {
+    const file = (e.target as HTMLInputElement).files[0];
+  }
+
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       this.params = params;
@@ -117,12 +152,48 @@ export class AddEditGroupComponent implements OnInit {
   }
 
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {
-    this.store.dispatch(
-      new CreateUpdateGroupAction({
-        form,
-        formDirective,
-      })
-    );
+    console.log('this.logoFile on submit', this.logoFile);
+    if (this.logoFile) {
+      this.store.dispatch(
+        new ToggleLoadingScreen({
+          showLoadingScreen: true,
+          message: 'Uploading file',
+        })
+      );
+      const formData = new FormData();
+      formData.append('file', this.logoFile);
+      this.uploadService.upload(formData).subscribe(
+        (res) => {
+          const url = `${environment.api_endpoint}${res.file}`;
+          form.get('avatar').setValue(url);
+          console.log('after setting the new url after upload ', {
+            formValue: form.value,
+          });
+          this.store.dispatch(
+            new CreateUpdateInstitutionAction({ form, formDirective })
+          );
+          this.store.dispatch(
+            new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+          );
+        },
+        (err) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: 'Unable to upload file. Reset and try again',
+              action: 'error',
+            })
+          );
+          return;
+        }
+      );
+    } else {
+      this.store.dispatch(
+        new CreateUpdateGroupAction({
+          form,
+          formDirective,
+        })
+      );
+    }
   }
 }
 

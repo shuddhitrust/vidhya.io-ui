@@ -152,6 +152,7 @@ export type Announcement = {
 
 export type Group = {
   id: number;
+  avatar: string;
   name: string;
   description: string;
   institution: {

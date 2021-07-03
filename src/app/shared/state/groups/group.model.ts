@@ -1,3 +1,4 @@
+import { defaultLogos } from '../../common/constants';
 import { autoGenOptions } from '../../common/functions';
 import {
   FetchPolicy,
@@ -12,6 +13,7 @@ import { GROUPS } from './../../../pages/static/dashboard/dashboard.component';
 
 export const emptyGroupFormRecord: Group = {
   id: null,
+  avatar: defaultLogos.group,
   name: null,
   description: null,
   institution: { id: null },
