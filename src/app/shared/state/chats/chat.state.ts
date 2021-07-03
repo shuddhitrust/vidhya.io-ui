@@ -160,7 +160,7 @@ export class ChatState {
     patchState({ isFetchingChatMembers: true });
     this.apollo
       .watchQuery({
-        query: CHAT_QUERIES.GET_CHAT_MEMBERS,
+        query: CHAT_QUERIES.CHAT_SEARCH,
         variables: { query },
         fetchPolicy,
       })

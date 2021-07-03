@@ -349,9 +349,9 @@ export const CHAT_QUERIES = {
       }
     }
   `,
-  GET_CHAT_MEMBERS: gql`
-    query chatMembers($query: String) {
-      chatMembers(query: $query) {
+  CHAT_SEARCH: gql`
+    query chatSearch($query: String) {
+      chatSearch(query: $query) {
         id
         firstName
         lastName
