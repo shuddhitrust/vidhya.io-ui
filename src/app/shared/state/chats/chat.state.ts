@@ -83,8 +83,8 @@ export class ChatState {
   }
 
   @Selector()
-  static listChatMembers(state: ChatStateModel): User[] {
-    return state.chatMembers;
+  static getChatSearchResults(state: ChatStateModel): User[] {
+    return state.chatSearch;
   }
 
   @Selector()
@@ -113,7 +113,7 @@ export class ChatState {
     const options: MatSelectOption[] = state.chats.map((i) => {
       const option: MatSelectOption = {
         value: i.id,
-        label: `${i.name}`,
+        label: `${i.group?.name}`,
       };
       return option;
     });
@@ -165,10 +165,11 @@ export class ChatState {
         fetchPolicy,
       })
       .valueChanges.subscribe(({ data }: any) => {
-        const response = data.chatMembers;
+        console.log('Chat search respose => ', { data });
+        const response = data.chatSearch ? data.chatSearch : [];
 
         patchState({
-          chatMembers: response,
+          chatSearch: response,
           isFetchingChatMembers: false,
         });
       });
@@ -581,7 +582,7 @@ export class ChatState {
   @Action(ClearChatMembers)
   clearChatMembers({ patchState }: StateContext<ChatStateModel>) {
     patchState({
-      chatMembers: [],
+      chatSearch: [],
     });
   }
 

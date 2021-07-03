@@ -269,7 +269,6 @@ export const CHAT_MUTATIONS = {
         ok
         chat {
           id
-          name
         }
       }
     }
@@ -280,7 +279,6 @@ export const CHAT_MUTATIONS = {
         ok
         chat {
           id
-          name
         }
       }
     }
@@ -291,7 +289,6 @@ export const CHAT_MUTATIONS = {
         ok
         chat {
           id
-          name
         }
       }
     }
@@ -333,11 +330,13 @@ export const CHAT_MESSAGE_MUTATIONS = {
           id
           chat {
             id
-            name
-            members {
-              id
-              firstName
-              lastName
+            group {
+              name
+              members {
+                id
+                firstName
+                lastName
+              }
             }
             chatmessageSet {
               id

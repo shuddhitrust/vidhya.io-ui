@@ -111,12 +111,24 @@ export const SUBSCRIPTIONS = {
       notifyChat {
         chat {
           id
-          name
-          members {
+          individualMemberOne {
             id
             firstName
             lastName
-            avatar
+          }
+          individualMemberTwo {
+            id
+            firstName
+            lastName
+          }
+          group {
+            name
+            members {
+              id
+              firstName
+              lastName
+              avatar
+            }
           }
         }
         method

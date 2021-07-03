@@ -17,11 +17,11 @@
     </header>
     <div class="chats" *ngIf="validSearchQueryExists(); else activechats">
       <div style="text-align: center">
-        <small *ngIf="chatMembers.length < 1"
+        <small *ngIf="chatSearch.length < 1"
           >No results for "{{ query }}"</small
         >
       </div>
-      <span *ngFor="let member of chatMembers">
+      <span *ngFor="let member of chatSearch">
         <div class="chatButton" (click)="getIntoChat(member)">
           <div class="chatInfo">
             <img [src]="member.avatar" class="image" alt="Member Avatar" />
@@ -52,11 +52,12 @@
             />
 
             <p class="name">{{ chatItem.name }}</p>
+            <p class="subtitle">
+              {{ chatItem.subtitle }}
+            </p>
           </div>
 
-          <div class="status onTop">
-            <p class="date">{{ chatItem.subtitle }}</p>
-          </div>
+          <div class="status onTop"></div>
         </div>
       </div>
     </ng-template>

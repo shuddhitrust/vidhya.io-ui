@@ -266,7 +266,6 @@ export const CHAT_QUERIES = {
     query chat($id: ID!) {
       chat(id: $id) {
         id
-        name
         chatType
         individualMemberOne {
           id
@@ -282,10 +281,12 @@ export const CHAT_QUERIES = {
           avatar
           lastActive
         }
-        members {
-          id
-          firstName
-          lastName
+        group {
+          members {
+            id
+            firstName
+            lastName
+          }
         }
         createdAt
       }
@@ -295,7 +296,6 @@ export const CHAT_QUERIES = {
     query chats($searchField: String, $limit: Int, $offset: Int) {
       chats(searchField: $searchField, limit: $limit, offset: $offset) {
         id
-        name
         chatType
         individualMemberOne {
           id
@@ -311,12 +311,15 @@ export const CHAT_QUERIES = {
           avatar
           lastActive
         }
-        members {
-          id
-          firstName
-          lastName
-          avatar
-          lastActive
+        group {
+          name
+          members {
+            id
+            firstName
+            lastName
+            avatar
+            lastActive
+          }
         }
       }
     }

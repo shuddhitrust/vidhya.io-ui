@@ -44,8 +44,8 @@ export class ChatComponent implements OnInit, AfterViewInit {
   @ViewChild('searchMember') searchMember: ElementRef;
   @Select(ChatState.listChats)
   chats$: Observable<Chat[]>;
-  @Select(ChatState.listChatMembers)
-  chatMembers$: Observable<User[]>;
+  @Select(ChatState.getChatSearchResults)
+  chatSearch$: Observable<User[]>;
   @Select(ChatState.getIsFetchingChatMembers)
   isFetchingChatMembers$: Observable<boolean>;
   @Select(ChatState.getChatFormRecord)
@@ -58,7 +58,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
   currentMember$: Observable<User>;
   currentMember;
   isFetchingChatMembers = false;
-  chatMembers: User[];
+  chatSearch: User[];
   opened: boolean = true;
   draft = '';
   chats: ChatUIObject[] = [];
@@ -80,9 +80,9 @@ export class ChatComponent implements OnInit, AfterViewInit {
     this.isCreatingNewChatMessage$.subscribe((val) => {
       this.isCreatingNewChatMessage = val;
     });
-    this.chatMembers$.subscribe((val) => {
-      this.chatMembers = val;
-      console.log('chatMembers => ', { chatMebmers: this.chatMembers });
+    this.chatSearch$.subscribe((val) => {
+      this.chatSearch = val;
+      console.log('chatSearch => ', { chatMebmers: this.chatSearch });
     });
     this.isFetchingChatMembers$.subscribe((val) => {
       this.isFetchingChatMembers = val;
@@ -158,9 +158,9 @@ export class ChatComponent implements OnInit, AfterViewInit {
     } else if (chat.chatType == ChatTypes.GROUP) {
       preppedChat = {
         id: chat.id,
-        name: chat.name,
-        subtitle: `${chat.members.length} members`,
-        avatar: defaultLogos.user,
+        name: chat.group?.name,
+        subtitle: `${chat.group?.members?.length} members`,
+        avatar: chat.group?.avatar ? chat.group?.avatar : defaultLogos.user,
         chatmessageSet: chat.chatmessageSet,
       };
     }
@@ -194,7 +194,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
   clearSearchMember() {
     this.searchMember.nativeElement.value = '';
     this.query = '';
-    this.chatMembers = [];
+    this.chatSearch = [];
     this.store.dispatch(new ClearChatMembers());
   }
 

@@ -38,10 +38,8 @@ export type MatSelectOption = { label: string; value: number | string };
 
 export type Chat = {
   id: number;
-  name: string;
   chatType: string;
-  admins: any[];
-  members: any[];
+  group: Group;
   individualMemberOne: User;
   individualMemberTwo: User;
   chatmessageSet: ChatMessage[];

@@ -9,10 +9,8 @@ import { uiroutes } from '../../common/ui-routes';
 
 export const emptyChatFormRecord: Chat = {
   id: null,
-  name: null,
   chatType: null,
-  admins: [],
-  members: [],
+  group: null,
   individualMemberOne: null,
   individualMemberTwo: null,
   chatmessageSet: [],
@@ -20,7 +18,7 @@ export const emptyChatFormRecord: Chat = {
 export interface ChatStateModel {
   chats: Chat[];
   chatMessagesSubscribed: boolean;
-  chatMembers: User[];
+  chatSearch: User[];
   isFetchingChatMembers: boolean;
   isFetchingChatMessages: boolean;
   fetchPolicy: FetchPolicy;
@@ -38,7 +36,7 @@ export interface ChatStateModel {
 export const defaultChatState: ChatStateModel = {
   chats: [],
   chatMessagesSubscribed: false,
-  chatMembers: [],
+  chatSearch: [],
   isFetchingChatMembers: false,
   isFetchingChatMessages: false,
   fetchPolicy: null,
