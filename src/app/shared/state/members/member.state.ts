@@ -103,7 +103,10 @@ export class MemberState {
   forceRefetchMembers({ patchState }: StateContext<MemberStateModel>) {
     patchState({ fetchPolicy: 'network-only' });
     this.store.dispatch(
-      new FetchMembersAction({ searchParams: defaultSearchParams })
+      new FetchMembersAction({
+        searchParams: defaultSearchParams,
+        columnFilters: {},
+      })
     );
   }
 
@@ -113,7 +116,7 @@ export class MemberState {
     { payload }: FetchMembersAction
   ) {
     const state = getState();
-    const { searchParams } = payload;
+    const { searchParams, columnFilters } = payload;
     const { fetchPolicy, paginationObject, membersSubscribed } = state;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
     let newPaginationObject = updatePaginationObject({
@@ -132,6 +135,8 @@ export class MemberState {
       });
       const variables = {
         searchField: newSearchQuery,
+        membershipStatusNot: columnFilters.membershipStatusNot,
+        role: columnFilters.role,
         limit: newPaginationObject.pageSize,
         offset: newPaginationObject.offset,
       };

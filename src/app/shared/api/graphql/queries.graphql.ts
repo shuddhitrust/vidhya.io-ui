@@ -49,14 +49,30 @@ export const USER_QUERIES = {
     }
   `,
   GET_USERS: gql`
-    query users($searchField: String, $limit: Int, $offset: Int) {
-      users(searchField: $searchField, limit: $limit, offset: $offset) {
+    query users(
+      $searchField: String
+      $membershipStatusNot: String
+      $role: String
+      $limit: Int
+      $offset: Int
+    ) {
+      users(
+        searchField: $searchField
+        membershipStatusNot: $membershipStatusNot
+        role: $role
+        limit: $limit
+        offset: $offset
+      ) {
         id
         firstName
         lastName
         title
         bio
         membershipStatus
+        role {
+          id
+          name
+        }
         institution {
           id
           name

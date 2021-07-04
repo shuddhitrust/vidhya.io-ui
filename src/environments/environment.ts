@@ -4,12 +4,18 @@
 
 const api_endpoint = 'http://localhost:8000';
 const websocket_api_endpoint = 'ws://localhost:8000';
+const standardUserRoles = {
+  LEARNER: 4,
+  CLASS_ADMIN: 3,
+  INSTITUTION_ADMIN: 2,
+};
 export const environment = {
   production: false,
   api_endpoint,
   file_uplod_endpoint: `${api_endpoint}/upload/`,
   graphql_endpoint: `${api_endpoint}/graphql/`,
   websocket_graphql_endpoint: `${websocket_api_endpoint}/graphql/`,
+  standardUserRoles,
 };
 
 /*

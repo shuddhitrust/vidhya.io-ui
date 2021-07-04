@@ -6,13 +6,20 @@ import { GridOptions } from 'ag-grid-community';
 import { Observable } from 'rxjs';
 import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
 import { MemberProfileRendererComponent } from 'src/app/shared/cell-renderers/member-profile/member-profile-renderer.component';
-import { PaginationObject, User } from 'src/app/shared/common/models';
+import {
+  MembershipStatus,
+  PaginationObject,
+  User,
+} from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   FetchMembersAction,
   ForceRefetchMembersAction,
 } from 'src/app/shared/state/members/member.actions';
-import { memberColumns } from 'src/app/shared/state/members/member.model';
+import {
+  memberColumns,
+  membershipStatusOptions,
+} from 'src/app/shared/state/members/member.model';
 import { MemberState } from 'src/app/shared/state/members/member.state';
 import { MemberProfileComponent } from '../../modals/member-profile/member-profile.component';
 
@@ -37,7 +44,7 @@ export class AwaitingModerationTableComponent implements OnInit {
     resizable: true,
   };
   columnFilters = {
-    // membershipStatus: { eq: MembershipStatus.PENDING_APPROVAL },
+    membershipStatusNot: MembershipStatus.APPROVED,
   };
   columns = memberColumns;
   frameworkComponents = {
@@ -58,7 +65,12 @@ export class AwaitingModerationTableComponent implements OnInit {
   }
 
   fetchMembers(searchParams: SearchParams) {
-    this.store.dispatch(new FetchMembersAction({ searchParams }));
+    this.store.dispatch(
+      new FetchMembersAction({
+        searchParams,
+        columnFilters: this.columnFilters,
+      })
+    );
   }
 
   forceRefetchMembers(searchParams: SearchParams) {

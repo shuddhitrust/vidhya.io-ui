@@ -13,6 +13,7 @@ import {
 } from 'src/app/shared/state/members/member.actions';
 import { memberColumns } from 'src/app/shared/state/members/member.model';
 import { MemberState } from 'src/app/shared/state/members/member.state';
+import { environment } from 'src/environments/environment';
 import { MemberProfileComponent } from '../../modals/member-profile/member-profile.component';
 import { INSTITUTION_ADMINS } from '../../static/dashboard/tabs/admin-dashboard/admin-dashboard.component';
 
@@ -34,7 +35,7 @@ export class InstitutionAdminsTableComponent implements OnInit {
   paginationObject$: Observable<PaginationObject>;
 
   columnFilters = {
-    // type: { eq: CognitoGroup.INSTITUTION_ADMIN },
+    role: environment.standardUserRoles.INSTITUTION_ADMIN,
   };
   defaultColDef = {
     resizable: true,
@@ -58,7 +59,12 @@ export class InstitutionAdminsTableComponent implements OnInit {
   }
 
   fetchMembers(searchParams: SearchParams) {
-    this.store.dispatch(new FetchMembersAction({ searchParams }));
+    this.store.dispatch(
+      new FetchMembersAction({
+        searchParams,
+        columnFilters: this.columnFilters,
+      })
+    );
   }
 
   forceRefetchMembers(searchParams: SearchParams) {
