@@ -19,7 +19,7 @@ import {
   SelectChatAction,
 } from 'src/app/shared/state/chats/chat.actions';
 import { ChatState } from 'src/app/shared/state/chats/chat.state';
-import { Observable, fromEvent } from 'rxjs';
+import { Observable, fromEvent, ObservedValueOf } from 'rxjs';
 import {
   Chat,
   ChatSearchResult,
@@ -48,7 +48,7 @@ interface ChatUIObject {
   styleUrls: ['./chat.component.scss'],
 })
 export class ChatComponent implements OnInit, AfterViewInit {
-  @ViewChild('chatWindow', { static: false }) chatWindow: ElementRef;
+  @ViewChild('chatWindow', { static: false }) chatWindow: any;
   @ViewChild('searchMember') searchMember: ElementRef;
   @Select(ChatState.listChats)
   chats$: Observable<Chat[]>;
@@ -56,6 +56,8 @@ export class ChatComponent implements OnInit, AfterViewInit {
   chatSearch$: Observable<ChatSearchResult[]>;
   @Select(ChatState.getIsFetchingChatMembers)
   isFetchingChatMembers$: Observable<boolean>;
+  @Select(ChatState.getIsFetchingChatMessages)
+  isFetchingChatMessages$: Observable<boolean>;
   @Select(ChatState.getChatFormRecord)
   chat$: Observable<Chat>;
   chat: ChatUIObject;
@@ -131,8 +133,9 @@ export class ChatComponent implements OnInit, AfterViewInit {
   scrollToBottom(): void {
     console.log('ChatWindow exists => ', { chatWindow: this.chatWindow });
     if (this.chatWindow) {
-      this.chatWindow.nativeElement.scrollTop =
-        this.chatWindow.nativeElement.scrollHeight;
+      console.log('chat window => ', { chatWindow: this.chatWindow });
+      this.chatWindow.host.nativeElement.scrollTop =
+        this.chatWindow.host.nativeElement.scrollHeight;
     }
   }
   prepCurrentChat(chat: Chat): ChatUIObject {
@@ -175,30 +178,6 @@ export class ChatComponent implements OnInit, AfterViewInit {
     return preppedChat;
   }
 
-  // getChatNameFromChat(chat) {
-  //   let chatName = chat?.name;
-  //   let memberList = '';
-  //   chat?.members.forEach((m) => {
-  //     memberList +=
-  //       m?.id?.toString() === this.currentMember?.id?.toString()
-  //         ? ''
-  //         : m.firstName;
-  //   });
-  //   chatName = chatName ? chatName : memberList;
-  //   return chatName;
-  // }
-  // getAvatarFromChat(chat: Chat): string {
-  //   const members = chat?.members;
-  //   let otherPerson;
-  //   if (members?.length == 2) {
-  //     otherPerson = members.find((m) => m.id != this.currentMember.id);
-  //   }
-  //   if (otherPerson?.avatar) {
-  //     return otherPerson.avatar;
-  //   } else {
-  //     return defaultLogos.user;
-  //   }
-  // }
   clearSearchMember() {
     this.searchMember.nativeElement.value = '';
     this.query = '';
@@ -222,6 +201,9 @@ export class ChatComponent implements OnInit, AfterViewInit {
       this.store.dispatch(new SelectChatAction({ id: chat?.id }));
       this.draft = '';
     }
+  }
+  onScroll() {
+    console.log('poop');
   }
   getIntoChat(result: ChatSearchResult) {
     if (result.userId) {

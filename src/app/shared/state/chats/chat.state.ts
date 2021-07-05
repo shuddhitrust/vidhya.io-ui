@@ -96,6 +96,11 @@ export class ChatState {
   }
 
   @Selector()
+  static getIsFetchingChatMessages(state: ChatStateModel): boolean {
+    return state.isFetchingChatMessages;
+  }
+
+  @Selector()
   static isFetching(state: ChatStateModel): boolean {
     return state.isFetching;
   }
@@ -567,6 +572,7 @@ export class ChatState {
               chats: chats,
               chatFormRecord: formRecord,
               chatMessagesPaginationObject: newPaginationObject,
+              isFetchingChatMessages: false,
             });
           }
         });

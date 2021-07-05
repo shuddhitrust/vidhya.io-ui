@@ -83,7 +83,17 @@
       </div>
     </div>
 
-    <div class="convHistory userBg" #chatWindow>
+    <infinite-scroll
+      (scrolled)="onScroll()"
+      class="convHistory userBg"
+      #chatWindow
+    >
+      <p
+        *ngIf="isFetchingChatMessages$ | async"
+        style="text-align: center; color: white"
+      >
+        Loading...
+      </p>
       <!-- CONVERSATION GOES HERE! -->
       <div *ngFor="let chatMessage of chat?.chatmessageSet">
         <mat-card
@@ -108,7 +118,7 @@
         </mat-card>
       </div>
       <br />
-    </div>
+    </infinite-scroll>
 
     <div class="replyBar">
       <button class="attach">
