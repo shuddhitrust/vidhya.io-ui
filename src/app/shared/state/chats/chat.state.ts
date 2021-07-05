@@ -304,16 +304,20 @@ export class ChatState {
     if (id) {
       const state = getState();
       const chat = state.chats.find((c) => c.id == id);
-      patchState({
-        chatFormRecord: chat,
-        chatMessagesPaginationObject: startingPaginationObject,
-      });
-      this.store.dispatch(
-        new FetchChatMessagesAction({
-          chatId: chat.id,
-          searchParams: defaultSearchParams,
-        })
-      );
+      if (chat) {
+        patchState({
+          chatFormRecord: chat,
+          chatMessagesPaginationObject: startingPaginationObject,
+        });
+        this.store.dispatch(
+          new FetchChatMessagesAction({
+            chatId: chat.id,
+            searchParams: defaultSearchParams,
+          })
+        );
+      } else {
+        this.store.dispatch(new GetChatAction({ id }));
+      }
     } else {
       patchState({ chatFormRecord: emptyChatFormRecord });
     }
