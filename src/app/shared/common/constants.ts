@@ -16,6 +16,7 @@ export const defaultLogos = {
   institution: 'https://i.imgur.com/dPO1MlY.png',
   user: 'https://i.imgur.com/KHtECqa.png',
   group: 'https://i.imgur.com/hNdMk4c.png',
+  chat: 'https://i.imgur.com/dr06PoW.png',
 };
 
 export const defaultSearchParams = new SearchParams();

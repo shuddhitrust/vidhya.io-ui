@@ -263,22 +263,31 @@ export const ASSIGNMENT_MUTATIONS = {
 };
 
 export const CHAT_MUTATIONS = {
-  CREATE_CHAT: gql`
-    mutation createChat($input: ChatInput!) {
-      createChat(input: $input) {
+  CHAT_SEARCH: gql`
+    mutation chatSearch($query: String!) {
+      chatSearch(query: $query) {
         ok
-        chat {
+        users {
           id
+          firstName
+          lastName
+          avatar
+          lastActive
         }
-      }
-    }
-  `,
-  UPDATE_CHAT: gql`
-    mutation updateChat($id: ID!, $input: ChatInput!) {
-      updateChat(id: $id, input: $input) {
-        ok
-        chat {
+        groups {
+          name
+          avatar
+          chat {
+            id
+          }
+        }
+        chatMessages {
           id
+          message
+          createdAt
+          chat {
+            id
+          }
         }
       }
     }

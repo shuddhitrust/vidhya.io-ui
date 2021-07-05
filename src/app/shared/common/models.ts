@@ -201,3 +201,11 @@ export type Assignment = {
   createdAt?: string;
   updatedAt?: string;
 };
+
+export type ChatSearchResult = {
+  title: string;
+  subtitle: string;
+  avatar: string;
+  chatId: number;
+  userId: number;
+};

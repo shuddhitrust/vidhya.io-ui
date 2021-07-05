@@ -4,6 +4,7 @@ import {
   PaginationObject,
   startingPaginationObject,
   User,
+  ChatSearchResult,
 } from '../../common/models';
 import { uiroutes } from '../../common/ui-routes';
 
@@ -18,7 +19,7 @@ export const emptyChatFormRecord: Chat = {
 export interface ChatStateModel {
   chats: Chat[];
   chatMessagesSubscribed: boolean;
-  chatSearch: User[];
+  chatSearchResults: ChatSearchResult[];
   isFetchingChatMembers: boolean;
   isFetchingChatMessages: boolean;
   fetchPolicy: FetchPolicy;
@@ -36,7 +37,7 @@ export interface ChatStateModel {
 export const defaultChatState: ChatStateModel = {
   chats: [],
   chatMessagesSubscribed: false,
-  chatSearch: [],
+  chatSearchResults: [],
   isFetchingChatMembers: false,
   isFetchingChatMessages: false,
   fetchPolicy: null,

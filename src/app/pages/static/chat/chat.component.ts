@@ -4,7 +4,10 @@ import {
   defaultLogos,
   defaultSearchParams,
 } from 'src/app/shared/common/constants';
-import { parseDateTime } from 'src/app/shared/common/functions';
+import {
+  constructUserFullName,
+  parseDateTime,
+} from 'src/app/shared/common/functions';
 import {
   ClearChatMembers,
   CreateChatMessageAction,
@@ -17,7 +20,12 @@ import {
 } from 'src/app/shared/state/chats/chat.actions';
 import { ChatState } from 'src/app/shared/state/chats/chat.state';
 import { Observable, fromEvent } from 'rxjs';
-import { Chat, ChatTypes, User } from 'src/app/shared/common/models';
+import {
+  Chat,
+  ChatSearchResult,
+  ChatTypes,
+  User,
+} from 'src/app/shared/common/models';
 import { ElementRef, AfterViewInit, ViewChild } from '@angular/core';
 import {
   filter,
@@ -45,7 +53,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
   @Select(ChatState.listChats)
   chats$: Observable<Chat[]>;
   @Select(ChatState.getChatSearchResults)
-  chatSearch$: Observable<User[]>;
+  chatSearch$: Observable<ChatSearchResult[]>;
   @Select(ChatState.getIsFetchingChatMembers)
   isFetchingChatMembers$: Observable<boolean>;
   @Select(ChatState.getChatFormRecord)
@@ -58,7 +66,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
   currentMember$: Observable<User>;
   currentMember;
   isFetchingChatMembers = false;
-  chatSearch: User[];
+  chatSearchResults: ChatSearchResult[];
   opened: boolean = true;
   draft = '';
   chats: ChatUIObject[] = [];
@@ -81,8 +89,8 @@ export class ChatComponent implements OnInit, AfterViewInit {
       this.isCreatingNewChatMessage = val;
     });
     this.chatSearch$.subscribe((val) => {
-      this.chatSearch = val;
-      console.log('chatSearch => ', { chatMebmers: this.chatSearch });
+      this.chatSearchResults = val;
+      console.log('chatSearch => ', { chatMebmers: this.chatSearchResults });
     });
     this.isFetchingChatMembers$.subscribe((val) => {
       this.isFetchingChatMembers = val;
@@ -150,7 +158,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
       console.log('member => ', member);
       preppedChat = {
         id: chat.id,
-        name: member?.firstName + ' ' + member?.lastName,
+        name: constructUserFullName(member),
         subtitle: this.parseDateTimeMethod(member.lastActive),
         avatar: member.avatar,
         chatmessageSet: chat.chatmessageSet,
@@ -194,7 +202,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
   clearSearchMember() {
     this.searchMember.nativeElement.value = '';
     this.query = '';
-    this.chatSearch = [];
+    this.chatSearchResults = [];
     this.store.dispatch(new ClearChatMembers());
   }
 
@@ -215,9 +223,12 @@ export class ChatComponent implements OnInit, AfterViewInit {
       this.draft = '';
     }
   }
-  getIntoChat(member) {
-    console.log('starting chat with ', member.firstName);
-    this.store.dispatch(new GetIntoChatAction({ id: member.id }));
+  getIntoChat(result: ChatSearchResult) {
+    if (result.userId) {
+      this.store.dispatch(new GetIntoChatAction({ id: result.userId }));
+    } else if (result.chatId) {
+      this.store.dispatch(new SelectChatAction({ id: result.chatId }));
+    }
   }
   showChat() {
     return this.chat?.id != undefined;

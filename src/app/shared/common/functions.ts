@@ -2,6 +2,7 @@ import {
   MatSelectOption,
   PaginationObject,
   SUBSCRIPTION_METHODS,
+  User,
 } from './models';
 import { day, hour, minute, month, week, year } from './constants';
 
@@ -203,4 +204,8 @@ export const getErrorMessageFromGraphQLResponse = (errors): string => {
   return message
     ? message
     : 'Something went wrong! Action could not be completed successfully.';
+};
+
+export const constructUserFullName = (user: User): string => {
+  return user?.firstName + ' ' + user?.lastName;
 };

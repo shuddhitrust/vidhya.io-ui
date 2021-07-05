@@ -34,6 +34,7 @@ import { Apollo } from 'apollo-angular';
 import {
   Chat,
   ChatMessage,
+  ChatSearchResult,
   MatSelectOption,
   PaginationObject,
   startingPaginationObject,
@@ -45,13 +46,15 @@ import {
 } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
+  constructUserFullName,
   getErrorMessageFromGraphQLResponse,
   paginationChanged,
+  parseDateTime,
   subscriptionUpdater,
   updatePaginationObject,
 } from '../../common/functions';
 import { Router } from '@angular/router';
-import { defaultSearchParams } from '../../common/constants';
+import { defaultLogos, defaultSearchParams } from '../../common/constants';
 import { AuthState } from '../auth/auth.state';
 import { Observable } from 'rxjs';
 import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
@@ -83,8 +86,8 @@ export class ChatState {
   }
 
   @Selector()
-  static getChatSearchResults(state: ChatStateModel): User[] {
-    return state.chatSearch;
+  static getChatSearchResults(state: ChatStateModel): ChatSearchResult[] {
+    return state.chatSearchResults;
   }
 
   @Selector()
@@ -159,17 +162,88 @@ export class ChatState {
     const { fetchPolicy } = state;
     patchState({ isFetchingChatMembers: true });
     this.apollo
-      .watchQuery({
-        query: CHAT_QUERIES.CHAT_SEARCH,
+      .mutate({
+        mutation: CHAT_MUTATIONS.CHAT_SEARCH,
         variables: { query },
-        fetchPolicy,
       })
-      .valueChanges.subscribe(({ data }: any) => {
+      .subscribe(({ data }: any) => {
         console.log('Chat search respose => ', { data });
         const response = data.chatSearch ? data.chatSearch : [];
+        const res = {
+          data: {
+            chatSearch: {
+              ok: true,
+              users: [
+                {
+                  id: '4',
+                  firstName: 'Admin',
+                  lastName: 'User',
+                  avatar: 'http://localhost:8000/media/fgQz5u9.jpg',
+                  lastActive: '2021-06-04T11:09:03.632804+00:00',
+                  __typename: 'UserType',
+                },
+              ],
+              groups: [],
+              chatMessages: [
+                {
+                  id: '219',
+                  message: 'Hey admin',
+                  chat: {
+                    id: '68',
+                    __typename: 'ChatType',
+                  },
+                  __typename: 'ChatMessageType',
+                },
+              ],
+              __typename: 'ChatSearch',
+            },
+          },
+        };
+        let results: ChatSearchResult[] = [];
 
+        results = results.concat(
+          response.users.map((u) => {
+            return {
+              title: constructUserFullName(u),
+              subtitle: parseDateTime(u.lastActive),
+              avatar: u.avatar,
+              userId: u.id,
+              chatId: null,
+            };
+          })
+        );
+
+        results = results.concat(
+          response.groups.map((g) => {
+            return {
+              title: g.name,
+              subtitle: 'Group Chat',
+              avatar: g.avatar,
+              userId: null,
+              chatId: g.chat?.id,
+            };
+          })
+        );
+
+        results = results.concat(
+          response.chatMessages.map((c) => {
+            const index = c.message?.indexOf(query);
+            let message = c.message;
+            if (message.length > query.length + 25) {
+              message =
+                c.message?.slice(index > 5 ? index - 5 : 0, index + 20) + '...';
+            }
+            return {
+              title: message,
+              subtitle: parseDateTime(c.createdAt),
+              avatar: defaultLogos.chat,
+              userId: null,
+              chatId: c.chat.id,
+            };
+          })
+        );
         patchState({
-          chatSearch: response,
+          chatSearchResults: results,
           isFetchingChatMembers: false,
         });
       });
@@ -310,87 +384,87 @@ export class ChatState {
       );
   }
 
-  @Action(CreateUpdateChatAction)
-  createUpdateChat(
-    { getState, patchState }: StateContext<ChatStateModel>,
-    { payload }: CreateUpdateChatAction
-  ) {
-    const state = getState();
-    const { form, formDirective } = payload;
-    let { formSubmitting } = state;
-    if (form.valid) {
-      formSubmitting = true;
-      patchState({ formSubmitting });
-      const values = form.value;
-      console.log('Chat Form values', values);
-      const updateForm = values.id == null ? false : true;
-      const { id, ...sanitizedValues } = values;
-      const variables = updateForm
-        ? {
-            input: sanitizedValues,
-            id: values.id, // adding id to the mutation variables if it is an update mutation
-          }
-        : { input: sanitizedValues };
+  // @Action(CreateUpdateChatAction)
+  // createUpdateChat(
+  //   { getState, patchState }: StateContext<ChatStateModel>,
+  //   { payload }: CreateUpdateChatAction
+  // ) {
+  //   const state = getState();
+  //   const { form, formDirective } = payload;
+  //   let { formSubmitting } = state;
+  //   if (form.valid) {
+  //     formSubmitting = true;
+  //     patchState({ formSubmitting });
+  //     const values = form.value;
+  //     console.log('Chat Form values', values);
+  //     const updateForm = values.id == null ? false : true;
+  //     const { id, ...sanitizedValues } = values;
+  //     const variables = updateForm
+  //       ? {
+  //           input: sanitizedValues,
+  //           id: values.id, // adding id to the mutation variables if it is an update mutation
+  //         }
+  //       : { input: sanitizedValues };
 
-      this.apollo
-        .mutate({
-          mutation: updateForm
-            ? CHAT_MUTATIONS.UPDATE_CHAT
-            : CHAT_MUTATIONS.CREATE_CHAT,
-          variables,
-        })
-        .subscribe(
-          ({ data }: any) => {
-            const response = updateForm ? data.updateChat : data.createChat;
-            patchState({ formSubmitting: false });
-            console.log('update chat ', { response });
-            if (response.ok) {
-              this.store.dispatch(
-                new ShowNotificationAction({
-                  message: `Chat ${
-                    updateForm ? 'updated' : 'created'
-                  } successfully!`,
-                  action: 'success',
-                })
-              );
-              form.reset();
-              formDirective.resetForm();
-              this.router.navigateByUrl(ChatFormCloseURL);
-              patchState({
-                chatFormRecord: emptyChatFormRecord,
-                fetchPolicy: 'network-only',
-              });
-            } else {
-              this.store.dispatch(
-                new ShowNotificationAction({
-                  message: getErrorMessageFromGraphQLResponse(response?.errors),
-                  action: 'error',
-                })
-              );
-            }
-            console.log('From createUpdateChat', { response });
-          },
-          (error) => {
-            console.log('Some error happened ', error);
-            this.store.dispatch(
-              new ShowNotificationAction({
-                message: getErrorMessageFromGraphQLResponse(error),
-                action: 'error',
-              })
-            );
-            patchState({ formSubmitting: false });
-          }
-        );
-    } else {
-      this.store.dispatch(
-        new ShowNotificationAction({
-          message:
-            'Please make sure there are no errors in the form before attempting to submit!',
-          action: 'error',
-        })
-      );
-    }
-  }
+  //     this.apollo
+  //       .mutate({
+  //         mutation: updateForm
+  //           ? CHAT_MUTATIONS.UPDATE_CHAT
+  //           : CHAT_MUTATIONS.CREATE_CHAT,
+  //         variables,
+  //       })
+  //       .subscribe(
+  //         ({ data }: any) => {
+  //           const response = updateForm ? data.updateChat : data.createChat;
+  //           patchState({ formSubmitting: false });
+  //           console.log('update chat ', { response });
+  //           if (response.ok) {
+  //             this.store.dispatch(
+  //               new ShowNotificationAction({
+  //                 message: `Chat ${
+  //                   updateForm ? 'updated' : 'created'
+  //                 } successfully!`,
+  //                 action: 'success',
+  //               })
+  //             );
+  //             form.reset();
+  //             formDirective.resetForm();
+  //             this.router.navigateByUrl(ChatFormCloseURL);
+  //             patchState({
+  //               chatFormRecord: emptyChatFormRecord,
+  //               fetchPolicy: 'network-only',
+  //             });
+  //           } else {
+  //             this.store.dispatch(
+  //               new ShowNotificationAction({
+  //                 message: getErrorMessageFromGraphQLResponse(response?.errors),
+  //                 action: 'error',
+  //               })
+  //             );
+  //           }
+  //           console.log('From createUpdateChat', { response });
+  //         },
+  //         (error) => {
+  //           console.log('Some error happened ', error);
+  //           this.store.dispatch(
+  //             new ShowNotificationAction({
+  //               message: getErrorMessageFromGraphQLResponse(error),
+  //               action: 'error',
+  //             })
+  //           );
+  //           patchState({ formSubmitting: false });
+  //         }
+  //       );
+  //   } else {
+  //     this.store.dispatch(
+  //       new ShowNotificationAction({
+  //         message:
+  //           'Please make sure there are no errors in the form before attempting to submit!',
+  //         action: 'error',
+  //       })
+  //     );
+  //   }
+  // }
 
   @Action(DeleteChatAction)
   deleteChat({}: StateContext<ChatStateModel>, { payload }: DeleteChatAction) {
@@ -582,7 +656,7 @@ export class ChatState {
   @Action(ClearChatMembers)
   clearChatMembers({ patchState }: StateContext<ChatStateModel>) {
     patchState({
-      chatSearch: [],
+      chatSearchResults: [],
     });
   }
 
