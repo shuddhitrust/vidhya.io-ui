@@ -11,7 +11,13 @@ export class FetchChatsAction {
 export class FetchChatMessagesAction {
   static readonly type = '[CHAT MESSAGES] Fetch';
 
-  constructor(public payload: { chatId: number; searchParams: SearchParams }) {}
+  constructor(public payload: { searchParams: SearchParams }) {}
+}
+
+export class FetchNextChatMessagesAction {
+  static readonly type = '[CHAT MESSAGES] Fetch Next';
+
+  constructor() {}
 }
 export class ChatMessageSubscriptionAction {
   static readonly type = '[CHAT MESSAGES] Subscribe';

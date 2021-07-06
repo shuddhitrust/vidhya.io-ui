@@ -13,6 +13,7 @@ import {
   CreateChatMessageAction,
   FetchChatMessagesAction,
   FetchChatsAction,
+  FetchNextChatMessagesAction,
   GetChatAction,
   GetIntoChatAction,
   SearchChatMembersAction,
@@ -66,7 +67,9 @@ export class ChatComponent implements OnInit, AfterViewInit {
   isCreatingNewChatMessage: boolean;
   @Select(AuthState.getCurrentMember)
   currentMember$: Observable<User>;
+  autoScrollToBottom = true;
   currentMember;
+  isFetchingChatMessages = false;
   isFetchingChatMembers = false;
   chatSearchResults: ChatSearchResult[];
   opened: boolean = true;
@@ -78,9 +81,13 @@ export class ChatComponent implements OnInit, AfterViewInit {
   constructor(private store: Store) {
     this.chat$.subscribe((val) => {
       this.chat = this.prepCurrentChat(val);
-      setTimeout(() => {
-        this.scrollToBottom();
-      }, 0);
+      console.log({ autoScrollToBottom: this.autoScrollToBottom });
+      if (this.autoScrollToBottom) {
+        setTimeout(() => {
+          this.scrollToBottom();
+        }, 0);
+      }
+      this.autoScrollToBottom = true;
       this.draft = '';
       console.log('Chat changed => ', { chat: this.chat });
     });
@@ -96,6 +103,9 @@ export class ChatComponent implements OnInit, AfterViewInit {
     });
     this.isFetchingChatMembers$.subscribe((val) => {
       this.isFetchingChatMembers = val;
+    });
+    this.isFetchingChatMessages$.subscribe((val) => {
+      this.isFetchingChatMessages = val;
     });
     this.chats$.subscribe((val) => {
       this.chats = val.map((c) => this.prepChat(c));
@@ -203,7 +213,12 @@ export class ChatComponent implements OnInit, AfterViewInit {
     }
   }
   onScroll() {
-    console.log('poop');
+    if (this.chat?.id && this.chat?.chatmessageSet?.length) {
+      this.autoScrollToBottom = false; // Setting this to be true so that it doesn't autoscroll to lowest when chat updates
+      if (!this.isFetchingChatMessages) {
+        this.store.dispatch(new FetchNextChatMessagesAction());
+      }
+    }
   }
   getIntoChat(result: ChatSearchResult) {
     if (result.userId) {

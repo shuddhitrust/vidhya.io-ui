@@ -25,6 +25,7 @@ export interface ChatStateModel {
   fetchPolicy: FetchPolicy;
   paginationObject: PaginationObject;
   chatMessagesPaginationObject: PaginationObject;
+  lastChatMessagesPage: number;
   chatFormId: number;
   isCreatingNewChatMessage: boolean;
   chatFormRecord: Chat;
@@ -43,6 +44,7 @@ export const defaultChatState: ChatStateModel = {
   fetchPolicy: null,
   paginationObject: startingPaginationObject,
   chatMessagesPaginationObject: startingPaginationObject,
+  lastChatMessagesPage: null,
   chatFormId: null,
   chatFormRecord: emptyChatFormRecord,
   isCreatingNewChatMessage: false,

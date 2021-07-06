@@ -22,6 +22,7 @@ import {
   DeleteChatAction,
   FetchChatMessagesAction,
   FetchChatsAction,
+  FetchNextChatMessagesAction,
   ForceRefetchChatsAction,
   GetChatAction,
   GetIntoChatAction,
@@ -59,6 +60,7 @@ import { AuthState } from '../auth/auth.state';
 import { Observable } from 'rxjs';
 import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
 import { state } from '@angular/animations';
+import { SearchParams } from '../../abstract/master-grid/table.model';
 
 @State<ChatStateModel>({
   name: 'chatState',
@@ -174,36 +176,6 @@ export class ChatState {
       .subscribe(({ data }: any) => {
         console.log('Chat search respose => ', { data });
         const response = data.chatSearch ? data.chatSearch : [];
-        const res = {
-          data: {
-            chatSearch: {
-              ok: true,
-              users: [
-                {
-                  id: '4',
-                  firstName: 'Admin',
-                  lastName: 'User',
-                  avatar: 'http://localhost:8000/media/fgQz5u9.jpg',
-                  lastActive: '2021-06-04T11:09:03.632804+00:00',
-                  __typename: 'UserType',
-                },
-              ],
-              groups: [],
-              chatMessages: [
-                {
-                  id: '219',
-                  message: 'Hey admin',
-                  chat: {
-                    id: '68',
-                    __typename: 'ChatType',
-                  },
-                  __typename: 'ChatMessageType',
-                },
-              ],
-              __typename: 'ChatSearch',
-            },
-          },
-        };
         let results: ChatSearchResult[] = [];
 
         results = results.concat(
@@ -316,7 +288,6 @@ export class ChatState {
         });
         this.store.dispatch(
           new FetchChatMessagesAction({
-            chatId: chat.id,
             searchParams: defaultSearchParams,
           })
         );
@@ -324,7 +295,10 @@ export class ChatState {
         this.store.dispatch(new GetChatAction({ id }));
       }
     } else {
-      patchState({ chatFormRecord: emptyChatFormRecord });
+      patchState({
+        chatFormRecord: emptyChatFormRecord,
+        lastChatMessagesPage: null,
+      });
     }
   }
 
@@ -346,7 +320,12 @@ export class ChatState {
         console.log('Response for getChat => ', { data });
         const state = getState();
         const chats = [response, ...state.chats];
-        patchState({ chatFormRecord: response, chats, isFetching: false });
+        patchState({
+          chatFormRecord: response,
+          lastChatMessagesPage: null,
+          chats,
+          isFetching: false,
+        });
       });
   }
 
@@ -370,13 +349,13 @@ export class ChatState {
             const state = getState();
             patchState({
               chatFormRecord: chat,
+              lastChatMessagesPage: null,
               chats: [chat].concat(state.chats),
               chatMessagesPaginationObject: startingPaginationObject,
               isFetching: false,
             });
             this.store.dispatch(
               new FetchChatMessagesAction({
-                chatId: chat.id,
                 searchParams: defaultSearchParams,
               })
             );
@@ -519,6 +498,25 @@ export class ChatState {
       );
   }
 
+  @Action(FetchNextChatMessagesAction)
+  fetchNextChatMessages({ getState }: StateContext<ChatStateModel>) {
+    const state = getState();
+    const lastPageNumber = state.lastChatMessagesPage;
+    const newPageNumber = state.chatMessagesPaginationObject.currentPage + 1;
+    const newSearchParams: SearchParams = {
+      ...defaultSearchParams,
+      newPageNumber,
+    };
+    if (
+      !lastPageNumber ||
+      (lastPageNumber != null && newPageNumber <= lastPageNumber)
+    ) {
+      this.store.dispatch(
+        new FetchChatMessagesAction({ searchParams: newSearchParams })
+      );
+    }
+  }
+
   @Action(FetchChatMessagesAction)
   fetchChatMessages(
     { getState, patchState }: StateContext<ChatStateModel>,
@@ -526,7 +524,8 @@ export class ChatState {
   ) {
     const state = getState();
     const { chatMessagesPaginationObject } = state;
-    const { searchParams, chatId } = payload;
+    const chatId = state.chatFormRecord.id;
+    const { searchParams } = payload;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
     let newPaginationObject = updatePaginationObject({
       paginationObject: chatMessagesPaginationObject,
@@ -562,14 +561,22 @@ export class ChatState {
           let chat: Chat = state.chats.find((c) => c.id == chatId);
           if (chat) {
             console.log('line 460 from chat state => ', { chat, response });
-            chat = { ...chat, chatmessageSet: response };
+            const chatmessageSet = chat.chatmessageSet.concat(response);
+            chat = { ...chat, chatmessageSet };
             let chats = state.chats.filter((c) => c.id != chat.id);
             chats = [chat, ...chats];
             let formRecord =
               state.chatFormRecord.id == chat.id ? chat : state.chatFormRecord;
 
+            //  Checking if the number of chat messages received is less than the limit
+            // if it is less, then we declare that as the last page
+            let lastChatMessagesPage = null;
+            if (response.length < newPaginationObject.pageSize) {
+              lastChatMessagesPage = newPaginationObject.currentPage;
+            }
             patchState({
-              chats: chats,
+              chats,
+              lastChatMessagesPage,
               chatFormRecord: formRecord,
               chatMessagesPaginationObject: newPaginationObject,
               isFetchingChatMessages: false,
