@@ -29,7 +29,7 @@ const sectionParamKey = 'adminSection';
 export class AdminDashboardComponent implements OnInit {
   @Input() params: object = {};
   opened: boolean = true;
-  entities: string[] = entities;
+  entities: string[] = processEntities();
   moderation: string = MODERATION;
   userRoles: string = USER_ROLES;
   institutions: string = INSTITUTIONS;
@@ -73,3 +73,7 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 }
+
+const processEntities = (): string[] => {
+  return entities;
+};

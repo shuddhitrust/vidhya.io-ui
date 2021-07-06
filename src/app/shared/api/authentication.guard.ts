@@ -25,11 +25,13 @@ export class AuthenticationGuard implements CanActivate {
   authState: AuthStateModel;
   activeMember: boolean = false;
   isFullyAuthenticated: boolean = false;
+  isLoggedIn: boolean = false;
   constructor(private _router: Router, private store: Store) {
     this.authState$.subscribe((val) => {
       this.authState = val;
       // this.membershipStatus = this.authState.membershipStatus;
       this.isFullyAuthenticated = this.authState.isFullyAuthenticated;
+      this.isLoggedIn = this.authState.isLoggedIn;
       // this.activeMember = this.membershipStatus == MembershipStatus.ACTIVE;
     });
   }
@@ -37,7 +39,11 @@ export class AuthenticationGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean {
-    return true;
+    if (this.isLoggedIn && !this.isFullyAuthenticated) {
+      return false;
+    } else {
+      return true;
+    }
     // if (this.isFullyAuthenticated) {
     //   return true;
     // } else {

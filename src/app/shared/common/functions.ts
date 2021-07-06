@@ -4,6 +4,7 @@ import {
   PaginationObject,
   SUBSCRIPTION_METHODS,
   User,
+  UserPermissions,
 } from './models';
 import { day, hour, minute, month, week, year } from './constants';
 
@@ -211,30 +212,39 @@ export const constructUserFullName = (user: User): string => {
   return user?.firstName + ' ' + user?.lastName;
 };
 
-export const constructPermissions = (permission) => {
+export const constructPermissions = (permissions: UserPermissions) => {
+  if (!permissions) {
+    return defaultResourcePermissions;
+  }
   const resources = Object.keys(defaultResourcePermissions);
   for (let i = 0; i < resources.length; i++) {
     const resource = resources[i];
     // Fitting in the resource if it is missing in the permission
-    permission[resource] = permission[resource]
-      ? permission[resource]
+    permissions[resource] = permissions[resource]
+      ? permissions[resource]
       : defaultResourcePermissions[resource];
     const actions = Object.keys(resource);
     // Getting the actions within each resource right
     for (let j = 0; j < actions.length; j++) {
       const action = actions[j];
-      permission[resource][action] =
-        typeof permission[resource].action == 'boolean'
-          ? permission[resource].action
-          : defaultResourcePermissions[resource].action;
+      console.log(
+        'From line 229',
+        { permissions },
+        'permission[resource][action]',
+        permissions[resource][action]
+      );
+      permissions[resource][action] =
+        typeof permissions[resource][action] == 'boolean'
+          ? permissions[resource][action]
+          : defaultResourcePermissions[resource][action];
     }
     // Sorting it in the proper order
     for (let i = 0; i < resources.length; i++) {
       const resource = resources[i];
-      permission[resource] = permission[resource]
-        ? permission[resource]
+      permissions[resource] = permissions[resource]
+        ? permissions[resource]
         : defaultResourcePermissions[resource];
     }
   }
-  return permission;
+  return permissions;
 };
