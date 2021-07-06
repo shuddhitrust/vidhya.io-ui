@@ -1,4 +1,8 @@
-import { CurrentMember, User } from '../../common/models';
+import {
+  CurrentMember,
+  defaultResourcePermissions,
+  UserPermissions,
+} from '../../common/models';
 
 export interface AuthStateModel {
   token: string;
@@ -11,13 +15,9 @@ export interface AuthStateModel {
   isFullyAuthenticated: boolean;
   isFetchingCurrentMember: boolean;
   currentMember: CurrentMember;
+  permissions: UserPermissions;
   firstTimeSetup: boolean;
   activationEmailSent: Date;
-  // userId: number;
-  // currentMemberInstitutionId: number;
-  // username: string;
-  // firstName: string;
-  // lastName: string;
 }
 
 export const defaultAuthState: AuthStateModel = {
@@ -31,11 +31,7 @@ export const defaultAuthState: AuthStateModel = {
   isFullyAuthenticated: false,
   isFetchingCurrentMember: false,
   currentMember: null,
+  permissions: defaultResourcePermissions,
   firstTimeSetup: false,
   activationEmailSent: null,
-  // userId: null,
-  // currentMemberInstitutionId: null,
-  // username: null,
-  // firstName: null,
-  // lastName: null,
 };

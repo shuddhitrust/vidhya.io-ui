@@ -15,12 +15,10 @@ import {
 } from 'src/app/shared/state/userRoles/userRole.actions';
 import { UserRoleState } from 'src/app/shared/state/userRoles/userRole.state';
 import { Observable } from 'rxjs';
-import {
-  defaultResourcePermissions,
-  emptyUserRoleFormRecord,
-} from 'src/app/shared/state/userRoles/userRole.model';
+import { emptyUserRoleFormRecord } from 'src/app/shared/state/userRoles/userRole.model';
 import {
   CREATE,
+  defaultResourcePermissions,
   DELETE,
   LIST,
   UPDATE,

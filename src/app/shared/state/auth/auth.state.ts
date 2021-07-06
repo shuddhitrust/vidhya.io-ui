@@ -36,7 +36,10 @@ import { ShowNotificationAction } from '../notifications/notification.actions';
 import { Apollo } from 'apollo-angular';
 import { AUTH_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { AUTH_QUERIES } from '../../api/graphql/queries.graphql';
-import { getErrorMessageFromGraphQLResponse } from '../../common/functions';
+import {
+  constructPermissions,
+  getErrorMessageFromGraphQLResponse,
+} from '../../common/functions';
 import {
   AUTH_TOKEN_KEY,
   AUTH_REFRESH_TOKEN_KEY,
@@ -376,6 +379,7 @@ export class AuthState {
     console.log('running UpdateCurrentUserInState', { user });
     const state = getState();
     const { isLoggedIn, currentMember } = state;
+    const permissions = constructPermissions(user?.role?.permissions);
     const newCurrentMember: CurrentMember = {
       id: user?.id ? user?.id : currentMember?.id,
       username: user?.username,
@@ -389,6 +393,10 @@ export class AuthState {
         name: user?.institution?.name,
       },
       membershipStatus: user?.membershipStatus,
+      role: {
+        name: user?.role?.name,
+        permissions,
+      },
     };
     console.log('newCurrentMember ', { currentMember: newCurrentMember });
     const firstTimeSetup = calculateFirstTiimeSetup(newCurrentMember);
@@ -410,6 +418,7 @@ export class AuthState {
       patchState({
         isFullyAuthenticated,
         currentMember: newCurrentMember,
+        permissions,
         firstTimeSetup,
       });
     }

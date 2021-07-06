@@ -1,4 +1,5 @@
 import {
+  defaultResourcePermissions,
   MatSelectOption,
   PaginationObject,
   SUBSCRIPTION_METHODS,
@@ -208,4 +209,32 @@ export const getErrorMessageFromGraphQLResponse = (errors): string => {
 
 export const constructUserFullName = (user: User): string => {
   return user?.firstName + ' ' + user?.lastName;
+};
+
+export const constructPermissions = (permission) => {
+  const resources = Object.keys(defaultResourcePermissions);
+  for (let i = 0; i < resources.length; i++) {
+    const resource = resources[i];
+    // Fitting in the resource if it is missing in the permission
+    permission[resource] = permission[resource]
+      ? permission[resource]
+      : defaultResourcePermissions[resource];
+    const actions = Object.keys(resource);
+    // Getting the actions within each resource right
+    for (let j = 0; j < actions.length; j++) {
+      const action = actions[j];
+      permission[resource][action] =
+        typeof permission[resource].action == 'boolean'
+          ? permission[resource].action
+          : defaultResourcePermissions[resource].action;
+    }
+    // Sorting it in the proper order
+    for (let i = 0; i < resources.length; i++) {
+      const resource = resources[i];
+      permission[resource] = permission[resource]
+        ? permission[resource]
+        : defaultResourcePermissions[resource];
+    }
+  }
+  return permission;
 };

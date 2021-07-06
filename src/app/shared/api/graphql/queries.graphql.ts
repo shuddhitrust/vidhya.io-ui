@@ -39,12 +39,18 @@ export const USER_QUERIES = {
         username
         firstName
         lastName
+        avatar
+        invitecode
         email
         institution {
           id
           name
         }
-        lastLogin
+        role {
+          name
+          permissions
+        }
+        membershipStatus
       }
     }
   `,

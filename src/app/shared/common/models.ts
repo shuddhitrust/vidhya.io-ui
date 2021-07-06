@@ -85,6 +85,7 @@ export type CurrentMember = {
   invitecode?: string;
   institution?: { id: number; name: string };
   membershipStatus: string;
+  role: { name?: string; permissions: UserPermissions };
   createdAt?: string;
   updatedAt?: string;
 };
@@ -118,8 +119,30 @@ export type User = {
   invitecode?: string;
   title?: string;
   bio?: string;
+  role: { name?: string; permissions: UserPermissions };
   createdAt?: string;
   updatedAt?: string;
+};
+
+type ResourceActions = {
+  VIEW: boolean;
+  CREATE: boolean;
+  UPDATE: boolean;
+  DELETE: boolean;
+};
+
+export type UserPermissions = {
+  MODERATION: ResourceActions;
+  LEARNERS: ResourceActions;
+  CLASS_ADMINS: ResourceActions;
+  INSTITUTION_ADMINS: ResourceActions;
+  INSTITUTION_MEMBERS: ResourceActions;
+  INSTITUTIONS: ResourceActions;
+  ANNOUNCEMENTS: ResourceActions;
+  COURSES: ResourceActions;
+  GROUPS: ResourceActions;
+  REPORTS: ResourceActions;
+  ROLES: ResourceActions;
 };
 
 export const CREATE = 'CREATE';
@@ -208,4 +231,32 @@ export type ChatSearchResult = {
   avatar: string;
   chatId: number;
   userId: number;
+};
+
+export const RESOURCE_ACTIONS = {
+  VIEW: 'VIEW',
+  CREATE: 'CREATE',
+  UPDATE: 'UPDATE',
+  DELETE: 'DELETE',
+};
+
+const defaultActions: ResourceActions = {
+  VIEW: false,
+  CREATE: false,
+  UPDATE: false,
+  DELETE: false,
+};
+
+export const defaultResourcePermissions: UserPermissions = {
+  MODERATION: defaultActions,
+  LEARNERS: defaultActions,
+  CLASS_ADMINS: defaultActions,
+  INSTITUTION_ADMINS: defaultActions,
+  INSTITUTION_MEMBERS: defaultActions,
+  INSTITUTIONS: defaultActions,
+  ANNOUNCEMENTS: defaultActions,
+  COURSES: defaultActions,
+  GROUPS: defaultActions,
+  REPORTS: defaultActions,
+  ROLES: defaultActions,
 };

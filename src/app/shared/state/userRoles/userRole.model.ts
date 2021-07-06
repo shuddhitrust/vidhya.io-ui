@@ -5,6 +5,7 @@ import {
   parseDateTime,
 } from '../../common/functions';
 import {
+  defaultResourcePermissions,
   FetchPolicy,
   MatSelectOption,
   PaginationObject,
@@ -12,20 +13,6 @@ import {
   UserRole,
 } from '../../common/models';
 import { uiroutes } from '../../common/ui-routes';
-
-export const defaultResourcePermissions = {
-  moderation: [],
-  learners: [],
-  class_admins: [],
-  institution_admins: [],
-  institution_members: [],
-  institutions: [],
-  announcements: [],
-  courses: [],
-  groups: [],
-  reports: [],
-  roles: [],
-};
 
 export const defaultChatPermissions = {
   otherInstitutionAdmins: false,

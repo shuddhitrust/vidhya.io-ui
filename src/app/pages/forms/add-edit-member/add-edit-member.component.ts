@@ -23,6 +23,7 @@ import { InstitutionState } from 'src/app/shared/state/institutions/institution.
 import { FetchInstitutionsAction } from 'src/app/shared/state/institutions/institution.actions';
 import {
   CurrentMember,
+  defaultResourcePermissions,
   MatSelectOption,
   User,
 } from 'src/app/shared/common/models';
@@ -108,6 +109,10 @@ export class AddEditMemberComponent implements OnInit {
         institution: {
           id: this.currentMember?.institution?.id,
           name: this.currentMember?.institution?.name,
+        },
+        role: {
+          name: this.currentMember?.role.name,
+          permissions: this.currentMember?.role?.permissions,
         },
       };
       this.memberForm = this.setupMemberFormGroup(currentUser);
