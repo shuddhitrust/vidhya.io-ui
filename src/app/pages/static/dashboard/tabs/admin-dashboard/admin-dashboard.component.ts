@@ -55,6 +55,13 @@ export class AdminDashboardComponent implements OnInit {
       }
     });
   }
+  ngOnChanges(changes) {
+    if (changes.entities) {
+      this.selectedEntity = this.selectedEntity
+        ? this.selectedEntity
+        : this.entities[0]?.value;
+    }
+  }
 
   onSelectEntity(entity) {
     this.selectedEntity = entity;

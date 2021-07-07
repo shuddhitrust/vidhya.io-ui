@@ -244,7 +244,7 @@ export const RESOURCE_ACTIONS = {
 };
 
 const defaultActions: ResourceActions = {
-  LIST: false,
+  LIST: true,
   GET: false,
   CREATE: false,
   UPDATE: false,
