@@ -15,7 +15,7 @@ import { memberColumns } from 'src/app/shared/state/members/member.model';
 import { MemberState } from 'src/app/shared/state/members/member.state';
 import { environment } from 'src/environments/environment';
 import { MemberProfileComponent } from '../../modals/member-profile/member-profile.component';
-import { INSTITUTION_ADMINS } from '../../static/dashboard/tabs/admin-dashboard/admin-dashboard.component';
+import { INSTITUTION_ADMINS_LABEL } from '../../static/dashboard/tabs/admin-dashboard/admin-dashboard.component';
 
 @Component({
   selector: 'app-institution-admins-table',
@@ -23,7 +23,7 @@ import { INSTITUTION_ADMINS } from '../../static/dashboard/tabs/admin-dashboard/
   styleUrls: ['./institution-admins-table.component.scss'],
 })
 export class InstitutionAdminsTableComponent implements OnInit {
-  tableTitle: string = INSTITUTION_ADMINS;
+  tableTitle: string = INSTITUTION_ADMINS_LABEL;
   members: object[];
   @Select(MemberState.listMembers)
   rows$: Observable<User[]>;

@@ -15,7 +15,7 @@ import { memberColumns } from 'src/app/shared/state/members/member.model';
 import { MemberState } from 'src/app/shared/state/members/member.state';
 import { environment } from 'src/environments/environment';
 import { MemberProfileComponent } from '../../modals/member-profile/member-profile.component';
-import { LEARNERS } from '../../static/dashboard/tabs/admin-dashboard/admin-dashboard.component';
+import { LEARNERS_LABEL } from '../../static/dashboard/tabs/admin-dashboard/admin-dashboard.component';
 
 @Component({
   selector: 'app-learners-table',
@@ -23,7 +23,7 @@ import { LEARNERS } from '../../static/dashboard/tabs/admin-dashboard/admin-dash
   styleUrls: ['./learners-table.component.scss'],
 })
 export class LearnersTableComponent implements OnInit {
-  tableTitle: string = LEARNERS;
+  tableTitle: string = LEARNERS_LABEL;
   members: object[];
   @Select(MemberState.listMembers)
   rows$: Observable<User[]>;

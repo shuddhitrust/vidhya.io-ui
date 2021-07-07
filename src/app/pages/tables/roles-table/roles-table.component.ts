@@ -15,7 +15,7 @@ import {
 } from 'src/app/shared/state/userRoles/userRole.actions';
 import { UserRoleState } from 'src/app/shared/state/userRoles/userRole.state';
 import { RoleProfileComponent } from '../../modals/role-profile/role-profile.component';
-import { USER_ROLES } from '../../static/dashboard/tabs/admin-dashboard/admin-dashboard.component';
+import { USER_ROLES_LABEL } from '../../static/dashboard/tabs/admin-dashboard/admin-dashboard.component';
 
 @Component({
   selector: 'app-roles-table',
@@ -23,7 +23,7 @@ import { USER_ROLES } from '../../static/dashboard/tabs/admin-dashboard/admin-da
   styleUrls: ['./roles-table.component.scss'],
 })
 export class RolesTableComponent implements OnInit {
-  tableTitle: string = USER_ROLES;
+  tableTitle: string = USER_ROLES_LABEL;
   roles: object[];
   @Select(UserRoleState.listRoles)
   rows$: Observable<User[]>;

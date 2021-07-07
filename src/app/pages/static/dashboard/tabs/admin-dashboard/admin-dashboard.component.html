@@ -8,13 +8,15 @@
     <mat-selection-list [multiple]="false">
       <mat-list-option
         [ngClass]="
-          selectedEntity === entity ? 'selectedSection' : 'unselectedSection'
+          selectedEntity === entity.value
+            ? 'selectedSection'
+            : 'unselectedSection'
         "
         *ngFor="let entity of entities"
-        [value]="entity"
-        (click)="onSelectEntity(entity)"
+        [value]="entity.value"
+        (click)="onSelectEntity(entity.value)"
       >
-        {{ entity }}
+        {{ entity.label }}
       </mat-list-option>
     </mat-selection-list>
   </mat-drawer>

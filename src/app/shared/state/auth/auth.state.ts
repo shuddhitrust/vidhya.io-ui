@@ -7,7 +7,12 @@ import {
   Select,
 } from '@ngxs/store';
 import { AuthStateModel, defaultAuthState } from './auth.model';
-import { CurrentMember, MembershipStatus, User } from '../../common/models';
+import {
+  CurrentMember,
+  MembershipStatus,
+  User,
+  UserPermissions,
+} from '../../common/models';
 
 import { Injectable } from '@angular/core';
 import {
@@ -112,6 +117,11 @@ export class AuthState {
   @Selector()
   static getToken(state: AuthStateModel): string {
     return state.token;
+  }
+
+  @Selector()
+  static getPermissions(state: AuthStateModel): UserPermissions {
+    return state.permissions;
   }
 
   @Selector()

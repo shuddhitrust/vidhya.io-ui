@@ -4,9 +4,12 @@
   [(selectedIndex)]="activeTabIndex"
   (selectedTabChange)="onTabChange($event)"
 >
-  <mat-tab [label]="tabIndexList[0]">
+  <mat-tab *ngIf="entities.length" [label]="tabIndexList[0]">
     <div class="mat-tab">
-      <app-admin-dashboard [params]="params"></app-admin-dashboard>
+      <app-admin-dashboard
+        [params]="params"
+        [entities]="entities"
+      ></app-admin-dashboard>
     </div>
   </mat-tab>
   <mat-tab [label]="tabIndexList[1]">

@@ -21,9 +21,9 @@ import {
   defaultResourcePermissions,
   DELETE,
   LIST,
+  GET,
   UPDATE,
   UserRole,
-  VIEW,
 } from 'src/app/shared/common/models';
 import { convertKeyToLabel } from 'src/app/shared/common/functions';
 
@@ -36,8 +36,8 @@ import { convertKeyToLabel } from 'src/app/shared/common/functions';
   ],
 })
 export class AddEditUserRoleComponent implements OnInit {
-  VIEW = VIEW;
   LIST = LIST;
+  GET = GET;
   CREATE = CREATE;
   UPDATE = UPDATE;
   DELETE = DELETE;
@@ -53,7 +53,7 @@ export class AddEditUserRoleComponent implements OnInit {
   permissionsTable: object[] = convertPermissionsToTable(
     this.permissionsObject
   );
-  scopes: string[] = ['resource', VIEW, LIST, CREATE, UPDATE, DELETE];
+  scopes: string[] = ['resource', LIST, GET, CREATE, UPDATE, DELETE];
   permissionItems: string[] = Object.keys(defaultResourcePermissions);
   constructor(
     private location: Location,
@@ -149,7 +149,7 @@ const convertPermissionsToTable = (permissionsObject: object): object[] => {
     const resource = permissionItems[i];
     permissionsTableData[i] = {
       resource,
-      VIEW: permissionsObject[resource].includes[VIEW] ? true : true,
+      GET: permissionsObject[resource].includes[GET] ? true : true,
       LIST: permissionsObject[resource].includes[LIST] ? true : false,
       CREATE: permissionsObject[resource].includes[CREATE] ? true : false,
       UPDATE: permissionsObject[resource].includes[UPDATE] ? true : false,

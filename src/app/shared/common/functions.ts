@@ -231,12 +231,12 @@ export const constructPermissions = (permissions: UserPermissions) => {
         'From line 229',
         { permissions },
         'permission[resource][action]',
-        permissions[resource][action]
+        permissions[resource][resource[action]]
       );
-      permissions[resource][action] =
-        typeof permissions[resource][action] == 'boolean'
-          ? permissions[resource][action]
-          : defaultResourcePermissions[resource][action];
+      permissions[resource][resource[action]] =
+        typeof permissions[resource][resource[action]] == 'boolean'
+          ? permissions[resource][resource[action]]
+          : defaultResourcePermissions[resource][resource[action]];
     }
     // Sorting it in the proper order
     for (let i = 0; i < resources.length; i++) {
@@ -247,4 +247,25 @@ export const constructPermissions = (permissions: UserPermissions) => {
     }
   }
   return permissions;
+};
+
+export const authorizeResource = (
+  permissions: UserPermissions,
+  resource: string,
+  action: string
+): boolean => {
+  if (action == '*') {
+    const keys = Object.keys(permissions[resource]);
+    console.log('authorizeResources => ', { keys });
+    for (let i = 0; i < keys.length; i++) {
+      console.log('permission[resource]', permissions[resource]);
+      console.log('permission[resource][i]', permissions[resource][keys[i]]);
+      if (permissions[resource][keys[i]] == true) {
+        return true;
+      }
+    }
+    return false;
+  } else {
+    return permissions[resource][action];
+  }
 };

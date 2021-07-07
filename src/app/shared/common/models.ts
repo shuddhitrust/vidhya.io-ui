@@ -125,7 +125,8 @@ export type User = {
 };
 
 type ResourceActions = {
-  VIEW: boolean;
+  LIST: boolean;
+  GET: boolean;
   CREATE: boolean;
   UPDATE: boolean;
   DELETE: boolean;
@@ -135,6 +136,7 @@ export type UserPermissions = {
   MODERATION: ResourceActions;
   LEARNERS: ResourceActions;
   CLASS_ADMINS: ResourceActions;
+  MEMBERS: ResourceActions;
   INSTITUTION_ADMINS: ResourceActions;
   INSTITUTION_MEMBERS: ResourceActions;
   INSTITUTIONS: ResourceActions;
@@ -142,12 +144,12 @@ export type UserPermissions = {
   COURSES: ResourceActions;
   GROUPS: ResourceActions;
   REPORTS: ResourceActions;
-  ROLES: ResourceActions;
+  USER_ROLES: ResourceActions;
 };
 
-export const CREATE = 'CREATE';
 export const LIST = 'LIST';
-export const VIEW = 'VIEW';
+export const GET = 'GET';
+export const CREATE = 'CREATE';
 export const UPDATE = 'UPDATE';
 export const DELETE = 'DELETE';
 
@@ -234,23 +236,41 @@ export type ChatSearchResult = {
 };
 
 export const RESOURCE_ACTIONS = {
-  VIEW: 'VIEW',
+  LIST: 'LIST',
+  GET: 'GET',
   CREATE: 'CREATE',
   UPDATE: 'UPDATE',
   DELETE: 'DELETE',
 };
 
 const defaultActions: ResourceActions = {
-  VIEW: false,
+  LIST: false,
+  GET: false,
   CREATE: false,
   UPDATE: false,
   DELETE: false,
+};
+
+export const resources = {
+  MODERATION: 'MODERATION',
+  LEARNERS: 'LEARNERS',
+  CLASS_ADMINS: 'CLASS_ADMINS',
+  MEMBERS: 'MEMBERS',
+  INSTITUTION_ADMINS: 'INSTITUTION_ADMINS',
+  INSTITUTION_MEMBERS: 'INSTITUTION_MEMBERS',
+  INSTITUTIONS: 'INSTITUTIONS',
+  ANNOUNCEMENTS: 'ANNOUNCEMENTS',
+  COURSES: 'COURSES',
+  GROUPS: 'GROUPS',
+  REPORTS: 'REPORTS',
+  USER_ROLES: 'USER_ROLES',
 };
 
 export const defaultResourcePermissions: UserPermissions = {
   MODERATION: defaultActions,
   LEARNERS: defaultActions,
   CLASS_ADMINS: defaultActions,
+  MEMBERS: defaultActions,
   INSTITUTION_ADMINS: defaultActions,
   INSTITUTION_MEMBERS: defaultActions,
   INSTITUTIONS: defaultActions,
@@ -258,5 +278,5 @@ export const defaultResourcePermissions: UserPermissions = {
   COURSES: defaultActions,
   GROUPS: defaultActions,
   REPORTS: defaultActions,
-  ROLES: defaultActions,
+  USER_ROLES: defaultActions,
 };

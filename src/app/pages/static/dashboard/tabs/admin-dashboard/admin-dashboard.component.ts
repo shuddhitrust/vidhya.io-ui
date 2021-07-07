@@ -1,24 +1,19 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Observable } from '@apollo/client/utilities';
+import { Select } from '@ngxs/store';
+import { authorizeResource } from 'src/app/shared/common/functions';
+import { resources, UserPermissions } from 'src/app/shared/common/models';
+import { AuthState } from 'src/app/shared/state/auth/auth.state';
 
-export const MODERATION = 'Moderation';
-export const USER_ROLES = 'User Roles';
-export const INSTITUTIONS = 'Institutions';
-export const MEMBERS = 'Members';
-export const INSTITUTION_ADMINS = 'Institution Admins';
-export const CLASS_ADMINS = 'Class Admins';
-export const LEARNERS = 'Learners';
-
-const entities = [
-  MODERATION,
-  USER_ROLES,
-  INSTITUTIONS,
-  MEMBERS,
-  INSTITUTION_ADMINS,
-  CLASS_ADMINS,
-  LEARNERS,
-];
+export const MODERATION_LABEL = 'Moderation';
+export const USER_ROLES_LABEL = 'User Roles';
+export const INSTITUTIONS_LABEL = 'Institutions';
+export const MEMBERS_LABEL = 'Members';
+export const INSTITUTION_ADMINS_LABEL = 'Institution Admins';
+export const CLASS_ADMINS_LABEL = 'Class Admins';
+export const LEARNERS_LABEL = 'Learners';
 
 const sectionParamKey = 'adminSection';
 @Component({
@@ -29,22 +24,24 @@ const sectionParamKey = 'adminSection';
 export class AdminDashboardComponent implements OnInit {
   @Input() params: object = {};
   opened: boolean = true;
-  entities: string[] = processEntities();
-  moderation: string = MODERATION;
-  userRoles: string = USER_ROLES;
-  institutions: string = INSTITUTIONS;
-  members: string = MEMBERS;
-  institutionAdmins: string = INSTITUTION_ADMINS;
-  classAdmins: string = CLASS_ADMINS;
-  learners: string = LEARNERS;
+  @Input() entities: any[] = [];
 
-  selectedEntity = this.entities[0];
+  moderation: string = resources.MODERATION;
+  userRoles: string = resources.USER_ROLES;
+  institutions: string = resources.INSTITUTIONS;
+  members: string = resources.MEMBERS;
+  institutionAdmins: string = resources.INSTITUTION_ADMINS;
+  classAdmins: string = resources.CLASS_ADMINS;
+  learners: string = resources.LEARNERS;
+  selectedEntity;
 
   constructor(
     public dialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router
-  ) {}
+  ) {
+    this.selectedEntity = this.entities[0]?.value;
+  }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
@@ -73,7 +70,3 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 }
-
-const processEntities = (): string[] => {
-  return entities;
-};

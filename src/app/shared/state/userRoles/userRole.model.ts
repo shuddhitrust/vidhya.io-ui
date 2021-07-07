@@ -1,4 +1,4 @@
-import { USER_ROLES } from 'src/app/pages/static/dashboard/tabs/admin-dashboard/admin-dashboard.component';
+import { USER_ROLES_LABEL } from 'src/app/pages/static/dashboard/tabs/admin-dashboard/admin-dashboard.component';
 import {
   autoGenOptions,
   getOptionLabel,
@@ -61,4 +61,4 @@ export const defaultRoleState: UserRoleStateModel = {
 };
 
 export const UserRoleFormCloseURL =
-  uiroutes.DASHBOARD_ROUTE + '?adminSection=' + USER_ROLES;
+  uiroutes.DASHBOARD_ROUTE + '?adminSection=' + USER_ROLES_LABEL;
