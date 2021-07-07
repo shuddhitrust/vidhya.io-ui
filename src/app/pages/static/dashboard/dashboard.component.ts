@@ -55,6 +55,7 @@ export class DashboardComponent implements OnInit {
   permissions$: Observable<UserPermissions>;
   permissions: UserPermissions;
   entities: any[] = [];
+  resources = resources;
   constructor(private route: ActivatedRoute, private router: Router) {
     this.permissions$.subscribe((val) => {
       this.permissions = val;
@@ -77,6 +78,10 @@ export class DashboardComponent implements OnInit {
         // Do this after authorization is implemented
       }
     });
+  }
+
+  authorizeResourceMethod(resource) {
+    return authorizeResource(this.permissions, resource, '*');
   }
 
   onTabChange($event) {

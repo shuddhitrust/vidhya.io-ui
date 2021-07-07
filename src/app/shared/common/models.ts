@@ -124,29 +124,6 @@ export type User = {
   updatedAt?: string;
 };
 
-type ResourceActions = {
-  LIST: boolean;
-  GET: boolean;
-  CREATE: boolean;
-  UPDATE: boolean;
-  DELETE: boolean;
-};
-
-export type UserPermissions = {
-  MODERATION: ResourceActions;
-  LEARNERS: ResourceActions;
-  CLASS_ADMINS: ResourceActions;
-  MEMBERS: ResourceActions;
-  INSTITUTION_ADMINS: ResourceActions;
-  INSTITUTION_MEMBERS: ResourceActions;
-  INSTITUTIONS: ResourceActions;
-  ANNOUNCEMENTS: ResourceActions;
-  COURSES: ResourceActions;
-  GROUPS: ResourceActions;
-  REPORTS: ResourceActions;
-  USER_ROLES: ResourceActions;
-};
-
 export const LIST = 'LIST';
 export const GET = 'GET';
 export const CREATE = 'CREATE';
@@ -243,6 +220,30 @@ export const RESOURCE_ACTIONS = {
   DELETE: 'DELETE',
 };
 
+type ResourceActions = {
+  LIST: boolean;
+  GET: boolean;
+  CREATE: boolean;
+  UPDATE: boolean;
+  DELETE: boolean;
+};
+
+export type UserPermissions = {
+  MODERATION: ResourceActions;
+  LEARNERS: ResourceActions;
+  CLASS_ADMINS: ResourceActions;
+  MEMBERS: ResourceActions;
+  INSTITUTION_ADMINS: ResourceActions;
+  INSTITUTION_MEMBERS: ResourceActions;
+  INSTITUTIONS: ResourceActions;
+  ANNOUNCEMENTS: ResourceActions;
+  ASSIGNMENTS: ResourceActions;
+  COURSES: ResourceActions;
+  GROUPS: ResourceActions;
+  REPORTS: ResourceActions;
+  USER_ROLES: ResourceActions;
+};
+
 const defaultActions: ResourceActions = {
   LIST: true,
   GET: false,
@@ -260,6 +261,7 @@ export const resources = {
   INSTITUTION_MEMBERS: 'INSTITUTION_MEMBERS',
   INSTITUTIONS: 'INSTITUTIONS',
   ANNOUNCEMENTS: 'ANNOUNCEMENTS',
+  ASSIGNMENTS: 'ASSIGNMENTS',
   COURSES: 'COURSES',
   GROUPS: 'GROUPS',
   REPORTS: 'REPORTS',
@@ -275,6 +277,7 @@ export const defaultResourcePermissions: UserPermissions = {
   INSTITUTION_MEMBERS: defaultActions,
   INSTITUTIONS: defaultActions,
   ANNOUNCEMENTS: defaultActions,
+  ASSIGNMENTS: defaultActions,
   COURSES: defaultActions,
   GROUPS: defaultActions,
   REPORTS: defaultActions,
