@@ -9,6 +9,7 @@ import { MemberProfileRendererComponent } from 'src/app/shared/cell-renderers/me
 import {
   MembershipStatus,
   PaginationObject,
+  resources,
   User,
 } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
@@ -30,6 +31,7 @@ import { MemberProfileComponent } from '../../modals/member-profile/member-profi
 })
 export class AwaitingModerationTableComponent implements OnInit {
   tableTitle: string = 'Members Pending Approval';
+  resource: string = resources.MODERATION;
   members: object[];
   @Select(MemberState.listMembers)
   rows$: Observable<User[]>;

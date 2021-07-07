@@ -1,6 +1,7 @@
 <div class="feed-header-block">
   <h2>Groups</h2>
   <button
+    *ngIf="authorizeResourceMethod(resourceActions.CREATE)"
     (click)="createGroup()"
     class="floating-header-button-top"
     mat-raised-button
@@ -9,25 +10,26 @@
     Create Group
   </button>
 </div>
-
-<span *ngIf="!(isFetching$ | async); else loading">
-  <span *ngIf="(groups$ | async).length > 0; else feedEmpty">
-    <div *ngFor="let group of groups$ | async">
-      <span class="feed-card" (click)="openGroup(group)">
-        <h2>{{ group.name }}</h2>
-        <p>{{ clip(group.description) }}</p>
-        <small style="font-style: italic"
-          >Created on {{ parseDate(group.createdAt) }}</small
-        >
-      </span>
-    </div>
+<span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
+  <span *ngIf="!(isFetching$ | async); else loading">
+    <span *ngIf="(groups$ | async).length > 0; else feedEmpty">
+      <div *ngFor="let group of groups$ | async">
+        <span class="feed-card" (click)="openGroup(group)">
+          <h2>{{ group.name }}</h2>
+          <p>{{ clip(group.description) }}</p>
+          <small style="font-style: italic"
+            >Created on {{ parseDate(group.createdAt) }}</small
+          >
+        </span>
+      </div>
+    </span>
   </span>
+
+  <ng-template #feedEmpty>
+    <p class="center-title">There are no groups you are part of!</p>
+  </ng-template>
+
+  <ng-template #loading>
+    <app-simple-loading-spinner></app-simple-loading-spinner>
+  </ng-template>
 </span>
-
-<ng-template #feedEmpty>
-  <p class="center-title">There are no groups you are part of!</p>
-</ng-template>
-
-<ng-template #loading>
-  <app-simple-loading-spinner></app-simple-loading-spinner>
-</ng-template>

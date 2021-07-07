@@ -245,10 +245,10 @@ export type UserPermissions = {
 };
 
 const defaultActions: ResourceActions = {
-  LIST: true,
+  LIST: false,
   GET: false,
   CREATE: false,
-  UPDATE: false,
+  UPDATE: true,
   DELETE: false,
 };
 

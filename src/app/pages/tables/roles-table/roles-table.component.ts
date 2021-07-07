@@ -6,7 +6,11 @@ import { GridOptions } from 'ag-grid-community';
 import { Observable } from 'rxjs';
 import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
 import { RoleProfileRendererComponent } from 'src/app/shared/cell-renderers/role-profile/role-profile-renderer.component';
-import { PaginationObject, User } from 'src/app/shared/common/models';
+import {
+  PaginationObject,
+  resources,
+  User,
+} from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   FetchUserRolesAction,
@@ -24,6 +28,7 @@ import { USER_ROLES_LABEL } from '../../static/dashboard/tabs/admin-dashboard/ad
 })
 export class RolesTableComponent implements OnInit {
   tableTitle: string = USER_ROLES_LABEL;
+  resource: string = resources.USER_ROLES;
   roles: object[];
   @Select(UserRoleState.listRoles)
   rows$: Observable<User[]>;

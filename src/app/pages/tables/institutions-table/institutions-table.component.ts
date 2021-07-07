@@ -6,7 +6,11 @@ import { GridOptions } from 'ag-grid-community';
 import { Observable } from 'rxjs';
 import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
 import { InstitutionProfileRendererComponent } from 'src/app/shared/cell-renderers/institution-profile/institution-profile-renderer.component';
-import { Institution, PaginationObject } from 'src/app/shared/common/models';
+import {
+  Institution,
+  PaginationObject,
+  resources,
+} from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   ForceRefetchInstitutionsAction,
@@ -24,6 +28,7 @@ import { INSTITUTIONS_LABEL } from '../../static/dashboard/tabs/admin-dashboard/
 })
 export class InstitutionsTableComponent implements OnInit {
   tableTitle: string = INSTITUTIONS_LABEL;
+  resource: string = resources.INSTITUTIONS;
   institutions: object[];
   @Select(InstitutionState.listInstitutions)
   rows$: Observable<Institution[]>;

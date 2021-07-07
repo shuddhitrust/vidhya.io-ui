@@ -1,6 +1,10 @@
 <div id="title-tab">
   <div class="title-block">
-    <mat-form-field id="search-query-field" appearance="outline">
+    <mat-form-field
+      id="search-query-field"
+      *ngIf="authorizeResourceMethod(resourceActions.LIST)"
+      appearance="outline"
+    >
       <input
         [(ngModel)]="draftSearchQuery"
         (keyup.enter)="initiateGlobalSearch()"
@@ -27,46 +31,53 @@
       </mat-icon> -->
     </h2>
   </div>
-  <div *ngIf="createMethod.observers.length" class="title-block">
+  <div
+    *ngIf="
+      createMethod.observers.length &&
+      authorizeResourceMethod(resourceActions.CREATE)
+    "
+    class="title-block"
+  >
     <button mat-icon-button (click)="createRecord()" id="add-button">
       <mat-icon>add_circle</mat-icon>
     </button>
   </div>
 </div>
-
-<ag-grid-angular
-  class="ag-theme-alpine table-style"
-  [gridOptions]="gridOptions"
-  [rowData]="rows"
-  [columnDefs]="columns"
-  [defaultColDef]="defaultColDef"
-  [rowSelection]="rowSelection"
-  (firstDataRendered)="onFirstDataRendered($event)"
-  (rowDataChanged)="onRowDataChanged($event)"
-  (sortChanged)="onSortChanged($event)"
-  (filterChanged)="onFilterChanged($event)"
-  (selectionChanged)="onSelectionChanged($event)"
-  (columnResized)="onColumnResize($event)"
-  (dragStopped)="onColumnReorder($event)"
-  [rowHeight]="rowHeight"
-  [getRowHeight]="getRowHeight"
-  (gridReady)="onGridReady($event)"
-  [overlayLoadingTemplate]="overlayLoadingTemplate"
-  [overlayNoRowsTemplate]="overlayNoRowsTemplate"
-  [frameworkComponents]="frameworkComponents"
-  [isFullWidthCell]="isFullWidthCell"
-  [fullWidthCellRenderer]="fullWidthCellRenderer"
-  [fullWidthCellRendererParams]="fullWidthCellRendererParams"
->
-</ag-grid-angular>
-<app-paginator
-  [totalRecords]="totalRecords"
-  [pageSize]="pageSize"
-  [currentPage]="currentPage"
-  [rowsShowing]="rows?.length"
-  [staticTable]="staticTable"
-  [searchQuery]="searchParams?.newSearchQuery"
-  (onPageSizeChange)="onPageSizeChange($event)"
-  (onPageChange)="onPageChange($event)"
->
-</app-paginator>
+<span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
+  <ag-grid-angular
+    class="ag-theme-alpine table-style"
+    [gridOptions]="gridOptions"
+    [rowData]="rows"
+    [columnDefs]="columns"
+    [defaultColDef]="defaultColDef"
+    [rowSelection]="rowSelection"
+    (firstDataRendered)="onFirstDataRendered($event)"
+    (rowDataChanged)="onRowDataChanged($event)"
+    (sortChanged)="onSortChanged($event)"
+    (filterChanged)="onFilterChanged($event)"
+    (selectionChanged)="onSelectionChanged($event)"
+    (columnResized)="onColumnResize($event)"
+    (dragStopped)="onColumnReorder($event)"
+    [rowHeight]="rowHeight"
+    [getRowHeight]="getRowHeight"
+    (gridReady)="onGridReady($event)"
+    [overlayLoadingTemplate]="overlayLoadingTemplate"
+    [overlayNoRowsTemplate]="overlayNoRowsTemplate"
+    [frameworkComponents]="frameworkComponents"
+    [isFullWidthCell]="isFullWidthCell"
+    [fullWidthCellRenderer]="fullWidthCellRenderer"
+    [fullWidthCellRendererParams]="fullWidthCellRendererParams"
+  >
+  </ag-grid-angular>
+  <app-paginator
+    [totalRecords]="totalRecords"
+    [pageSize]="pageSize"
+    [currentPage]="currentPage"
+    [rowsShowing]="rows?.length"
+    [staticTable]="staticTable"
+    [searchQuery]="searchParams?.newSearchQuery"
+    (onPageSizeChange)="onPageSizeChange($event)"
+    (onPageChange)="onPageChange($event)"
+  >
+  </app-paginator>
+</span>

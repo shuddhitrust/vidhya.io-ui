@@ -266,6 +266,18 @@ export const authorizeResource = (
     }
     return false;
   } else {
-    return permissions[resource][action];
+    console.log(
+      'permissions[resource]',
+      permissions[resource],
+      {
+        permissions,
+        resource,
+        action,
+      },
+      'permissions[resource][action]',
+      permissions[resource][action]
+    );
+
+    return permissions[resource] ? permissions[resource][action] : false;
   }
 };

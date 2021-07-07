@@ -6,7 +6,11 @@ import { GridOptions } from 'ag-grid-community';
 import { Observable } from 'rxjs';
 import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
 import { MemberProfileRendererComponent } from 'src/app/shared/cell-renderers/member-profile/member-profile-renderer.component';
-import { PaginationObject, User } from 'src/app/shared/common/models';
+import {
+  PaginationObject,
+  resources,
+  User,
+} from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   FetchMembersAction,
@@ -24,6 +28,7 @@ import { MEMBERS_LABEL } from '../../static/dashboard/tabs/admin-dashboard/admin
 })
 export class MembersTableComponent implements OnInit {
   tableTitle: string = MEMBERS_LABEL;
+  resource: string = resources.MEMBERS;
   members: object[];
   @Select(MemberState.listMembers)
   rows$: Observable<User[]>;

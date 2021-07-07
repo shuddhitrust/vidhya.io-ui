@@ -6,7 +6,11 @@ import { GridOptions } from 'ag-grid-community';
 import { Observable } from 'rxjs';
 import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
 import { MemberProfileRendererComponent } from 'src/app/shared/cell-renderers/member-profile/member-profile-renderer.component';
-import { PaginationObject, User } from 'src/app/shared/common/models';
+import {
+  PaginationObject,
+  resources,
+  User,
+} from 'src/app/shared/common/models';
 import {
   FetchMembersAction,
   ForceRefetchMembersAction,
@@ -24,6 +28,7 @@ import { LEARNERS_LABEL } from '../../static/dashboard/tabs/admin-dashboard/admi
 })
 export class LearnersTableComponent implements OnInit {
   tableTitle: string = LEARNERS_LABEL;
+  resource: string = resources.LEARNERS;
   members: object[];
   @Select(MemberState.listMembers)
   rows$: Observable<User[]>;

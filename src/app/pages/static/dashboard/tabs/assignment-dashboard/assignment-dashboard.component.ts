@@ -3,10 +3,17 @@ import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
-import { Assignment } from 'src/app/shared/common/models';
+import { authorizeResource } from 'src/app/shared/common/functions';
+import {
+  Assignment,
+  resources,
+  RESOURCE_ACTIONS,
+  UserPermissions,
+} from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { FetchAssignmentsAction } from 'src/app/shared/state/assignments/assignment.actions';
 import { AssignmentState } from 'src/app/shared/state/assignments/assignment.state';
+import { AuthState } from 'src/app/shared/state/auth/auth.state';
 
 @Component({
   selector: 'app-assignment-dashboard',
@@ -17,6 +24,12 @@ import { AssignmentState } from 'src/app/shared/state/assignments/assignment.sta
   ],
 })
 export class AssignmentDashboardComponent implements OnInit {
+  resource: string = resources.ANNOUNCEMENTS;
+  resourceActions = RESOURCE_ACTIONS;
+  @Select(AuthState.getPermissions)
+  permissions$: Observable<UserPermissions>;
+  permissions: UserPermissions;
+
   @Select(AssignmentState.listAssignments)
   assignments$: Observable<Assignment[]>;
 
@@ -24,9 +37,15 @@ export class AssignmentDashboardComponent implements OnInit {
   isFetching$: Observable<boolean>;
 
   constructor(private store: Store, private router: Router) {
+    this.permissions$.subscribe((val) => {
+      this.permissions = val;
+    });
     this.store.dispatch(
       new FetchAssignmentsAction({ searchParams: defaultSearchParams })
     );
+  }
+  authorizeResourceMethod(action) {
+    return authorizeResource(this.permissions, this.resource, action);
   }
 
   ngOnInit(): void {}

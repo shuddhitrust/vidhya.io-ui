@@ -6,7 +6,7 @@ import {
   EventEmitter,
   OnChanges,
 } from '@angular/core';
-import { Store } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
 import { GridOptions } from 'ag-grid-community';
 import { pageSizeOptions } from './../../table.config';
 import { ColWidth, defaultPageSize, SearchParams } from './../../table.model';
@@ -17,9 +17,13 @@ import {
 } from './../../table.functions';
 import {
   PaginationObject,
+  RESOURCE_ACTIONS,
   startingPaginationObject,
+  UserPermissions,
 } from 'src/app/shared/common/models';
 import { Observable } from 'rxjs';
+import { authorizeResource } from 'src/app/shared/common/functions';
+import { AuthState } from 'src/app/shared/state/auth/auth.state';
 @Component({
   selector: 'app-master-grid',
   templateUrl: './master-grid.component.html',
@@ -63,6 +67,7 @@ export class MasterGridComponent implements OnInit, OnChanges {
   pageSizeOptions: Array<Object> = pageSizeOptions.map((p) => p.value);
   staticTable = false; // Set to true if there are no server side operations
   @Input() searchInputExists: boolean = false;
+  @Input() resource: string;
   @Input() tableId = '';
   @Input() addRoute = '';
   @Input() addLabel = '';
@@ -81,6 +86,11 @@ export class MasterGridComponent implements OnInit, OnChanges {
   @Input() rowSelection: string = '';
   @Input() rowDeselection: boolean = true;
   @Input() paginationObject$: Observable<PaginationObject>;
+
+  @Select(AuthState.getPermissions)
+  permissions$: Observable<UserPermissions>;
+  permissions: UserPermissions;
+  resourceActions = RESOURCE_ACTIONS;
   totalRecords = 0;
   pageSize = defaultPageSize;
   currentPage = 1;
@@ -103,7 +113,11 @@ export class MasterGridComponent implements OnInit, OnChanges {
   //     return `calc(${this.tableHeight} - ${this.tableHeightClearanceInPx}px)`;
   //   }
   // };
-  constructor(private store: Store) {}
+  constructor(private store: Store) {
+    this.permissions$.subscribe((val) => {
+      this.permissions = val;
+    });
+  }
 
   ngOnChanges(changes) {
     if (changes.paginationObject$) {
@@ -140,6 +154,10 @@ export class MasterGridComponent implements OnInit, OnChanges {
     );
     this.fetchRecords();
     this.sizeToFit();
+  }
+
+  authorizeResourceMethod(action) {
+    return authorizeResource(this.permissions, this.resource, action);
   }
 
   sizeToFit() {

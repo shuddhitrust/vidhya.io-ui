@@ -3,11 +3,20 @@ import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
-import { parseDateTime } from 'src/app/shared/common/functions';
-import { Announcement } from 'src/app/shared/common/models';
+import {
+  authorizeResource,
+  parseDateTime,
+} from 'src/app/shared/common/functions';
+import {
+  Announcement,
+  resources,
+  RESOURCE_ACTIONS,
+  UserPermissions,
+} from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { FetchAnnouncementsAction } from 'src/app/shared/state/announcements/announcement.actions';
 import { AnnouncementState } from 'src/app/shared/state/announcements/announcement.state';
+import { AuthState } from 'src/app/shared/state/auth/auth.state';
 
 @Component({
   selector: 'app-announcement-dashboard',
@@ -18,6 +27,11 @@ import { AnnouncementState } from 'src/app/shared/state/announcements/announceme
   ],
 })
 export class AnnouncementDashboardComponent implements OnInit {
+  resource: string = resources.ANNOUNCEMENTS;
+  resourceActions = RESOURCE_ACTIONS;
+  @Select(AuthState.getPermissions)
+  permissions$: Observable<UserPermissions>;
+  permissions: UserPermissions;
   @Select(AnnouncementState.listAnnouncements)
   announcements$: Observable<Announcement[]>;
 
@@ -25,6 +39,9 @@ export class AnnouncementDashboardComponent implements OnInit {
   isFetching$: Observable<boolean>;
 
   constructor(private store: Store, private router: Router) {
+    this.permissions$.subscribe((val) => {
+      this.permissions = val;
+    });
     this.store.dispatch(
       new FetchAnnouncementsAction({ searchParams: defaultSearchParams })
     );
@@ -42,6 +59,10 @@ export class AnnouncementDashboardComponent implements OnInit {
 
   parseDate(date) {
     return parseDateTime(date);
+  }
+
+  authorizeResourceMethod(action) {
+    return authorizeResource(this.permissions, this.resource, action);
   }
 
   openAnnouncement(announcement) {
