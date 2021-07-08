@@ -67,7 +67,7 @@ export const defaultMemberState: MemberStateModel = {
 export const membershipStatusOptions: MatSelectOption[] =
   autoGenOptions(MembershipStatus); // autoGenOptions(MembershipStatus);
 
-export const memberColumns = [
+export const memberColumns: any[] = [
   {
     field: 'firstName',
   },

@@ -4,11 +4,11 @@ import { ICellRendererParams } from 'ag-grid-community';
 import { MemberProfileComponent } from 'src/app/pages/modals/member-profile/member-profile.component';
 
 @Component({
-  selector: 'app-member-profile',
-  templateUrl: './member-profile-renderer.component.html',
-  styleUrls: ['./member-profile-renderer.component.scss'],
+  selector: 'app-moderation-renderer',
+  templateUrl: './user-moderation-renderer.component.html',
+  styleUrls: ['./user-moderation-renderer.component.scss'],
 })
-export class MemberProfileRendererComponent {
+export class UserModerationRendererComponent {
   cellValue: string;
   rowData: any;
   params: any;
@@ -31,6 +31,6 @@ export class MemberProfileRendererComponent {
   constructor(public dialog: MatDialog) {}
 
   public invokeParentMethod() {
-    this.params.context.componentParent.openMemberProfile(this.rowData);
+    this.params.context.componentParent.moderateUser(this.rowData);
   }
 }

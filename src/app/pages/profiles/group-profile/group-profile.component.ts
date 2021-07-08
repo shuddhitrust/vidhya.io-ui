@@ -15,7 +15,12 @@ import {
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
-import { Group } from 'src/app/shared/common/models';
+import {
+  Group,
+  resources,
+  RESOURCE_ACTIONS,
+} from 'src/app/shared/common/models';
+import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 
 @Component({
   selector: 'app-group-profile',
@@ -23,6 +28,8 @@ import { Group } from 'src/app/shared/common/models';
   styleUrls: ['./group-profile.component.scss'],
 })
 export class GroupProfileComponent implements OnInit, OnDestroy {
+  resource = resources.GROUPS;
+  resourceActions = RESOURCE_ACTIONS;
   @Select(GroupState.getGroupFormRecord)
   group$: Observable<Group>;
   group: Group;
@@ -34,10 +41,17 @@ export class GroupProfileComponent implements OnInit, OnDestroy {
     private location: Location,
     private route: ActivatedRoute,
     private store: Store,
-    private router: Router
+    private router: Router,
+    private auth: AuthorizationService
   ) {
     this.group$.subscribe((val) => {
       this.group = val;
+    });
+  }
+
+  authorizeResourceMethod(action) {
+    return this.auth.authorizeResource(this.resource, action, {
+      adminIds: this.group?.admins?.map((admin) => admin.id),
     });
   }
 

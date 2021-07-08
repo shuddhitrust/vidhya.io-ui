@@ -109,6 +109,12 @@ import { ChatComponent } from './pages/static/chat/chat.component';
 import { ChatState } from './shared/state/chats/chat.state';
 import { PasswordResetComponent } from './pages/forms/password-reset/password-reset.component';
 import { InfiniteScrollComponent } from './shared/abstract/infinite-scroller/infinite-scroller.component';
+import {
+  UserModerationProfileComponent,
+  UserApprovalConfirmationDialog,
+  UserDenialConfirmationDialog,
+} from './pages/modals/moderate-user/user-moderation.component';
+import { UserModerationRendererComponent } from './shared/cell-renderers/user-moderation/user-moderation-renderer.component';
 
 @NgModule({
   declarations: [
@@ -164,6 +170,10 @@ import { InfiniteScrollComponent } from './shared/abstract/infinite-scroller/inf
     ChatComponent,
     PasswordResetComponent,
     InfiniteScrollComponent,
+    UserModerationProfileComponent,
+    UserModerationRendererComponent,
+    UserApprovalConfirmationDialog,
+    UserDenialConfirmationDialog,
   ],
   imports: [
     BrowserModule,

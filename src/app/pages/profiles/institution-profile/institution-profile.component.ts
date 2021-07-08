@@ -4,7 +4,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
-import { Institution } from 'src/app/shared/common/models';
+import {
+  Institution,
+  resources,
+  RESOURCE_ACTIONS,
+} from 'src/app/shared/common/models';
 import { InstitutionState } from 'src/app/shared/state/institutions/institution.state';
 import {
   DeleteInstitutionAction,
@@ -15,6 +19,7 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
+import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 
 @Component({
   selector: 'app-institution-profile',
@@ -22,6 +27,8 @@ import {
   styleUrls: ['./institution-profile.component.scss'],
 })
 export class InstitutionProfileComponent implements OnInit {
+  resource = resources.INSTITUTIONS;
+  resourceActions = RESOURCE_ACTIONS;
   params: object = {};
   @Select(InstitutionState.getInstitutionFormRecord)
   institutionFormRecord$: Observable<Institution>;
@@ -34,10 +41,17 @@ export class InstitutionProfileComponent implements OnInit {
     private location: Location,
     private router: Router,
     private store: Store,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private auth: AuthorizationService
   ) {
     this.institutionFormRecord$.subscribe((val) => {
       this.institution = val;
+    });
+  }
+
+  authorizeResourceMethod(action) {
+    return this.auth.authorizeResource(this.resource, action, {
+      institutionId: this.institution.id,
     });
   }
 

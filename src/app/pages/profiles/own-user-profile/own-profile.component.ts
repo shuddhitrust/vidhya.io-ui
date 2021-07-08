@@ -5,7 +5,12 @@ import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
-import { User } from 'src/app/shared/common/models';
+import {
+  resources,
+  RESOURCE_ACTIONS,
+  User,
+} from 'src/app/shared/common/models';
+import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 
 @Component({
   selector: 'app-own-profile',
@@ -13,13 +18,25 @@ import { User } from 'src/app/shared/common/models';
   styleUrls: ['./own-profile.component.scss'],
 })
 export class OwnProfileComponent implements OnInit, OnDestroy {
+  resource = resources.OWN_PROFILE;
+  resourceActions = RESOURCE_ACTIONS;
   @Select(AuthState.getCurrentMember)
   currentMember$: Observable<User>;
   currentMember: User;
 
-  constructor(private location: Location, private router: Router) {
+  constructor(
+    private location: Location,
+    private router: Router,
+    private auth: AuthorizationService
+  ) {
     this.currentMember$.subscribe((val) => {
       this.currentMember = val;
+    });
+  }
+
+  authorizeResourceMethod(action) {
+    return this.auth.authorizeResource(this.resource, action, {
+      adminIds: [this.currentMember.id],
     });
   }
 

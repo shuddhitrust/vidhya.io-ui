@@ -6,8 +6,9 @@ import { GridOptions } from 'ag-grid-community';
 import { Observable } from 'rxjs';
 import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
 import { MemberProfileRendererComponent } from 'src/app/shared/cell-renderers/member-profile/member-profile-renderer.component';
+import { UserModerationRendererComponent } from 'src/app/shared/cell-renderers/user-moderation/user-moderation-renderer.component';
+import { getOptionLabel, parseDateTime } from 'src/app/shared/common/functions';
 import {
-  MembershipStatus,
   PaginationObject,
   resources,
   User,
@@ -17,12 +18,10 @@ import {
   FetchMembersAction,
   ForceRefetchMembersAction,
 } from 'src/app/shared/state/members/member.actions';
-import {
-  memberColumns,
-  membershipStatusOptions,
-} from 'src/app/shared/state/members/member.model';
+import { membershipStatusOptions } from 'src/app/shared/state/members/member.model';
 import { MemberState } from 'src/app/shared/state/members/member.state';
 import { MemberProfileComponent } from '../../modals/member-profile/member-profile.component';
+import { UserModerationProfileComponent } from '../../modals/moderate-user/user-moderation.component';
 
 @Component({
   selector: 'app-awaiting-moderation-table',
@@ -46,11 +45,40 @@ export class AwaitingModerationTableComponent implements OnInit {
     resizable: true,
   };
   columnFilters = {
-    membershipStatusNot: MembershipStatus.APPROVED,
+    // membershipStatusNot: MembershipStatus.APPROVED,
   };
-  columns = memberColumns;
+  columns = [
+    {
+      field: 'firstName',
+    },
+    {
+      field: 'lastName',
+    },
+    { field: 'title' },
+    {
+      field: 'bio',
+    },
+    {
+      field: 'membershipStatus',
+      cellRenderer: (params) => {
+        return getOptionLabel(params.value, membershipStatusOptions);
+      },
+    },
+    {
+      field: 'lastActive',
+      cellRenderer: (params) => {
+        return parseDateTime(params.value);
+      },
+      tooltipField: 'lastActive',
+    },
+    {
+      field: 'moderate',
+      cellRenderer: 'moderationRenderer',
+    },
+  ];
   frameworkComponents = {
     memberRenderer: MemberProfileRendererComponent,
+    moderationRenderer: UserModerationRendererComponent,
   };
   gridOptions: GridOptions;
 
@@ -81,6 +109,14 @@ export class AwaitingModerationTableComponent implements OnInit {
 
   createMember() {
     this.router.navigateByUrl(uiroutes.MEMBER_FORM_ROUTE);
+  }
+
+  moderateUser(rowData) {
+    const dialogRef = this.dialog.open(UserModerationProfileComponent, {
+      data: rowData,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {});
   }
 
   openMemberProfile(rowData) {

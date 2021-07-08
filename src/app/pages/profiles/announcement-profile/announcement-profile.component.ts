@@ -20,7 +20,6 @@ import {
   RESOURCE_ACTIONS,
 } from 'src/app/shared/common/models';
 import { parseDateTime } from 'src/app/shared/common/functions';
-import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 
 @Component({
@@ -50,7 +49,9 @@ export class AnnouncementProfileComponent implements OnInit, OnDestroy {
   }
 
   authorizeResourceMethod(action) {
-    return this.auth.authorizeResource(this.resource, action);
+    return this.auth.authorizeResource(this.resource, action, {
+      adminIds: [this.announcement?.author?.id],
+    });
   }
 
   ngOnInit(): void {

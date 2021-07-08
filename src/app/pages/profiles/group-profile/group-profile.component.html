@@ -4,6 +4,7 @@
 
 <span *ngIf="!(isFetchingGroup$ | async)">
   <button
+    *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
     mat-raised-button
     color="warn"
     class="profile-button"
@@ -12,6 +13,7 @@
     Delete
   </button>
   <button
+    *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
     mat-raised-button
     color="info"
     [class.button-loading]="isFetchingGroup$ | async"

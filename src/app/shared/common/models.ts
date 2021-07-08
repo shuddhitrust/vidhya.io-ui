@@ -158,8 +158,8 @@ export type Group = {
   institution: {
     id: number;
   };
-  members: number[];
-  admins: number[];
+  members: User[];
+  admins: User[];
   groupType: string;
   createdAt?: string;
   updatedAt?: string;
@@ -242,14 +242,15 @@ export type UserPermissions = {
   GROUPS: ResourceActions;
   REPORTS: ResourceActions;
   USER_ROLES: ResourceActions;
+  OWN_PROFILE: ResourceActions;
 };
 
 const defaultActions: ResourceActions = {
-  LIST: false,
-  GET: false,
-  CREATE: false,
+  LIST: true,
+  GET: true,
+  CREATE: true,
   UPDATE: true,
-  DELETE: false,
+  DELETE: true,
 };
 
 export const resources = {
@@ -266,6 +267,7 @@ export const resources = {
   GROUPS: 'GROUPS',
   REPORTS: 'REPORTS',
   USER_ROLES: 'USER_ROLES',
+  OWN_PROFILE: 'OWN_PROFILE',
 };
 
 export const defaultResourcePermissions: UserPermissions = {
@@ -282,4 +284,5 @@ export const defaultResourcePermissions: UserPermissions = {
   GROUPS: defaultActions,
   REPORTS: defaultActions,
   USER_ROLES: defaultActions,
+  OWN_PROFILE: defaultActions,
 };
