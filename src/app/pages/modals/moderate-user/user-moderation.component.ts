@@ -23,10 +23,17 @@ export class UserModerationProfileComponent {
     private store: Store
   ) {
     this.profileData = data;
+    console.log('profieData from usermoderationprofile => ', {
+      profileData: this.profileData,
+    });
   }
 
   closeDialog(): void {
     this.dialogRef.close();
+  }
+
+  constructFullName() {
+    return constructUserFullName(this.data);
   }
 
   approvalConfirmation() {

@@ -74,6 +74,7 @@ export const USER_QUERIES = {
         lastName
         title
         bio
+        avatar
         membershipStatus
         role {
           id

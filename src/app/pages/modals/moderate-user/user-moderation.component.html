@@ -1,11 +1,17 @@
 <div mat-dialog-content class="dialog-box">
   <mat-card>
     <mat-card-header>
-      <mat-card-title>{{ profileData.name }}</mat-card-title>
+      <mat-card-title>{{ constructFullName() }}</mat-card-title>
       <mat-card-subtitle>{{ profileData.location }}</mat-card-subtitle>
       <mat-card-subtitle>{{ profileData.title }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
+      <img
+        class="avatar"
+        *ngIf="profileData.avatar"
+        [src]="profileData.avatar"
+        alt="User avatar"
+      />
       <p>
         {{ profileData.bio }}
       </p>
