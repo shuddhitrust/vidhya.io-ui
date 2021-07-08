@@ -2,16 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
+import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
-import { authorizeResource } from 'src/app/shared/common/functions';
 import {
   Course,
   resources,
   RESOURCE_ACTIONS,
-  UserPermissions,
 } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
-import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { FetchCoursesAction } from 'src/app/shared/state/courses/course.actions';
 import { CourseState } from 'src/app/shared/state/courses/course.state';
 
@@ -26,9 +24,6 @@ import { CourseState } from 'src/app/shared/state/courses/course.state';
 export class CourseDashboardComponent implements OnInit {
   resource: string = resources.COURSES;
   resourceActions = RESOURCE_ACTIONS;
-  @Select(AuthState.getPermissions)
-  permissions$: Observable<UserPermissions>;
-  permissions: UserPermissions;
 
   @Select(CourseState.listCourses)
   courses$: Observable<Course[]>;
@@ -36,16 +31,17 @@ export class CourseDashboardComponent implements OnInit {
   @Select(CourseState.isFetching)
   isFetching$: Observable<boolean>;
 
-  constructor(private store: Store, private router: Router) {
-    this.permissions$.subscribe((val) => {
-      this.permissions = val;
-    });
+  constructor(
+    private store: Store,
+    private router: Router,
+    private auth: AuthorizationService
+  ) {
     this.store.dispatch(
       new FetchCoursesAction({ searchParams: defaultSearchParams })
     );
   }
   authorizeResourceMethod(action) {
-    return authorizeResource(this.permissions, this.resource, action);
+    return this.auth.authorizeResource(this.resource, action);
   }
 
   ngOnInit(): void {}

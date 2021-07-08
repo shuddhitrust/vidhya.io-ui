@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from '@apollo/client/utilities';
 import { Select } from '@ngxs/store';
-import { authorizeResource } from 'src/app/shared/common/functions';
+import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { resources, UserPermissions } from 'src/app/shared/common/models';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { uiroutes } from '../../../shared/common/ui-routes';
@@ -53,13 +53,16 @@ export class DashboardComponent implements OnInit {
   params: object = {};
   @Select(AuthState.getPermissions)
   permissions$: Observable<UserPermissions>;
-  permissions: UserPermissions;
+
   entities: any[] = [];
   resources = resources;
-  constructor(private route: ActivatedRoute, private router: Router) {
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private auth: AuthorizationService
+  ) {
     this.permissions$.subscribe((val) => {
-      this.permissions = val;
-      this.entities = processEntities(this.permissions);
+      this.entities = this.processEntities();
     });
   }
 
@@ -80,8 +83,16 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  processEntities(): any[] {
+    let newEntities = adminEntities.filter((e) => {
+      console.log('from process entities => ', { e });
+      return this.authorizeResourceMethod(e.value);
+    });
+    return newEntities;
+  }
+
   authorizeResourceMethod(resource) {
-    return authorizeResource(this.permissions, resource, '*');
+    return this.auth.authorizeResource(resource, '*');
   }
 
   onTabChange($event) {
@@ -104,12 +115,4 @@ const getIndexFromTabName = (tabName: string): string => {
   );
 
   return indexByParams.toString();
-};
-
-const processEntities = (permissions): any[] => {
-  let newEntities = adminEntities.filter((e) => {
-    console.log('from process entities => ', { e });
-    return authorizeResource(permissions, e?.value, '*');
-  });
-  return newEntities;
 };

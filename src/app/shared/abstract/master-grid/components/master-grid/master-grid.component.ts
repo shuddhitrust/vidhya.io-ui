@@ -22,8 +22,7 @@ import {
   UserPermissions,
 } from 'src/app/shared/common/models';
 import { Observable } from 'rxjs';
-import { authorizeResource } from 'src/app/shared/common/functions';
-import { AuthState } from 'src/app/shared/state/auth/auth.state';
+import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 @Component({
   selector: 'app-master-grid',
   templateUrl: './master-grid.component.html',
@@ -87,9 +86,6 @@ export class MasterGridComponent implements OnInit, OnChanges {
   @Input() rowDeselection: boolean = true;
   @Input() paginationObject$: Observable<PaginationObject>;
 
-  @Select(AuthState.getPermissions)
-  permissions$: Observable<UserPermissions>;
-  permissions: UserPermissions;
   resourceActions = RESOURCE_ACTIONS;
   totalRecords = 0;
   pageSize = defaultPageSize;
@@ -113,11 +109,7 @@ export class MasterGridComponent implements OnInit, OnChanges {
   //     return `calc(${this.tableHeight} - ${this.tableHeightClearanceInPx}px)`;
   //   }
   // };
-  constructor(private store: Store) {
-    this.permissions$.subscribe((val) => {
-      this.permissions = val;
-    });
-  }
+  constructor(private store: Store, private auth: AuthorizationService) {}
 
   ngOnChanges(changes) {
     if (changes.paginationObject$) {
@@ -157,7 +149,7 @@ export class MasterGridComponent implements OnInit, OnChanges {
   }
 
   authorizeResourceMethod(action) {
-    return authorizeResource(this.permissions, this.resource, action);
+    return this.auth.authorizeResource(this.resource, action);
   }
 
   sizeToFit() {

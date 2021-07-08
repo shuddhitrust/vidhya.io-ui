@@ -14,8 +14,14 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
-import { Announcement } from 'src/app/shared/common/models';
+import {
+  Announcement,
+  resources,
+  RESOURCE_ACTIONS,
+} from 'src/app/shared/common/models';
 import { parseDateTime } from 'src/app/shared/common/functions';
+import { AuthState } from 'src/app/shared/state/auth/auth.state';
+import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 
 @Component({
   selector: 'app-announcement-profile',
@@ -23,6 +29,8 @@ import { parseDateTime } from 'src/app/shared/common/functions';
   styleUrls: ['./announcement-profile.component.scss'],
 })
 export class AnnouncementProfileComponent implements OnInit, OnDestroy {
+  resource = resources.ANNOUNCEMENTS;
+  resourceActions = RESOURCE_ACTIONS;
   @Select(AnnouncementState.getAnnouncementFormRecord)
   announcement$: Observable<Announcement>;
   announcement: Announcement;
@@ -33,11 +41,16 @@ export class AnnouncementProfileComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     private location: Location,
     private route: ActivatedRoute,
-    private store: Store
+    private store: Store,
+    private auth: AuthorizationService
   ) {
     this.announcement$.subscribe((val) => {
       this.announcement = val;
     });
+  }
+
+  authorizeResourceMethod(action) {
+    return this.auth.authorizeResource(this.resource, action);
   }
 
   ngOnInit(): void {

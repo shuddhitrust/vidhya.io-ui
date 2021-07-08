@@ -248,36 +248,3 @@ export const constructPermissions = (permissions: UserPermissions) => {
   }
   return permissions;
 };
-
-export const authorizeResource = (
-  permissions: UserPermissions,
-  resource: string,
-  action: string
-): boolean => {
-  if (action == '*') {
-    const keys = Object.keys(permissions[resource]);
-    console.log('authorizeResources => ', { keys });
-    for (let i = 0; i < keys.length; i++) {
-      console.log('permission[resource]', permissions[resource]);
-      console.log('permission[resource][i]', permissions[resource][keys[i]]);
-      if (permissions[resource][keys[i]] == true) {
-        return true;
-      }
-    }
-    return false;
-  } else {
-    console.log(
-      'permissions[resource]',
-      permissions[resource],
-      {
-        permissions,
-        resource,
-        action,
-      },
-      'permissions[resource][action]',
-      permissions[resource][action]
-    );
-
-    return permissions[resource] ? permissions[resource][action] : false;
-  }
-};

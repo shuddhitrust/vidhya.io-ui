@@ -4,6 +4,7 @@
 
 <span *ngIf="!(isFetchingAnnouncement$ | async)">
   <button
+    *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
     mat-raised-button
     color="warn"
     class="profile-button"

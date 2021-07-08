@@ -1,11 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from '@apollo/client/utilities';
-import { Select } from '@ngxs/store';
-import { authorizeResource } from 'src/app/shared/common/functions';
-import { resources, UserPermissions } from 'src/app/shared/common/models';
-import { AuthState } from 'src/app/shared/state/auth/auth.state';
+import { resources } from 'src/app/shared/common/models';
 
 export const MODERATION_LABEL = 'Moderation';
 export const USER_ROLES_LABEL = 'User Roles';
