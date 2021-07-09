@@ -57,6 +57,7 @@ export class AuthenticationGuard implements CanActivate {
       return false;
     } else {
       if (resource) {
+        let result = false;
         for (let i = 0; i < actions.length; i++) {
           const action = actions[i];
           // if resource permissions exists for this route, it will check with authorization service and return it's output
@@ -67,10 +68,12 @@ export class AuthenticationGuard implements CanActivate {
               action,
             },
             'this.auth.authorizeResource(resource, action, {});',
-            this.auth.authorizeResource(resource, action, {})
+            (result =
+              result || this.auth.authorizeResource(resource, action, {}))
           );
-          return this.auth.authorizeResource(resource, action, {});
+          result = result || this.auth.authorizeResource(resource, action, {});
         }
+        return result;
       }
       // if resource is null, then it is automatically returned true without checking with authorization service
       return true;
