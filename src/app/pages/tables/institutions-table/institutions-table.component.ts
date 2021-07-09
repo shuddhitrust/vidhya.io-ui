@@ -74,7 +74,7 @@ export class InstitutionsTableComponent implements OnInit {
 
   createInstitution() {
     this.store.dispatch(new ResetInstitutionFormAction());
-    this.router.navigateByUrl(uiroutes.INSTITUTION_FORM_ROUTE);
+    this.router.navigateByUrl(uiroutes.INSTITUTION_FORM_ROUTE.route);
   }
 
   forceRefetchInstitutions(searchParams: SearchParams) {

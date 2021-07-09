@@ -50,7 +50,7 @@ export class HomeComponent implements OnInit {
       if (this.firstTimeSetup) {
         // If this is the first time user is logging in, redirect to member form page
         // to update their profile info.
-        this.router.navigate([uiroutes.MEMBER_FORM_ROUTE]);
+        this.router.navigate([uiroutes.MEMBER_FORM_ROUTE.route]);
       }
     });
 
@@ -90,9 +90,11 @@ export class HomeComponent implements OnInit {
   activateAccount() {
     this.url = window.location.href;
     console.log('this.url => ', { url: this.url });
-    if (this.url.includes(uiroutes.ACTIVATE_ACCOUNT)) {
+    if (this.url.includes(uiroutes.ACTIVATE_ACCOUNT_ROUTE.route)) {
       console.log('account activation!!!');
-      const token = this.url.split(uiroutes.ACTIVATE_ACCOUNT + '/')[1];
+      const token = this.url.split(
+        uiroutes.ACTIVATE_ACCOUNT_ROUTE.route + '/'
+      )[1];
       if (token) {
         this.store.dispatch(new VerifyAccountAction({ token }));
       }

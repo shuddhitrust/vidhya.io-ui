@@ -108,7 +108,7 @@ export class AwaitingModerationTableComponent implements OnInit {
   }
 
   createMember() {
-    this.router.navigateByUrl(uiroutes.MEMBER_FORM_ROUTE);
+    this.router.navigateByUrl(uiroutes.MEMBER_FORM_ROUTE.route);
   }
 
   moderateUser(rowData) {

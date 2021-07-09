@@ -20,10 +20,10 @@ import { AuthState } from '../../state/auth/auth.state';
   styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent implements OnInit {
-  dashboardRoute: string = uiroutes.DASHBOARD_ROUTE;
-  profileRoute: string = uiroutes.MEMBER_PROFILE_ROUTE;
-  accountRoute: string = uiroutes.ACCOUNT_ROUTE;
-  supportRoute: string = uiroutes.SUPPORT_ROUTE;
+  dashboardRoute: string = uiroutes.DASHBOARD_ROUTE.route;
+  profileRoute: string = uiroutes.MEMBER_PROFILE_ROUTE.route;
+  accountRoute: string = uiroutes.ACCOUNT_ROUTE.route;
+  supportRoute: string = uiroutes.SUPPORT_ROUTE.route;
   @Select(AuthState)
   authState$: Observable<AuthStateModel>;
   authState: AuthStateModel;
@@ -45,11 +45,11 @@ export class NavbarComponent implements OnInit {
   }
 
   onAvatarClick() {
-    this.router.navigateByUrl(uiroutes.MEMBER_PROFILE_ROUTE);
+    this.router.navigateByUrl(uiroutes.MEMBER_PROFILE_ROUTE.route);
   }
 
   onChatClick() {
-    this.router.navigateByUrl(uiroutes.CHAT_ROUTE);
+    this.router.navigateByUrl(uiroutes.CHAT_ROUTE.route);
   }
 
   login() {

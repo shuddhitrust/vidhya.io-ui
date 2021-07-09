@@ -45,7 +45,7 @@ export class AnnouncementDashboardComponent implements OnInit {
   ngOnInit(): void {}
 
   createAnnouncement() {
-    this.router.navigateByUrl(uiroutes.ANNOUNCEMENT_FORM_ROUTE);
+    this.router.navigateByUrl(uiroutes.ANNOUNCEMENT_FORM_ROUTE.route);
   }
   clip(string) {
     const clipLength = 50;
@@ -61,7 +61,7 @@ export class AnnouncementDashboardComponent implements OnInit {
   }
 
   openAnnouncement(announcement) {
-    this.router.navigate([uiroutes.ANNOUNCEMENT_PROFILE_ROUTE], {
+    this.router.navigate([uiroutes.ANNOUNCEMENT_PROFILE_ROUTE.route], {
       queryParams: { id: announcement.id },
     });
   }

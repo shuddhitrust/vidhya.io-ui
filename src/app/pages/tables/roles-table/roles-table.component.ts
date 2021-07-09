@@ -81,7 +81,7 @@ export class RolesTableComponent implements OnInit {
 
   createUserRole() {
     this.store.dispatch(new ResetUserRoleFormAction());
-    this.router.navigateByUrl(uiroutes.USER_ROLE_FORM_ROUTE);
+    this.router.navigateByUrl(uiroutes.USER_ROLE_FORM_ROUTE.route);
   }
 
   openRoleProfile(rowData) {

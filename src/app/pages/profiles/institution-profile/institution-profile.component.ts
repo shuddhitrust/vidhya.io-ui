@@ -74,7 +74,7 @@ export class InstitutionProfileComponent implements OnInit {
   // }
 
   editInstitution() {
-    this.router.navigate([uiroutes.INSTITUTION_FORM_ROUTE], {
+    this.router.navigate([uiroutes.INSTITUTION_FORM_ROUTE.route], {
       queryParams: { id: this.institution.id },
       queryParamsHandling: 'merge',
       skipLocationChange: false,

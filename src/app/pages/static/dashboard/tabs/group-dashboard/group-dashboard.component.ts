@@ -60,11 +60,11 @@ export class GroupDashboardComponent implements OnInit {
 
   createGroup() {
     this.store.dispatch(new ResetGroupFormAction());
-    this.router.navigateByUrl(uiroutes.GROUP_FORM_ROUTE);
+    this.router.navigateByUrl(uiroutes.GROUP_FORM_ROUTE.route);
   }
 
   openGroup(group) {
-    this.router.navigate([uiroutes.GROUP_PROFILE_ROUTE], {
+    this.router.navigate([uiroutes.GROUP_PROFILE_ROUTE.route], {
       queryParams: { id: group.id },
     });
   }

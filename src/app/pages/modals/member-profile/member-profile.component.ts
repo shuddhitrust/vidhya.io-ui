@@ -36,7 +36,7 @@ export class MemberProfileComponent {
   editMember() {
     this.closeDialog();
     const id = this.profileData.id;
-    this.router.navigate([uiroutes.MEMBER_FORM_ROUTE], {
+    this.router.navigate([uiroutes.MEMBER_FORM_ROUTE.route], {
       relativeTo: this.route,
       queryParams: { id },
       queryParamsHandling: 'merge',

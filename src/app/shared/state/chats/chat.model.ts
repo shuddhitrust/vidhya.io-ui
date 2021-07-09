@@ -54,4 +54,4 @@ export const defaultChatState: ChatStateModel = {
   errorSubmitting: false,
 };
 
-export const ChatFormCloseURL = uiroutes.CHAT_ROUTE;
+export const ChatFormCloseURL = uiroutes.CHAT_ROUTE.route;

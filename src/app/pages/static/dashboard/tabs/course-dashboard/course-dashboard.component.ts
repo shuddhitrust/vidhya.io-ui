@@ -47,11 +47,11 @@ export class CourseDashboardComponent implements OnInit {
   ngOnInit(): void {}
 
   createCourse() {
-    this.router.navigateByUrl(uiroutes.COURSE_FORM_ROUTE);
+    this.router.navigateByUrl(uiroutes.COURSE_FORM_ROUTE.route);
   }
 
   openCourse(course) {
-    this.router.navigate([uiroutes.COURSE_PROFILE_ROUTE], {
+    this.router.navigate([uiroutes.COURSE_PROFILE_ROUTE.route], {
       queryParams: { id: course.id },
     });
   }

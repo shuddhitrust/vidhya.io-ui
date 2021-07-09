@@ -47,6 +47,7 @@ export const defaultGroupState: GroupStateModel = {
   errorSubmitting: false,
 };
 
-export const GroupFormCloseURL = uiroutes.DASHBOARD_ROUTE + '?tab=' + GROUPS;
+export const GroupFormCloseURL =
+  uiroutes.DASHBOARD_ROUTE.route + '?tab=' + GROUPS;
 
 export const groupTypeOptions: MatSelectOption[] = autoGenOptions(GroupType);

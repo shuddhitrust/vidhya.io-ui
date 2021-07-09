@@ -47,11 +47,11 @@ export class AssignmentDashboardComponent implements OnInit {
   ngOnInit(): void {}
 
   createAssignment() {
-    this.router.navigateByUrl(uiroutes.ASSIGNMENT_FORM_ROUTE);
+    this.router.navigateByUrl(uiroutes.ASSIGNMENT_FORM_ROUTE.route);
   }
 
   openAssignment(assignment) {
-    this.router.navigate([uiroutes.ASSIGNMENT_PROFILE_ROUTE], {
+    this.router.navigate([uiroutes.ASSIGNMENT_PROFILE_ROUTE.route], {
       queryParams: { id: assignment.id },
     });
   }

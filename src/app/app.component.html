@@ -6,9 +6,9 @@
 
 <ng-template #otherStuff>
   <app-password-reset
-    *ngIf="showUnprotectedPage(uiroutes.PASSWORD_RESET)"
+    *ngIf="showUnprotectedPage(uiroutes.PASSWORD_RESET_ROUTE.route)"
   ></app-password-reset>
-  <app-home *ngIf="showUnprotectedPage(uiroutes.HOME)"></app-home>
+  <app-home *ngIf="showUnprotectedPage(uiroutes.HOME_ROUTE.route)"></app-home>
 </ng-template>
 
 <app-loading></app-loading>

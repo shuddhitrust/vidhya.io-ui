@@ -50,9 +50,11 @@ export class PasswordResetComponent implements OnInit {
     } else {
       this.url = window.location.href;
       console.log('this.url => ', { url: this.url });
-      if (this.router.url === uiroutes.PASSWORD_RESET) {
+      if (this.router.url === uiroutes.PASSWORD_RESET_ROUTE.route) {
         console.log('account activation!!!');
-        this.token = this.url.split(uiroutes.PASSWORD_RESET + '/')[1];
+        this.token = this.url.split(
+          uiroutes.PASSWORD_RESET_ROUTE.route + '/'
+        )[1];
       }
     }
   }

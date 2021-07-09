@@ -40,4 +40,5 @@ export const defaultCourseState: CourseStateModel = {
   errorSubmitting: false,
 };
 
-export const CourseFormCloseURL = uiroutes.DASHBOARD_ROUTE + '?tab=' + COURSES;
+export const CourseFormCloseURL =
+  uiroutes.DASHBOARD_ROUTE.route + '?tab=' + COURSES;

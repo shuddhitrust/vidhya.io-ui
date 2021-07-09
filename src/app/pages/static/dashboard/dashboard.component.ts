@@ -73,7 +73,7 @@ export class DashboardComponent implements OnInit {
       if (tabName) {
         const indexByParams = getIndexFromTabName(tabName);
         if (indexByParams === 'NaN') {
-          this.router.navigateByUrl(uiroutes.DASHBOARD_ROUTE);
+          this.router.navigateByUrl(uiroutes.DASHBOARD_ROUTE.route);
         }
         this.activeTabIndex = parseInt(indexByParams, 10);
       } else {

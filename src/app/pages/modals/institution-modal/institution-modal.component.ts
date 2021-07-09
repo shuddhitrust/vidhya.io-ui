@@ -34,7 +34,7 @@ export class InstitutionModalComponent {
   onClickInstitutionName() {
     this.closeDialog();
     const id = this.profileData.id;
-    this.router.navigate([uiroutes.INSTITUTION_PROFILE_ROUTE], {
+    this.router.navigate([uiroutes.INSTITUTION_PROFILE_ROUTE.route], {
       queryParams: { id },
       queryParamsHandling: 'merge',
       skipLocationChange: false,
@@ -43,7 +43,7 @@ export class InstitutionModalComponent {
   editInstitution() {
     this.closeDialog();
     const id = this.profileData.id;
-    this.router.navigate([uiroutes.INSTITUTION_FORM_ROUTE], {
+    this.router.navigate([uiroutes.INSTITUTION_FORM_ROUTE.route], {
       relativeTo: this.route,
       queryParams: { id },
       queryParamsHandling: 'merge',

@@ -67,7 +67,7 @@ export class GroupProfileComponent implements OnInit, OnDestroy {
   }
 
   editGroup() {
-    this.router.navigate([uiroutes.GROUP_FORM_ROUTE], {
+    this.router.navigate([uiroutes.GROUP_FORM_ROUTE.route], {
       queryParams: { id: this.group.id },
       queryParamsHandling: 'merge',
       skipLocationChange: false,

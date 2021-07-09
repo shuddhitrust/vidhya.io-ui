@@ -36,7 +36,7 @@ export class RoleProfileComponent {
   editRole() {
     this.closeDialog();
     const id = this.profileData.id;
-    this.router.navigate([uiroutes.USER_ROLE_FORM_ROUTE], {
+    this.router.navigate([uiroutes.USER_ROLE_FORM_ROUTE.route], {
       relativeTo: this.route,
       queryParams: { id },
       queryParamsHandling: 'merge',

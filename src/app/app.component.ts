@@ -27,18 +27,18 @@ export class AppComponent {
 
   showUnprotectedPage(route) {
     switch (route) {
-      case uiroutes.PASSWORD_RESET:
-        if (this.router.url.includes(uiroutes.PASSWORD_RESET)) {
+      case uiroutes.PASSWORD_RESET_ROUTE.route:
+        if (this.router.url.includes(uiroutes.PASSWORD_RESET_ROUTE.route)) {
           return true;
         }
         break;
-      case uiroutes.HOME:
-        if (this.router.url === uiroutes.HOME) {
+      case uiroutes.HOME_ROUTE.route:
+        if (this.router.url === uiroutes.HOME_ROUTE.route) {
           return true;
         }
         break;
       default:
-        this.router.navigate[uiroutes.HOME];
+        this.router.navigate[uiroutes.HOME_ROUTE.route];
     }
     return false;
   }

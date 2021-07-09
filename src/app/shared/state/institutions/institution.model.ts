@@ -46,4 +46,4 @@ export const defaultInstitutionState: InstitutionStateModel = {
 };
 
 export const InstitutionFormCloseURL =
-  uiroutes.DASHBOARD_ROUTE + '?adminSection=' + INSTITUTIONS_LABEL;
+  uiroutes.DASHBOARD_ROUTE.route + '?adminSection=' + INSTITUTIONS_LABEL;
