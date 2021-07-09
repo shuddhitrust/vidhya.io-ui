@@ -57,15 +57,20 @@ export class AuthenticationGuard implements CanActivate {
       return false;
     } else {
       if (resource) {
-        console.log('checking auth guard for ', {
-          route: next,
-          resource,
-          actions,
-        });
-        actions.forEach((action) => {
+        for (let i = 0; i < actions.length; i++) {
+          const action = actions[i];
           // if resource permissions exists for this route, it will check with authorization service and return it's output
+          console.log(
+            'canActivate checking auth guard for ',
+            {
+              resource,
+              action,
+            },
+            'this.auth.authorizeResource(resource, action, {});',
+            this.auth.authorizeResource(resource, action, {})
+          );
           return this.auth.authorizeResource(resource, action, {});
-        });
+        }
       }
       // if resource is null, then it is automatically returned true without checking with authorization service
       return true;
