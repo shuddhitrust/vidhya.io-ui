@@ -17,6 +17,7 @@ import {
   HttpRequest,
 } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { AuthorizationService } from './authorization/authorization.service';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
@@ -26,7 +27,11 @@ export class AuthenticationGuard implements CanActivate {
   activeMember: boolean = false;
   isFullyAuthenticated: boolean = false;
   isLoggedIn: boolean = false;
-  constructor(private _router: Router, private store: Store) {
+  constructor(
+    private _router: Router,
+    private store: Store,
+    private auth: AuthorizationService
+  ) {
     this.authState$.subscribe((val) => {
       this.authState = val;
       // this.membershipStatus = this.authState.membershipStatus;
@@ -39,9 +44,17 @@ export class AuthenticationGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean {
+    const routePermissions = next.data;
+    const resource = routePermissions?.resource;
+    const action = routePermissions?.action;
     if (this.isLoggedIn && !this.isFullyAuthenticated) {
       return false;
     } else {
+      if (resource) {
+        // if resource permissions exists for this route, it will check with authorization service and return it's output
+        return this.auth.authorizeResource(resource, action, {});
+      }
+      // if resource is null, then it is automatically returned true without checking with authorization service
       return true;
     }
     // if (this.isFullyAuthenticated) {
