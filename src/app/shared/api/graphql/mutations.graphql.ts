@@ -44,6 +44,28 @@ export const USER_MUTATIONS = {
       }
     }
   `,
+  APPROVE_USER: gql`
+    mutation approveUser($userId: ID!, $roleId: ID!) {
+      approveUser(userId: $userId, roleId: $roleId) {
+        ok
+        user {
+          id
+          membershipStatus
+        }
+      }
+    }
+  `,
+  SUSPEND_USER: gql`
+    mutation deleteUser($userId: ID!, $remarks: String!) {
+      suspendUser(userId: $userId, remarks: $remarks) {
+        ok
+        user {
+          id
+          membershipStatus
+        }
+      }
+    }
+  `,
 };
 
 export const USER_ROLE_MUTATIONS = {

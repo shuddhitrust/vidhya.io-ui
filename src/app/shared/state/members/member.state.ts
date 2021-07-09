@@ -15,6 +15,7 @@ import {
 
 import { Injectable } from '@angular/core';
 import {
+  ApproveMemberAction,
   CreateUpdateMemberAction,
   DeleteMemberAction,
   FetchMembersAction,
@@ -22,6 +23,7 @@ import {
   GetMemberAction,
   MemberSubscriptionAction,
   ResetMemberFormAction,
+  SuspendMemberAction,
 } from './member.actions';
 import { AUTH_QUERIES, USER_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
@@ -319,6 +321,90 @@ export class MemberState {
             this.store.dispatch(
               new ForceRefetchMembersAction({
                 searchParams: defaultSearchParams,
+              })
+            );
+          } else {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(response?.errors),
+                action: 'error',
+              })
+            );
+          }
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+        }
+      );
+  }
+
+  @Action(ApproveMemberAction)
+  approveUser(
+    {}: StateContext<MemberStateModel>,
+    { payload }: ApproveMemberAction
+  ) {
+    let { userId, roleId } = payload;
+    this.apollo
+      .mutate({
+        mutation: USER_MUTATIONS.APPROVE_USER,
+        variables: { userId, roleId },
+      })
+      .subscribe(
+        ({ data }: any) => {
+          const response = data.approveUser;
+          console.log('from delete member ', { data });
+          if (response.ok) {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: 'Member approved successfully!',
+                action: 'success',
+              })
+            );
+          } else {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(response?.errors),
+                action: 'error',
+              })
+            );
+          }
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+        }
+      );
+  }
+
+  @Action(SuspendMemberAction)
+  suspendUser(
+    {}: StateContext<MemberStateModel>,
+    { payload }: SuspendMemberAction
+  ) {
+    let { userId, remarks } = payload;
+    this.apollo
+      .mutate({
+        mutation: USER_MUTATIONS.SUSPEND_USER,
+        variables: { userId, remarks },
+      })
+      .subscribe(
+        ({ data }: any) => {
+          const response = data.suspendUser;
+          console.log('from delete member ', { data });
+          if (response.ok) {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: 'Member suspended successfully!',
+                action: 'success',
               })
             );
           } else {

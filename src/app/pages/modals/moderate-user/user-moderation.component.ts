@@ -10,6 +10,10 @@ import { Observable } from 'rxjs';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { constructUserFullName } from 'src/app/shared/common/functions';
 import { User, UserRole } from 'src/app/shared/common/models';
+import {
+  ApproveMemberAction,
+  SuspendMemberAction,
+} from 'src/app/shared/state/members/member.actions';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { FetchUserRolesAction } from 'src/app/shared/state/userRoles/userRole.actions';
 import { UserRoleState } from 'src/app/shared/state/userRoles/userRole.state';
@@ -72,9 +76,12 @@ export class UserModerationProfileComponent implements OnInit {
   }
 
   approvalConfirmation() {
-    if (this.moderationForm.get('role').value) {
+    const roleValue = this.moderationForm.get('role').value;
+    if (roleValue) {
+      const roleOption = this.roleOptions.find((r) => r.value == roleValue);
+      const roleName = roleOption.label;
       const dialogRef = this.dialog.open(UserApprovalConfirmationDialog, {
-        data: this.profileData,
+        data: { ...this.profileData, role: { id: roleValue, name: roleName } },
       });
 
       dialogRef.afterClosed().subscribe((result) => {
@@ -95,7 +102,13 @@ export class UserModerationProfileComponent implements OnInit {
     console.log('payload before dispatching Member action => ', {
       id: this.profileData.id,
     });
-    // this.store.dispatch(new ModerateUserAction({ id: this.profileData.id }));
+    this.store.dispatch(
+      new ApproveMemberAction({
+        userId: this.profileData.id,
+        roleId: this.moderationForm.get('role').value,
+      })
+    );
+
     this.closeDialog();
   }
 
@@ -123,7 +136,12 @@ export class UserModerationProfileComponent implements OnInit {
     console.log('payload before dispatching Member action => ', {
       id: this.profileData.id,
     });
-    // this.store.dispatch(new ModerateUserAction({ id: this.profileData.id }));
+    this.store.dispatch(
+      new SuspendMemberAction({
+        userId: this.profileData.id,
+        remarks: this.moderationForm.get('remarks').value,
+      })
+    );
     this.closeDialog();
   }
 }

@@ -47,3 +47,15 @@ export class DeleteMemberAction {
 
   constructor(public payload: idPayload) {}
 }
+
+export class ApproveMemberAction {
+  static readonly type = '[MEMBER] Approve';
+
+  constructor(public payload: { userId: number; roleId: number }) {}
+}
+
+export class SuspendMemberAction {
+  static readonly type = '[MEMBER] Suspend';
+
+  constructor(public payload: { userId: number; remarks: string }) {}
+}
