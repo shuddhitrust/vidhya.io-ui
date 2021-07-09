@@ -249,7 +249,7 @@ const defaultActions: ResourceActions = {
   LIST: true,
   GET: true,
   CREATE: true,
-  UPDATE: true,
+  UPDATE: false,
   DELETE: true,
 };
 
