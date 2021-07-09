@@ -209,7 +209,6 @@ export const getErrorMessageFromGraphQLResponse = (errors): string => {
 };
 
 export const constructUserFullName = (user: User): string => {
-  console.log('from constructFullName => ', { user });
   return user?.firstName + ' ' + user?.lastName;
 };
 

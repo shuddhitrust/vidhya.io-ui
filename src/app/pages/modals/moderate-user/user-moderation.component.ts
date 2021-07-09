@@ -1,32 +1,67 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import {
   MatDialog,
   MatDialogRef,
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
-import { Store } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
+import { Observable } from 'rxjs';
+import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { constructUserFullName } from 'src/app/shared/common/functions';
-import { User } from 'src/app/shared/common/models';
+import { User, UserRole } from 'src/app/shared/common/models';
+import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
+import { FetchUserRolesAction } from 'src/app/shared/state/userRoles/userRole.actions';
+import { UserRoleState } from 'src/app/shared/state/userRoles/userRole.state';
 
 @Component({
   selector: 'app-user-moderation-profile',
   templateUrl: './user-moderation.component.html',
-  styleUrls: ['./user-moderation.component.scss'],
+  styleUrls: [
+    './user-moderation.component.scss',
+    './../../../shared/common/shared-styles.css',
+  ],
 })
-export class UserModerationProfileComponent {
+export class UserModerationProfileComponent implements OnInit {
   profileData: any = {};
-
+  moderationForm: FormGroup;
+  @Select(UserRoleState.listRoleOptions)
+  roleOptions$: Observable<UserRole[]>;
+  roleOptions;
+  @Select(UserRoleState.isFetching)
+  isFetchingUserRoles$: Observable<boolean>;
+  isFetchingUserRoles: boolean;
   constructor(
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<UserModerationProfileComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private store: Store
+    private store: Store,
+    private fb: FormBuilder
   ) {
+    this.roleOptions$.subscribe((val) => {
+      this.roleOptions = val;
+      console.log('roleOptions => ', { roleOptions: this.roleOptions });
+    });
     this.profileData = data;
     console.log('profieData from usermoderationprofile => ', {
       profileData: this.profileData,
     });
+    this.moderationForm = this.setupModerationFormGroup();
   }
+
+  ngOnInit() {
+    this.store.dispatch(
+      new FetchUserRolesAction({ searchParams: defaultSearchParams })
+    );
+  }
+
+  setupModerationFormGroup = (): FormGroup => {
+    const formGroup = this.fb.group({
+      role: [],
+      remarks: [],
+    });
+    return formGroup;
+  };
 
   closeDialog(): void {
     this.dialogRef.close();
@@ -37,15 +72,24 @@ export class UserModerationProfileComponent {
   }
 
   approvalConfirmation() {
-    const dialogRef = this.dialog.open(UserApprovalConfirmationDialog, {
-      data: this.profileData,
-    });
+    if (this.moderationForm.get('role').value) {
+      const dialogRef = this.dialog.open(UserApprovalConfirmationDialog, {
+        data: this.profileData,
+      });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result == true) {
-        this.approveUser();
-      }
-    });
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result == true) {
+          this.approveUser();
+        }
+      });
+    } else {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message: 'Please select role before attempting to approve.',
+          action: 'error',
+        })
+      );
+    }
   }
   approveUser() {
     console.log('payload before dispatching Member action => ', {
@@ -56,15 +100,24 @@ export class UserModerationProfileComponent {
   }
 
   denialConfirmation() {
-    const dialogRef = this.dialog.open(UserApprovalConfirmationDialog, {
-      data: this.profileData,
-    });
+    if (this.moderationForm.get('remarks').value) {
+      const dialogRef = this.dialog.open(UserDenialConfirmationDialog, {
+        data: this.profileData,
+      });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result == true) {
-        this.denyUser();
-      }
-    });
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result == true) {
+          this.denyUser();
+        }
+      });
+    } else {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message: 'Please add a remark before attempting to deny.',
+          action: 'error',
+        })
+      );
+    }
   }
   denyUser() {
     console.log('payload before dispatching Member action => ', {

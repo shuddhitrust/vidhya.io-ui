@@ -1,8 +1,8 @@
 .dialog-box {
   width: 60vw;
   min-width: 300px;
-  height: 80vh;
-  min-height: 300px;
+  height: 60vh;
+  min-height: 500px;
 }
 
 .profile-title {
@@ -14,5 +14,14 @@
 }
 
 .avatar {
-  max-width: 200px;
+  float: left;
+  max-height: 100px;
+  margin-right: 20px;
+}
+.avatar::after {
+  float: clear;
+}
+
+.bio-text {
+  padding-left: 10px;
 }

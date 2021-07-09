@@ -5,24 +5,64 @@
       <mat-card-subtitle>{{ profileData.location }}</mat-card-subtitle>
       <mat-card-subtitle>{{ profileData.title }}</mat-card-subtitle>
     </mat-card-header>
-    <mat-card-content>
+    <mat-card-content style="min-height: 100px">
       <img
         class="avatar"
         *ngIf="profileData.avatar"
         [src]="profileData.avatar"
         alt="User avatar"
       />
-      <p>
+      <p class="bio-text">
         {{ profileData.bio }}
       </p>
     </mat-card-content>
+    <hr />
+    <form [formGroup]="moderationForm" novalidate #formDirective="ngForm">
+      <p>
+        In order to approve <b>{{ profileData?.firstName }}</b> as a member at
+        <b>{{ profileData?.institution?.name }}</b
+        >, please choose a role for them:-
+      </p>
+      <mat-form-field
+        class="col-lg-8 col-md-8 col-sm-8"
+        [class.dropdoawn-loading]="isFetchingUserRoles"
+        appearance="outline"
+      >
+        <mat-label>Role</mat-label>
+        <mat-select
+          formControlName="role"
+          placeholder="The role of this member in the institution"
+        >
+          <mat-option *ngFor="let role of roleOptions" [value]="role.value">
+            {{ role.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="approvalConfirmation()"
+      >
+        Approve
+      </button>
+      <hr />
+      <p>
+        If <b>{{ profileData?.firstName }}</b> is not a member at
+        <b>{{ profileData?.institution?.name }}</b
+        >, please add appropriate remarks before clicking on deny:-
+      </p>
+      <mat-form-field class="col-lg-8 col-md-8 col-sm-8" appearance="outline">
+        <mat-label>Remarks</mat-label>
+        <textarea
+          matInput
+          formControlName="remarks"
+          placeholder="Explain the reason for denial"
+        ></textarea>
+      </mat-form-field>
+      <button mat-raised-button color="warn" (click)="denialConfirmation()">
+        Deny
+      </button>
+    </form>
   </mat-card>
-  <mat-dialog-actions class="card-actions">
-    <button mat-raised-button color="secondary" (click)="denialConfirmation()">
-      Deny
-    </button>
-    <button mat-raised-button color="primary" (click)="approvalConfirmation()">
-      Approve
-    </button>
-  </mat-dialog-actions>
+  <mat-dialog-actions class="card-actions"> </mat-dialog-actions>
 </div>

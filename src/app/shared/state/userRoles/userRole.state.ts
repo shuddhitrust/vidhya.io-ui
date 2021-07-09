@@ -75,6 +75,18 @@ export class UserRoleState {
   }
 
   @Selector()
+  static listRoleOptions(state: UserRoleStateModel): MatSelectOption[] {
+    const options: MatSelectOption[] = state.roles.map((i) => {
+      const option: MatSelectOption = {
+        value: i.id,
+        label: `${i.name} (${i.description})`,
+      };
+      return option;
+    });
+    return options;
+  }
+
+  @Selector()
   static isFetching(state: UserRoleStateModel): boolean {
     return state.isFetching;
   }
