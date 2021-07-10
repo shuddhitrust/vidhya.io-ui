@@ -9,6 +9,7 @@ import {
   FetchPolicy,
   MatSelectOption,
   PaginationObject,
+  resources,
   startingPaginationObject,
   UserRole,
 } from '../../common/models';
@@ -29,7 +30,7 @@ export const emptyUserRoleFormRecord: UserRole = {
   id: null,
   name: null,
   description: null,
-  resourcePermissions: defaultResourcePermissions,
+  permissions: defaultResourcePermissions,
 };
 
 export interface UserRoleStateModel {
@@ -61,4 +62,4 @@ export const defaultRoleState: UserRoleStateModel = {
 };
 
 export const UserRoleFormCloseURL =
-  uiroutes.DASHBOARD_ROUTE.route + '?adminSection=' + USER_ROLES_LABEL;
+  uiroutes.DASHBOARD_ROUTE.route + '?adminSection=' + resources.USER_ROLES;

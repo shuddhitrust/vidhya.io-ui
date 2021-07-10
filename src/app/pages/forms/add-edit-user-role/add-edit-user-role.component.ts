@@ -17,12 +17,8 @@ import { UserRoleState } from 'src/app/shared/state/userRoles/userRole.state';
 import { Observable } from 'rxjs';
 import { emptyUserRoleFormRecord } from 'src/app/shared/state/userRoles/userRole.model';
 import {
-  CREATE,
+  RESOURCE_ACTIONS,
   defaultResourcePermissions,
-  DELETE,
-  LIST,
-  GET,
-  UPDATE,
   UserRole,
 } from 'src/app/shared/common/models';
 import { convertKeyToLabel } from 'src/app/shared/common/functions';
@@ -36,11 +32,19 @@ import { convertKeyToLabel } from 'src/app/shared/common/functions';
   ],
 })
 export class AddEditUserRoleComponent implements OnInit {
-  LIST = LIST;
-  GET = GET;
-  CREATE = CREATE;
-  UPDATE = UPDATE;
-  DELETE = DELETE;
+  LIST = RESOURCE_ACTIONS.LIST;
+  GET = RESOURCE_ACTIONS.GET;
+  CREATE = RESOURCE_ACTIONS.CREATE;
+  UPDATE = RESOURCE_ACTIONS.UPDATE;
+  DELETE = RESOURCE_ACTIONS.DELETE;
+  scopes = [
+    'resource',
+    this.LIST,
+    this.GET,
+    this.CREATE,
+    this.UPDATE,
+    this.DELETE,
+  ];
   formSubmitting: boolean = false;
   params: object = {};
   @Select(UserRoleState.getUserRoleFormRecord)
@@ -53,7 +57,6 @@ export class AddEditUserRoleComponent implements OnInit {
   permissionsTable: object[] = convertPermissionsToTable(
     this.permissionsObject
   );
-  scopes: string[] = ['resource', LIST, GET, CREATE, UPDATE, DELETE];
   permissionItems: string[] = Object.keys(defaultResourcePermissions);
   constructor(
     private location: Location,
@@ -80,8 +83,8 @@ export class AddEditUserRoleComponent implements OnInit {
       name: [userRoleFormRecord.name, Validators.required],
       description: [userRoleFormRecord.description, Validators.required],
       permissions: [
-        userRoleFormRecord.resourcePermissions
-          ? userRoleFormRecord.resourcePermissions
+        userRoleFormRecord.permissions
+          ? userRoleFormRecord.permissions
           : defaultResourcePermissions,
         Validators.required,
       ],
@@ -110,23 +113,32 @@ export class AddEditUserRoleComponent implements OnInit {
   }
 
   togglePermission(item, action) {
+    // console.log('from toglgePermission ', {
+    //   item,
+    //   action,
+    //   currentPermissions: this.permissionsObject,
+    // });
+    // let newPermissionsObject = Object.assign({}, this.permissionsObject);
+    // let resource = Object.assign({}, newPermissionsObject[item]);
+    // console.log('before resource', { resource });
+    // resource[action] = !this.permissionsObject[item][action];
+    // console.log('after resource', { resource });
+    // newPermissionsObject[item] = resource;
+    // this.permissionsObject = newPermissionsObject;
+    // console.log('after toggling', { newPermissionsObject });
     let newPermissionsObject = Object.assign({}, this.permissionsObject);
     console.log('from togglePermission => ', {
       item,
       action,
       newPermissionsObject,
     });
-    const index = this.permissionsObject[item].indexOf(action);
-    console.log('index of ', action, ' in ', item, ' => ', index);
-    if (index > -1) {
-      newPermissionsObject[item].splice(index, 1);
-    } else {
-      let itemActions = Object.assign([], newPermissionsObject[item]);
-      itemActions.push(action);
-      console.log('itemActions => ', { itemActions });
-      newPermissionsObject[item] = itemActions;
-    }
+
+    let resource = Object.assign([], newPermissionsObject[item]);
+    resource[action] = !resource[action];
+    newPermissionsObject[item] = resource;
+
     this.permissionsObject = newPermissionsObject;
+    console.log('after toggling', { newPermissionsObject });
     this.permissionsTable = convertPermissionsToTable(this.permissionsObject);
   }
 
@@ -134,10 +146,17 @@ export class AddEditUserRoleComponent implements OnInit {
     this.location.back();
   }
 
-  submitForm(form: FormGroup, formDirective: FormGroupDirective) {
-    this.userRoleForm.get('permissions').setValue(this.permissionsObject);
+  submitForm(formDirective: FormGroupDirective) {
+    this.userRoleForm
+      .get('permissions')
+      .setValue(JSON.stringify(this.permissionsObject));
+    console.log('form => ', {
+      form: this.userRoleForm.value,
+      permissionObject: this.permissionsObject,
+      example: this.permissionsObject['MODERATION']['LIST'],
+    });
     this.store.dispatch(
-      new CreateUpdateUserRoleAction({ form, formDirective })
+      new CreateUpdateUserRoleAction({ form: this.userRoleForm, formDirective })
     );
   }
 }
@@ -149,12 +168,18 @@ const convertPermissionsToTable = (permissionsObject: object): object[] => {
     const resource = permissionItems[i];
     permissionsTableData[i] = {
       resource,
-      GET: permissionsObject[resource].includes[GET] ? true : true,
-      LIST: permissionsObject[resource].includes[LIST] ? true : false,
-      CREATE: permissionsObject[resource].includes[CREATE] ? true : false,
-      UPDATE: permissionsObject[resource].includes[UPDATE] ? true : false,
-      DELETE: permissionsObject[resource].includes[DELETE ? true : false],
     };
+    const resourceActions = Object.keys(RESOURCE_ACTIONS);
+    for (let j = 0; j < resourceActions.length; j++) {
+      const resourceAction = resourceActions[j];
+      permissionsTableData[i] = {
+        ...permissionsTableData[i],
+        [resourceAction]:
+          typeof permissionsObject[resource][resourceAction] == 'boolean'
+            ? permissionsObject[resource][resourceAction]
+            : false,
+      };
+    }
   }
   return permissionsTableData;
 };

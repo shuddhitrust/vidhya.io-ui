@@ -15,6 +15,7 @@ export const AUTH_QUERIES = {
           name
         }
         role {
+          id
           name
           permissions
         }
@@ -47,6 +48,7 @@ export const USER_QUERIES = {
           name
         }
         role {
+          id
           name
           permissions
         }

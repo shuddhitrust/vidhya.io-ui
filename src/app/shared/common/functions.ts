@@ -216,35 +216,38 @@ export const constructPermissions = (permissions: UserPermissions) => {
   if (!permissions) {
     return defaultResourcePermissions;
   }
-  const resources = Object.keys(defaultResourcePermissions);
+  let newPermissions = Object.assign({}, defaultResourcePermissions);
+  const resources = Object.keys(newPermissions);
   for (let i = 0; i < resources.length; i++) {
-    const resource = resources[i];
+    const resource = newPermissions[resources[i]];
     // Fitting in the resource if it is missing in the permission
-    permissions[resource] = permissions[resource]
-      ? permissions[resource]
-      : defaultResourcePermissions[resource];
     const actions = Object.keys(resource);
+    console.log({ actions });
     // Getting the actions within each resource right
     for (let j = 0; j < actions.length; j++) {
       const action = actions[j];
       console.log(
         'From line 229',
-        { permissions },
-        'permission[resource][action]',
-        permissions[resource][resource[action]]
+        { newPermissions, permissions, action }
+        // 'permission[resource][action]',
+        // permissions[resource][resource[action]]
       );
-      permissions[resource][resource[action]] =
-        typeof permissions[resource][resource[action]] == 'boolean'
-          ? permissions[resource][resource[action]]
-          : defaultResourcePermissions[resource][resource[action]];
-    }
-    // Sorting it in the proper order
-    for (let i = 0; i < resources.length; i++) {
-      const resource = resources[i];
-      permissions[resource] = permissions[resource]
-        ? permissions[resource]
-        : defaultResourcePermissions[resource];
+      const resourceObj = permissions[resources[i]];
+      console.log({ resourceObj });
+      if (resourceObj) {
+        const resourceActionObj = resourceObj[action];
+        console.log({ resourceActionObj });
+        if (resourceActionObj) {
+          console.log({ resourceActionObj });
+          const actionAuth = resourceObj[resource[action]];
+          console.log({ actionAuth });
+          if (typeof actionAuth == 'boolean') {
+            newPermissions[resource][resource[action]] = actionAuth;
+          }
+        }
+      }
+      console.log('from line 250', { permissions, newPermissions });
     }
   }
-  return permissions;
+  return newPermissions;
 };

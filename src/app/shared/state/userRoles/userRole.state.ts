@@ -34,6 +34,7 @@ import {
 import { USER_ROLE_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
+  constructPermissions,
   getErrorMessageFromGraphQLResponse,
   paginationChanged,
   subscriptionUpdater,
@@ -229,12 +230,15 @@ export class UserRoleState {
       })
       .valueChanges.subscribe(({ data }: any) => {
         let response = data.userRole;
-        const resourcePermissions = JSON.parse(response.resourcePermissions);
+        console.log('resource from getUserRoleAction', { data, response });
+        const permissions = constructPermissions(
+          JSON.parse(response.permissions)
+        );
         const userRoleFormRecord = {
           id: response.id,
           name: response.name,
           description: response.description,
-          resourcePermissions,
+          permissions,
         };
         patchState({ userRoleFormRecord, isFetching: false });
       });

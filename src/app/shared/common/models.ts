@@ -134,7 +134,7 @@ export type UserRole = {
   id?: number;
   name: string;
   description: string;
-  resourcePermissions: object;
+  permissions: object;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -249,7 +249,7 @@ const defaultActions: ResourceActions = {
   LIST: true,
   GET: true,
   CREATE: false,
-  UPDATE: false,
+  UPDATE: true,
   DELETE: true,
 };
 
