@@ -5,9 +5,9 @@
 const api_endpoint = 'http://localhost:8000';
 const websocket_api_endpoint = 'ws://localhost:8000';
 const standardUserRoles = {
-  LEARNER: 4,
-  CLASS_ADMIN: 3,
-  INSTITUTION_ADMIN: 2,
+  LEARNER: 10,
+  CLASS_ADMIN: 9,
+  INSTITUTION_ADMIN: 8,
 };
 export const environment = {
   production: false,
