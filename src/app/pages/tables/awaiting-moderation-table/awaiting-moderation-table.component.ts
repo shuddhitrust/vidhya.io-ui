@@ -9,6 +9,7 @@ import { MemberProfileRendererComponent } from 'src/app/shared/cell-renderers/me
 import { UserModerationRendererComponent } from 'src/app/shared/cell-renderers/user-moderation/user-moderation-renderer.component';
 import { getOptionLabel, parseDateTime } from 'src/app/shared/common/functions';
 import {
+  MembershipStatus,
   PaginationObject,
   resources,
   User,
@@ -45,7 +46,7 @@ export class AwaitingModerationTableComponent implements OnInit {
     resizable: true,
   };
   columnFilters = {
-    // membershipStatusNot: MembershipStatus.APPROVED,
+    membershipStatusNot: MembershipStatus.APPROVED,
   };
   columns = [
     {
