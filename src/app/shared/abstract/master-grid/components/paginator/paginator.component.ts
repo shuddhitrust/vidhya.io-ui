@@ -48,11 +48,13 @@ export class PaginatorComponent implements OnChanges {
       this.currentlyShowing = this.totalRecords;
     }
     // Calculate how many records are showing in the table right now
-    if (this.totalRecords > this.pageSize) {
-      this.currentlyShowing = this.rowsShowing;
-    } else {
-      this.currentlyShowing = this.totalRecords;
-    }
+    // if (this.totalRecords > this.pageSize) {
+    //   this.currentlyShowing = this.rowsShowing;
+    // } else {
+    //   this.currentlyShowing = this.totalRecords;
+    // }
+    this.currentlyShowing = this.rowsShowing;
+
     this.calculatePageSizeOptionsVisibility();
     this.calculateSearchText();
   };
