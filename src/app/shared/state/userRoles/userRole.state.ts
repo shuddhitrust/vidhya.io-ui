@@ -198,12 +198,12 @@ export class UserRoleState {
             userRoles: state.roles,
             result,
           });
-          const method = result?.data?.notifyUser?.method;
-          const member = result?.data?.notifyUser?.member;
+          const method = result?.data?.notifyUserRole?.method;
+          const userRole = result?.data?.notifyUserRole?.userRole;
           const { items, paginationObject } = subscriptionUpdater({
             items: state.roles,
             method,
-            subscriptionItem: member,
+            subscriptionItem: userRole,
             paginationObject: state.paginationObject,
           });
           patchState({

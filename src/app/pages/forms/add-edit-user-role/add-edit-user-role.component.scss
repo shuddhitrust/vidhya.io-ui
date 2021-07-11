@@ -17,6 +17,11 @@ table {
   height: 200px;
   overflow: auto;
 }
+
+.pointer {
+  cursor: pointer;
+  color: red;
+}
 @media screen and (max-width: 768px) {
   .floating-logo {
     float: none;

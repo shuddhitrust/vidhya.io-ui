@@ -389,9 +389,10 @@ export class AuthState {
     console.log('running UpdateCurrentUserInState', { user });
     const state = getState();
     const { isLoggedIn, currentMember } = state;
-    const permissions = constructPermissions(
-      JSON.parse(user?.role?.permissions.toString())
-    );
+    const userPermissions = user?.role?.permissions?.toString()
+      ? JSON.parse(user?.role?.permissions?.toString())
+      : null;
+    const permissions = constructPermissions(userPermissions);
     const newCurrentMember: CurrentMember = {
       id: user?.id ? user?.id : currentMember?.id,
       username: user?.username,

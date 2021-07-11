@@ -44,6 +44,7 @@ export class AddEditUserRoleComponent implements OnInit {
     this.CREATE,
     this.UPDATE,
     this.DELETE,
+    'all',
   ];
   formSubmitting: boolean = false;
   params: object = {};
@@ -112,33 +113,42 @@ export class AddEditUserRoleComponent implements OnInit {
     return convertKeyToLabel(key);
   }
 
-  togglePermission(item, action) {
-    // console.log('from toglgePermission ', {
-    //   item,
-    //   action,
-    //   currentPermissions: this.permissionsObject,
-    // });
-    // let newPermissionsObject = Object.assign({}, this.permissionsObject);
-    // let resource = Object.assign({}, newPermissionsObject[item]);
-    // console.log('before resource', { resource });
-    // resource[action] = !this.permissionsObject[item][action];
-    // console.log('after resource', { resource });
-    // newPermissionsObject[item] = resource;
-    // this.permissionsObject = newPermissionsObject;
-    // console.log('after toggling', { newPermissionsObject });
+  toggleAll() {
     let newPermissionsObject = Object.assign({}, this.permissionsObject);
-    console.log('from togglePermission => ', {
-      item,
-      action,
-      newPermissionsObject,
-    });
+    const items = Object.keys(newPermissionsObject);
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      let resource = Object.assign({}, newPermissionsObject[item]);
+      const actions = Object.keys(RESOURCE_ACTIONS);
+      for (let j = 0; j < actions.length; j++) {
+        const action = actions[j];
+        resource[action] = !resource[action];
+      }
+      newPermissionsObject[item] = resource;
+      this.permissionsObject = newPermissionsObject;
+      this.permissionsTable = convertPermissionsToTable(this.permissionsObject);
+    }
+  }
 
-    let resource = Object.assign([], newPermissionsObject[item]);
+  toggleRow(item) {
+    let newPermissionsObject = Object.assign({}, this.permissionsObject);
+    let resource = Object.assign({}, newPermissionsObject[item]);
+    const actions = Object.keys(RESOURCE_ACTIONS);
+    for (let i = 0; i < actions.length; i++) {
+      const action = actions[i];
+      resource[action] = !resource[action];
+    }
+    newPermissionsObject[item] = resource;
+    this.permissionsObject = newPermissionsObject;
+    this.permissionsTable = convertPermissionsToTable(this.permissionsObject);
+  }
+
+  togglePermission(item, action) {
+    let newPermissionsObject = Object.assign({}, this.permissionsObject);
+    let resource = Object.assign({}, newPermissionsObject[item]);
     resource[action] = !resource[action];
     newPermissionsObject[item] = resource;
-
     this.permissionsObject = newPermissionsObject;
-    console.log('after toggling', { newPermissionsObject });
     this.permissionsTable = convertPermissionsToTable(this.permissionsObject);
   }
 
@@ -147,9 +157,7 @@ export class AddEditUserRoleComponent implements OnInit {
   }
 
   submitForm(formDirective: FormGroupDirective) {
-    this.userRoleForm
-      .get('permissions')
-      .setValue(JSON.stringify(this.permissionsObject));
+    this.userRoleForm.get('permissions').setValue(this.permissionsObject);
     console.log('form => ', {
       form: this.userRoleForm.value,
       permissionObject: this.permissionsObject,
@@ -181,5 +189,6 @@ const convertPermissionsToTable = (permissionsObject: object): object[] => {
       };
     }
   }
+  console.log('after constructing the table => ', { permissionsTableData });
   return permissionsTableData;
 };

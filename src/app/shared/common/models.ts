@@ -248,7 +248,7 @@ export type UserPermissions = {
 const defaultActions: ResourceActions = {
   LIST: true,
   GET: true,
-  CREATE: false,
+  CREATE: true,
   UPDATE: true,
   DELETE: true,
 };

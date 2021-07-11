@@ -110,6 +110,19 @@
           </td>
         </ng-container>
 
+        <ng-container matColumnDef="all">
+          <th mat-header-cell *matHeaderCellDef (click)="toggleAll()">
+            <b class="pointer">Toggle All</b>
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            (click)="toggleRow(element.resource)"
+          >
+            <b class="pointer">Toggle Row</b>
+          </td>
+        </ng-container>
+
         <tr mat-header-row *matHeaderRowDef="scopes; sticky: true"></tr>
         <tr mat-row *matRowDef="let row; columns: scopes"></tr>
       </table>
