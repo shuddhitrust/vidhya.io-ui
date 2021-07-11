@@ -231,9 +231,9 @@ export class UserRoleState {
       .valueChanges.subscribe(({ data }: any) => {
         let response = data.userRole;
         console.log('resource from getUserRoleAction', { data, response });
-        const permissions = constructPermissions(
-          JSON.parse(response.permissions)
-        );
+        const userRolePermissions = JSON.parse(response.permissions.toString());
+        console.log('userRolePermissions => ', { userRolePermissions });
+        const permissions = constructPermissions(userRolePermissions);
         const userRoleFormRecord = {
           id: response.id,
           name: response.name,

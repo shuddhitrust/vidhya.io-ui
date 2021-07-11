@@ -216,37 +216,31 @@ export const constructPermissions = (permissions: UserPermissions) => {
   if (!permissions) {
     return defaultResourcePermissions;
   }
+  // Newpermissions is based on the latest template that is part of the UI
+  // The following steps ensure that whenever we get the permissions from the DB,
+  // We automatically parse it to the latest version that is always part of the UI code.
+  // This way, we can ensure that everything works even if the permissions in the db is outdated
   let newPermissions = Object.assign({}, defaultResourcePermissions);
   const resources = Object.keys(newPermissions);
   for (let i = 0; i < resources.length; i++) {
     const resource = newPermissions[resources[i]];
     // Fitting in the resource if it is missing in the permission
     const actions = Object.keys(resource);
-    console.log({ actions });
+
     // Getting the actions within each resource right
     for (let j = 0; j < actions.length; j++) {
       const action = actions[j];
-      console.log(
-        'From line 229',
-        { newPermissions, permissions, action }
-        // 'permission[resource][action]',
-        // permissions[resource][resource[action]]
-      );
       const resourceObj = permissions[resources[i]];
-      console.log({ resourceObj });
       if (resourceObj) {
-        const resourceActionObj = resourceObj[action];
-        console.log({ resourceActionObj });
-        if (resourceActionObj) {
-          console.log({ resourceActionObj });
-          const actionAuth = resourceObj[resource[action]];
-          console.log({ actionAuth });
-          if (typeof actionAuth == 'boolean') {
-            newPermissions[resource][resource[action]] = actionAuth;
-          }
+        const actionAuth = resourceObj[action];
+
+        if (typeof actionAuth == 'boolean') {
+          let newResourceObj = Object.assign({}, permissions[resources[i]]);
+          newResourceObj[action] = actionAuth;
+          // Assigning the permissions value for the action of the specific resource to the newPermissions
+          newPermissions[resources[i]] = newResourceObj;
         }
       }
-      console.log('from line 250', { permissions, newPermissions });
     }
   }
   return newPermissions;
