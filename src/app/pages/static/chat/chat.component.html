@@ -1,5 +1,5 @@
 <section class="mainApp">
-  <div class="leftPanel">
+  <infinite-scroll (scrolled)="onChatScroll()" class="leftPanel">
     <header>
       <mat-form-field
         class="search-member-input col-lg-11 col-md-11 col-sm-11"
@@ -40,34 +40,32 @@
       </span>
     </div>
     <ng-template #activechatsTemplate>
-      <infinite-scroll (scrolled)="onChatScroll()" #activechats>
-        <div *ngFor="let chatItem of chats">
-          <div
-            class="chatButton"
-            [ngClass]="
-              chatItem.id == chat?.id ? 'chatButton active' : 'chatButton'
-            "
-            (click)="onSelectChat(chatItem)"
-          >
-            <div class="chatInfo">
-              <img
-                [src]="chatItem.avatar"
-                class="image my-image"
-                alt="Member Avatar"
-              />
+      <div *ngFor="let chatItem of chats">
+        <div
+          class="chatButton"
+          [ngClass]="
+            chatItem.id == chat?.id ? 'chatButton active' : 'chatButton'
+          "
+          (click)="onSelectChat(chatItem)"
+        >
+          <div class="chatInfo">
+            <img
+              [src]="chatItem.avatar"
+              class="image my-image"
+              alt="Member Avatar"
+            />
 
-              <p class="name">{{ chatItem.name }}</p>
-              <p class="subtitle">
-                {{ chatItem.subtitle }}
-              </p>
-            </div>
-
-            <div class="status onTop"></div>
+            <p class="name">{{ chatItem.name }}</p>
+            <p class="subtitle">
+              {{ chatItem.subtitle }}
+            </p>
           </div>
+
+          <div class="status onTop"></div>
         </div>
-      </infinite-scroll>
+      </div>
     </ng-template>
-  </div>
+  </infinite-scroll>
 
   <div *ngIf="showChat()" class="rightPanel">
     <div class="topBar">
@@ -88,9 +86,8 @@
       </div>
     </div>
 
-    <infinite-scroll
+    <inverted-infinite-scroll
       (scrolled)="onChatMessagesScroll()"
-      [invert]="true"
       class="convHistory userBg"
       #chatWindow
     >
@@ -124,7 +121,7 @@
         </mat-card>
       </div>
       <br />
-    </infinite-scroll>
+    </inverted-infinite-scroll>
 
     <div class="replyBar">
       <button class="attach">

@@ -108,7 +108,10 @@ import { AddEditUserRoleComponent } from './pages/forms/add-edit-user-role/add-e
 import { ChatComponent } from './pages/static/chat/chat.component';
 import { ChatState } from './shared/state/chats/chat.state';
 import { PasswordResetComponent } from './pages/forms/password-reset/password-reset.component';
-import { InfiniteScrollComponent } from './shared/abstract/infinite-scroller/infinite-scroller.component';
+import {
+  InfiniteScrollComponent,
+  InvertedInfiniteScrollComponent,
+} from './shared/abstract/infinite-scroller/infinite-scroller.component';
 import {
   UserModerationProfileComponent,
   UserApprovalConfirmationDialog,
@@ -170,6 +173,7 @@ import { UserModerationRendererComponent } from './shared/cell-renderers/user-mo
     ChatComponent,
     PasswordResetComponent,
     InfiniteScrollComponent,
+    InvertedInfiniteScrollComponent,
     UserModerationProfileComponent,
     UserModerationRendererComponent,
     UserApprovalConfirmationDialog,

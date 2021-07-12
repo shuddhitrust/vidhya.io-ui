@@ -220,12 +220,14 @@ export class ChatComponent implements OnInit, AfterViewInit {
     }
   }
   onChatScroll() {
+    console.log('onChatScroll');
     if (!this.isFetchingChats) {
       this.store.dispatch(new FetchNextChatsAction());
     }
   }
 
   onChatMessagesScroll() {
+    console.log('onChatMessagesScroll');
     if (this.chat?.id && this.chat?.chatmessageSet?.length) {
       this.autoScrollToBottom = false; // Setting this to be true so that it doesn't autoscroll to lowest when chat updates
       if (!this.isFetchingChatMessages) {

@@ -259,11 +259,11 @@ export class ChatState {
     const state = getState();
     const { paginationObject } = state;
     const { searchParams } = payload;
-    const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
+    const { newSearchQuery, newPageNumber } = searchParams;
     let newPaginationObject = updatePaginationObject({
       paginationObject,
       newPageNumber,
-      newPageSize,
+      newPageSize: 1,
       newSearchQuery,
     });
     patchState({ isFetching: true });
