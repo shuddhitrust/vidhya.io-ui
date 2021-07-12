@@ -8,6 +8,12 @@ export class FetchChatsAction {
   constructor(public payload: { searchParams: SearchParams }) {}
 }
 
+export class FetchNextChatsAction {
+  static readonly type = '[CHATS] Fetch Next';
+
+  constructor() {}
+}
+
 export class FetchChatMessagesAction {
   static readonly type = '[CHAT MESSAGES] Fetch';
 

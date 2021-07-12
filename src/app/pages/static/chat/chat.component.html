@@ -15,7 +15,10 @@
         >
       </mat-form-field>
     </header>
-    <div class="chats" *ngIf="validSearchQueryExists(); else activechats">
+    <div
+      class="chats"
+      *ngIf="validSearchQueryExists(); else activechatsTemplate"
+    >
       <div style="text-align: center">
         <small *ngIf="chatSearchResults.length < 1"
           >No results for "{{ query }}"</small
@@ -36,31 +39,33 @@
         </div>
       </span>
     </div>
-    <ng-template #activechats>
-      <div *ngFor="let chatItem of chats">
-        <div
-          class="chatButton"
-          [ngClass]="
-            chatItem.id == chat?.id ? 'chatButton active' : 'chatButton'
-          "
-          (click)="onSelectChat(chatItem)"
-        >
-          <div class="chatInfo">
-            <img
-              [src]="chatItem.avatar"
-              class="image my-image"
-              alt="Member Avatar"
-            />
+    <ng-template #activechatsTemplate>
+      <infinite-scroll (scrolled)="onChatScroll()" #activechats>
+        <div *ngFor="let chatItem of chats">
+          <div
+            class="chatButton"
+            [ngClass]="
+              chatItem.id == chat?.id ? 'chatButton active' : 'chatButton'
+            "
+            (click)="onSelectChat(chatItem)"
+          >
+            <div class="chatInfo">
+              <img
+                [src]="chatItem.avatar"
+                class="image my-image"
+                alt="Member Avatar"
+              />
 
-            <p class="name">{{ chatItem.name }}</p>
-            <p class="subtitle">
-              {{ chatItem.subtitle }}
-            </p>
+              <p class="name">{{ chatItem.name }}</p>
+              <p class="subtitle">
+                {{ chatItem.subtitle }}
+              </p>
+            </div>
+
+            <div class="status onTop"></div>
           </div>
-
-          <div class="status onTop"></div>
         </div>
-      </div>
+      </infinite-scroll>
     </ng-template>
   </div>
 
@@ -84,7 +89,8 @@
     </div>
 
     <infinite-scroll
-      (scrolled)="onScroll()"
+      (scrolled)="onChatMessagesScroll()"
+      [invert]="true"
       class="convHistory userBg"
       #chatWindow
     >

@@ -12,10 +12,11 @@ import {
 
 @Component({
   selector: 'infinite-scroll',
-  template: `<div #anchor></div>
-    <ng-content></ng-content> `,
+  template: ` <ng-content></ng-content>
+    <div #anchor></div>`,
 })
 export class InfiniteScrollComponent implements AfterViewInit, OnDestroy {
+  @Input() invert = false;
   @Input() options = {};
   @Output() scrolled = new EventEmitter();
   @ViewChild('anchor', { static: false }) anchor: ElementRef<HTMLElement>;

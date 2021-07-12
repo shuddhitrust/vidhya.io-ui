@@ -23,6 +23,7 @@ import {
   FetchChatMessagesAction,
   FetchChatsAction,
   FetchNextChatMessagesAction,
+  FetchNextChatsAction,
   ForceRefetchChatsAction,
   GetChatAction,
   GetIntoChatAction,
@@ -85,6 +86,11 @@ export class ChatState {
   @Selector()
   static listChats(state: ChatStateModel): Chat[] {
     return state.chats;
+  }
+
+  @Selector()
+  static getIsFetchingChats(state: ChatStateModel): boolean {
+    return state.isFetching;
   }
 
   @Selector()
@@ -226,6 +232,25 @@ export class ChatState {
       });
   }
 
+  @Action(FetchNextChatsAction)
+  fetchNextChats({ getState }: StateContext<ChatStateModel>) {
+    const state = getState();
+    const lastPageNumber = state.lastChatPage;
+    const newPageNumber = state.paginationObject.currentPage + 1;
+    const newSearchParams: SearchParams = {
+      ...defaultSearchParams,
+      newPageNumber,
+    };
+    if (
+      !lastPageNumber ||
+      (lastPageNumber != null && newPageNumber <= lastPageNumber)
+    ) {
+      this.store.dispatch(
+        new FetchChatsAction({ searchParams: newSearchParams })
+      );
+    }
+  }
+
   @Action(FetchChatsAction)
   fetchChats(
     { getState, patchState }: StateContext<ChatStateModel>,
@@ -259,15 +284,25 @@ export class ChatState {
           ? response[0]?.totalCount
           : 0;
         newPaginationObject = { ...newPaginationObject, totalCount };
-        const chats = response.map((c) => {
-          return { ...c, chatmessageSet: [] };
-        });
+        let chats = state.chats;
+        chats = chats.concat(
+          response.map((c) => {
+            return { ...c, chatmessageSet: [] };
+          })
+        );
+        let lastChatPage = null;
+        if (response.length < newPaginationObject.pageSize) {
+          lastChatPage = newPaginationObject.currentPage;
+        }
         patchState({
           chats,
+          lastChatPage,
           paginationObject: newPaginationObject,
           isFetching: false,
         });
-        this.store.dispatch(new ChatMessageSubscriptionAction());
+        if (!state.chatMessagesSubscribed) {
+          this.store.dispatch(new ChatMessageSubscriptionAction());
+        }
       });
   }
 

@@ -14,6 +14,7 @@ import {
   FetchChatMessagesAction,
   FetchChatsAction,
   FetchNextChatMessagesAction,
+  FetchNextChatsAction,
   GetChatAction,
   GetIntoChatAction,
   SearchChatMembersAction,
@@ -62,6 +63,9 @@ export class ChatComponent implements OnInit, AfterViewInit {
   @Select(ChatState.getChatFormRecord)
   chat$: Observable<Chat>;
   chat: ChatUIObject;
+  @Select(ChatState.getIsFetchingChats)
+  isFetchingChats$: Observable<boolean>;
+  isFetchingChats;
   @Select(ChatState.isCreatingNewChatMessage)
   isCreatingNewChatMessage$: Observable<boolean>;
   isCreatingNewChatMessage: boolean;
@@ -90,6 +94,9 @@ export class ChatComponent implements OnInit, AfterViewInit {
       this.autoScrollToBottom = true;
       this.draft = '';
       console.log('Chat changed => ', { chat: this.chat });
+    });
+    this.isFetchingChats$.subscribe((val) => {
+      this.isFetchingChats = val;
     });
     this.currentMember$.subscribe((val) => {
       this.currentMember = val;
@@ -212,7 +219,13 @@ export class ChatComponent implements OnInit, AfterViewInit {
       this.draft = '';
     }
   }
-  onScroll() {
+  onChatScroll() {
+    if (!this.isFetchingChats) {
+      this.store.dispatch(new FetchNextChatsAction());
+    }
+  }
+
+  onChatMessagesScroll() {
     if (this.chat?.id && this.chat?.chatmessageSet?.length) {
       this.autoScrollToBottom = false; // Setting this to be true so that it doesn't autoscroll to lowest when chat updates
       if (!this.isFetchingChatMessages) {
