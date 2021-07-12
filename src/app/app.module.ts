@@ -109,10 +109,6 @@ import { ChatComponent } from './pages/static/chat/chat.component';
 import { ChatState } from './shared/state/chats/chat.state';
 import { PasswordResetComponent } from './pages/forms/password-reset/password-reset.component';
 import {
-  InfiniteScrollComponent,
-  InvertedInfiniteScrollComponent,
-} from './shared/abstract/infinite-scroller/infinite-scroller.component';
-import {
   UserModerationProfileComponent,
   UserApprovalConfirmationDialog,
   UserDenialConfirmationDialog,
@@ -173,8 +169,6 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
     AddEditUserRoleComponent,
     ChatComponent,
     PasswordResetComponent,
-    InfiniteScrollComponent,
-    InvertedInfiniteScrollComponent,
     UserModerationProfileComponent,
     UserModerationRendererComponent,
     UserApprovalConfirmationDialog,
