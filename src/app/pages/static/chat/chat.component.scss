@@ -91,7 +91,8 @@ input[type="checkbox"] {
 
 .autoscroll {
   overflow: auto;
-  height: 100%;
+  // height: calc(100vh-170px);
+  height: 10px;
 }
 
 header {

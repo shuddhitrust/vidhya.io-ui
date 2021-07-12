@@ -151,8 +151,8 @@ export class ChatComponent implements OnInit, AfterViewInit {
     console.log('ChatWindow exists => ', { chatWindow: this.chatWindow });
     if (this.chatWindow) {
       console.log('chat window => ', { chatWindow: this.chatWindow });
-      this.chatWindow.host.nativeElement.scrollTop =
-        this.chatWindow.host.nativeElement.scrollHeight;
+      this.chatWindow.nativeElement.scrollTop =
+        this.chatWindow.nativeElement.scrollHeight;
     }
   }
   prepCurrentChat(chat: Chat): ChatUIObject {

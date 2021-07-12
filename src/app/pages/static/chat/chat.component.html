@@ -1,5 +1,13 @@
 <section class="mainApp">
-  <infinite-scroll (scrolled)="onChatScroll()" class="leftPanel">
+  <div
+    class="leftPanel"
+    infiniteScroll
+    [infiniteScrollDistance]="2"
+    [infiniteScrollThrottle]="50"
+    infiniteScrollContainer=".leftPanel"
+    [fromRoot]="true"
+    (scrolled)="onChatScroll()"
+  >
     <header>
       <mat-form-field
         class="search-member-input col-lg-11 col-md-11 col-sm-11"
@@ -65,7 +73,7 @@
         </div>
       </div>
     </ng-template>
-  </infinite-scroll>
+  </div>
 
   <div *ngIf="showChat()" class="rightPanel">
     <div class="topBar">
@@ -86,10 +94,15 @@
       </div>
     </div>
 
-    <inverted-infinite-scroll
-      (scrolled)="onChatMessagesScroll()"
+    <div
       class="convHistory userBg"
       #chatWindow
+      infiniteScroll
+      [infiniteScrollDistance]="2"
+      [infiniteScrollThrottle]="50"
+      infiniteScrollContainer=".convHistory"
+      [fromRoot]="true"
+      (scrolledUp)="onChatMessagesScroll()"
     >
       <p
         *ngIf="isFetchingChatMessages$ | async"
@@ -121,7 +134,7 @@
         </mat-card>
       </div>
       <br />
-    </inverted-infinite-scroll>
+    </div>
 
     <div class="replyBar">
       <button class="attach">

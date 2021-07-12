@@ -118,6 +118,7 @@ import {
   UserDenialConfirmationDialog,
 } from './pages/modals/moderate-user/user-moderation.component';
 import { UserModerationRendererComponent } from './shared/cell-renderers/user-moderation/user-moderation-renderer.component';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 @NgModule({
   declarations: [
@@ -214,6 +215,7 @@ import { UserModerationRendererComponent } from './shared/cell-renderers/user-mo
       NgxsReduxDevtoolsPluginModule.forRoot(),
     ],
     TokenUpdater,
+    InfiniteScrollModule,
   ],
   providers: [
     AuthenticationGuard,
