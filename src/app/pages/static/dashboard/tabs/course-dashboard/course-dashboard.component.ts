@@ -10,7 +10,10 @@ import {
   RESOURCE_ACTIONS,
 } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
-import { FetchCoursesAction } from 'src/app/shared/state/courses/course.actions';
+import {
+  FetchCoursesAction,
+  FetchNextCoursesAction,
+} from 'src/app/shared/state/courses/course.actions';
 import { CourseState } from 'src/app/shared/state/courses/course.state';
 
 @Component({
@@ -30,6 +33,7 @@ export class CourseDashboardComponent implements OnInit {
 
   @Select(CourseState.isFetching)
   isFetching$: Observable<boolean>;
+  isFetching: boolean;
 
   constructor(
     private store: Store,
@@ -39,13 +43,21 @@ export class CourseDashboardComponent implements OnInit {
     this.store.dispatch(
       new FetchCoursesAction({ searchParams: defaultSearchParams })
     );
+    this.isFetching$.subscribe((val) => {
+      this.isFetching = val;
+    });
   }
   authorizeResourceMethod(action) {
     return this.auth.authorizeResource(this.resource, action);
   }
 
   ngOnInit(): void {}
-
+  onScroll() {
+    console.log('scrolling groups');
+    if (!this.isFetching) {
+      this.store.dispatch(new FetchNextCoursesAction());
+    }
+  }
   createCourse() {
     this.router.navigateByUrl(uiroutes.COURSE_FORM_ROUTE.route);
   }

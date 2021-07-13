@@ -16,6 +16,7 @@ export const emptyCourseFormRecord: Course = {
 };
 export interface CourseStateModel {
   courses: Course[];
+  lastPage: number;
   coursesSubscribed: boolean;
   fetchPolicy: FetchPolicy;
   paginationObject: PaginationObject;
@@ -29,6 +30,7 @@ export interface CourseStateModel {
 
 export const defaultCourseState: CourseStateModel = {
   courses: [],
+  lastPage: null,
   coursesSubscribed: false,
   fetchPolicy: null,
   paginationObject: startingPaginationObject,

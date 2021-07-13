@@ -12,6 +12,7 @@ import {
   CreateUpdateAssignmentAction,
   DeleteAssignmentAction,
   FetchAssignmentsAction,
+  FetchNextAssignmentsAction,
   ForceRefetchAssignmentsAction,
   GetAssignmentAction,
   ResetAssignmentFormAction,
@@ -34,6 +35,7 @@ import {
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
 import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
+import { SearchParams } from '../../abstract/master-grid/table.model';
 
 @State<AssignmentStateModel>({
   name: 'assignmentState',
@@ -102,6 +104,25 @@ export class AssignmentState {
     );
   }
 
+  @Action(FetchNextAssignmentsAction)
+  fetchNextAssignments({ getState }: StateContext<AssignmentStateModel>) {
+    const state = getState();
+    const lastPageNumber = state.lastPage;
+    const newPageNumber = state.paginationObject.currentPage + 1;
+    const newSearchParams: SearchParams = {
+      ...defaultSearchParams,
+      newPageNumber,
+    };
+    if (
+      !lastPageNumber ||
+      (lastPageNumber != null && newPageNumber <= lastPageNumber)
+    ) {
+      this.store.dispatch(
+        new FetchAssignmentsAction({ searchParams: newSearchParams })
+      );
+    }
+  }
+
   @Action(FetchAssignmentsAction)
   fetchAssignments(
     { getState, patchState }: StateContext<AssignmentStateModel>,
@@ -147,12 +168,21 @@ export class AssignmentState {
             response,
             newPaginationObject,
           });
+          let assignments = state.assignments;
+          assignments = assignments.concat(response);
+          let lastPage = null;
+          if (response.length < newPaginationObject.pageSize) {
+            lastPage = newPaginationObject.currentPage;
+          }
           patchState({
-            assignments: response,
+            assignments,
+            lastPage,
             paginationObject: newPaginationObject,
             isFetching: false,
           });
-          this.store.dispatch(new AssignmentSubscriptionAction());
+          if (!state.assignmentsSubscribed) {
+            this.store.dispatch(new AssignmentSubscriptionAction());
+          }
         });
     }
   }

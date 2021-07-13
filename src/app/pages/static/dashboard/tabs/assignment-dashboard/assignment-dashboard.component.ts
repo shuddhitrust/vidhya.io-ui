@@ -10,7 +10,10 @@ import {
   RESOURCE_ACTIONS,
 } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
-import { FetchAssignmentsAction } from 'src/app/shared/state/assignments/assignment.actions';
+import {
+  FetchAssignmentsAction,
+  FetchNextAssignmentsAction,
+} from 'src/app/shared/state/assignments/assignment.actions';
 import { AssignmentState } from 'src/app/shared/state/assignments/assignment.state';
 
 @Component({
@@ -30,6 +33,7 @@ export class AssignmentDashboardComponent implements OnInit {
 
   @Select(AssignmentState.isFetching)
   isFetching$: Observable<boolean>;
+  isFetching: boolean;
 
   constructor(
     private store: Store,
@@ -39,13 +43,21 @@ export class AssignmentDashboardComponent implements OnInit {
     this.store.dispatch(
       new FetchAssignmentsAction({ searchParams: defaultSearchParams })
     );
+    this.isFetching$.subscribe((val) => {
+      this.isFetching = val;
+    });
   }
   authorizeResourceMethod(action) {
     return this.auth.authorizeResource(this.resource, action);
   }
 
   ngOnInit(): void {}
-
+  onScroll() {
+    console.log('scrolling groups');
+    if (!this.isFetching) {
+      this.store.dispatch(new FetchNextAssignmentsAction());
+    }
+  }
   createAssignment() {
     this.router.navigateByUrl(uiroutes.ASSIGNMENT_FORM_ROUTE.route);
   }

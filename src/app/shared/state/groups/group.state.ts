@@ -175,7 +175,9 @@ export class GroupState {
             paginationObject: newPaginationObject,
             isFetching: false,
           });
-          this.store.dispatch(new GroupSubscriptionAction());
+          if (!state.groupsSubscribed) {
+            this.store.dispatch(new GroupSubscriptionAction());
+          }
         });
     }
   }

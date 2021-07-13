@@ -12,6 +12,7 @@ import {
   CreateUpdateCourseAction,
   DeleteCourseAction,
   FetchCoursesAction,
+  FetchNextCoursesAction,
   ForceRefetchCoursesAction,
   GetCourseAction,
   ResetCourseFormAction,
@@ -30,6 +31,7 @@ import {
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
 import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
+import { SearchParams } from '../../abstract/master-grid/table.model';
 
 @State<CourseStateModel>({
   name: 'courseState',
@@ -98,6 +100,24 @@ export class CourseState {
     );
   }
 
+  @Action(FetchNextCoursesAction)
+  fetchNextCourses({ getState }: StateContext<CourseStateModel>) {
+    const state = getState();
+    const lastPageNumber = state.lastPage;
+    const newPageNumber = state.paginationObject.currentPage + 1;
+    const newSearchParams: SearchParams = {
+      ...defaultSearchParams,
+      newPageNumber,
+    };
+    if (
+      !lastPageNumber ||
+      (lastPageNumber != null && newPageNumber <= lastPageNumber)
+    ) {
+      this.store.dispatch(
+        new FetchCoursesAction({ searchParams: newSearchParams })
+      );
+    }
+  }
   @Action(FetchCoursesAction)
   fetchCourses(
     { getState, patchState }: StateContext<CourseStateModel>,
@@ -148,7 +168,9 @@ export class CourseState {
             paginationObject: newPaginationObject,
             isFetching: false,
           });
-          this.store.dispatch(new CourseSubscriptionAction());
+          if (!state.coursesSubscribed) {
+            this.store.dispatch(new CourseSubscriptionAction());
+          }
         });
     }
   }
