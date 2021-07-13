@@ -11,7 +11,11 @@ import {
   RESOURCE_ACTIONS,
 } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
-import { FetchAnnouncementsAction } from 'src/app/shared/state/announcements/announcement.actions';
+import {
+  FetchAnnouncementsAction,
+  FetchNextAnnouncementsAction,
+  ForceRefetchAnnouncementsAction,
+} from 'src/app/shared/state/announcements/announcement.actions';
 import { AnnouncementState } from 'src/app/shared/state/announcements/announcement.state';
 
 @Component({
@@ -31,6 +35,7 @@ export class AnnouncementDashboardComponent implements OnInit {
 
   @Select(AnnouncementState.isFetching)
   isFetching$: Observable<boolean>;
+  isFetching: boolean;
 
   constructor(
     private store: Store,
@@ -40,9 +45,18 @@ export class AnnouncementDashboardComponent implements OnInit {
     this.store.dispatch(
       new FetchAnnouncementsAction({ searchParams: defaultSearchParams })
     );
+    this.isFetching$.subscribe((val) => {
+      this.isFetching = val;
+    });
   }
 
   ngOnInit(): void {}
+  onScroll() {
+    console.log('scrolling announcements');
+    if (!this.isFetching) {
+      this.store.dispatch(new FetchNextAnnouncementsAction());
+    }
+  }
 
   createAnnouncement() {
     this.router.navigateByUrl(uiroutes.ANNOUNCEMENT_FORM_ROUTE.route);

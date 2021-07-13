@@ -5,6 +5,7 @@ import { RESOURCE_ACTIONS, UserPermissions } from '../../common/models';
 import { Observable } from '@apollo/client/utilities';
 import { AuthState } from '../../state/auth/auth.state';
 import { Select } from '@ngxs/store';
+import { InstitutionFormCloseURL } from '../../state/institutions/institution.model';
 
 @Injectable({
   providedIn: 'root',
@@ -37,6 +38,14 @@ export class AuthorizationService {
       institutionId: null,
     }
   ): boolean => {
+    console.log('from authorizeResource => ', {
+      permissions: this.permissions,
+      currentUserId: this.currentUserId,
+      resource,
+      action,
+      adminIds: recordData.adminIds,
+      institutionId: recordData.institutionId,
+    });
     const permissions = this.permissions;
     if (action == '*') {
       const keys = Object.keys(permissions[resource]);

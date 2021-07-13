@@ -12,6 +12,7 @@ import {
   CreateUpdateAnnouncementAction,
   DeleteAnnouncementAction,
   FetchAnnouncementsAction,
+  FetchNextAnnouncementsAction,
   ForceRefetchAnnouncementsAction,
   GetAnnouncementAction,
   ResetAnnouncementFormAction,
@@ -34,6 +35,7 @@ import {
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
 import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
+import { SearchParams } from '../../abstract/master-grid/table.model';
 
 @State<AnnouncementStateModel>({
   name: 'announcementState',
@@ -108,6 +110,25 @@ export class AnnouncementState {
     );
   }
 
+  @Action(FetchNextAnnouncementsAction)
+  fetchNextAnnouncements({ getState }: StateContext<AnnouncementStateModel>) {
+    const state = getState();
+    const lastPageNumber = state.lastPage;
+    const newPageNumber = state.paginationObject.currentPage + 1;
+    const newSearchParams: SearchParams = {
+      ...defaultSearchParams,
+      newPageNumber,
+    };
+    if (
+      !lastPageNumber ||
+      (lastPageNumber != null && newPageNumber <= lastPageNumber)
+    ) {
+      this.store.dispatch(
+        new FetchAnnouncementsAction({ searchParams: newSearchParams })
+      );
+    }
+  }
+
   @Action(FetchAnnouncementsAction)
   fetchAnnouncements(
     { getState, patchState }: StateContext<AnnouncementStateModel>,
@@ -153,12 +174,21 @@ export class AnnouncementState {
             response,
             newPaginationObject,
           });
+          let announcements = state.announcements;
+          announcements = announcements.concat(response);
+          let lastPage = null;
+          if (response.length < newPaginationObject.pageSize) {
+            lastPage = newPaginationObject.currentPage;
+          }
           patchState({
-            announcements: response,
+            lastPage,
+            announcements,
             paginationObject: newPaginationObject,
             isFetching: false,
           });
-          this.store.dispatch(new AnnouncementSubscriptionAction());
+          if (!state.announcementsSubscribed) {
+            this.store.dispatch(new AnnouncementSubscriptionAction());
+          }
         });
     }
   }

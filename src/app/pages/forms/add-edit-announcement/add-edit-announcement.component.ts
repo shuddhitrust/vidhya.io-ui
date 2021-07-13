@@ -19,6 +19,8 @@ import { emptyAnnouncementFormRecord } from 'src/app/shared/state/announcements/
 import { Announcement, MatSelectOption } from 'src/app/shared/common/models';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { GroupState } from 'src/app/shared/state/groups/group.state';
+import { FetchGroupsAction } from 'src/app/shared/state/groups/group.actions';
+import { defaultSearchParams } from 'src/app/shared/common/constants';
 @Component({
   selector: 'app-add-edit-announcement',
   templateUrl: './add-edit-announcement.component.html',
@@ -41,7 +43,7 @@ export class AddEditAnnouncementComponent implements OnInit {
   currentMemberInstitutionId: number = 1;
   @Select(AuthState.getCurrentUserId)
   currentUserId$: Observable<number>;
-  currentUserId: number = 4;
+  currentUserId: number;
   announcementFormRecord: Announcement = emptyAnnouncementFormRecord;
   announcementForm: FormGroup;
 
@@ -51,17 +53,19 @@ export class AddEditAnnouncementComponent implements OnInit {
     private route: ActivatedRoute,
     private fb: FormBuilder
   ) {
-    this.announcementForm = this.setupAnnouncementFormGroup();
+    this.store.dispatch(
+      new FetchGroupsAction({ searchParams: defaultSearchParams })
+    );
+    this.currentUserId$.subscribe((val) => {
+      this.currentUserId = val;
+    });
     this.announcementFormRecord$.subscribe((val) => {
       this.announcementFormRecord = val;
       this.announcementForm = this.setupAnnouncementFormGroup(
         this.announcementFormRecord
       );
     });
-
-    this.currentUserId$.subscribe((val) => {
-      this.currentUserId = val;
-    });
+    this.announcementForm = this.setupAnnouncementFormGroup();
   }
 
   setupAnnouncementFormGroup = (

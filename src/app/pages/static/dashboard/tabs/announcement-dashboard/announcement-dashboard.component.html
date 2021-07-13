@@ -13,16 +13,26 @@
 <span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
   <span *ngIf="!(isFetching$ | async); else loading">
     <span *ngIf="(announcements$ | async).length > 0; else feedEmpty">
-      <div *ngFor="let announcement of announcements$ | async">
-        <span class="feed-card" (click)="openAnnouncement(announcement)">
-          <h2>{{ announcement.title }}</h2>
-          <p>{{ clip(announcement.message) }}</p>
-          <small style="font-style: italic"
-            >Posted by {{ announcement?.author?.firstName }}
-            {{ announcement?.author?.lastName }} at
-            {{ parseDate(announcement.createdAt) }}</small
-          >
-        </span>
+      <div
+        class="scroll-feed"
+        infiniteScroll
+        [infiniteScrollDistance]="2"
+        [infiniteScrollThrottle]="50"
+        infiniteScrollContainer=".scroll-feed"
+        [fromRoot]="true"
+        (scrolled)="onScroll()"
+      >
+        <div *ngFor="let announcement of announcements$ | async">
+          <span class="feed-card" (click)="openAnnouncement(announcement)">
+            <h2>{{ announcement.title }}</h2>
+            <p>{{ clip(announcement.message) }}</p>
+            <small style="font-style: italic"
+              >Posted by {{ announcement?.author?.firstName }}
+              {{ announcement?.author?.lastName }} at
+              {{ parseDate(announcement.createdAt) }}</small
+            >
+          </span>
+        </div>
       </div>
     </span>
   </span>
