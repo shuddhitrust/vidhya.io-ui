@@ -14,7 +14,6 @@ import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   FetchAnnouncementsAction,
   FetchNextAnnouncementsAction,
-  ForceRefetchAnnouncementsAction,
 } from 'src/app/shared/state/announcements/announcement.actions';
 import { AnnouncementState } from 'src/app/shared/state/announcements/announcement.state';
 

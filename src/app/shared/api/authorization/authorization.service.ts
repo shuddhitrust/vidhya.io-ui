@@ -38,14 +38,14 @@ export class AuthorizationService {
       institutionId: null,
     }
   ): boolean => {
-    console.log('from authorizeResource => ', {
-      permissions: this.permissions,
-      currentUserId: this.currentUserId,
-      resource,
-      action,
-      adminIds: recordData.adminIds,
-      institutionId: recordData.institutionId,
-    });
+    // console.log('from authorizeResource => ', {
+    //   permissions: this.permissions,
+    //   currentUserId: this.currentUserId,
+    //   resource,
+    //   action,
+    //   adminIds: recordData.adminIds,
+    //   institutionId: recordData.institutionId,
+    // });
     const permissions = this.permissions;
     if (action == '*') {
       const keys = Object.keys(permissions[resource]);

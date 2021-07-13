@@ -13,6 +13,7 @@ import {
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   FetchGroupsAction,
+  FetchNextGroupsAction,
   ResetGroupFormAction,
 } from 'src/app/shared/state/groups/group.actions';
 import { GroupState } from 'src/app/shared/state/groups/group.state';
@@ -33,6 +34,7 @@ export class GroupDashboardComponent implements OnInit {
 
   @Select(GroupState.isFetching)
   isFetching$: Observable<boolean>;
+  isFetching: boolean;
 
   constructor(
     private store: Store,
@@ -42,13 +44,21 @@ export class GroupDashboardComponent implements OnInit {
     this.store.dispatch(
       new FetchGroupsAction({ searchParams: defaultSearchParams })
     );
+    this.isFetching$.subscribe((val) => {
+      this.isFetching = val;
+    });
   }
   authorizeResourceMethod(action) {
     return this.auth.authorizeResource(this.resource, action);
   }
 
   ngOnInit(): void {}
-
+  onScroll() {
+    console.log('scrolling groups');
+    if (!this.isFetching) {
+      this.store.dispatch(new FetchNextGroupsAction());
+    }
+  }
   clip(string) {
     const clipLength = 50;
     return string.slice(0, clipLength);

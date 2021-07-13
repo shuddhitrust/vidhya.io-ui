@@ -13,14 +13,24 @@
 <span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
   <span *ngIf="!(isFetching$ | async); else loading">
     <span *ngIf="(groups$ | async).length > 0; else feedEmpty">
-      <div *ngFor="let group of groups$ | async">
-        <span class="feed-card" (click)="openGroup(group)">
-          <h2>{{ group.name }}</h2>
-          <p>{{ clip(group.description) }}</p>
-          <small style="font-style: italic"
-            >Created on {{ parseDate(group.createdAt) }}</small
-          >
-        </span>
+      <div
+        class="scroll-feed"
+        infiniteScroll
+        [infiniteScrollDistance]="2"
+        [infiniteScrollThrottle]="50"
+        infiniteScrollContainer=".scroll-feed"
+        [fromRoot]="true"
+        (scrolled)="onScroll()"
+      >
+        <div *ngFor="let group of groups$ | async">
+          <span class="feed-card" (click)="openGroup(group)">
+            <h2>{{ group.name }}</h2>
+            <p>{{ clip(group.description) }}</p>
+            <small style="font-style: italic"
+              >Created on {{ parseDate(group.createdAt) }}</small
+            >
+          </span>
+        </div>
       </div>
     </span>
   </span>

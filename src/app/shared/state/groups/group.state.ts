@@ -11,6 +11,7 @@ import {
   CreateUpdateGroupAction,
   DeleteGroupAction,
   FetchGroupsAction,
+  FetchNextGroupsAction,
   ForceRefetchGroupsAction,
   GetGroupAction,
   GroupSubscriptionAction,
@@ -30,6 +31,7 @@ import {
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
 import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
+import { SearchParams } from '../../abstract/master-grid/table.model';
 
 @State<GroupStateModel>({
   name: 'groupState',
@@ -98,6 +100,24 @@ export class GroupState {
     );
   }
 
+  @Action(FetchNextGroupsAction)
+  fetchNextGroups({ getState }: StateContext<GroupStateModel>) {
+    const state = getState();
+    const lastPageNumber = state.lastPage;
+    const newPageNumber = state.paginationObject.currentPage + 1;
+    const newSearchParams: SearchParams = {
+      ...defaultSearchParams,
+      newPageNumber,
+    };
+    if (
+      !lastPageNumber ||
+      (lastPageNumber != null && newPageNumber <= lastPageNumber)
+    ) {
+      this.store.dispatch(
+        new FetchGroupsAction({ searchParams: newSearchParams })
+      );
+    }
+  }
   @Action(FetchGroupsAction)
   fetchGroups(
     { getState, patchState }: StateContext<GroupStateModel>,
@@ -143,8 +163,15 @@ export class GroupState {
             response,
             newPaginationObject,
           });
+          let groups = state.groups;
+          groups = groups.concat(response);
+          let lastPage = null;
+          if (response.length < newPaginationObject.pageSize) {
+            lastPage = newPaginationObject.currentPage;
+          }
           patchState({
-            groups: response,
+            groups,
+            lastPage,
             paginationObject: newPaginationObject,
             isFetching: false,
           });
