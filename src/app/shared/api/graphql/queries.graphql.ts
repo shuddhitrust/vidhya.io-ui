@@ -320,30 +320,33 @@ export const CHAT_QUERIES = {
   GET_CHATS: gql`
     query chats($searchField: String, $limit: Int, $offset: Int) {
       chats(searchField: $searchField, limit: $limit, offset: $offset) {
-        id
-        chatType
-        individualMemberOne {
+        chats {
           id
-          firstName
-          lastName
-          avatar
-          lastActive
-        }
-        individualMemberTwo {
-          id
-          firstName
-          lastName
-          avatar
-          lastActive
-        }
-        group {
-          name
-          members {
+          chatType
+          individualMemberOne {
             id
             firstName
             lastName
             avatar
             lastActive
+          }
+          individualMemberTwo {
+            id
+            firstName
+            lastName
+            avatar
+            lastActive
+          }
+        }
+        groups {
+          id
+          name
+          avatar
+          members {
+            id
+          }
+          chat {
+            id
           }
         }
       }
@@ -378,16 +381,31 @@ export const CHAT_QUERIES = {
     }
   `,
   CHAT_SEARCH: gql`
-    query chatSearch($query: String) {
+    query chatSearch($query: String!) {
       chatSearch(query: $query) {
-        id
-        firstName
-        lastName
-        avatar
-        institution {
-          name
+        users {
+          id
+          firstName
+          lastName
+          avatar
+          lastActive
         }
-        lastActive
+        groups {
+          id
+          name
+          avatar
+          chat {
+            id
+          }
+        }
+        chatMessages {
+          id
+          message
+          createdAt
+          chat {
+            id
+          }
+        }
       }
     }
   `,

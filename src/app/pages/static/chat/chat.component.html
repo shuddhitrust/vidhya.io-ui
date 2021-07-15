@@ -52,13 +52,13 @@
         <div
           class="chatButton"
           [ngClass]="
-            chatItem.id == chat?.id ? 'chatButton active' : 'chatButton'
+            chatItem?.id == chat?.id ? 'chatButton active' : 'chatButton'
           "
           (click)="onSelectChat(chatItem)"
         >
           <div class="chatInfo">
             <img
-              [src]="chatItem.avatar"
+              [src]="chatItem?.avatar"
               class="image my-image"
               alt="Member Avatar"
             />

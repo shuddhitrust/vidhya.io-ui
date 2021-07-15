@@ -36,14 +36,8 @@ import {
   tap,
 } from 'rxjs/operators';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
+import { ChatUIObject } from 'src/app/shared/state/chats/chat.model';
 
-interface ChatUIObject {
-  id: number;
-  name: string;
-  subtitle: string;
-  avatar: string;
-  chatmessageSet: any[];
-}
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
@@ -53,7 +47,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
   @ViewChild('chatWindow', { static: false }) chatWindow: any;
   @ViewChild('searchMember') searchMember: ElementRef;
   @Select(ChatState.listChats)
-  chats$: Observable<Chat[]>;
+  chats$: Observable<ChatUIObject[]>;
   @Select(ChatState.getChatSearchResults)
   chatSearch$: Observable<ChatSearchResult[]>;
   @Select(ChatState.getIsFetchingChatMembers)
@@ -61,7 +55,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
   @Select(ChatState.getIsFetchingChatMessages)
   isFetchingChatMessages$: Observable<boolean>;
   @Select(ChatState.getChatFormRecord)
-  chat$: Observable<Chat>;
+  chat$: Observable<ChatUIObject>;
   chat: ChatUIObject;
   @Select(ChatState.getIsFetchingChats)
   isFetchingChats$: Observable<boolean>;
@@ -115,7 +109,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
       this.isFetchingChatMessages = val;
     });
     this.chats$.subscribe((val) => {
-      this.chats = val.map((c) => this.prepChat(c));
+      this.chats = val;
       console.log('chats => ', { chats: val });
     });
     this.store.dispatch(
@@ -155,44 +149,15 @@ export class ChatComponent implements OnInit, AfterViewInit {
         this.chatWindow.nativeElement.scrollHeight;
     }
   }
-  prepCurrentChat(chat: Chat): ChatUIObject {
+  prepCurrentChat(chat: ChatUIObject): ChatUIObject {
     console.log('from prepCurrentChat ', { chat });
+    let newChat = Object.assign({}, chat);
     if (chat?.chatmessageSet?.length > 1) {
-      let newChat = Object.assign({}, this.prepChat(chat));
       return {
         ...newChat,
         chatmessageSet: newChat?.chatmessageSet?.slice().reverse(),
       };
-    } else return this.prepChat(chat);
-  }
-  prepChat(chat: Chat): ChatUIObject {
-    let preppedChat;
-    if (chat.chatType == ChatTypes.INDIVIDUAL) {
-      let member;
-      console.log('Chat => ', chat);
-      if (chat.individualMemberOne?.id == this.currentMember?.id) {
-        member = chat.individualMemberTwo;
-      } else if (chat.individualMemberTwo?.id == this.currentMember?.id) {
-        member = chat.individualMemberOne;
-      }
-      console.log('member => ', member);
-      preppedChat = {
-        id: chat.id,
-        name: constructUserFullName(member),
-        subtitle: this.parseDateTimeMethod(member.lastActive),
-        avatar: member.avatar,
-        chatmessageSet: chat.chatmessageSet,
-      };
-    } else if (chat.chatType == ChatTypes.GROUP) {
-      preppedChat = {
-        id: chat.id,
-        name: chat.group?.name,
-        subtitle: `${chat.group?.members?.length} members`,
-        avatar: chat.group?.avatar ? chat.group?.avatar : defaultLogos.user,
-        chatmessageSet: chat.chatmessageSet,
-      };
-    }
-    return preppedChat;
+    } else return chat;
   }
 
   clearSearchMember() {

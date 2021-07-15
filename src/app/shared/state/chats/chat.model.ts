@@ -8,16 +8,23 @@ import {
 } from '../../common/models';
 import { uiroutes } from '../../common/ui-routes';
 
-export const emptyChatFormRecord: Chat = {
+export const emptyChatFormRecord: ChatUIObject = {
   id: null,
-  chatType: null,
-  group: null,
-  individualMemberOne: null,
-  individualMemberTwo: null,
+  name: null,
+  subtitle: null,
+  avatar: null,
   chatmessageSet: [],
 };
+
+export interface ChatUIObject {
+  id: number;
+  name: string;
+  subtitle: string;
+  avatar: string;
+  chatmessageSet: any[];
+}
 export interface ChatStateModel {
-  chats: Chat[];
+  chats: ChatUIObject[];
   chatMessagesSubscribed: boolean;
   chatSearchResults: ChatSearchResult[];
   isFetchingChatMembers: boolean;
@@ -29,7 +36,7 @@ export interface ChatStateModel {
   lastChatMessagesPage: number;
   chatFormId: number;
   isCreatingNewChatMessage: boolean;
-  chatFormRecord: Chat;
+  chatFormRecord: ChatUIObject;
   isFetching: boolean;
   errorFetching: boolean;
   formSubmitting: boolean;

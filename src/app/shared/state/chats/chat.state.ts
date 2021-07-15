@@ -11,6 +11,7 @@ import {
   emptyChatFormRecord,
   ChatFormCloseURL,
   ChatStateModel,
+  ChatUIObject,
 } from './chat.model';
 
 import { Injectable } from '@angular/core';
@@ -84,7 +85,7 @@ export class ChatState {
   }
 
   @Selector()
-  static listChats(state: ChatStateModel): Chat[] {
+  static listChats(state: ChatStateModel): ChatUIObject[] {
     return state.chats;
   }
 
@@ -129,7 +130,7 @@ export class ChatState {
     const options: MatSelectOption[] = state.chats.map((i) => {
       const option: MatSelectOption = {
         value: i.id,
-        label: `${i.group?.name}`,
+        label: `${i.name}`,
       };
       return option;
     });
@@ -153,7 +154,7 @@ export class ChatState {
   }
 
   @Selector()
-  static getChatFormRecord(state: ChatStateModel): Chat {
+  static getChatFormRecord(state: ChatStateModel): ChatUIObject {
     return state.chatFormRecord;
   }
 
@@ -176,7 +177,7 @@ export class ChatState {
     patchState({ isFetchingChatMembers: true });
     this.apollo
       .mutate({
-        mutation: CHAT_MUTATIONS.CHAT_SEARCH,
+        mutation: CHAT_QUERIES.CHAT_SEARCH,
         variables: { query },
       })
       .subscribe(({ data }: any) => {
@@ -225,6 +226,7 @@ export class ChatState {
             };
           })
         );
+        console.log('results => ', { results });
         patchState({
           chatSearchResults: results,
           isFetchingChatMembers: false,
@@ -266,44 +268,82 @@ export class ChatState {
       newPageSize,
       newSearchQuery,
     });
-    patchState({ isFetching: true });
-    const variables = {
-      searchField: newSearchQuery,
-      limit: newPaginationObject.pageSize,
-      offset: newPaginationObject.offset,
-    };
-    this.apollo
-      .watchQuery({
-        query: CHAT_QUERIES.GET_CHATS,
-        variables,
-        fetchPolicy: 'network-only',
+    if (
+      paginationChanged({
+        paginationObject,
+        newPaginationObject,
       })
-      .valueChanges.subscribe(({ data }: any) => {
-        const response = data.chats;
-        const totalCount = response[0]?.totalCount
-          ? response[0]?.totalCount
-          : 0;
-        newPaginationObject = { ...newPaginationObject, totalCount };
-        let chats = state.chats;
-        chats = chats.concat(
-          response.map((c) => {
-            return { ...c, chatmessageSet: [] };
-          })
-        );
-        let lastChatPage = null;
-        if (response.length < newPaginationObject.pageSize) {
-          lastChatPage = newPaginationObject.currentPage;
-        }
-        patchState({
-          chats,
-          lastChatPage,
-          paginationObject: newPaginationObject,
-          isFetching: false,
+    ) {
+      patchState({ isFetching: true });
+      const variables = {
+        searchField: newSearchQuery,
+        limit: newPaginationObject.pageSize,
+        offset: newPaginationObject.offset,
+      };
+      this.apollo
+        .watchQuery({
+          query: CHAT_QUERIES.GET_CHATS,
+          variables,
+          fetchPolicy: 'network-only',
+        })
+        .valueChanges.subscribe(({ data }: any) => {
+          const response = data.chats;
+          console.log('response from fetchChats => ', { response });
+          const totalCount = response[0]?.totalCount
+            ? response[0]?.totalCount
+            : 0;
+          newPaginationObject = { ...newPaginationObject, totalCount };
+          let chats = state.chats;
+          let responseChats = response.chats;
+          let responseGroups = response.groups;
+
+          // Parsing the individual chats in to chat objects
+          responseChats = responseChats.map((chat) => {
+            let member;
+            console.log('Chat => ', chat);
+            if (chat.individualMemberOne?.id == this.currentMember?.id) {
+              member = chat.individualMemberTwo;
+            } else if (chat.individualMemberTwo?.id == this.currentMember?.id) {
+              member = chat.individualMemberOne;
+            }
+            console.log('member => ', member);
+            const preppedChat = {
+              id: chat.id,
+              name: constructUserFullName(member),
+              subtitle: parseDateTime(member.lastActive),
+              avatar: member.avatar,
+              chatmessageSet: [],
+            };
+            return preppedChat;
+          });
+          // Parsing the groups into chat objects
+          responseGroups = responseGroups.map((group) => {
+            const preppedChat = {
+              id: group.chat.id,
+              name: group?.name,
+              subtitle: `${group?.members?.length} members`,
+              avatar: group?.avatar ? group?.avatar : defaultLogos.user,
+              chatmessageSet: [],
+            };
+            return preppedChat;
+          });
+          chats = chats.concat(responseChats).concat(responseGroups);
+
+          let lastChatPage = null;
+          if (response.length < newPaginationObject.pageSize) {
+            lastChatPage = newPaginationObject.currentPage;
+          }
+          patchState({
+            chats,
+            lastChatPage,
+            paginationObject: newPaginationObject,
+            isFetching: false,
+          });
+          if (!state.chatMessagesSubscribed) {
+            this.store.dispatch(new ChatMessageSubscriptionAction());
+          }
         });
-        if (!state.chatMessagesSubscribed) {
-          this.store.dispatch(new ChatMessageSubscriptionAction());
-        }
-      });
+    }
   }
 
   @Action(SelectChatAction)
@@ -593,7 +633,7 @@ export class ChatState {
             ? response[0]?.totalCount
             : 0;
           newPaginationObject = { ...newPaginationObject, totalCount };
-          let chat: Chat = state.chats.find((c) => c.id == chatId);
+          let chat: ChatUIObject = state.chats.find((c) => c.id == chatId);
           if (chat) {
             console.log('line 460 from chat state => ', { chat, response });
             const chatmessageSet = chat.chatmessageSet.concat(response);
@@ -641,7 +681,7 @@ export class ChatState {
           const method = result?.data?.notifyChatMessage?.method;
           const chatMessage = result?.data?.notifyChatMessage?.chatMessage;
           if (chatMessage) {
-            let chat: Chat = state.chats.find(
+            let chat: ChatUIObject = state.chats.find(
               (c) => c.id == chatMessage?.chat?.id
             );
             if (chat) {
