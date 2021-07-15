@@ -16,7 +16,7 @@ export interface AssignmentStateModel {
   lastPage: number;
   assignmentsSubscribed: boolean;
   fetchPolicy: FetchPolicy;
-  paginationObject: PaginationObject;
+  paginationObjects: PaginationObject[];
   assignmentFormId: number;
   assignmentFormRecord: Assignment;
   isFetching: boolean;
@@ -30,7 +30,7 @@ export const defaultAssignmentState: AssignmentStateModel = {
   lastPage: null,
   assignmentsSubscribed: false,
   fetchPolicy: null,
-  paginationObject: startingPaginationObject,
+  paginationObjects: [startingPaginationObject],
   assignmentFormId: null,
   assignmentFormRecord: emptyAssignmentFormRecord,
   isFetching: false,

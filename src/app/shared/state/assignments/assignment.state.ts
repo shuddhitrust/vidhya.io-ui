@@ -28,7 +28,7 @@ import { ASSIGNMENT_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
-  paginationChanged,
+  paginationNewOrNot,
   subscriptionUpdater,
   updatePaginationObject,
 } from '../../common/functions';
@@ -61,7 +61,7 @@ export class AssignmentState {
 
   @Selector()
   static paginationObject(state: AssignmentStateModel): PaginationObject {
-    return state.paginationObject;
+    return state.paginationObjects[state.paginationObjects.length - 1];
   }
   @Selector()
   static listAssignmentOptions(state: AssignmentStateModel): MatSelectOption[] {
@@ -108,7 +108,9 @@ export class AssignmentState {
   fetchNextAssignments({ getState }: StateContext<AssignmentStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastPage;
-    const newPageNumber = state.paginationObject.currentPage + 1;
+    const newPageNumber =
+      state.paginationObjects[state.paginationObjects.length - 1].currentPage +
+      1;
     const newSearchParams: SearchParams = {
       ...defaultSearchParams,
       newPageNumber,
@@ -131,10 +133,10 @@ export class AssignmentState {
     console.log('Fetching assignments from assignment state');
     let { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, paginationObject, assignmentsSubscribed } = state;
+    const { fetchPolicy, paginationObjects, assignmentsSubscribed } = state;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
     let newPaginationObject = updatePaginationObject({
-      paginationObject,
+      paginationObjects,
       newPageNumber,
       newPageSize,
       newSearchQuery,
@@ -145,7 +147,7 @@ export class AssignmentState {
       offset: newPaginationObject.offset,
     };
     if (
-      paginationChanged({ paginationObject, newPaginationObject }) ||
+      paginationNewOrNot({ paginationObjects, newPaginationObject }) ||
       !assignmentsSubscribed
     ) {
       patchState({ isFetching: true });
@@ -177,7 +179,9 @@ export class AssignmentState {
           patchState({
             assignments,
             lastPage,
-            paginationObject: newPaginationObject,
+            paginationObjects: state.paginationObjects.concat([
+              newPaginationObject,
+            ]),
             isFetching: false,
           });
           if (!state.assignmentsSubscribed) {
@@ -206,15 +210,15 @@ export class AssignmentState {
           });
           const method = result?.data?.notifyAssignment?.method;
           const assignment = result?.data?.notifyAssignment?.assignment;
-          const { items, paginationObject } = subscriptionUpdater({
+          const { items, paginationObjects } = subscriptionUpdater({
             items: state.assignments,
             method,
             subscriptionItem: assignment,
-            paginationObject: state.paginationObject,
+            paginationObjects: state.paginationObjects,
           });
           patchState({
             assignments: items,
-            paginationObject,
+            paginationObjects,
             assignmentsSubscribed: true,
           });
         });

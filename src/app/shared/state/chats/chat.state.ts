@@ -14,7 +14,7 @@ import {
   ChatUIObject,
 } from './chat.model';
 
-import { Injectable } from '@angular/core';
+import { ComponentFactoryResolver, Injectable } from '@angular/core';
 import {
   ChatMessageSubscriptionAction,
   ClearChatMembers,
@@ -40,7 +40,6 @@ import {
   ChatSearchResult,
   MatSelectOption,
   PaginationObject,
-  startingPaginationObject,
   User,
 } from '../../common/models';
 import {
@@ -51,7 +50,7 @@ import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   constructUserFullName,
   getErrorMessageFromGraphQLResponse,
-  paginationChanged,
+  paginationNewOrNot,
   parseDateTime,
   subscriptionUpdater,
   updatePaginationObject,
@@ -123,7 +122,7 @@ export class ChatState {
 
   @Selector()
   static paginationObject(state: ChatStateModel): PaginationObject {
-    return state.paginationObject;
+    return state.paginationObjects[state.paginationObjects.length - 1];
   }
   @Selector()
   static listChatOptions(state: ChatStateModel): MatSelectOption[] {
@@ -238,7 +237,9 @@ export class ChatState {
   fetchNextChats({ getState }: StateContext<ChatStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastChatPage;
-    const newPageNumber = state.paginationObject.currentPage + 1;
+    const newPageNumber =
+      state.paginationObjects[state.paginationObjects.length - 1].currentPage +
+      1;
     const newSearchParams: SearchParams = {
       ...defaultSearchParams,
       newPageNumber,
@@ -259,18 +260,18 @@ export class ChatState {
     { payload }: FetchChatsAction
   ) {
     const state = getState();
-    const { paginationObject } = state;
+    const { paginationObjects } = state;
     const { searchParams } = payload;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
     let newPaginationObject = updatePaginationObject({
-      paginationObject,
+      paginationObjects,
       newPageNumber,
       newPageSize,
       newSearchQuery,
     });
     if (
-      paginationChanged({
-        paginationObject,
+      paginationNewOrNot({
+        paginationObjects,
         newPaginationObject,
       })
     ) {
@@ -336,7 +337,9 @@ export class ChatState {
           patchState({
             chats,
             lastChatPage,
-            paginationObject: newPaginationObject,
+            paginationObjects: state.paginationObjects.concat([
+              newPaginationObject,
+            ]),
             isFetching: false,
           });
           if (!state.chatMessagesSubscribed) {
@@ -355,19 +358,22 @@ export class ChatState {
     console.log('id from select Chat action ', { id });
     if (id) {
       const state = getState();
-      const chat = state.chats.find((c) => c.id == id);
-      if (chat) {
-        patchState({
-          chatFormRecord: chat,
-          chatMessagesPaginationObject: startingPaginationObject,
-        });
-        this.store.dispatch(
-          new FetchChatMessagesAction({
-            searchParams: defaultSearchParams,
-          })
-        );
-      } else {
-        this.store.dispatch(new GetChatAction({ id }));
+      if (id !== state.chatFormRecord.id) {
+        // Skipping thse if we're selecting a chat that is already selected
+        const chat = state.chats.find((c) => c.id == id);
+        if (chat) {
+          patchState({
+            chatFormRecord: chat,
+            chatMessagesPaginationObjects: [],
+          });
+          this.store.dispatch(
+            new FetchChatMessagesAction({
+              searchParams: defaultSearchParams,
+            })
+          );
+        } else {
+          this.store.dispatch(new GetChatAction({ id }));
+        }
       }
     } else {
       patchState({
@@ -426,7 +432,7 @@ export class ChatState {
               chatFormRecord: chat,
               lastChatMessagesPage: null,
               chats: [chat].concat(state.chats),
-              chatMessagesPaginationObject: startingPaginationObject,
+              chatMessagesPaginationObjects: [],
               isFetching: false,
             });
             this.store.dispatch(
@@ -577,7 +583,10 @@ export class ChatState {
   fetchNextChatMessages({ getState }: StateContext<ChatStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastChatMessagesPage;
-    const newPageNumber = state.chatMessagesPaginationObject.currentPage + 1;
+    const newPageNumber =
+      state.chatMessagesPaginationObjects[
+        state.chatMessagesPaginationObjects.length - 1
+      ].currentPage + 1;
     const newSearchParams: SearchParams = {
       ...defaultSearchParams,
       newPageNumber,
@@ -598,19 +607,26 @@ export class ChatState {
     { payload }: FetchChatMessagesAction
   ) {
     const state = getState();
-    const { chatMessagesPaginationObject } = state;
+    const { chatMessagesPaginationObjects } = state;
     const chatId = state.chatFormRecord.id;
     const { searchParams } = payload;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
     let newPaginationObject = updatePaginationObject({
-      paginationObject: chatMessagesPaginationObject,
+      paginationObjects: chatMessagesPaginationObjects,
       newPageNumber,
       newPageSize,
       newSearchQuery,
     });
+    console.log(
+      'from fetchChatMessages => ',
+      paginationNewOrNot({
+        paginationObjects: chatMessagesPaginationObjects,
+        newPaginationObject,
+      })
+    );
     if (
-      paginationChanged({
-        paginationObject: chatMessagesPaginationObject,
+      paginationNewOrNot({
+        paginationObjects: chatMessagesPaginationObjects,
         newPaginationObject,
       })
     ) {
@@ -653,7 +669,9 @@ export class ChatState {
               chats,
               lastChatMessagesPage,
               chatFormRecord: formRecord,
-              chatMessagesPaginationObject: newPaginationObject,
+              chatMessagesPaginationObjects: state.paginationObjects.concat([
+                newPaginationObject,
+              ]),
               isFetchingChatMessages: false,
             });
           }
@@ -689,11 +707,11 @@ export class ChatState {
                 ? chat.chatmessageSet
                 : [];
               console.log('Chat, chatmessages => ', { chat, chatMessages });
-              const { items, paginationObject } = subscriptionUpdater({
+              const { items, paginationObjects } = subscriptionUpdater({
                 items: chatMessages,
                 method,
                 subscriptionItem: chatMessage,
-                paginationObject: state.paginationObject,
+                paginationObjects: state.paginationObjects,
               });
               chat = { ...chat, chatmessageSet: items };
               let chats = state.chats.filter((c) => c.id != chat.id);
@@ -701,7 +719,7 @@ export class ChatState {
               patchState({
                 chats: chats,
                 chatFormRecord: chat,
-                paginationObject,
+                paginationObjects,
                 chatMessagesSubscribed: true,
               });
             } else {

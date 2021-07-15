@@ -19,7 +19,7 @@ export interface CourseStateModel {
   lastPage: number;
   coursesSubscribed: boolean;
   fetchPolicy: FetchPolicy;
-  paginationObject: PaginationObject;
+  paginationObjects: PaginationObject[];
   courseFormId: number;
   courseFormRecord: Course;
   isFetching: boolean;
@@ -33,7 +33,7 @@ export const defaultCourseState: CourseStateModel = {
   lastPage: null,
   coursesSubscribed: false,
   fetchPolicy: null,
-  paginationObject: startingPaginationObject,
+  paginationObjects: [startingPaginationObject],
   courseFormId: null,
   courseFormRecord: emptyCourseFormRecord,
   isFetching: false,

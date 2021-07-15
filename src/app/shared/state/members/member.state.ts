@@ -32,7 +32,7 @@ import { USER_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
-  paginationChanged,
+  paginationNewOrNot,
   subscriptionUpdater,
   updatePaginationObject,
 } from '../../common/functions';
@@ -78,7 +78,7 @@ export class MemberState {
 
   @Selector()
   static paginationObject(state: MemberStateModel): PaginationObject {
-    return state.paginationObject;
+    return state.paginationObjects[state.paginationObjects.length - 1];
   }
 
   @Selector()
@@ -119,16 +119,16 @@ export class MemberState {
   ) {
     const state = getState();
     const { searchParams, columnFilters } = payload;
-    const { fetchPolicy, paginationObject, membersSubscribed } = state;
+    const { fetchPolicy, paginationObjects, membersSubscribed } = state;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
     let newPaginationObject = updatePaginationObject({
-      paginationObject,
+      paginationObjects,
       newPageNumber,
       newPageSize,
       newSearchQuery,
     });
     if (
-      paginationChanged({ paginationObject, newPaginationObject }) ||
+      paginationNewOrNot({ paginationObjects, newPaginationObject }) ||
       !membersSubscribed
     ) {
       patchState({ isFetching: true });
@@ -162,7 +162,9 @@ export class MemberState {
           });
           patchState({
             members: response,
-            paginationObject: newPaginationObject,
+            paginationObjects: state.paginationObjects.concat([
+              newPaginationObject,
+            ]),
             isFetching: false,
           });
           this.store.dispatch(new MemberSubscriptionAction());
@@ -186,15 +188,15 @@ export class MemberState {
           });
           const method = result?.data?.notifyUser?.method;
           const member = result?.data?.notifyUser?.member;
-          const { items, paginationObject } = subscriptionUpdater({
+          const { items, paginationObjects } = subscriptionUpdater({
             items: state.members,
             method,
             subscriptionItem: member,
-            paginationObject: state.paginationObject,
+            paginationObjects: state.paginationObjects,
           });
           patchState({
             members: items,
-            paginationObject,
+            paginationObjects,
             membersSubscribed: true,
           });
         });

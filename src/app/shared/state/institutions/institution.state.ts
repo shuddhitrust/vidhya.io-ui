@@ -28,7 +28,7 @@ import { INSTITUTION_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
-  paginationChanged,
+  paginationNewOrNot,
   subscriptionUpdater,
   updatePaginationObject,
 } from '../../common/functions';
@@ -60,7 +60,7 @@ export class InstitutionState {
 
   @Selector()
   static paginationObject(state: InstitutionStateModel): PaginationObject {
-    return state.paginationObject;
+    return state.paginationObjects[state.paginationObjects.length - 1];
   }
   @Selector()
   static listInstitutionOptions(
@@ -113,17 +113,17 @@ export class InstitutionState {
     { payload }: FetchInstitutionsAction
   ) {
     const state = getState();
-    const { institutionsSubscribed, paginationObject } = state;
+    const { institutionsSubscribed, paginationObjects } = state;
     const { searchParams } = payload;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
     let newPaginationObject = updatePaginationObject({
-      paginationObject,
+      paginationObjects,
       newPageNumber,
       newPageSize,
       newSearchQuery,
     });
     if (
-      paginationChanged({ paginationObject, newPaginationObject }) ||
+      paginationNewOrNot({ paginationObjects, newPaginationObject }) ||
       !institutionsSubscribed
     ) {
       patchState({ isFetching: true });
@@ -152,7 +152,9 @@ export class InstitutionState {
           console.log('new institutions from fetch ', response);
           patchState({
             institutions: response,
-            paginationObject: newPaginationObject,
+            paginationObjects: state.paginationObjects.concat([
+              newPaginationObject,
+            ]),
             isFetching: false,
           });
           this.store.dispatch(new InstitutionSubscriptionAction());
@@ -179,15 +181,15 @@ export class InstitutionState {
           });
           const method = result?.data?.notifyInstitution?.method;
           const institution = result?.data?.notifyInstitution?.institution;
-          const { items, paginationObject } = subscriptionUpdater({
+          const { items, paginationObjects } = subscriptionUpdater({
             items: state.institutions,
             method,
             subscriptionItem: institution,
-            paginationObject: state.paginationObject,
+            paginationObjects: state.paginationObjects,
           });
           patchState({
             institutions: items,
-            paginationObject,
+            paginationObjects,
             institutionsSubscribed: true,
           });
         });

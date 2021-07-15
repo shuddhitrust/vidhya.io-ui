@@ -6,7 +6,15 @@ import {
   User,
   UserPermissions,
 } from './models';
-import { day, hour, minute, month, week, year } from './constants';
+import {
+  day,
+  defaultSearchParams,
+  hour,
+  minute,
+  month,
+  week,
+  year,
+} from './constants';
 
 export const getOptionLabel = (
   value: string,
@@ -22,19 +30,20 @@ export const subscriptionUpdater = ({
   items,
   method,
   subscriptionItem,
-  paginationObject,
+  paginationObjects,
 }: {
   items: any[];
   method: string;
   subscriptionItem: any;
-  paginationObject: PaginationObject;
+  paginationObjects: PaginationObject[];
 }) => {
   console.log('From SubscriptionUpdater method =>', {
     items,
     method,
     subscriptionItem,
-    paginationObject,
+    paginationObjects,
   });
+  let paginationObject = paginationObjects[paginationObjects.length - 1];
   if (subscriptionItem && method) {
     if (method == SUBSCRIPTION_METHODS.CREATE_METHOD) {
       paginationObject = {
@@ -54,37 +63,65 @@ export const subscriptionUpdater = ({
       };
     }
   }
+  const newPaginationObjects = paginationObjects.concat([paginationObject]);
   console.log('After updating items =>', { items, paginationObject });
-  return { items, paginationObject };
+  return { items, paginationObjects: newPaginationObjects };
 };
 
-export const paginationChanged = ({
-  paginationObject,
+export const paginationNewOrNot = ({
+  paginationObjects,
   newPaginationObject,
 }: {
-  paginationObject: PaginationObject;
+  paginationObjects: PaginationObject[];
   newPaginationObject: PaginationObject;
 }): boolean => {
-  if (
-    paginationObject.currentPage != newPaginationObject.currentPage ||
-    paginationObject.pageSize != newPaginationObject.pageSize ||
-    paginationObject.offset != newPaginationObject.offset ||
-    paginationObject.searchQuery != newPaginationObject.searchQuery
-  ) {
-    return true;
+  console.log('from paginationNewOrNot', {
+    paginationObjects,
+    newPaginationObject,
+  });
+  let result = false;
+  if (paginationObjects.length < 1) {
+    result = true;
   }
-  return false;
+  for (let i = 0; i < paginationObjects.length; i++) {
+    const paginationObject = paginationObjects[i];
+    if (
+      paginationObject.currentPage != newPaginationObject.currentPage ||
+      paginationObject.pageSize != newPaginationObject.pageSize ||
+      paginationObject.offset != newPaginationObject.offset ||
+      paginationObject.searchQuery != newPaginationObject.searchQuery
+    ) {
+      result = true;
+    }
+  }
+  console.log('paginationNeworNot result => ', { result });
+  return result;
 };
 
 export const updatePaginationObject = ({
-  paginationObject,
+  paginationObjects,
   newPageNumber,
   newPageSize,
   newSearchQuery,
-}) => {
-  // Update paginationTokens
-  let { currentPage, totalCount, pageSize, offset, searchQuery } =
-    paginationObject;
+}: {
+  paginationObjects: PaginationObject[];
+  newPageNumber: number;
+  newPageSize: number;
+  newSearchQuery: string;
+}): PaginationObject => {
+  const paginationObject = paginationObjects[paginationObjects.length - 1];
+  let pageSize = defaultSearchParams.newPageSize;
+  let currentPage = defaultSearchParams.newPageNumber;
+  let searchQuery = defaultSearchParams.newSearchQuery;
+  let offset = 0;
+  let totalCount = 0;
+  if (paginationObject) {
+    currentPage = paginationObject.currentPage;
+    totalCount = paginationObject.totalCount;
+    pageSize = paginationObject.pageSize;
+    offset = paginationObject.offset;
+    searchQuery = paginationObject.searchQuery;
+  }
   console.log('from updatePaginationObject => ', {
     paginationObject,
     newPageNumber,

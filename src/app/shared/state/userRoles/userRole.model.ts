@@ -37,7 +37,7 @@ export interface UserRoleStateModel {
   roles: UserRole[];
   userRolesSubscribed: boolean;
   fetchPolicy: FetchPolicy;
-  paginationObject: PaginationObject;
+  paginationObjects: PaginationObject[];
   userRoleFormId: string;
   userRoleFormRecord: UserRole;
   isFetchingFormRecord: boolean;
@@ -51,7 +51,7 @@ export const defaultRoleState: UserRoleStateModel = {
   roles: [],
   userRolesSubscribed: false,
   fetchPolicy: null,
-  paginationObject: startingPaginationObject,
+  paginationObjects: [startingPaginationObject],
   userRoleFormId: null,
   userRoleFormRecord: emptyUserRoleFormRecord,
   isFetchingFormRecord: false,

@@ -24,7 +24,7 @@ import { COURSE_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
-  paginationChanged,
+  paginationNewOrNot,
   subscriptionUpdater,
   updatePaginationObject,
 } from '../../common/functions';
@@ -57,7 +57,7 @@ export class CourseState {
 
   @Selector()
   static paginationObject(state: CourseStateModel): PaginationObject {
-    return state.paginationObject;
+    return state.paginationObjects[state.paginationObjects.length - 1];
   }
   @Selector()
   static listCourseOptions(state: CourseStateModel): MatSelectOption[] {
@@ -104,7 +104,9 @@ export class CourseState {
   fetchNextCourses({ getState }: StateContext<CourseStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastPage;
-    const newPageNumber = state.paginationObject.currentPage + 1;
+    const newPageNumber =
+      state.paginationObjects[state.paginationObjects.length - 1].currentPage +
+      1;
     const newSearchParams: SearchParams = {
       ...defaultSearchParams,
       newPageNumber,
@@ -126,10 +128,10 @@ export class CourseState {
     console.log('Fetching courses from course state');
     let { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, paginationObject, coursesSubscribed } = state;
+    const { fetchPolicy, paginationObjects, coursesSubscribed } = state;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
     let newPaginationObject = updatePaginationObject({
-      paginationObject,
+      paginationObjects,
       newPageNumber,
       newPageSize,
       newSearchQuery,
@@ -140,7 +142,7 @@ export class CourseState {
       offset: newPaginationObject.offset,
     };
     if (
-      paginationChanged({ paginationObject, newPaginationObject }) ||
+      paginationNewOrNot({ paginationObjects, newPaginationObject }) ||
       !coursesSubscribed
     ) {
       patchState({ isFetching: true });
@@ -165,7 +167,9 @@ export class CourseState {
           });
           patchState({
             courses: response,
-            paginationObject: newPaginationObject,
+            paginationObjects: state.paginationObjects.concat([
+              newPaginationObject,
+            ]),
             isFetching: false,
           });
           if (!state.coursesSubscribed) {
@@ -191,15 +195,15 @@ export class CourseState {
           });
           const method = result?.data?.notifyCourse?.method;
           const course = result?.data?.notifyCourse?.course;
-          const { items, paginationObject } = subscriptionUpdater({
+          const { items, paginationObjects } = subscriptionUpdater({
             items: state.courses,
             method,
             subscriptionItem: course,
-            paginationObject: state.paginationObject,
+            paginationObjects: state.paginationObjects,
           });
           patchState({
             courses: items,
-            paginationObject,
+            paginationObjects,
             coursesSubscribed: true,
           });
         });

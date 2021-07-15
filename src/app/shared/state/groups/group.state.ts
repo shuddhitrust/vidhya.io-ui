@@ -24,7 +24,7 @@ import { GROUP_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
-  paginationChanged,
+  paginationNewOrNot,
   subscriptionUpdater,
   updatePaginationObject,
 } from '../../common/functions';
@@ -57,7 +57,7 @@ export class GroupState {
 
   @Selector()
   static paginationObject(state: GroupStateModel): PaginationObject {
-    return state.paginationObject;
+    return state.paginationObjects[state.paginationObjects.length - 1];
   }
   @Selector()
   static listGroupOptions(state: GroupStateModel): MatSelectOption[] {
@@ -104,7 +104,9 @@ export class GroupState {
   fetchNextGroups({ getState }: StateContext<GroupStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastPage;
-    const newPageNumber = state.paginationObject.currentPage + 1;
+    const newPageNumber =
+      state.paginationObjects[state.paginationObjects.length - 1].currentPage +
+      1;
     const newSearchParams: SearchParams = {
       ...defaultSearchParams,
       newPageNumber,
@@ -126,10 +128,10 @@ export class GroupState {
     console.log('Fetching groups from group state');
     let { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, paginationObject, groupsSubscribed } = state;
+    const { fetchPolicy, paginationObjects, groupsSubscribed } = state;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
     let newPaginationObject = updatePaginationObject({
-      paginationObject,
+      paginationObjects,
       newPageNumber,
       newPageSize,
       newSearchQuery,
@@ -140,7 +142,7 @@ export class GroupState {
       offset: newPaginationObject.offset,
     };
     if (
-      paginationChanged({ paginationObject, newPaginationObject }) ||
+      paginationNewOrNot({ paginationObjects, newPaginationObject }) ||
       !groupsSubscribed
     ) {
       patchState({ isFetching: true });
@@ -172,7 +174,9 @@ export class GroupState {
           patchState({
             groups,
             lastPage,
-            paginationObject: newPaginationObject,
+            paginationObjects: state.paginationObjects.concat([
+              newPaginationObject,
+            ]),
             isFetching: false,
           });
           if (!state.groupsSubscribed) {
@@ -198,15 +202,15 @@ export class GroupState {
           });
           const method = result?.data?.notifyGroup?.method;
           const group = result?.data?.notifyGroup?.group;
-          const { items, paginationObject } = subscriptionUpdater({
+          const { items, paginationObjects } = subscriptionUpdater({
             items: state.groups,
             method,
             subscriptionItem: group,
-            paginationObject: state.paginationObject,
+            paginationObjects: state.paginationObjects,
           });
           patchState({
             groups: items,
-            paginationObject,
+            paginationObjects,
             groupsSubscribed: true,
           });
         });

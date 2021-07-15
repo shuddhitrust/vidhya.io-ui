@@ -28,7 +28,7 @@ import { ANNOUNCEMENT_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
-  paginationChanged,
+  paginationNewOrNot,
   subscriptionUpdater,
   updatePaginationObject,
 } from '../../common/functions';
@@ -61,7 +61,7 @@ export class AnnouncementState {
 
   @Selector()
   static paginationObject(state: AnnouncementStateModel): PaginationObject {
-    return state.paginationObject;
+    return state.paginationObjects[state.paginationObjects.length - 1];
   }
   @Selector()
   static listAnnouncementOptions(
@@ -114,7 +114,9 @@ export class AnnouncementState {
   fetchNextAnnouncements({ getState }: StateContext<AnnouncementStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastPage;
-    const newPageNumber = state.paginationObject.currentPage + 1;
+    const newPageNumber =
+      state.paginationObjects[state.paginationObjects.length - 1].currentPage +
+      1;
     const newSearchParams: SearchParams = {
       ...defaultSearchParams,
       newPageNumber,
@@ -137,10 +139,10 @@ export class AnnouncementState {
     console.log('Fetching announcements from announcement state');
     let { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, paginationObject, announcementsSubscribed } = state;
+    const { fetchPolicy, paginationObjects, announcementsSubscribed } = state;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
     let newPaginationObject = updatePaginationObject({
-      paginationObject,
+      paginationObjects,
       newPageNumber,
       newPageSize,
       newSearchQuery,
@@ -151,7 +153,7 @@ export class AnnouncementState {
       offset: newPaginationObject.offset,
     };
     if (
-      paginationChanged({ paginationObject, newPaginationObject }) ||
+      paginationNewOrNot({ paginationObjects, newPaginationObject }) ||
       !announcementsSubscribed
     ) {
       patchState({ isFetching: true });
@@ -183,7 +185,9 @@ export class AnnouncementState {
           patchState({
             lastPage,
             announcements,
-            paginationObject: newPaginationObject,
+            paginationObjects: state.paginationObjects.concat([
+              newPaginationObject,
+            ]),
             isFetching: false,
           });
           if (!state.announcementsSubscribed) {
@@ -212,15 +216,15 @@ export class AnnouncementState {
           });
           const method = result?.data?.notifyAnnouncement?.method;
           const announcement = result?.data?.notifyAnnouncement?.announcement;
-          const { items, paginationObject } = subscriptionUpdater({
+          const { items, paginationObjects } = subscriptionUpdater({
             items: state.announcements,
             method,
             subscriptionItem: announcement,
-            paginationObject: state.paginationObject,
+            paginationObjects: state.paginationObjects,
           });
           patchState({
             announcements: items,
-            paginationObject,
+            paginationObjects,
             announcementsSubscribed: true,
           });
         });

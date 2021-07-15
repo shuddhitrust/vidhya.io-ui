@@ -36,7 +36,7 @@ import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   constructPermissions,
   getErrorMessageFromGraphQLResponse,
-  paginationChanged,
+  paginationNewOrNot,
   subscriptionUpdater,
   updatePaginationObject,
 } from '../../common/functions';
@@ -94,7 +94,7 @@ export class UserRoleState {
 
   @Selector()
   static paginationObject(state: UserRoleStateModel): PaginationObject {
-    return state.paginationObject;
+    return state.paginationObjects[state.paginationObjects.length - 1];
   }
 
   @Selector()
@@ -132,16 +132,16 @@ export class UserRoleState {
   ) {
     const { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, paginationObject, userRolesSubscribed } = state;
+    const { fetchPolicy, paginationObjects, userRolesSubscribed } = state;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
     let newPaginationObject = updatePaginationObject({
-      paginationObject,
+      paginationObjects,
       newPageNumber,
       newPageSize,
       newSearchQuery,
     });
     if (
-      paginationChanged({ paginationObject, newPaginationObject }) ||
+      paginationNewOrNot({ paginationObjects, newPaginationObject }) ||
       !userRolesSubscribed
     ) {
       patchState({ isFetching: true });
@@ -173,7 +173,9 @@ export class UserRoleState {
           });
           patchState({
             roles: response,
-            paginationObject: newPaginationObject,
+            paginationObjects: state.paginationObjects.concat([
+              newPaginationObject,
+            ]),
             isFetching: false,
           });
           this.store.dispatch(new UserRoleSubscriptionAction());
@@ -200,15 +202,15 @@ export class UserRoleState {
           });
           const method = result?.data?.notifyUserRole?.method;
           const userRole = result?.data?.notifyUserRole?.userRole;
-          const { items, paginationObject } = subscriptionUpdater({
+          const { items, paginationObjects } = subscriptionUpdater({
             items: state.roles,
             method,
             subscriptionItem: userRole,
-            paginationObject: state.paginationObject,
+            paginationObjects: state.paginationObjects,
           });
           patchState({
             roles: items,
-            paginationObject,
+            paginationObjects,
             userRolesSubscribed: true,
           });
         });

@@ -30,9 +30,9 @@ export interface ChatStateModel {
   isFetchingChatMembers: boolean;
   isFetchingChatMessages: boolean;
   fetchPolicy: FetchPolicy;
-  paginationObject: PaginationObject;
+  paginationObjects: PaginationObject[];
   lastChatPage: number;
-  chatMessagesPaginationObject: PaginationObject;
+  chatMessagesPaginationObjects: PaginationObject[];
   lastChatMessagesPage: number;
   chatFormId: number;
   isCreatingNewChatMessage: boolean;
@@ -50,9 +50,9 @@ export const defaultChatState: ChatStateModel = {
   isFetchingChatMembers: false,
   isFetchingChatMessages: false,
   fetchPolicy: null,
-  paginationObject: startingPaginationObject,
+  paginationObjects: [],
   lastChatPage: null,
-  chatMessagesPaginationObject: startingPaginationObject,
+  chatMessagesPaginationObjects: [],
   lastChatMessagesPage: null,
   chatFormId: null,
   chatFormRecord: emptyChatFormRecord,
