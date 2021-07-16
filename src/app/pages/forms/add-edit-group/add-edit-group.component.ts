@@ -21,10 +21,7 @@ import {
 } from 'src/app/shared/state/groups/group.model';
 import { InstitutionState } from 'src/app/shared/state/institutions/institution.state';
 import { Group, MatSelectOption } from 'src/app/shared/common/models';
-import {
-  CreateUpdateInstitutionAction,
-  FetchInstitutionsAction,
-} from 'src/app/shared/state/institutions/institution.actions';
+import { FetchInstitutionsAction } from 'src/app/shared/state/institutions/institution.actions';
 import { OptionsState } from 'src/app/shared/state/options/options.state';
 import {
   MatDialog,
@@ -170,7 +167,7 @@ export class AddEditGroupComponent implements OnInit {
             formValue: form.value,
           });
           this.store.dispatch(
-            new CreateUpdateInstitutionAction({ form, formDirective })
+            new CreateUpdateGroupAction({ form, formDirective })
           );
           this.store.dispatch(
             new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
