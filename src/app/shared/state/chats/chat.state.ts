@@ -318,9 +318,10 @@ export class ChatState {
             return preppedChat;
           });
           // Parsing the groups into chat objects
+          console.log('responseGroups', { responseGroups });
           responseGroups = responseGroups.map((group) => {
             const preppedChat = {
-              id: group.chat.id,
+              id: group?.chat?.id,
               name: group?.name,
               subtitle: `${group?.members?.length} members`,
               avatar: group?.avatar ? group?.avatar : defaultLogos.user,
