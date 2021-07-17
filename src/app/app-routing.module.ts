@@ -146,8 +146,8 @@ const routes: Routes = [
     component: PasswordResetComponent,
     pathMatch: 'full',
   },
-  { path: '', component: HomeComponent, pathMatch: 'full' },
-  { path: '**', redirectTo: '/', pathMatch: 'full' },
+  { path: '', component: HomeComponent },
+  { path: '**', redirectTo: '/' },
 ];
 
 @NgModule({
