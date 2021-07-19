@@ -32,11 +32,6 @@ export class AppComponent {
           return true;
         }
         break;
-      case uiroutes.HOME_ROUTE.route:
-        if (this.router.url === uiroutes.HOME_ROUTE.route) {
-          return true;
-        }
-        break;
       default:
         this.router.navigate[uiroutes.HOME_ROUTE.route];
     }
