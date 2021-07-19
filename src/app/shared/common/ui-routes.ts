@@ -1,7 +1,7 @@
 import { resources, RESOURCE_ACTIONS } from './models';
 
 export const uiroutes = {
-  HOME_ROUTE: { route: 'activate', auth: { resource: null, actions: [] } },
+  HOME_ROUTE: { route: '', auth: { resource: null, actions: [] } },
   ACTIVATE_ACCOUNT_ROUTE: {
     route: 'activate',
     auth: { resource: null, actions: [] },

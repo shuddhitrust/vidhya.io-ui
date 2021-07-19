@@ -147,7 +147,7 @@ const routes: Routes = [
     pathMatch: 'full',
   },
   { path: '', component: HomeComponent },
-  { path: '**', redirectTo: '/' },
+  { path: '**', redirectTo: '' },
 ];
 
 @NgModule({
