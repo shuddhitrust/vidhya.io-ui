@@ -329,6 +329,8 @@ export class ChatState {
             };
             return preppedChat;
           });
+          console.log('after parsing responseGroups', { responseGroups });
+
           chats = chats.concat(responseChats).concat(responseGroups);
 
           let lastChatPage = null;
