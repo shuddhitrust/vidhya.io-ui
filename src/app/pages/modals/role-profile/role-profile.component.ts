@@ -6,7 +6,12 @@ import {
 } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
-import { User } from 'src/app/shared/common/models';
+import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
+import {
+  resources,
+  RESOURCE_ACTIONS,
+  User,
+} from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { DeleteUserRoleAction } from 'src/app/shared/state/userRoles/userRole.actions';
 
@@ -17,20 +22,26 @@ import { DeleteUserRoleAction } from 'src/app/shared/state/userRoles/userRole.ac
 })
 export class RoleProfileComponent {
   profileData: any = {};
-
+  resource = resources.USER_ROLES;
+  resourceActions = RESOURCE_ACTIONS;
   constructor(
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<RoleProfileComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private route: ActivatedRoute,
     private router: Router,
-    private store: Store
+    private store: Store,
+    private auth: AuthorizationService
   ) {
     this.profileData = data;
   }
 
   closeDialog(): void {
     this.dialogRef.close();
+  }
+
+  authorizeResourceMethod(action) {
+    return this.auth.authorizeResource(this.resource, action, {});
   }
 
   editRole() {

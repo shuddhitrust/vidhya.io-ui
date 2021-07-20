@@ -1,8 +1,8 @@
 <div mat-dialog-content class="dialog-box">
   <mat-card>
     <mat-card-header>
-      <mat-card-title>{{ profileData.name }}</mat-card-title>
-      <mat-card-subtitle>{{ profileData.location }}</mat-card-subtitle>
+      <mat-card-title>{{ constructFullName(profileData) }}</mat-card-title>
+      <mat-card-subtitle>{{ profileData.title }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       <p>
@@ -11,10 +11,20 @@
     </mat-card-content>
   </mat-card>
   <mat-dialog-actions class="card-actions">
-    <button mat-raised-button color="primary" (click)="editMember()">
+    <button
+      mat-raised-button
+      color="primary"
+      *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
+      (click)="editMember()"
+    >
       Edit
     </button>
-    <button mat-raised-button color="warn" (click)="deleteConfirmation()">
+    <button
+      mat-raised-button
+      color="warn"
+      *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
+      (click)="deleteConfirmation()"
+    >
       Delete
     </button>
   </mat-dialog-actions>

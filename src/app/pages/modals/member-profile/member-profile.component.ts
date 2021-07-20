@@ -6,7 +6,13 @@ import {
 } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
-import { User } from 'src/app/shared/common/models';
+import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
+import { constructUserFullName } from 'src/app/shared/common/functions';
+import {
+  resources,
+  RESOURCE_ACTIONS,
+  User,
+} from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { DeleteMemberAction } from 'src/app/shared/state/members/member.actions';
 
@@ -17,6 +23,8 @@ import { DeleteMemberAction } from 'src/app/shared/state/members/member.actions'
 })
 export class MemberProfileComponent {
   profileData: any = {};
+  resource = resources.MEMBERS;
+  resourceActions = RESOURCE_ACTIONS;
 
   constructor(
     public dialog: MatDialog,
@@ -24,13 +32,23 @@ export class MemberProfileComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private route: ActivatedRoute,
     private router: Router,
-    private store: Store
+    private store: Store,
+    private auth: AuthorizationService
   ) {
     this.profileData = data;
   }
 
   closeDialog(): void {
     this.dialogRef.close();
+  }
+  constructFullName(user) {
+    return constructUserFullName(user);
+  }
+
+  authorizeResourceMethod(action) {
+    return this.auth.authorizeResource(this.resource, action, {
+      institutionId: this.profileData?.instituion?.id,
+    });
   }
 
   editMember() {

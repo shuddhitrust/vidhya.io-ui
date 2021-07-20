@@ -10,8 +10,20 @@
     </mat-card-content>
   </mat-card>
   <mat-dialog-actions class="card-actions">
-    <button mat-raised-button color="primary" (click)="editRole()">Edit</button>
-    <button mat-raised-button color="warn" (click)="deleteConfirmation()">
+    <button
+      mat-raised-button
+      color="primary"
+      *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
+      (click)="editRole()"
+    >
+      Edit
+    </button>
+    <button
+      mat-raised-button
+      color="warn"
+      *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
+      (click)="deleteConfirmation()"
+    >
       Delete
     </button>
   </mat-dialog-actions>

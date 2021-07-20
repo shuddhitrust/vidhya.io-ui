@@ -6,7 +6,12 @@ import {
 } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
-import { Institution } from 'src/app/shared/common/models';
+import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
+import {
+  Institution,
+  resources,
+  RESOURCE_ACTIONS,
+} from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { DeleteInstitutionAction } from 'src/app/shared/state/institutions/institution.actions';
 @Component({
@@ -16,6 +21,8 @@ import { DeleteInstitutionAction } from 'src/app/shared/state/institutions/insti
 })
 export class InstitutionModalComponent {
   profileData: Institution;
+  resource = resources.INSTITUTIONS;
+  resourceActions = RESOURCE_ACTIONS;
 
   constructor(
     public dialog: MatDialog,
@@ -23,7 +30,8 @@ export class InstitutionModalComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private route: ActivatedRoute,
     private router: Router,
-    private store: Store
+    private store: Store,
+    private auth: AuthorizationService
   ) {
     this.profileData = data;
   }
@@ -40,6 +48,13 @@ export class InstitutionModalComponent {
       skipLocationChange: false,
     });
   }
+
+  authorizeResourceMethod(action) {
+    return this.auth.authorizeResource(this.resource, action, {
+      institutionId: this.profileData?.id,
+    });
+  }
+
   editInstitution() {
     this.closeDialog();
     const id = this.profileData.id;

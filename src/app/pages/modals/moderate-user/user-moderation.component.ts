@@ -7,9 +7,15 @@ import {
 } from '@angular/material/dialog';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
+import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { constructUserFullName } from 'src/app/shared/common/functions';
-import { User, UserRole } from 'src/app/shared/common/models';
+import {
+  resources,
+  RESOURCE_ACTIONS,
+  User,
+  UserRole,
+} from 'src/app/shared/common/models';
 import {
   ApproveMemberAction,
   SuspendMemberAction,
@@ -27,6 +33,8 @@ import { UserRoleState } from 'src/app/shared/state/userRoles/userRole.state';
   ],
 })
 export class UserModerationProfileComponent implements OnInit {
+  resource = resources.MODERATION;
+  resourceActions = RESOURCE_ACTIONS;
   profileData: any = {};
   moderationForm: FormGroup;
   @Select(UserRoleState.listRoleOptions)
@@ -40,7 +48,8 @@ export class UserModerationProfileComponent implements OnInit {
     public dialogRef: MatDialogRef<UserModerationProfileComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private auth: AuthorizationService
   ) {
     this.roleOptions$.subscribe((val) => {
       this.roleOptions = val;
@@ -57,6 +66,12 @@ export class UserModerationProfileComponent implements OnInit {
     this.store.dispatch(
       new FetchUserRolesAction({ searchParams: defaultSearchParams })
     );
+  }
+
+  authorizeResourceMethod(action) {
+    return this.auth.authorizeResource(this.resource, action, {
+      institutionId: this.profileData?.institution?.id,
+    });
   }
 
   setupModerationFormGroup = (): FormGroup => {

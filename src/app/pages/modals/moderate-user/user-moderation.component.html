@@ -41,6 +41,7 @@
       <button
         mat-raised-button
         color="primary"
+        *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
         (click)="approvalConfirmation()"
       >
         Approve
@@ -59,7 +60,12 @@
           placeholder="Explain the reason for denial"
         ></textarea>
       </mat-form-field>
-      <button mat-raised-button color="warn" (click)="denialConfirmation()">
+      <button
+        mat-raised-button
+        color="warn"
+        *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
+        (click)="denialConfirmation()"
+      >
         Deny
       </button>
     </form>
