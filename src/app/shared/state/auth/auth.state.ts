@@ -53,6 +53,8 @@ import {
 import jwtDecode from 'jwt-decode';
 import { Observable } from 'rxjs';
 import { ToggleLoadingScreen } from '../loading/loading.actions';
+import { uiroutes } from '../../common/ui-routes';
+import { Router } from '@angular/router';
 
 /**
  * Auth flow steps:-
@@ -83,7 +85,11 @@ export class AuthState {
   refreshTokenTimeout; // Variable that stores the timeout method for the next RefreshToken call
   @Select(AuthState.getExpiresAt)
   expiresAt$: Observable<string>;
-  constructor(private store: Store, private apollo: Apollo) {
+  constructor(
+    private store: Store,
+    private apollo: Apollo,
+    private router: Router
+  ) {
     // Looking for updates in the expiresAt value...
     this.expiresAt$.subscribe((val) => {
       // Calling the startAutoRefreshTokenTimeout method the moment a new expiresAt value is detected
@@ -717,6 +723,7 @@ export class AuthState {
           isSubmittingForm = false;
           patchState({ isSubmittingForm });
           console.log('got data', { data });
+          this.router.navigateByUrl(uiroutes.HOME_ROUTE.route);
           if (response.success) {
             this.store.dispatch(
               new ShowNotificationAction({
