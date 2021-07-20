@@ -347,7 +347,7 @@ export class MemberState {
 
   @Action(ApproveMemberAction)
   approveUser(
-    {}: StateContext<MemberStateModel>,
+    { getState, patchState }: StateContext<MemberStateModel>,
     { payload }: ApproveMemberAction
   ) {
     let { userId, roleId } = payload;
@@ -361,6 +361,11 @@ export class MemberState {
           const response = data.approveUser;
           console.log('from delete member ', { data });
           if (response.ok) {
+            const state = getState();
+            const newMembers = state.members.filter(
+              (m) => m.id != response?.user?.id
+            );
+            patchState({ members: newMembers });
             this.store.dispatch(
               new ShowNotificationAction({
                 message: 'Member approved successfully!',
