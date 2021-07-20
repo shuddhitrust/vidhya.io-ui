@@ -100,7 +100,7 @@ export class AddEditMemberComponent implements OnInit {
       this.isFullyAuthenticated = this.authState.isFullyAuthenticated;
       this.currentMember = this.authState.currentMember;
       this.firstTimeSetup = this.authState.firstTimeSetup;
-      const currentUser: User = {
+      this.currentMember = {
         username: this.currentMember.username,
         firstName: this.currentMember.firstName,
         lastName: this.currentMember.lastName,
@@ -115,7 +115,7 @@ export class AddEditMemberComponent implements OnInit {
           permissions: this.currentMember?.role?.permissions,
         },
       };
-      this.memberForm = this.setupMemberFormGroup(currentUser);
+      this.memberForm = this.setupMemberFormGroup(this.currentMember);
       this.populateInstitution();
       if (this.firstTimeSetup) {
         this.store.dispatch(
@@ -126,13 +126,6 @@ export class AddEditMemberComponent implements OnInit {
           })
         );
       } else {
-        // this.memberForm = this.setupMemberFormGroup();
-        // this.institutionOptions$.subscribe((options) => {
-        //   this.institutionOptions = options;
-        // });
-        // this.isFetchingInstitutions$.subscribe((val) => {
-        //   this.isFetchingInstitutions = val;
-        // });
         this.optionsState$.subscribe((val: OptionsStateModel) => {
           this.optionsState = val;
           this.isFetchingGroups = val.isFetchingGroupsByInstitution;
@@ -141,18 +134,12 @@ export class AddEditMemberComponent implements OnInit {
         this.groupOptions$.subscribe((val) => {
           this.groupOptions = val;
         });
-        // this.store.dispatch(
-        //   new FetchInstitutionsAction({ searchParams: defaultSearchParams })
-        // );
       }
-      // this.membershipStatus = this.authState.membershipStatus;
-      // this.createForm =
-      //   this.membershipStatus == MembershipStatus.PENDING_REGISTRATION; // The form is set to createForm when user status is pending_registration
-      // console.log('current pending registration => ', {
-      //   createForm: this.createForm,
-      //   authState: this.authState,
-      // });
     });
+    if (!this.memberForm) {
+      this.memberForm = this.setupMemberFormGroup();
+    }
+    console.log('this.memberForm => ', this.memberForm);
     this.checkIfFormContainsRecord();
   }
   checkIfFormContainsRecord() {
@@ -177,6 +164,7 @@ export class AddEditMemberComponent implements OnInit {
       bio: [memberFormRecord?.bio, Validators.maxLength(this.bioMaxLength)],
     });
     this.previewPath = formGroup.get('avatar').value;
+    console.log('memberForm at the end of setupMemberFormGroup ', formGroup);
     return formGroup;
   };
   ngOnInit(): void {
