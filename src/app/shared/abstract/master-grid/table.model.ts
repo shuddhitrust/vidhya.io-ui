@@ -7,7 +7,7 @@ export class SearchParams {
   newPageSize: number = defaultPageSize;
   sortField: string = null;
   sortOrder: string = null;
-  newSearchQuery: string = '';
+  newSearchQuery: string = null;
   columnFilters: object = {};
 }
 

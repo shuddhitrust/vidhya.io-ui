@@ -188,7 +188,9 @@ export class MasterGridComponent implements OnInit, OnChanges {
   };
   initiateGlobalSearch() {
     this.searchParams.newPageNumber = 1;
-    this.searchParams.newSearchQuery = this.draftSearchQuery;
+    this.searchParams.newSearchQuery = this.draftSearchQuery.length
+      ? this.draftSearchQuery
+      : null;
     this.fetchRecords();
   }
   onPageChange(number: number) {
