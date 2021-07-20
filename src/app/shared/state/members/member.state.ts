@@ -46,6 +46,7 @@ import { Router } from '@angular/router';
 import { AuthState } from '../auth/auth.state';
 import { Observable } from 'rxjs';
 import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
+import { uiroutes } from '../../common/ui-routes';
 
 @State<MemberStateModel>({
   name: 'memberState',
@@ -262,7 +263,7 @@ export class MemberState {
                 })
               );
               if (this.firstTimeSetup) {
-                this.router.navigateByUrl('/');
+                this.router.navigateByUrl(uiroutes.HOME_ROUTE.route);
               } else {
                 this.router.navigate([MemberFormCloseURL]);
               }
