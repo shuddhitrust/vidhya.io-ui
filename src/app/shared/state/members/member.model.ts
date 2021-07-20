@@ -70,9 +70,11 @@ export const membershipStatusOptions: MatSelectOption[] =
 export const memberColumns: any[] = [
   {
     field: 'firstName',
+    cellRenderer: 'memberRenderer',
   },
   {
     field: 'lastName',
+    cellRenderer: 'memberRenderer',
   },
   {
     field: 'membershipStatus',
