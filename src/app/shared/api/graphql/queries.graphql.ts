@@ -60,14 +60,14 @@ export const USER_QUERIES = {
     query users(
       $searchField: String
       $membershipStatusNot: String
-      $role: String
+      $roleName: String
       $limit: Int
       $offset: Int
     ) {
       users(
         searchField: $searchField
         membershipStatusNot: $membershipStatusNot
-        role: $role
+        roleName: $roleName
         limit: $limit
         offset: $offset
       ) {

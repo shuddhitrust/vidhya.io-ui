@@ -6,6 +6,7 @@ import { GridOptions } from 'ag-grid-community';
 import { Observable } from 'rxjs';
 import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
 import { MemberProfileRendererComponent } from 'src/app/shared/cell-renderers/member-profile/member-profile-renderer.component';
+import { USER_ROLES_NAMES } from 'src/app/shared/common/constants';
 import {
   PaginationObject,
   resources,
@@ -39,7 +40,7 @@ export class ClassAdminsTableComponent implements OnInit {
   @Select(MemberState.paginationObject)
   paginationObject$: Observable<PaginationObject>;
   columnFilters = {
-    role: environment.standardUserRoles.CLASS_ADMIN,
+    roleName: USER_ROLES_NAMES.CLASS_ADMIN,
   };
   defaultColDef = {
     resizable: true,

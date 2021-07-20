@@ -139,7 +139,7 @@ export class MemberState {
       const variables = {
         searchField: newSearchQuery,
         membershipStatusNot: columnFilters.membershipStatusNot,
-        role: columnFilters.role,
+        roleName: columnFilters.roleName,
         limit: newPaginationObject.pageSize,
         offset: newPaginationObject.offset,
       };
@@ -321,11 +321,11 @@ export class MemberState {
                 action: 'success',
               })
             );
-            this.store.dispatch(
-              new ForceRefetchMembersAction({
-                searchParams: defaultSearchParams,
-              })
-            );
+            // this.store.dispatch(
+            //   new ForceRefetchMembersAction({
+            //     searchParams: defaultSearchParams,
+            //   })
+            // );
           } else {
             this.store.dispatch(
               new ShowNotificationAction({

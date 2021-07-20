@@ -6,6 +6,7 @@ import { GridOptions } from 'ag-grid-community';
 import { Observable } from 'rxjs';
 import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
 import { MemberProfileRendererComponent } from 'src/app/shared/cell-renderers/member-profile/member-profile-renderer.component';
+import { USER_ROLES_NAMES } from 'src/app/shared/common/constants';
 import {
   PaginationObject,
   resources,
@@ -17,7 +18,6 @@ import {
 } from 'src/app/shared/state/members/member.actions';
 import { memberColumns } from 'src/app/shared/state/members/member.model';
 import { MemberState } from 'src/app/shared/state/members/member.state';
-import { environment } from 'src/environments/environment';
 import { MemberProfileComponent } from '../../modals/member-profile/member-profile.component';
 import { LEARNERS_LABEL } from '../../static/dashboard/tabs/admin-dashboard/admin-dashboard.component';
 
@@ -40,7 +40,7 @@ export class LearnersTableComponent implements OnInit {
   paginationObject$: Observable<PaginationObject>;
 
   columnFilters = {
-    role: environment.standardUserRoles.LEARNER,
+    roleName: USER_ROLES_NAMES.LEARNER,
   };
   defaultColDef = {
     resizable: true,
