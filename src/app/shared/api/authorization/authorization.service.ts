@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { RESOURCE_ACTIONS, UserPermissions } from '../../common/models';
 import { Observable } from '@apollo/client/utilities';
 import { AuthState } from '../../state/auth/auth.state';
 import { Select } from '@ngxs/store';
-import { InstitutionFormCloseURL } from '../../state/institutions/institution.model';
 
 @Injectable({
   providedIn: 'root',
@@ -21,12 +19,15 @@ export class AuthorizationService {
   currentUserInsitutionId: number;
   permissions: UserPermissions;
   FILE_UPLOAD_ENDPOINT: string = environment.file_uplod_endpoint;
-  constructor(private http: HttpClient) {
+  constructor() {
     this.permissions$.subscribe((val) => {
       this.permissions = val;
     });
     this.currentUserId$.subscribe((val) => {
       this.currentUserId = val;
+    });
+    this.currentUserInsitutionId$.subscribe((val) => {
+      this.currentUserInsitutionId = val;
     });
   }
 
@@ -45,6 +46,7 @@ export class AuthorizationService {
     //   action,
     //   adminIds: recordData.adminIds,
     //   institutionId: recordData.institutionId,
+    //   currentUserInstitutionId: this.currentUserInsitutionId,
     // });
     const permissions = this.permissions;
     if (action == '*') {
@@ -69,10 +71,12 @@ export class AuthorizationService {
           recordConstraint = institutionId == this.currentUserInsitutionId;
         }
       }
-
-      return recordConstraint && permissions[resource]
-        ? permissions[resource][action]
-        : false;
+      const verdict =
+        recordConstraint && permissions[resource]
+          ? permissions[resource][action]
+          : false;
+      // console.log('VERDICT => ', { recordConstraint, verdict });
+      return verdict;
     }
   };
 }
