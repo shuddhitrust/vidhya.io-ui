@@ -22,15 +22,15 @@ import { Apollo } from 'apollo-angular';
 import {
   Announcement,
   MatSelectOption,
-  PaginationObject,
+  FetchParams,
 } from '../../common/models';
 import { ANNOUNCEMENT_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
-  paginationNewOrNot,
+  fetchParamsNewOrNot,
   subscriptionUpdater,
-  updatePaginationObject,
+  updateFetchParams,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
@@ -60,8 +60,8 @@ export class AnnouncementState {
   }
 
   @Selector()
-  static paginationObject(state: AnnouncementStateModel): PaginationObject {
-    return state.paginationObjects[state.paginationObjects.length - 1];
+  static fetchParams(state: AnnouncementStateModel): FetchParams {
+    return state.fetchParamss[state.fetchParamss.length - 1];
   }
   @Selector()
   static listAnnouncementOptions(
@@ -115,8 +115,7 @@ export class AnnouncementState {
     const state = getState();
     const lastPageNumber = state.lastPage;
     const newPageNumber =
-      state.paginationObjects[state.paginationObjects.length - 1].currentPage +
-      1;
+      state.fetchParamss[state.fetchParamss.length - 1].currentPage + 1;
     const newSearchParams: SearchParams = {
       ...defaultSearchParams,
       newPageNumber,
@@ -139,20 +138,20 @@ export class AnnouncementState {
     console.log('Fetching announcements from announcement state');
     let { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, paginationObjects, announcementsSubscribed } = state;
+    const { fetchPolicy, fetchParamss, announcementsSubscribed } = state;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
-    let newPaginationObject = updatePaginationObject({
-      paginationObjects,
+    let newFetchParams = updateFetchParams({
+      fetchParamss,
       newPageNumber,
       newPageSize,
       newSearchQuery,
     });
     const variables = {
       searchField: newSearchQuery,
-      limit: newPaginationObject.pageSize,
-      offset: newPaginationObject.offset,
+      limit: newFetchParams.pageSize,
+      offset: newFetchParams.offset,
     };
-    if (paginationNewOrNot({ paginationObjects, newPaginationObject })) {
+    if (fetchParamsNewOrNot({ fetchParamss, newFetchParams })) {
       patchState({ isFetching: true });
       console.log('variables for announcements fetch ', { variables });
       this.apollo
@@ -167,24 +166,22 @@ export class AnnouncementState {
           const totalCount = response[0]?.totalCount
             ? response[0]?.totalCount
             : 0;
-          newPaginationObject = { ...newPaginationObject, totalCount };
+          newFetchParams = { ...newFetchParams, totalCount };
           console.log('from after getting announcements', {
             totalCount,
             response,
-            newPaginationObject,
+            newFetchParams,
           });
           let announcements = state.announcements;
           announcements = announcements.concat(response);
           let lastPage = null;
-          if (response.length < newPaginationObject.pageSize) {
-            lastPage = newPaginationObject.currentPage;
+          if (response.length < newFetchParams.pageSize) {
+            lastPage = newFetchParams.currentPage;
           }
           patchState({
             lastPage,
             announcements,
-            paginationObjects: state.paginationObjects.concat([
-              newPaginationObject,
-            ]),
+            fetchParamss: state.fetchParamss.concat([newFetchParams]),
             isFetching: false,
           });
           if (!announcementsSubscribed) {
@@ -213,15 +210,15 @@ export class AnnouncementState {
           });
           const method = result?.data?.notifyAnnouncement?.method;
           const announcement = result?.data?.notifyAnnouncement?.announcement;
-          const { items, paginationObjects } = subscriptionUpdater({
+          const { items, fetchParamss } = subscriptionUpdater({
             items: state.announcements,
             method,
             subscriptionItem: announcement,
-            paginationObjects: state.paginationObjects,
+            fetchParamss: state.fetchParamss,
           });
           patchState({
             announcements: items,
-            paginationObjects,
+            fetchParamss,
             announcementsSubscribed: true,
           });
         });

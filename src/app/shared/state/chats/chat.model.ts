@@ -1,8 +1,8 @@
 import {
   FetchPolicy,
   Chat,
-  PaginationObject,
-  startingPaginationObject,
+  FetchParams,
+  startingFetchParams,
   User,
   ChatSearchResult,
 } from '../../common/models';
@@ -30,9 +30,9 @@ export interface ChatStateModel {
   isFetchingChatMembers: boolean;
   isFetchingChatMessages: boolean;
   fetchPolicy: FetchPolicy;
-  paginationObjects: PaginationObject[];
+  fetchParamss: FetchParams[];
   lastChatPage: number;
-  chatMessagesPaginationObjects: PaginationObject[];
+  chatMessagesFetchParamss: FetchParams[];
   lastChatMessagesPage: number;
   chatFormId: number;
   isCreatingNewChatMessage: boolean;
@@ -50,9 +50,9 @@ export const defaultChatState: ChatStateModel = {
   isFetchingChatMembers: false,
   isFetchingChatMessages: false,
   fetchPolicy: null,
-  paginationObjects: [],
+  fetchParamss: [],
   lastChatPage: null,
-  chatMessagesPaginationObjects: [],
+  chatMessagesFetchParamss: [],
   lastChatMessagesPage: null,
   chatFormId: null,
   chatFormRecord: emptyChatFormRecord,

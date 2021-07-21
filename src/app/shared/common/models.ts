@@ -60,7 +60,7 @@ export type ChatMessage = {
   updatedAt?: string;
 };
 
-export type PaginationObject = {
+export type FetchParams = {
   currentPage: number;
   totalCount: number;
   pageSize: number;
@@ -68,7 +68,7 @@ export type PaginationObject = {
   searchQuery: string;
 };
 
-export const startingPaginationObject: PaginationObject = {
+export const startingFetchParams: FetchParams = {
   currentPage: 1,
   totalCount: 0,
   pageSize: defaultPageSize,

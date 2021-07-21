@@ -10,7 +10,7 @@ import { UserModerationRendererComponent } from 'src/app/shared/cell-renderers/u
 import { getOptionLabel, parseDateTime } from 'src/app/shared/common/functions';
 import {
   MembershipStatus,
-  PaginationObject,
+  FetchParams,
   resources,
   User,
 } from 'src/app/shared/common/models';
@@ -39,8 +39,8 @@ export class AwaitingModerationTableComponent implements OnInit {
   isFetching$: Observable<boolean>;
   @Select(MemberState.errorFetching)
   errorFetching$: Observable<boolean>;
-  @Select(MemberState.paginationObject)
-  paginationObject$: Observable<PaginationObject>;
+  @Select(MemberState.fetchParams)
+  fetchParams$: Observable<FetchParams>;
 
   defaultColDef = {
     resizable: true,

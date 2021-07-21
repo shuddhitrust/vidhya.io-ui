@@ -7,8 +7,8 @@ import {
   FetchPolicy,
   MatSelectOption,
   MembershipStatus,
-  PaginationObject,
-  startingPaginationObject,
+  FetchParams,
+  startingFetchParams,
   User,
 } from '../../common/models';
 import { uiroutes } from '../../common/ui-routes';
@@ -40,7 +40,7 @@ export interface MemberStateModel {
   members: User[];
   membersSubscribed: boolean;
   fetchPolicy: FetchPolicy;
-  paginationObjects: PaginationObject[];
+  fetchParamss: FetchParams[];
   memberFormId: string;
   memberFormRecord: User;
   isFetchingFormRecord: boolean;
@@ -54,7 +54,7 @@ export const defaultMemberState: MemberStateModel = {
   members: [],
   membersSubscribed: false,
   fetchPolicy: null,
-  paginationObjects: [],
+  fetchParamss: [],
   memberFormId: null,
   memberFormRecord: emptyMemberFormRecord,
   isFetchingFormRecord: false,

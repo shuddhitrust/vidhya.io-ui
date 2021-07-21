@@ -1,8 +1,8 @@
 import {
   FetchPolicy,
   Announcement,
-  PaginationObject,
-  startingPaginationObject,
+  FetchParams,
+  startingFetchParams,
 } from '../../common/models';
 
 export const emptyAnnouncementFormRecord: Announcement = {
@@ -18,7 +18,7 @@ export interface AnnouncementStateModel {
   lastPage: number;
   announcementsSubscribed: boolean;
   fetchPolicy: FetchPolicy;
-  paginationObjects: PaginationObject[];
+  fetchParamss: FetchParams[];
   announcementFormId: number;
   announcementFormRecord: Announcement;
   isFetching: boolean;
@@ -32,7 +32,7 @@ export const defaultAnnouncementState: AnnouncementStateModel = {
   lastPage: null,
   announcementsSubscribed: false,
   fetchPolicy: null,
-  paginationObjects: [],
+  fetchParamss: [],
   announcementFormId: null,
   announcementFormRecord: emptyAnnouncementFormRecord,
   isFetching: false,

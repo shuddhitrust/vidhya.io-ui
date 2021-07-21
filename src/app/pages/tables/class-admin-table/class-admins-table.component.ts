@@ -7,11 +7,7 @@ import { Observable } from 'rxjs';
 import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
 import { MemberProfileRendererComponent } from 'src/app/shared/cell-renderers/member-profile/member-profile-renderer.component';
 import { USER_ROLES_NAMES } from 'src/app/shared/common/constants';
-import {
-  PaginationObject,
-  resources,
-  User,
-} from 'src/app/shared/common/models';
+import { FetchParams, resources, User } from 'src/app/shared/common/models';
 import {
   FetchMembersAction,
   ForceRefetchMembersAction,
@@ -37,8 +33,8 @@ export class ClassAdminsTableComponent implements OnInit {
   isFetching$: Observable<boolean>;
   @Select(MemberState.errorFetching)
   errorFetching$: Observable<boolean>;
-  @Select(MemberState.paginationObject)
-  paginationObject$: Observable<PaginationObject>;
+  @Select(MemberState.fetchParams)
+  fetchParams$: Observable<FetchParams>;
   columnFilters = {
     roleName: USER_ROLES_NAMES.CLASS_ADMIN,
   };

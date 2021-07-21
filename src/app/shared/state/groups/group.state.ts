@@ -19,14 +19,14 @@ import {
 } from './group.actions';
 import { GROUP_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
-import { Group, MatSelectOption, PaginationObject } from '../../common/models';
+import { Group, MatSelectOption, FetchParams } from '../../common/models';
 import { GROUP_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
-  paginationNewOrNot,
+  fetchParamsNewOrNot,
   subscriptionUpdater,
-  updatePaginationObject,
+  updateFetchParams,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
@@ -56,8 +56,8 @@ export class GroupState {
   }
 
   @Selector()
-  static paginationObject(state: GroupStateModel): PaginationObject {
-    return state.paginationObjects[state.paginationObjects.length - 1];
+  static fetchParams(state: GroupStateModel): FetchParams {
+    return state.fetchParamss[state.fetchParamss.length - 1];
   }
   @Selector()
   static listGroupOptions(state: GroupStateModel): MatSelectOption[] {
@@ -105,8 +105,7 @@ export class GroupState {
     const state = getState();
     const lastPageNumber = state.lastPage;
     const newPageNumber =
-      state.paginationObjects[state.paginationObjects.length - 1].currentPage +
-      1;
+      state.fetchParamss[state.fetchParamss.length - 1].currentPage + 1;
     const newSearchParams: SearchParams = {
       ...defaultSearchParams,
       newPageNumber,
@@ -128,20 +127,20 @@ export class GroupState {
     console.log('Fetching groups from group state');
     let { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, paginationObjects, groupsSubscribed } = state;
+    const { fetchPolicy, fetchParamss, groupsSubscribed } = state;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
-    let newPaginationObject = updatePaginationObject({
-      paginationObjects,
+    let newFetchParams = updateFetchParams({
+      fetchParamss,
       newPageNumber,
       newPageSize,
       newSearchQuery,
     });
     const variables = {
       searchField: newSearchQuery,
-      limit: newPaginationObject.pageSize,
-      offset: newPaginationObject.offset,
+      limit: newFetchParams.pageSize,
+      offset: newFetchParams.offset,
     };
-    if (paginationNewOrNot({ paginationObjects, newPaginationObject })) {
+    if (fetchParamsNewOrNot({ fetchParamss, newFetchParams })) {
       patchState({ isFetching: true });
       console.log('variables for groups fetch ', { variables });
       this.apollo
@@ -156,24 +155,22 @@ export class GroupState {
           const totalCount = response[0]?.totalCount
             ? response[0]?.totalCount
             : 0;
-          newPaginationObject = { ...newPaginationObject, totalCount };
+          newFetchParams = { ...newFetchParams, totalCount };
           console.log('from after getting groups', {
             totalCount,
             response,
-            newPaginationObject,
+            newFetchParams,
           });
           let groups = state.groups;
           groups = groups.concat(response);
           let lastPage = null;
-          if (response.length < newPaginationObject.pageSize) {
-            lastPage = newPaginationObject.currentPage;
+          if (response.length < newFetchParams.pageSize) {
+            lastPage = newFetchParams.currentPage;
           }
           patchState({
             groups,
             lastPage,
-            paginationObjects: state.paginationObjects.concat([
-              newPaginationObject,
-            ]),
+            fetchParamss: state.fetchParamss.concat([newFetchParams]),
             isFetching: false,
           });
           if (!groupsSubscribed) {
@@ -199,15 +196,15 @@ export class GroupState {
           });
           const method = result?.data?.notifyGroup?.method;
           const group = result?.data?.notifyGroup?.group;
-          const { items, paginationObjects } = subscriptionUpdater({
+          const { items, fetchParamss } = subscriptionUpdater({
             items: state.groups,
             method,
             subscriptionItem: group,
-            paginationObjects: state.paginationObjects,
+            fetchParamss: state.fetchParamss,
           });
           patchState({
             groups: items,
-            paginationObjects,
+            fetchParamss,
             groupsSubscribed: true,
           });
         });

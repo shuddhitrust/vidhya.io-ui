@@ -39,7 +39,7 @@ import {
   ChatMessage,
   ChatSearchResult,
   MatSelectOption,
-  PaginationObject,
+  FetchParams,
   User,
 } from '../../common/models';
 import {
@@ -50,10 +50,10 @@ import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   constructUserFullName,
   getErrorMessageFromGraphQLResponse,
-  paginationNewOrNot,
+  fetchParamsNewOrNot,
   parseDateTime,
   subscriptionUpdater,
-  updatePaginationObject,
+  updateFetchParams,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultLogos, defaultSearchParams } from '../../common/constants';
@@ -121,8 +121,8 @@ export class ChatState {
   isCreatingNewChatMessage;
 
   @Selector()
-  static paginationObject(state: ChatStateModel): PaginationObject {
-    return state.paginationObjects[state.paginationObjects.length - 1];
+  static fetchParams(state: ChatStateModel): FetchParams {
+    return state.fetchParamss[state.fetchParamss.length - 1];
   }
   @Selector()
   static listChatOptions(state: ChatStateModel): MatSelectOption[] {
@@ -238,8 +238,7 @@ export class ChatState {
     const state = getState();
     const lastPageNumber = state.lastChatPage;
     const newPageNumber =
-      state.paginationObjects[state.paginationObjects.length - 1].currentPage +
-      1;
+      state.fetchParamss[state.fetchParamss.length - 1].currentPage + 1;
     const newSearchParams: SearchParams = {
       ...defaultSearchParams,
       newPageNumber,
@@ -260,26 +259,26 @@ export class ChatState {
     { payload }: FetchChatsAction
   ) {
     const state = getState();
-    const { paginationObjects } = state;
+    const { fetchParamss } = state;
     const { searchParams } = payload;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
-    let newPaginationObject = updatePaginationObject({
-      paginationObjects,
+    let newFetchParams = updateFetchParams({
+      fetchParamss,
       newPageNumber,
       newPageSize,
       newSearchQuery,
     });
     if (
-      paginationNewOrNot({
-        paginationObjects,
-        newPaginationObject,
+      fetchParamsNewOrNot({
+        fetchParamss,
+        newFetchParams,
       })
     ) {
       patchState({ isFetching: true });
       const variables = {
         searchField: newSearchQuery,
-        limit: newPaginationObject.pageSize,
-        offset: newPaginationObject.offset,
+        limit: newFetchParams.pageSize,
+        offset: newFetchParams.offset,
       };
       this.apollo
         .watchQuery({
@@ -293,7 +292,7 @@ export class ChatState {
           const totalCount = response[0]?.totalCount
             ? response[0]?.totalCount
             : 0;
-          newPaginationObject = { ...newPaginationObject, totalCount };
+          newFetchParams = { ...newFetchParams, totalCount };
           let chats = state.chats;
           let responseChats = response.chats;
           let responseGroups = response.groups;
@@ -334,15 +333,13 @@ export class ChatState {
           chats = chats.concat(responseChats).concat(responseGroups);
 
           let lastChatPage = null;
-          if (response.length < newPaginationObject.pageSize) {
-            lastChatPage = newPaginationObject.currentPage;
+          if (response.length < newFetchParams.pageSize) {
+            lastChatPage = newFetchParams.currentPage;
           }
           patchState({
             chats,
             lastChatPage,
-            paginationObjects: state.paginationObjects.concat([
-              newPaginationObject,
-            ]),
+            fetchParamss: state.fetchParamss.concat([newFetchParams]),
             isFetching: false,
           });
           if (!state.chatMessagesSubscribed) {
@@ -367,7 +364,7 @@ export class ChatState {
         if (chat) {
           patchState({
             chatFormRecord: chat,
-            chatMessagesPaginationObjects: [],
+            chatMessagesFetchParamss: [],
           });
           this.store.dispatch(
             new FetchChatMessagesAction({
@@ -435,7 +432,7 @@ export class ChatState {
               chatFormRecord: chat,
               lastChatMessagesPage: null,
               chats: [chat].concat(state.chats),
-              chatMessagesPaginationObjects: [],
+              chatMessagesFetchParamss: [],
               isFetching: false,
             });
             this.store.dispatch(
@@ -587,9 +584,8 @@ export class ChatState {
     const state = getState();
     const lastPageNumber = state.lastChatMessagesPage;
     const newPageNumber =
-      state.chatMessagesPaginationObjects[
-        state.chatMessagesPaginationObjects.length - 1
-      ].currentPage + 1;
+      state.chatMessagesFetchParamss[state.chatMessagesFetchParamss.length - 1]
+        .currentPage + 1;
     const newSearchParams: SearchParams = {
       ...defaultSearchParams,
       newPageNumber,
@@ -610,35 +606,35 @@ export class ChatState {
     { payload }: FetchChatMessagesAction
   ) {
     const state = getState();
-    const { chatMessagesPaginationObjects } = state;
+    const { chatMessagesFetchParamss } = state;
     const chatId = state.chatFormRecord.id;
     const { searchParams } = payload;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
-    let newPaginationObject = updatePaginationObject({
-      paginationObjects: chatMessagesPaginationObjects,
+    let newFetchParams = updateFetchParams({
+      fetchParamss: chatMessagesFetchParamss,
       newPageNumber,
       newPageSize,
       newSearchQuery,
     });
     console.log(
       'from fetchChatMessages => ',
-      paginationNewOrNot({
-        paginationObjects: chatMessagesPaginationObjects,
-        newPaginationObject,
+      fetchParamsNewOrNot({
+        fetchParamss: chatMessagesFetchParamss,
+        newFetchParams,
       })
     );
     if (
-      paginationNewOrNot({
-        paginationObjects: chatMessagesPaginationObjects,
-        newPaginationObject,
+      fetchParamsNewOrNot({
+        fetchParamss: chatMessagesFetchParamss,
+        newFetchParams,
       })
     ) {
       patchState({ isFetchingChatMessages: true });
       const variables = {
         chatId,
         searchField: newSearchQuery,
-        limit: newPaginationObject.pageSize,
-        offset: newPaginationObject.offset,
+        limit: newFetchParams.pageSize,
+        offset: newFetchParams.offset,
       };
       this.apollo
         .watchQuery({
@@ -651,7 +647,7 @@ export class ChatState {
           const totalCount = response[0]?.totalCount
             ? response[0]?.totalCount
             : 0;
-          newPaginationObject = { ...newPaginationObject, totalCount };
+          newFetchParams = { ...newFetchParams, totalCount };
           let chat: ChatUIObject = state.chats.find((c) => c.id == chatId);
           if (chat) {
             console.log('line 460 from chat state => ', { chat, response });
@@ -665,15 +661,15 @@ export class ChatState {
             //  Checking if the number of chat messages received is less than the limit
             // if it is less, then we declare that as the last page
             let lastChatMessagesPage = null;
-            if (response.length < newPaginationObject.pageSize) {
-              lastChatMessagesPage = newPaginationObject.currentPage;
+            if (response.length < newFetchParams.pageSize) {
+              lastChatMessagesPage = newFetchParams.currentPage;
             }
             patchState({
               chats,
               lastChatMessagesPage,
               chatFormRecord: formRecord,
-              chatMessagesPaginationObjects: state.paginationObjects.concat([
-                newPaginationObject,
+              chatMessagesFetchParamss: state.fetchParamss.concat([
+                newFetchParams,
               ]),
               isFetchingChatMessages: false,
             });
@@ -710,11 +706,11 @@ export class ChatState {
                 ? chat.chatmessageSet
                 : [];
               console.log('Chat, chatmessages => ', { chat, chatMessages });
-              const { items, paginationObjects } = subscriptionUpdater({
+              const { items, fetchParamss } = subscriptionUpdater({
                 items: chatMessages,
                 method,
                 subscriptionItem: chatMessage,
-                paginationObjects: state.paginationObjects,
+                fetchParamss: state.fetchParamss,
               });
               chat = { ...chat, chatmessageSet: items };
               let chats = state.chats.filter((c) => c.id != chat.id);
@@ -722,7 +718,7 @@ export class ChatState {
               patchState({
                 chats: chats,
                 chatFormRecord: chat,
-                paginationObjects,
+                fetchParamss,
                 chatMessagesSubscribed: true,
               });
             } else {

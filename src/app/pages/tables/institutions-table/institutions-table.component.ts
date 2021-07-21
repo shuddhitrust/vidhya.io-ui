@@ -8,7 +8,7 @@ import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
 import { InstitutionProfileRendererComponent } from 'src/app/shared/cell-renderers/institution-profile/institution-profile-renderer.component';
 import {
   Institution,
-  PaginationObject,
+  FetchParams,
   resources,
 } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
@@ -34,8 +34,8 @@ export class InstitutionsTableComponent implements OnInit {
   rows$: Observable<Institution[]>;
   @Select(InstitutionState.isFetching)
   isFetching$: Observable<boolean>;
-  @Select(InstitutionState.paginationObject)
-  paginationObject$: Observable<PaginationObject>;
+  @Select(InstitutionState.fetchParams)
+  fetchParams$: Observable<FetchParams>;
 
   defaultColDef = {
     resizable: true,

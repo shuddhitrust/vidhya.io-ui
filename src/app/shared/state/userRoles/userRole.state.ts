@@ -28,7 +28,7 @@ import { Apollo } from 'apollo-angular';
 import {
   User,
   MatSelectOption,
-  PaginationObject,
+  FetchParams,
   UserRole,
 } from '../../common/models';
 import { USER_ROLE_MUTATIONS } from '../../api/graphql/mutations.graphql';
@@ -36,9 +36,9 @@ import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   constructPermissions,
   getErrorMessageFromGraphQLResponse,
-  paginationNewOrNot,
+  fetchParamsNewOrNot,
   subscriptionUpdater,
-  updatePaginationObject,
+  updateFetchParams,
 } from '../../common/functions';
 import { defaultSearchParams } from '../../common/constants';
 import {
@@ -93,8 +93,8 @@ export class UserRoleState {
   }
 
   @Selector()
-  static paginationObject(state: UserRoleStateModel): PaginationObject {
-    return state.paginationObjects[state.paginationObjects.length - 1];
+  static fetchParams(state: UserRoleStateModel): FetchParams {
+    return state.fetchParamss[state.fetchParamss.length - 1];
   }
 
   @Selector()
@@ -132,23 +132,23 @@ export class UserRoleState {
   ) {
     const { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, paginationObjects, userRolesSubscribed } = state;
+    const { fetchPolicy, fetchParamss, userRolesSubscribed } = state;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
-    let newPaginationObject = updatePaginationObject({
-      paginationObjects,
+    let newFetchParams = updateFetchParams({
+      fetchParamss,
       newPageNumber,
       newPageSize,
       newSearchQuery,
     });
-    if (paginationNewOrNot({ paginationObjects, newPaginationObject })) {
+    if (fetchParamsNewOrNot({ fetchParamss, newFetchParams })) {
       patchState({ isFetching: true });
       console.log('new pagination object after the update method => ', {
-        newPaginationObject,
+        newFetchParams,
       });
       const variables = {
         searchField: newSearchQuery,
-        limit: newPaginationObject.pageSize,
-        offset: newPaginationObject.offset,
+        limit: newFetchParams.pageSize,
+        offset: newFetchParams.offset,
       };
       console.log('variables for roles fetch ', { variables });
       this.apollo
@@ -162,17 +162,15 @@ export class UserRoleState {
           const totalCount = response[0]?.totalCount
             ? response[0]?.totalCount
             : 0;
-          newPaginationObject = { ...newPaginationObject, totalCount };
+          newFetchParams = { ...newFetchParams, totalCount };
           console.log('from after getting roles', {
             totalCount,
             response,
-            newPaginationObject,
+            newFetchParams,
           });
           patchState({
             roles: response,
-            paginationObjects: state.paginationObjects.concat([
-              newPaginationObject,
-            ]),
+            fetchParamss: state.fetchParamss.concat([newFetchParams]),
             isFetching: false,
           });
           if (!userRolesSubscribed) {
@@ -201,15 +199,15 @@ export class UserRoleState {
           });
           const method = result?.data?.notifyUserRole?.method;
           const userRole = result?.data?.notifyUserRole?.userRole;
-          const { items, paginationObjects } = subscriptionUpdater({
+          const { items, fetchParamss } = subscriptionUpdater({
             items: state.roles,
             method,
             subscriptionItem: userRole,
-            paginationObjects: state.paginationObjects,
+            fetchParamss: state.fetchParamss,
           });
           patchState({
             roles: items,
-            paginationObjects,
+            fetchParamss,
             userRolesSubscribed: true,
           });
         });

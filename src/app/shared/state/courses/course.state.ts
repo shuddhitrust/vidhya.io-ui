@@ -19,14 +19,14 @@ import {
 } from './course.actions';
 import { COURSE_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
-import { Course, MatSelectOption, PaginationObject } from '../../common/models';
+import { Course, MatSelectOption, FetchParams } from '../../common/models';
 import { COURSE_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
-  paginationNewOrNot,
+  fetchParamsNewOrNot,
   subscriptionUpdater,
-  updatePaginationObject,
+  updateFetchParams,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
@@ -56,8 +56,8 @@ export class CourseState {
   }
 
   @Selector()
-  static paginationObject(state: CourseStateModel): PaginationObject {
-    return state.paginationObjects[state.paginationObjects.length - 1];
+  static fetchParams(state: CourseStateModel): FetchParams {
+    return state.fetchParamss[state.fetchParamss.length - 1];
   }
   @Selector()
   static listCourseOptions(state: CourseStateModel): MatSelectOption[] {
@@ -105,8 +105,7 @@ export class CourseState {
     const state = getState();
     const lastPageNumber = state.lastPage;
     const newPageNumber =
-      state.paginationObjects[state.paginationObjects.length - 1].currentPage +
-      1;
+      state.fetchParamss[state.fetchParamss.length - 1].currentPage + 1;
     const newSearchParams: SearchParams = {
       ...defaultSearchParams,
       newPageNumber,
@@ -128,20 +127,20 @@ export class CourseState {
     console.log('Fetching courses from course state');
     let { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, paginationObjects, coursesSubscribed } = state;
+    const { fetchPolicy, fetchParamss, coursesSubscribed } = state;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
-    let newPaginationObject = updatePaginationObject({
-      paginationObjects,
+    let newFetchParams = updateFetchParams({
+      fetchParamss,
       newPageNumber,
       newPageSize,
       newSearchQuery,
     });
     const variables = {
       searchField: newSearchQuery,
-      limit: newPaginationObject.pageSize,
-      offset: newPaginationObject.offset,
+      limit: newFetchParams.pageSize,
+      offset: newFetchParams.offset,
     };
-    if (paginationNewOrNot({ paginationObjects, newPaginationObject })) {
+    if (fetchParamsNewOrNot({ fetchParamss, newFetchParams })) {
       patchState({ isFetching: true });
       console.log('variables for courses fetch ', { variables });
       this.apollo
@@ -156,17 +155,15 @@ export class CourseState {
           const totalCount = response[0]?.totalCount
             ? response[0]?.totalCount
             : 0;
-          newPaginationObject = { ...newPaginationObject, totalCount };
+          newFetchParams = { ...newFetchParams, totalCount };
           console.log('from after getting courses', {
             totalCount,
             response,
-            newPaginationObject,
+            newFetchParams,
           });
           patchState({
             courses: response,
-            paginationObjects: state.paginationObjects.concat([
-              newPaginationObject,
-            ]),
+            fetchParamss: state.fetchParamss.concat([newFetchParams]),
             isFetching: false,
           });
           if (!coursesSubscribed) {
@@ -192,15 +189,15 @@ export class CourseState {
           });
           const method = result?.data?.notifyCourse?.method;
           const course = result?.data?.notifyCourse?.course;
-          const { items, paginationObjects } = subscriptionUpdater({
+          const { items, fetchParamss } = subscriptionUpdater({
             items: state.courses,
             method,
             subscriptionItem: course,
-            paginationObjects: state.paginationObjects,
+            fetchParamss: state.fetchParamss,
           });
           patchState({
             courses: items,
-            paginationObjects,
+            fetchParamss,
             coursesSubscribed: true,
           });
         });

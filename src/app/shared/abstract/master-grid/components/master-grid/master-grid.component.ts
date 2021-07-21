@@ -16,9 +16,9 @@ import {
   customWidthsExist,
 } from './../../table.functions';
 import {
-  PaginationObject,
+  FetchParams,
   RESOURCE_ACTIONS,
-  startingPaginationObject,
+  startingFetchParams,
   UserPermissions,
 } from 'src/app/shared/common/models';
 import { Observable } from 'rxjs';
@@ -84,7 +84,7 @@ export class MasterGridComponent implements OnInit, OnChanges {
   @Input() csvColumnHeaders: string[] = [];
   @Input() rowSelection: string = '';
   @Input() rowDeselection: boolean = true;
-  @Input() paginationObject$: Observable<PaginationObject>;
+  @Input() fetchParams$: Observable<FetchParams>;
 
   resourceActions = RESOURCE_ACTIONS;
   totalRecords = 0;
@@ -112,8 +112,8 @@ export class MasterGridComponent implements OnInit, OnChanges {
   constructor(private store: Store, private auth: AuthorizationService) {}
 
   ngOnChanges(changes) {
-    if (changes.paginationObject$) {
-      this.paginationObject$.subscribe((val) => {
+    if (changes.fetchParams$) {
+      this.fetchParams$.subscribe((val) => {
         this.totalRecords = val?.totalCount;
         this.pageSize = val?.pageSize;
         this.currentPage = val?.currentPage;

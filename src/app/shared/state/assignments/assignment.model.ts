@@ -1,8 +1,8 @@
 import {
   FetchPolicy,
   Assignment,
-  PaginationObject,
-  startingPaginationObject,
+  FetchParams,
+  startingFetchParams,
 } from '../../common/models';
 
 export const emptyAssignmentFormRecord: Assignment = {
@@ -16,7 +16,7 @@ export interface AssignmentStateModel {
   lastPage: number;
   assignmentsSubscribed: boolean;
   fetchPolicy: FetchPolicy;
-  paginationObjects: PaginationObject[];
+  fetchParamss: FetchParams[];
   assignmentFormId: number;
   assignmentFormRecord: Assignment;
   isFetching: boolean;
@@ -30,7 +30,7 @@ export const defaultAssignmentState: AssignmentStateModel = {
   lastPage: null,
   assignmentsSubscribed: false,
   fetchPolicy: null,
-  paginationObjects: [],
+  fetchParamss: [],
   assignmentFormId: null,
   assignmentFormRecord: emptyAssignmentFormRecord,
   isFetching: false,

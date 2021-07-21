@@ -3,8 +3,8 @@ import { defaultLogos } from '../../common/constants';
 import {
   FetchPolicy,
   Institution,
-  PaginationObject,
-  startingPaginationObject,
+  FetchParams,
+  startingFetchParams,
 } from '../../common/models';
 import { uiroutes } from '../../common/ui-routes';
 
@@ -23,7 +23,7 @@ export interface InstitutionStateModel {
   institutions: Institution[];
   institutionsSubscribed: boolean;
   fetchPolicy: FetchPolicy;
-  paginationObjects: PaginationObject[];
+  fetchParamss: FetchParams[];
   institutionFormId: number;
   institutionFormRecord: Institution;
   isFetching: boolean;
@@ -36,7 +36,7 @@ export const defaultInstitutionState: InstitutionStateModel = {
   institutions: [],
   institutionsSubscribed: false,
   fetchPolicy: null,
-  paginationObjects: [],
+  fetchParamss: [],
   institutionFormId: null,
   institutionFormRecord: emptyInstitutionFormRecord,
   isFetching: false,

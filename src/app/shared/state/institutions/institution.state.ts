@@ -21,16 +21,16 @@ import { Apollo, Subscription } from 'apollo-angular';
 import {
   Institution,
   MatSelectOption,
-  PaginationObject,
+  FetchParams,
   SUBSCRIPTION_METHODS,
 } from '../../common/models';
 import { INSTITUTION_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
-  paginationNewOrNot,
+  fetchParamsNewOrNot,
   subscriptionUpdater,
-  updatePaginationObject,
+  updateFetchParams,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
@@ -59,8 +59,8 @@ export class InstitutionState {
   }
 
   @Selector()
-  static paginationObject(state: InstitutionStateModel): PaginationObject {
-    return state.paginationObjects[state.paginationObjects.length - 1];
+  static fetchParams(state: InstitutionStateModel): FetchParams {
+    return state.fetchParamss[state.fetchParamss.length - 1];
   }
   @Selector()
   static listInstitutionOptions(
@@ -113,24 +113,24 @@ export class InstitutionState {
     { payload }: FetchInstitutionsAction
   ) {
     const state = getState();
-    const { institutionsSubscribed, paginationObjects } = state;
+    const { institutionsSubscribed, fetchParamss } = state;
     const { searchParams } = payload;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
-    let newPaginationObject = updatePaginationObject({
-      paginationObjects,
+    let newFetchParams = updateFetchParams({
+      fetchParamss,
       newPageNumber,
       newPageSize,
       newSearchQuery,
     });
-    if (paginationNewOrNot({ paginationObjects, newPaginationObject })) {
+    if (fetchParamsNewOrNot({ fetchParamss, newFetchParams })) {
       patchState({ isFetching: true });
       console.log('new pagination object after the update method => ', {
-        newPaginationObject,
+        newFetchParams,
       });
       const variables = {
         searchField: newSearchQuery,
-        limit: newPaginationObject.pageSize,
-        offset: newPaginationObject.offset,
+        limit: newFetchParams.pageSize,
+        offset: newFetchParams.offset,
       };
       console.log('variables for institutions fetch ', { variables });
       this.apollo
@@ -145,13 +145,11 @@ export class InstitutionState {
             ? response[0]?.totalCount
             : 0;
 
-          newPaginationObject = { ...newPaginationObject, totalCount };
+          newFetchParams = { ...newFetchParams, totalCount };
           console.log('new institutions from fetch ', response);
           patchState({
             institutions: response,
-            paginationObjects: state.paginationObjects.concat([
-              newPaginationObject,
-            ]),
+            fetchParamss: state.fetchParamss.concat([newFetchParams]),
             isFetching: false,
           });
           if (!institutionsSubscribed) {
@@ -180,15 +178,15 @@ export class InstitutionState {
           });
           const method = result?.data?.notifyInstitution?.method;
           const institution = result?.data?.notifyInstitution?.institution;
-          const { items, paginationObjects } = subscriptionUpdater({
+          const { items, fetchParamss } = subscriptionUpdater({
             items: state.institutions,
             method,
             subscriptionItem: institution,
-            paginationObjects: state.paginationObjects,
+            fetchParamss: state.fetchParamss,
           });
           patchState({
             institutions: items,
-            paginationObjects,
+            fetchParamss,
             institutionsSubscribed: true,
           });
         });

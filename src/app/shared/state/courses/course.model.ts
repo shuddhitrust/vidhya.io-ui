@@ -2,8 +2,8 @@ import { COURSES } from 'src/app/pages/static/dashboard/dashboard.component';
 import {
   FetchPolicy,
   Course,
-  PaginationObject,
-  startingPaginationObject,
+  FetchParams,
+  startingFetchParams,
 } from '../../common/models';
 import { uiroutes } from '../../common/ui-routes';
 
@@ -19,7 +19,7 @@ export interface CourseStateModel {
   lastPage: number;
   coursesSubscribed: boolean;
   fetchPolicy: FetchPolicy;
-  paginationObjects: PaginationObject[];
+  fetchParamss: FetchParams[];
   courseFormId: number;
   courseFormRecord: Course;
   isFetching: boolean;
@@ -33,7 +33,7 @@ export const defaultCourseState: CourseStateModel = {
   lastPage: null,
   coursesSubscribed: false,
   fetchPolicy: null,
-  paginationObjects: [],
+  fetchParamss: [],
   courseFormId: null,
   courseFormRecord: emptyCourseFormRecord,
   isFetching: false,

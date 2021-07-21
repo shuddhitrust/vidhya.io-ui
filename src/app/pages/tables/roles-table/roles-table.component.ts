@@ -6,11 +6,7 @@ import { GridOptions } from 'ag-grid-community';
 import { Observable } from 'rxjs';
 import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
 import { RoleProfileRendererComponent } from 'src/app/shared/cell-renderers/role-profile/role-profile-renderer.component';
-import {
-  PaginationObject,
-  resources,
-  User,
-} from 'src/app/shared/common/models';
+import { FetchParams, resources, User } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   FetchUserRolesAction,
@@ -36,8 +32,8 @@ export class RolesTableComponent implements OnInit {
   isFetching$: Observable<boolean>;
   @Select(UserRoleState.errorFetching)
   errorFetching$: Observable<boolean>;
-  @Select(UserRoleState.paginationObject)
-  paginationObject$: Observable<PaginationObject>;
+  @Select(UserRoleState.fetchParams)
+  fetchParams$: Observable<FetchParams>;
 
   defaultColDef = {
     resizable: true,

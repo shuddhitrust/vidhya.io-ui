@@ -8,9 +8,9 @@ import {
   defaultResourcePermissions,
   FetchPolicy,
   MatSelectOption,
-  PaginationObject,
+  FetchParams,
   resources,
-  startingPaginationObject,
+  startingFetchParams,
   UserRole,
 } from '../../common/models';
 import { uiroutes } from '../../common/ui-routes';
@@ -37,7 +37,7 @@ export interface UserRoleStateModel {
   roles: UserRole[];
   userRolesSubscribed: boolean;
   fetchPolicy: FetchPolicy;
-  paginationObjects: PaginationObject[];
+  fetchParamss: FetchParams[];
   userRoleFormId: string;
   userRoleFormRecord: UserRole;
   isFetchingFormRecord: boolean;
@@ -51,7 +51,7 @@ export const defaultRoleState: UserRoleStateModel = {
   roles: [],
   userRolesSubscribed: false,
   fetchPolicy: null,
-  paginationObjects: [],
+  fetchParamss: [],
   userRoleFormId: null,
   userRoleFormRecord: emptyUserRoleFormRecord,
   isFetchingFormRecord: false,

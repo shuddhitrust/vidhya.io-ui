@@ -1,7 +1,7 @@
 import {
   defaultResourcePermissions,
   MatSelectOption,
-  PaginationObject,
+  FetchParams,
   SUBSCRIPTION_METHODS,
   User,
   UserPermissions,
@@ -30,25 +30,25 @@ export const subscriptionUpdater = ({
   items,
   method,
   subscriptionItem,
-  paginationObjects,
+  fetchParamss,
 }: {
   items: any[];
   method: string;
   subscriptionItem: any;
-  paginationObjects: PaginationObject[];
+  fetchParamss: FetchParams[];
 }) => {
   console.log('From SubscriptionUpdater method =>', {
     items,
     method,
     subscriptionItem,
-    paginationObjects,
+    fetchParamss,
   });
-  let paginationObject = paginationObjects[paginationObjects.length - 1];
+  let fetchParams = fetchParamss[fetchParamss.length - 1];
   if (subscriptionItem && method) {
     if (method == SUBSCRIPTION_METHODS.CREATE_METHOD) {
-      paginationObject = {
-        ...paginationObject,
-        totalCount: paginationObject.totalCount + 1,
+      fetchParams = {
+        ...fetchParams,
+        totalCount: fetchParams.totalCount + 1,
       };
       items = [subscriptionItem, ...items];
     } else if (method == SUBSCRIPTION_METHODS.UPDATE_METHOD) {
@@ -57,39 +57,39 @@ export const subscriptionUpdater = ({
       );
     } else if (method == SUBSCRIPTION_METHODS.DELETE_METHOD) {
       items = items.filter((i) => i.id != subscriptionItem.id);
-      paginationObject = {
-        ...paginationObject,
-        totalCount: paginationObject.totalCount - 1,
+      fetchParams = {
+        ...fetchParams,
+        totalCount: fetchParams.totalCount - 1,
       };
     }
   }
-  const newPaginationObjects = paginationObjects.concat([paginationObject]);
-  console.log('After updating items =>', { items, paginationObject });
-  return { items, paginationObjects: newPaginationObjects };
+  const newFetchParamss = fetchParamss.concat([fetchParams]);
+  console.log('After updating items =>', { items, fetchParams });
+  return { items, fetchParamss: newFetchParamss };
 };
 
-export const paginationNewOrNot = ({
-  paginationObjects,
-  newPaginationObject,
+export const fetchParamsNewOrNot = ({
+  fetchParamss,
+  newFetchParams,
 }: {
-  paginationObjects: PaginationObject[];
-  newPaginationObject: PaginationObject;
+  fetchParamss: FetchParams[];
+  newFetchParams: FetchParams;
 }): boolean => {
-  console.log('from paginationNewOrNot', {
-    paginationObjects,
-    newPaginationObject,
+  console.log('from fetchParamsNewOrNot', {
+    fetchParamss,
+    newFetchParams,
   });
   let result = false;
-  if (paginationObjects.length < 1) {
+  if (fetchParamss.length < 1) {
     return true;
   }
-  for (let i = 0; i < paginationObjects.length; i++) {
-    const paginationObject = paginationObjects[i];
+  for (let i = 0; i < fetchParamss.length; i++) {
+    const fetchParams = fetchParamss[i];
     if (
-      paginationObject.currentPage != newPaginationObject.currentPage ||
-      paginationObject.pageSize != newPaginationObject.pageSize ||
-      paginationObject.offset != newPaginationObject.offset ||
-      paginationObject.searchQuery != newPaginationObject.searchQuery
+      fetchParams.currentPage != newFetchParams.currentPage ||
+      fetchParams.pageSize != newFetchParams.pageSize ||
+      fetchParams.offset != newFetchParams.offset ||
+      fetchParams.searchQuery != newFetchParams.searchQuery
     ) {
       return true;
     }
@@ -98,32 +98,32 @@ export const paginationNewOrNot = ({
   return result;
 };
 
-export const updatePaginationObject = ({
-  paginationObjects,
+export const updateFetchParams = ({
+  fetchParamss,
   newPageNumber,
   newPageSize,
   newSearchQuery,
 }: {
-  paginationObjects: PaginationObject[];
+  fetchParamss: FetchParams[];
   newPageNumber: number;
   newPageSize: number;
   newSearchQuery: string;
-}): PaginationObject => {
-  const paginationObject = paginationObjects[paginationObjects.length - 1];
+}): FetchParams => {
+  const fetchParams = fetchParamss[fetchParamss.length - 1];
   let pageSize = defaultSearchParams.newPageSize;
   let currentPage = defaultSearchParams.newPageNumber;
   let searchQuery = defaultSearchParams.newSearchQuery;
   let offset = 0;
   let totalCount = 0;
-  if (paginationObject) {
-    currentPage = paginationObject.currentPage;
-    totalCount = paginationObject.totalCount;
-    pageSize = paginationObject.pageSize;
-    offset = paginationObject.offset;
-    searchQuery = paginationObject.searchQuery;
+  if (fetchParams) {
+    currentPage = fetchParams.currentPage;
+    totalCount = fetchParams.totalCount;
+    pageSize = fetchParams.pageSize;
+    offset = fetchParams.offset;
+    searchQuery = fetchParams.searchQuery;
   }
-  console.log('from updatePaginationObject => ', {
-    paginationObject,
+  console.log('from updateFetchParams => ', {
+    fetchParams,
     newPageNumber,
     newPageSize,
   });
@@ -131,14 +131,14 @@ export const updatePaginationObject = ({
   currentPage = newPageNumber;
   searchQuery = newSearchQuery;
   offset = (currentPage - 1) * pageSize;
-  let newPaginationObject = {
+  let newFetchParams = {
     currentPage,
     totalCount,
     pageSize,
     offset,
     searchQuery,
   };
-  return Object.assign({}, newPaginationObject);
+  return Object.assign({}, newFetchParams);
 };
 
 export const parseDateTime = (dateTime: string): string => {

@@ -5,8 +5,8 @@ import {
   Group,
   GroupType,
   MatSelectOption,
-  PaginationObject,
-  startingPaginationObject,
+  FetchParams,
+  startingFetchParams,
 } from '../../common/models';
 import { uiroutes } from '../../common/ui-routes';
 import { GROUPS } from './../../../pages/static/dashboard/dashboard.component';
@@ -26,7 +26,7 @@ export interface GroupStateModel {
   lastPage: number;
   groupsSubscribed: boolean;
   fetchPolicy: FetchPolicy;
-  paginationObjects: PaginationObject[];
+  fetchParamss: FetchParams[];
   groupFormId: number;
   groupFormRecord: Group;
   isFetching: boolean;
@@ -40,7 +40,7 @@ export const defaultGroupState: GroupStateModel = {
   lastPage: null,
   groupsSubscribed: false,
   fetchPolicy: null,
-  paginationObjects: [],
+  fetchParamss: [],
   groupFormId: null,
   groupFormRecord: emptyGroupFormRecord,
   isFetching: false,

@@ -27,14 +27,14 @@ import {
 } from './member.actions';
 import { AUTH_QUERIES, USER_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
-import { User, MatSelectOption, PaginationObject } from '../../common/models';
+import { User, MatSelectOption, FetchParams } from '../../common/models';
 import { USER_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
-  paginationNewOrNot,
+  fetchParamsNewOrNot,
   subscriptionUpdater,
-  updatePaginationObject,
+  updateFetchParams,
 } from '../../common/functions';
 import { defaultSearchParams } from '../../common/constants';
 import {
@@ -78,8 +78,8 @@ export class MemberState {
   }
 
   @Selector()
-  static paginationObject(state: MemberStateModel): PaginationObject {
-    return state.paginationObjects[state.paginationObjects.length - 1];
+  static fetchParams(state: MemberStateModel): FetchParams {
+    return state.fetchParamss[state.fetchParamss.length - 1];
   }
 
   @Selector()
@@ -120,25 +120,25 @@ export class MemberState {
   ) {
     const state = getState();
     const { searchParams, columnFilters } = payload;
-    const { fetchPolicy, paginationObjects, membersSubscribed } = state;
+    const { fetchPolicy, fetchParamss, membersSubscribed } = state;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
-    let newPaginationObject = updatePaginationObject({
-      paginationObjects,
+    let newFetchParams = updateFetchParams({
+      fetchParamss,
       newPageNumber,
       newPageSize,
       newSearchQuery,
     });
-    if (paginationNewOrNot({ paginationObjects, newPaginationObject })) {
+    if (fetchParamsNewOrNot({ fetchParamss, newFetchParams })) {
       patchState({ isFetching: true });
       console.log('new pagination object after the update method => ', {
-        newPaginationObject,
+        newFetchParams,
       });
       const variables = {
         searchField: newSearchQuery,
         membershipStatusNot: columnFilters.membershipStatusNot,
         roleName: columnFilters.roleName,
-        limit: newPaginationObject.pageSize,
-        offset: newPaginationObject.offset,
+        limit: newFetchParams.pageSize,
+        offset: newFetchParams.offset,
       };
       console.log('variables for members fetch ', { variables });
       this.apollo
@@ -152,17 +152,15 @@ export class MemberState {
           const totalCount = response[0]?.totalCount
             ? response[0]?.totalCount
             : 0;
-          newPaginationObject = { ...newPaginationObject, totalCount };
+          newFetchParams = { ...newFetchParams, totalCount };
           console.log('from after getting members', {
             totalCount,
             response,
-            newPaginationObject,
+            newFetchParams,
           });
           patchState({
             members: response,
-            paginationObjects: state.paginationObjects.concat([
-              newPaginationObject,
-            ]),
+            fetchParamss: state.fetchParamss.concat([newFetchParams]),
             isFetching: false,
           });
           if (!membersSubscribed) {
@@ -188,15 +186,15 @@ export class MemberState {
           });
           const method = result?.data?.notifyUser?.method;
           const member = result?.data?.notifyUser?.member;
-          const { items, paginationObjects } = subscriptionUpdater({
+          const { items, fetchParamss } = subscriptionUpdater({
             items: state.members,
             method,
             subscriptionItem: member,
-            paginationObjects: state.paginationObjects,
+            fetchParamss: state.fetchParamss,
           });
           patchState({
             members: items,
-            paginationObjects,
+            fetchParamss,
             membersSubscribed: true,
           });
         });

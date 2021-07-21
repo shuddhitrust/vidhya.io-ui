@@ -19,18 +19,14 @@ import {
 } from './assignment.actions';
 import { ASSIGNMENT_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
-import {
-  Assignment,
-  MatSelectOption,
-  PaginationObject,
-} from '../../common/models';
+import { Assignment, MatSelectOption, FetchParams } from '../../common/models';
 import { ASSIGNMENT_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
-  paginationNewOrNot,
+  fetchParamsNewOrNot,
   subscriptionUpdater,
-  updatePaginationObject,
+  updateFetchParams,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
@@ -60,8 +56,8 @@ export class AssignmentState {
   }
 
   @Selector()
-  static paginationObject(state: AssignmentStateModel): PaginationObject {
-    return state.paginationObjects[state.paginationObjects.length - 1];
+  static fetchParams(state: AssignmentStateModel): FetchParams {
+    return state.fetchParamss[state.fetchParamss.length - 1];
   }
   @Selector()
   static listAssignmentOptions(state: AssignmentStateModel): MatSelectOption[] {
@@ -109,8 +105,7 @@ export class AssignmentState {
     const state = getState();
     const lastPageNumber = state.lastPage;
     const newPageNumber =
-      state.paginationObjects[state.paginationObjects.length - 1].currentPage +
-      1;
+      state.fetchParamss[state.fetchParamss.length - 1].currentPage + 1;
     const newSearchParams: SearchParams = {
       ...defaultSearchParams,
       newPageNumber,
@@ -133,20 +128,20 @@ export class AssignmentState {
     console.log('Fetching assignments from assignment state');
     let { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, paginationObjects, assignmentsSubscribed } = state;
+    const { fetchPolicy, fetchParamss, assignmentsSubscribed } = state;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
-    let newPaginationObject = updatePaginationObject({
-      paginationObjects,
+    let newFetchParams = updateFetchParams({
+      fetchParamss,
       newPageNumber,
       newPageSize,
       newSearchQuery,
     });
     const variables = {
       searchField: newSearchQuery,
-      limit: newPaginationObject.pageSize,
-      offset: newPaginationObject.offset,
+      limit: newFetchParams.pageSize,
+      offset: newFetchParams.offset,
     };
-    if (paginationNewOrNot({ paginationObjects, newPaginationObject })) {
+    if (fetchParamsNewOrNot({ fetchParamss, newFetchParams })) {
       patchState({ isFetching: true });
       console.log('variables for assignments fetch ', { variables });
       this.apollo
@@ -161,24 +156,22 @@ export class AssignmentState {
           const totalCount = response[0]?.totalCount
             ? response[0]?.totalCount
             : 0;
-          newPaginationObject = { ...newPaginationObject, totalCount };
+          newFetchParams = { ...newFetchParams, totalCount };
           console.log('from after getting assignments', {
             totalCount,
             response,
-            newPaginationObject,
+            newFetchParams,
           });
           let assignments = state.assignments;
           assignments = assignments.concat(response);
           let lastPage = null;
-          if (response.length < newPaginationObject.pageSize) {
-            lastPage = newPaginationObject.currentPage;
+          if (response.length < newFetchParams.pageSize) {
+            lastPage = newFetchParams.currentPage;
           }
           patchState({
             assignments,
             lastPage,
-            paginationObjects: state.paginationObjects.concat([
-              newPaginationObject,
-            ]),
+            fetchParamss: state.fetchParamss.concat([newFetchParams]),
             isFetching: false,
           });
           if (!assignmentsSubscribed) {
@@ -207,15 +200,15 @@ export class AssignmentState {
           });
           const method = result?.data?.notifyAssignment?.method;
           const assignment = result?.data?.notifyAssignment?.assignment;
-          const { items, paginationObjects } = subscriptionUpdater({
+          const { items, fetchParamss } = subscriptionUpdater({
             items: state.assignments,
             method,
             subscriptionItem: assignment,
-            paginationObjects: state.paginationObjects,
+            fetchParamss: state.fetchParamss,
           });
           patchState({
             assignments: items,
-            paginationObjects,
+            fetchParamss,
             assignmentsSubscribed: true,
           });
         });
