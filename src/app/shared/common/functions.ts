@@ -81,7 +81,7 @@ export const paginationNewOrNot = ({
   });
   let result = false;
   if (paginationObjects.length < 1) {
-    result = true;
+    return true;
   }
   for (let i = 0; i < paginationObjects.length; i++) {
     const paginationObject = paginationObjects[i];
@@ -91,7 +91,7 @@ export const paginationNewOrNot = ({
       paginationObject.offset != newPaginationObject.offset ||
       paginationObject.searchQuery != newPaginationObject.searchQuery
     ) {
-      result = true;
+      return true;
     }
   }
   console.log('paginationNeworNot result => ', { result });

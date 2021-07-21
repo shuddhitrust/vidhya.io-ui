@@ -577,6 +577,7 @@ export class AuthState {
                 action: 'success',
               })
             );
+            window.location.reload();
           }
         },
         (error) => {

@@ -122,10 +122,7 @@ export class InstitutionState {
       newPageSize,
       newSearchQuery,
     });
-    if (
-      paginationNewOrNot({ paginationObjects, newPaginationObject }) ||
-      !institutionsSubscribed
-    ) {
+    if (paginationNewOrNot({ paginationObjects, newPaginationObject })) {
       patchState({ isFetching: true });
       console.log('new pagination object after the update method => ', {
         newPaginationObject,
@@ -157,7 +154,9 @@ export class InstitutionState {
             ]),
             isFetching: false,
           });
-          this.store.dispatch(new InstitutionSubscriptionAction());
+          if (!institutionsSubscribed) {
+            this.store.dispatch(new InstitutionSubscriptionAction());
+          }
         });
     }
   }

@@ -152,10 +152,7 @@ export class AnnouncementState {
       limit: newPaginationObject.pageSize,
       offset: newPaginationObject.offset,
     };
-    if (
-      paginationNewOrNot({ paginationObjects, newPaginationObject }) ||
-      !announcementsSubscribed
-    ) {
+    if (paginationNewOrNot({ paginationObjects, newPaginationObject })) {
       patchState({ isFetching: true });
       console.log('variables for announcements fetch ', { variables });
       this.apollo
@@ -190,7 +187,7 @@ export class AnnouncementState {
             ]),
             isFetching: false,
           });
-          if (!state.announcementsSubscribed) {
+          if (!announcementsSubscribed) {
             this.store.dispatch(new AnnouncementSubscriptionAction());
           }
         });

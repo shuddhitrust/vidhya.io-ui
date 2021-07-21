@@ -146,10 +146,7 @@ export class AssignmentState {
       limit: newPaginationObject.pageSize,
       offset: newPaginationObject.offset,
     };
-    if (
-      paginationNewOrNot({ paginationObjects, newPaginationObject }) ||
-      !assignmentsSubscribed
-    ) {
+    if (paginationNewOrNot({ paginationObjects, newPaginationObject })) {
       patchState({ isFetching: true });
       console.log('variables for assignments fetch ', { variables });
       this.apollo
@@ -184,7 +181,7 @@ export class AssignmentState {
             ]),
             isFetching: false,
           });
-          if (!state.assignmentsSubscribed) {
+          if (!assignmentsSubscribed) {
             this.store.dispatch(new AssignmentSubscriptionAction());
           }
         });

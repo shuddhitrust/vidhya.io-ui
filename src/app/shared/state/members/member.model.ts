@@ -54,7 +54,7 @@ export const defaultMemberState: MemberStateModel = {
   members: [],
   membersSubscribed: false,
   fetchPolicy: null,
-  paginationObjects: [startingPaginationObject],
+  paginationObjects: [],
   memberFormId: null,
   memberFormRecord: emptyMemberFormRecord,
   isFetchingFormRecord: false,

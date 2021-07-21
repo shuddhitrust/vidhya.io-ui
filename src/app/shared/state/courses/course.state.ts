@@ -141,10 +141,7 @@ export class CourseState {
       limit: newPaginationObject.pageSize,
       offset: newPaginationObject.offset,
     };
-    if (
-      paginationNewOrNot({ paginationObjects, newPaginationObject }) ||
-      !coursesSubscribed
-    ) {
+    if (paginationNewOrNot({ paginationObjects, newPaginationObject })) {
       patchState({ isFetching: true });
       console.log('variables for courses fetch ', { variables });
       this.apollo
@@ -172,7 +169,7 @@ export class CourseState {
             ]),
             isFetching: false,
           });
-          if (!state.coursesSubscribed) {
+          if (!coursesSubscribed) {
             this.store.dispatch(new CourseSubscriptionAction());
           }
         });

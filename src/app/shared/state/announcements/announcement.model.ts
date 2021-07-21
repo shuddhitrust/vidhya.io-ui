@@ -32,7 +32,7 @@ export const defaultAnnouncementState: AnnouncementStateModel = {
   lastPage: null,
   announcementsSubscribed: false,
   fetchPolicy: null,
-  paginationObjects: [startingPaginationObject],
+  paginationObjects: [],
   announcementFormId: null,
   announcementFormRecord: emptyAnnouncementFormRecord,
   isFetching: false,

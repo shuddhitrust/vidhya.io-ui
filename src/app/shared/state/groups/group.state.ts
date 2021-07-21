@@ -141,10 +141,7 @@ export class GroupState {
       limit: newPaginationObject.pageSize,
       offset: newPaginationObject.offset,
     };
-    if (
-      paginationNewOrNot({ paginationObjects, newPaginationObject }) ||
-      !groupsSubscribed
-    ) {
+    if (paginationNewOrNot({ paginationObjects, newPaginationObject })) {
       patchState({ isFetching: true });
       console.log('variables for groups fetch ', { variables });
       this.apollo
@@ -179,7 +176,7 @@ export class GroupState {
             ]),
             isFetching: false,
           });
-          if (!state.groupsSubscribed) {
+          if (!groupsSubscribed) {
             this.store.dispatch(new GroupSubscriptionAction());
           }
         });

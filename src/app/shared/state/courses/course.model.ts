@@ -33,7 +33,7 @@ export const defaultCourseState: CourseStateModel = {
   lastPage: null,
   coursesSubscribed: false,
   fetchPolicy: null,
-  paginationObjects: [startingPaginationObject],
+  paginationObjects: [],
   courseFormId: null,
   courseFormRecord: emptyCourseFormRecord,
   isFetching: false,

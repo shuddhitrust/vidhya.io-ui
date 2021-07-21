@@ -30,7 +30,7 @@ export const defaultAssignmentState: AssignmentStateModel = {
   lastPage: null,
   assignmentsSubscribed: false,
   fetchPolicy: null,
-  paginationObjects: [startingPaginationObject],
+  paginationObjects: [],
   assignmentFormId: null,
   assignmentFormRecord: emptyAssignmentFormRecord,
   isFetching: false,

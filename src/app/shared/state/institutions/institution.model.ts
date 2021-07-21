@@ -36,7 +36,7 @@ export const defaultInstitutionState: InstitutionStateModel = {
   institutions: [],
   institutionsSubscribed: false,
   fetchPolicy: null,
-  paginationObjects: [startingPaginationObject],
+  paginationObjects: [],
   institutionFormId: null,
   institutionFormRecord: emptyInstitutionFormRecord,
   isFetching: false,

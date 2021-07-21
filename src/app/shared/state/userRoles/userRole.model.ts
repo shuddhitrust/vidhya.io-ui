@@ -51,7 +51,7 @@ export const defaultRoleState: UserRoleStateModel = {
   roles: [],
   userRolesSubscribed: false,
   fetchPolicy: null,
-  paginationObjects: [startingPaginationObject],
+  paginationObjects: [],
   userRoleFormId: null,
   userRoleFormRecord: emptyUserRoleFormRecord,
   isFetchingFormRecord: false,

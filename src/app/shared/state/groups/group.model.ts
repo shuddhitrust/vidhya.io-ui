@@ -40,7 +40,7 @@ export const defaultGroupState: GroupStateModel = {
   lastPage: null,
   groupsSubscribed: false,
   fetchPolicy: null,
-  paginationObjects: [startingPaginationObject],
+  paginationObjects: [],
   groupFormId: null,
   groupFormRecord: emptyGroupFormRecord,
   isFetching: false,

@@ -128,10 +128,7 @@ export class MemberState {
       newPageSize,
       newSearchQuery,
     });
-    if (
-      paginationNewOrNot({ paginationObjects, newPaginationObject }) ||
-      !membersSubscribed
-    ) {
+    if (paginationNewOrNot({ paginationObjects, newPaginationObject })) {
       patchState({ isFetching: true });
       console.log('new pagination object after the update method => ', {
         newPaginationObject,
@@ -168,7 +165,9 @@ export class MemberState {
             ]),
             isFetching: false,
           });
-          this.store.dispatch(new MemberSubscriptionAction());
+          if (!membersSubscribed) {
+            this.store.dispatch(new MemberSubscriptionAction());
+          }
         });
     }
   }

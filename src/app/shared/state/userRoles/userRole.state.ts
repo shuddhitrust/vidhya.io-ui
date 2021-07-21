@@ -140,10 +140,7 @@ export class UserRoleState {
       newPageSize,
       newSearchQuery,
     });
-    if (
-      paginationNewOrNot({ paginationObjects, newPaginationObject }) ||
-      !userRolesSubscribed
-    ) {
+    if (paginationNewOrNot({ paginationObjects, newPaginationObject })) {
       patchState({ isFetching: true });
       console.log('new pagination object after the update method => ', {
         newPaginationObject,
@@ -178,7 +175,9 @@ export class UserRoleState {
             ]),
             isFetching: false,
           });
-          this.store.dispatch(new UserRoleSubscriptionAction());
+          if (!userRolesSubscribed) {
+            this.store.dispatch(new UserRoleSubscriptionAction());
+          }
         });
     }
   }

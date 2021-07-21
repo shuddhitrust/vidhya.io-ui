@@ -1,4 +1,5 @@
 import { defaultPageSize } from '../abstract/master-grid/table.model';
+import { defaultSearchParams } from './constants';
 
 /* 
 This is an object that requires an id of type string
@@ -69,10 +70,10 @@ export type PaginationObject = {
 
 export const startingPaginationObject: PaginationObject = {
   currentPage: 1,
-  totalCount: defaultPageSize,
+  totalCount: 0,
   pageSize: defaultPageSize,
   offset: 0,
-  searchQuery: '',
+  searchQuery: defaultSearchParams.newSearchQuery,
 };
 
 export type CurrentMember = {
