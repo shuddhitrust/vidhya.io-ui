@@ -22,7 +22,7 @@ export const defaultLogos = {
 export const defaultSearchParams = new SearchParams();
 
 export const USER_ROLES_NAMES = {
-  SUPER_USER: 'Super User',
+  SUPER_ADMIN: 'Super Admin',
   INSTITUTION_ADMIN: 'Institution Admin',
   CLASS_ADMIN: 'Class Admin',
   LEARNER: 'Learner',
