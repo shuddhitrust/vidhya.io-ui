@@ -90,12 +90,12 @@ export const fetchParamsNewOrNot = ({
       fetchParams.pageSize != newFetchParams.pageSize ||
       fetchParams.offset != newFetchParams.offset ||
       fetchParams.searchQuery != newFetchParams.searchQuery ||
-      compareObjects(fetchParams.columnFilters, newFetchParams.columnFilters)
+      !compareObjects(fetchParams.columnFilters, newFetchParams.columnFilters)
     ) {
       return true;
     }
   }
-  console.log('paginationNeworNot result => ', { result });
+  console.log('fetchParamsNewOrNot result => ', { result });
   return result;
 };
 
