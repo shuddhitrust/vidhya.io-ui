@@ -120,13 +120,15 @@ export class MemberState {
     const state = getState();
     const { searchParams } = payload;
     const { fetchPolicy, fetchParamObjects, membersSubscribed } = state;
-    const { newSearchQuery, newPageSize, newPageNumber, columnFilters } =
+    const { newSearchQuery, newPageSize, newPageNumber, newColumnFilters } =
       searchParams;
+    console.log('From fetch members state ', { searchParams });
     let newFetchParams = updateFetchParams({
       fetchParamObjects,
       newPageNumber,
       newPageSize,
       newSearchQuery,
+      newColumnFilters,
     });
     if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
       patchState({ isFetching: true });
@@ -135,8 +137,8 @@ export class MemberState {
       });
       const variables = {
         searchField: newSearchQuery,
-        membershipStatusNot: columnFilters.membershipStatusNot,
-        roleName: columnFilters.roleName,
+        membershipStatusNot: newColumnFilters.membershipStatusNot,
+        roleName: newColumnFilters.roleName,
         limit: newFetchParams.pageSize,
         offset: newFetchParams.offset,
       };

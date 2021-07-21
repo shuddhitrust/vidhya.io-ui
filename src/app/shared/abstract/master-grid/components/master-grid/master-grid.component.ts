@@ -138,7 +138,7 @@ export class MasterGridComponent implements OnInit, OnChanges {
     this.gridColumnApi = params.columnApi;
     this.searchParams = {
       ...this.searchParams,
-      columnFilters: this.columnFilters,
+      newColumnFilters: this.columnFilters,
     };
     console.log(
       'new searchParams after adding columnFilters => ',

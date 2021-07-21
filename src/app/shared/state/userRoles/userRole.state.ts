@@ -133,12 +133,14 @@ export class UserRoleState {
     const { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, fetchParamObjects, userRolesSubscribed } = state;
-    const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
+    const { newSearchQuery, newPageSize, newPageNumber, newColumnFilters } =
+      searchParams;
     let newFetchParams = updateFetchParams({
       fetchParamObjects,
       newPageNumber,
       newPageSize,
       newSearchQuery,
+      newColumnFilters,
     });
     if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
       patchState({ isFetching: true });

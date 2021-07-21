@@ -140,12 +140,14 @@ export class AnnouncementState {
     let { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, fetchParamObjects, announcementsSubscribed } = state;
-    const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
+    const { newSearchQuery, newPageSize, newPageNumber, newColumnFilters } =
+      searchParams;
     let newFetchParams = updateFetchParams({
       fetchParamObjects,
       newPageNumber,
       newPageSize,
       newSearchQuery,
+      newColumnFilters,
     });
     const variables = {
       searchField: newSearchQuery,

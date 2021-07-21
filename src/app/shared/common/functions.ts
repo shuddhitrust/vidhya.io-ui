@@ -104,11 +104,13 @@ export const updateFetchParams = ({
   newPageNumber,
   newPageSize,
   newSearchQuery,
+  newColumnFilters,
 }: {
   fetchParamObjects: FetchParams[];
   newPageNumber: number;
   newPageSize: number;
   newSearchQuery: string;
+  newColumnFilters: any;
 }): FetchParams => {
   const fetchParams = fetchParamObjects[fetchParamObjects.length - 1];
   let pageSize = defaultSearchParams.newPageSize;
@@ -116,7 +118,7 @@ export const updateFetchParams = ({
   let searchQuery = defaultSearchParams.newSearchQuery;
   let offset = 0;
   let totalCount = 0;
-  let columnFilters = defaultSearchParams.columnFilters;
+  let columnFilters = defaultSearchParams.newColumnFilters;
   if (fetchParams) {
     currentPage = fetchParams.currentPage;
     totalCount = fetchParams.totalCount;
@@ -134,6 +136,7 @@ export const updateFetchParams = ({
   currentPage = newPageNumber;
   searchQuery = newSearchQuery;
   offset = (currentPage - 1) * pageSize;
+  columnFilters = newColumnFilters;
 
   let newFetchParams = {
     currentPage,

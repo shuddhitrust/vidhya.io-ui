@@ -262,12 +262,14 @@ export class ChatState {
     const state = getState();
     const { fetchParamObjects } = state;
     const { searchParams } = payload;
-    const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
+    const { newSearchQuery, newPageSize, newPageNumber, newColumnFilters } =
+      searchParams;
     let newFetchParams = updateFetchParams({
       fetchParamObjects,
       newPageNumber,
       newPageSize,
       newSearchQuery,
+      newColumnFilters,
     });
     if (
       fetchParamsNewOrNot({
@@ -610,12 +612,14 @@ export class ChatState {
     const { chatMessagesFetchParamss } = state;
     const chatId = state.chatFormRecord.id;
     const { searchParams } = payload;
-    const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
+    const { newSearchQuery, newPageSize, newPageNumber, newColumnFilters } =
+      searchParams;
     let newFetchParams = updateFetchParams({
       fetchParamObjects: chatMessagesFetchParamss,
       newPageNumber,
       newPageSize,
       newSearchQuery,
+      newColumnFilters,
     });
     console.log(
       'from fetchChatMessages => ',

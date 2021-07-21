@@ -9,7 +9,7 @@ export class SearchParams {
   sortField: string = null;
   sortOrder: string = null;
   newSearchQuery: string = null;
-  columnFilters: any = null;
+  newColumnFilters: any = null;
 }
 
 export interface ColWidth {
