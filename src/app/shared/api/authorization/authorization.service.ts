@@ -1,9 +1,15 @@
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { RESOURCE_ACTIONS, UserPermissions } from '../../common/models';
+import {
+  CurrentMember,
+  resources,
+  RESOURCE_ACTIONS,
+  UserPermissions,
+} from '../../common/models';
 import { Observable } from '@apollo/client/utilities';
 import { AuthState } from '../../state/auth/auth.state';
 import { Select } from '@ngxs/store';
+import { USER_ROLES_NAMES } from '../../common/constants';
 
 @Injectable({
   providedIn: 'root',
@@ -11,23 +17,23 @@ import { Select } from '@ngxs/store';
 export class AuthorizationService {
   @Select(AuthState.getPermissions)
   permissions$: Observable<UserPermissions>;
-  @Select(AuthState.getCurrentUserId)
-  currentUserId$: Observable<number>;
+  @Select(AuthState.getCurrentMember)
+  currentMember$: Observable<CurrentMember>;
+  currentMember: CurrentMember;
   currentUserId: number;
-  @Select(AuthState.getCurrentMemberInstitutionId)
-  currentUserInsitutionId$: Observable<number>;
   currentUserInsitutionId: number;
+  currentMemberRoleName: string;
   permissions: UserPermissions;
   FILE_UPLOAD_ENDPOINT: string = environment.file_uplod_endpoint;
   constructor() {
     this.permissions$.subscribe((val) => {
       this.permissions = val;
     });
-    this.currentUserId$.subscribe((val) => {
-      this.currentUserId = val;
-    });
-    this.currentUserInsitutionId$.subscribe((val) => {
-      this.currentUserInsitutionId = val;
+    this.currentMember$.subscribe((val) => {
+      this.currentMember = val;
+      this.currentUserId = this.currentMember?.id;
+      this.currentUserInsitutionId = this.currentMember?.institution?.id;
+      this.currentMemberRoleName = this.currentMember?.role?.name;
     });
   }
 
@@ -64,11 +70,19 @@ export class AuthorizationService {
         action == RESOURCE_ACTIONS.DELETE
       ) {
         const { adminIds, institutionId } = recordData;
-        if (adminIds) {
-          recordConstraint = adminIds.includes(this.currentUserId);
-        }
-        if (institutionId) {
-          recordConstraint = institutionId == this.currentUserInsitutionId;
+        if (
+          this.currentMemberRoleName == USER_ROLES_NAMES.SUPER_ADMIN &&
+          resource == resources.MODERATION
+        ) {
+          // Super admin has the ability to moderate anyone
+          recordConstraint = true;
+        } else {
+          if (adminIds) {
+            recordConstraint = adminIds.includes(this.currentUserId);
+          }
+          if (institutionId) {
+            recordConstraint = institutionId == this.currentUserInsitutionId;
+          }
         }
       }
       const verdict =
