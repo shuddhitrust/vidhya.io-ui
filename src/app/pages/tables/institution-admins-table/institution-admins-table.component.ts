@@ -63,8 +63,7 @@ export class InstitutionAdminsTableComponent implements OnInit {
   fetchMembers(searchParams: SearchParams) {
     this.store.dispatch(
       new FetchMembersAction({
-        searchParams,
-        columnFilters: this.columnFilters,
+        searchParams: { ...searchParams, columnFilters: this.columnFilters },
       })
     );
   }

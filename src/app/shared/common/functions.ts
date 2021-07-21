@@ -30,20 +30,20 @@ export const subscriptionUpdater = ({
   items,
   method,
   subscriptionItem,
-  fetchParamss,
+  fetchParamObjects,
 }: {
   items: any[];
   method: string;
   subscriptionItem: any;
-  fetchParamss: FetchParams[];
+  fetchParamObjects: FetchParams[];
 }) => {
   console.log('From SubscriptionUpdater method =>', {
     items,
     method,
     subscriptionItem,
-    fetchParamss,
+    fetchParamObjects,
   });
-  let fetchParams = fetchParamss[fetchParamss.length - 1];
+  let fetchParams = fetchParamObjects[fetchParamObjects.length - 1];
   if (subscriptionItem && method) {
     if (method == SUBSCRIPTION_METHODS.CREATE_METHOD) {
       fetchParams = {
@@ -63,33 +63,34 @@ export const subscriptionUpdater = ({
       };
     }
   }
-  const newFetchParamss = fetchParamss.concat([fetchParams]);
+  const newFetchParamss = fetchParamObjects.concat([fetchParams]);
   console.log('After updating items =>', { items, fetchParams });
-  return { items, fetchParamss: newFetchParamss };
+  return { items, fetchParamObjects: newFetchParamss };
 };
 
 export const fetchParamsNewOrNot = ({
-  fetchParamss,
+  fetchParamObjects,
   newFetchParams,
 }: {
-  fetchParamss: FetchParams[];
+  fetchParamObjects: FetchParams[];
   newFetchParams: FetchParams;
 }): boolean => {
   console.log('from fetchParamsNewOrNot', {
-    fetchParamss,
+    fetchParamObjects,
     newFetchParams,
   });
   let result = false;
-  if (fetchParamss.length < 1) {
+  if (fetchParamObjects.length < 1) {
     return true;
   }
-  for (let i = 0; i < fetchParamss.length; i++) {
-    const fetchParams = fetchParamss[i];
+  for (let i = 0; i < fetchParamObjects.length; i++) {
+    const fetchParams = fetchParamObjects[i];
     if (
       fetchParams.currentPage != newFetchParams.currentPage ||
       fetchParams.pageSize != newFetchParams.pageSize ||
       fetchParams.offset != newFetchParams.offset ||
-      fetchParams.searchQuery != newFetchParams.searchQuery
+      fetchParams.searchQuery != newFetchParams.searchQuery ||
+      compareObjects(fetchParams.columnFilters, newFetchParams.columnFilters)
     ) {
       return true;
     }
@@ -99,28 +100,30 @@ export const fetchParamsNewOrNot = ({
 };
 
 export const updateFetchParams = ({
-  fetchParamss,
+  fetchParamObjects,
   newPageNumber,
   newPageSize,
   newSearchQuery,
 }: {
-  fetchParamss: FetchParams[];
+  fetchParamObjects: FetchParams[];
   newPageNumber: number;
   newPageSize: number;
   newSearchQuery: string;
 }): FetchParams => {
-  const fetchParams = fetchParamss[fetchParamss.length - 1];
+  const fetchParams = fetchParamObjects[fetchParamObjects.length - 1];
   let pageSize = defaultSearchParams.newPageSize;
   let currentPage = defaultSearchParams.newPageNumber;
   let searchQuery = defaultSearchParams.newSearchQuery;
   let offset = 0;
   let totalCount = 0;
+  let columnFilters = defaultSearchParams.columnFilters;
   if (fetchParams) {
     currentPage = fetchParams.currentPage;
     totalCount = fetchParams.totalCount;
     pageSize = fetchParams.pageSize;
     offset = fetchParams.offset;
     searchQuery = fetchParams.searchQuery;
+    columnFilters = fetchParams.columnFilters;
   }
   console.log('from updateFetchParams => ', {
     fetchParams,
@@ -131,12 +134,14 @@ export const updateFetchParams = ({
   currentPage = newPageNumber;
   searchQuery = newSearchQuery;
   offset = (currentPage - 1) * pageSize;
+
   let newFetchParams = {
     currentPage,
     totalCount,
     pageSize,
     offset,
     searchQuery,
+    columnFilters,
   };
   return Object.assign({}, newFetchParams);
 };
@@ -281,4 +286,22 @@ export const constructPermissions = (permissions: UserPermissions) => {
     }
   }
   return newPermissions;
+};
+
+export const compareObjects = (o1, o2) => {
+  for (var p in o1) {
+    if (o1.hasOwnProperty(p)) {
+      if (o1[p] !== o2[p]) {
+        return false;
+      }
+    }
+  }
+  for (var p in o2) {
+    if (o2.hasOwnProperty(p)) {
+      if (o1[p] !== o2[p]) {
+        return false;
+      }
+    }
+  }
+  return true;
 };

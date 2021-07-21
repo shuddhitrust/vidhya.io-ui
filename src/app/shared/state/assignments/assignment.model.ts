@@ -16,7 +16,7 @@ export interface AssignmentStateModel {
   lastPage: number;
   assignmentsSubscribed: boolean;
   fetchPolicy: FetchPolicy;
-  fetchParamss: FetchParams[];
+  fetchParamObjects: FetchParams[];
   assignmentFormId: number;
   assignmentFormRecord: Assignment;
   isFetching: boolean;
@@ -30,7 +30,7 @@ export const defaultAssignmentState: AssignmentStateModel = {
   lastPage: null,
   assignmentsSubscribed: false,
   fetchPolicy: null,
-  fetchParamss: [],
+  fetchParamObjects: [],
   assignmentFormId: null,
   assignmentFormRecord: emptyAssignmentFormRecord,
   isFetching: false,

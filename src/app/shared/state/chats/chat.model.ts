@@ -30,7 +30,7 @@ export interface ChatStateModel {
   isFetchingChatMembers: boolean;
   isFetchingChatMessages: boolean;
   fetchPolicy: FetchPolicy;
-  fetchParamss: FetchParams[];
+  fetchParamObjects: FetchParams[];
   lastChatPage: number;
   chatMessagesFetchParamss: FetchParams[];
   lastChatMessagesPage: number;
@@ -50,7 +50,7 @@ export const defaultChatState: ChatStateModel = {
   isFetchingChatMembers: false,
   isFetchingChatMessages: false,
   fetchPolicy: null,
-  fetchParamss: [],
+  fetchParamObjects: [],
   lastChatPage: null,
   chatMessagesFetchParamss: [],
   lastChatMessagesPage: null,

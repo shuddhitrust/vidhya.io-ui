@@ -26,7 +26,7 @@ export interface GroupStateModel {
   lastPage: number;
   groupsSubscribed: boolean;
   fetchPolicy: FetchPolicy;
-  fetchParamss: FetchParams[];
+  fetchParamObjects: FetchParams[];
   groupFormId: number;
   groupFormRecord: Group;
   isFetching: boolean;
@@ -40,7 +40,7 @@ export const defaultGroupState: GroupStateModel = {
   lastPage: null,
   groupsSubscribed: false,
   fetchPolicy: null,
-  fetchParamss: [],
+  fetchParamObjects: [],
   groupFormId: null,
   groupFormRecord: emptyGroupFormRecord,
   isFetching: false,

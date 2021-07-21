@@ -61,7 +61,7 @@ export class AnnouncementState {
 
   @Selector()
   static fetchParams(state: AnnouncementStateModel): FetchParams {
-    return state.fetchParamss[state.fetchParamss.length - 1];
+    return state.fetchParamObjects[state.fetchParamObjects.length - 1];
   }
   @Selector()
   static listAnnouncementOptions(
@@ -115,7 +115,8 @@ export class AnnouncementState {
     const state = getState();
     const lastPageNumber = state.lastPage;
     const newPageNumber =
-      state.fetchParamss[state.fetchParamss.length - 1].currentPage + 1;
+      state.fetchParamObjects[state.fetchParamObjects.length - 1].currentPage +
+      1;
     const newSearchParams: SearchParams = {
       ...defaultSearchParams,
       newPageNumber,
@@ -138,10 +139,10 @@ export class AnnouncementState {
     console.log('Fetching announcements from announcement state');
     let { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, fetchParamss, announcementsSubscribed } = state;
+    const { fetchPolicy, fetchParamObjects, announcementsSubscribed } = state;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
     let newFetchParams = updateFetchParams({
-      fetchParamss,
+      fetchParamObjects,
       newPageNumber,
       newPageSize,
       newSearchQuery,
@@ -151,7 +152,7 @@ export class AnnouncementState {
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
-    if (fetchParamsNewOrNot({ fetchParamss, newFetchParams })) {
+    if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
       patchState({ isFetching: true });
       console.log('variables for announcements fetch ', { variables });
       this.apollo
@@ -181,7 +182,7 @@ export class AnnouncementState {
           patchState({
             lastPage,
             announcements,
-            fetchParamss: state.fetchParamss.concat([newFetchParams]),
+            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
             isFetching: false,
           });
           if (!announcementsSubscribed) {
@@ -210,15 +211,15 @@ export class AnnouncementState {
           });
           const method = result?.data?.notifyAnnouncement?.method;
           const announcement = result?.data?.notifyAnnouncement?.announcement;
-          const { items, fetchParamss } = subscriptionUpdater({
+          const { items, fetchParamObjects } = subscriptionUpdater({
             items: state.announcements,
             method,
             subscriptionItem: announcement,
-            fetchParamss: state.fetchParamss,
+            fetchParamObjects: state.fetchParamObjects,
           });
           patchState({
             announcements: items,
-            fetchParamss,
+            fetchParamObjects,
             announcementsSubscribed: true,
           });
         });

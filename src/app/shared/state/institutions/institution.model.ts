@@ -23,7 +23,7 @@ export interface InstitutionStateModel {
   institutions: Institution[];
   institutionsSubscribed: boolean;
   fetchPolicy: FetchPolicy;
-  fetchParamss: FetchParams[];
+  fetchParamObjects: FetchParams[];
   institutionFormId: number;
   institutionFormRecord: Institution;
   isFetching: boolean;
@@ -36,7 +36,7 @@ export const defaultInstitutionState: InstitutionStateModel = {
   institutions: [],
   institutionsSubscribed: false,
   fetchPolicy: null,
-  fetchParamss: [],
+  fetchParamObjects: [],
   institutionFormId: null,
   institutionFormRecord: emptyInstitutionFormRecord,
   isFetching: false,

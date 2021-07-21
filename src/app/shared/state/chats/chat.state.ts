@@ -122,7 +122,7 @@ export class ChatState {
 
   @Selector()
   static fetchParams(state: ChatStateModel): FetchParams {
-    return state.fetchParamss[state.fetchParamss.length - 1];
+    return state.fetchParamObjects[state.fetchParamObjects.length - 1];
   }
   @Selector()
   static listChatOptions(state: ChatStateModel): MatSelectOption[] {
@@ -238,7 +238,8 @@ export class ChatState {
     const state = getState();
     const lastPageNumber = state.lastChatPage;
     const newPageNumber =
-      state.fetchParamss[state.fetchParamss.length - 1].currentPage + 1;
+      state.fetchParamObjects[state.fetchParamObjects.length - 1].currentPage +
+      1;
     const newSearchParams: SearchParams = {
       ...defaultSearchParams,
       newPageNumber,
@@ -259,18 +260,18 @@ export class ChatState {
     { payload }: FetchChatsAction
   ) {
     const state = getState();
-    const { fetchParamss } = state;
+    const { fetchParamObjects } = state;
     const { searchParams } = payload;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
     let newFetchParams = updateFetchParams({
-      fetchParamss,
+      fetchParamObjects,
       newPageNumber,
       newPageSize,
       newSearchQuery,
     });
     if (
       fetchParamsNewOrNot({
-        fetchParamss,
+        fetchParamObjects,
         newFetchParams,
       })
     ) {
@@ -339,7 +340,7 @@ export class ChatState {
           patchState({
             chats,
             lastChatPage,
-            fetchParamss: state.fetchParamss.concat([newFetchParams]),
+            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
             isFetching: false,
           });
           if (!state.chatMessagesSubscribed) {
@@ -611,7 +612,7 @@ export class ChatState {
     const { searchParams } = payload;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
     let newFetchParams = updateFetchParams({
-      fetchParamss: chatMessagesFetchParamss,
+      fetchParamObjects: chatMessagesFetchParamss,
       newPageNumber,
       newPageSize,
       newSearchQuery,
@@ -619,13 +620,13 @@ export class ChatState {
     console.log(
       'from fetchChatMessages => ',
       fetchParamsNewOrNot({
-        fetchParamss: chatMessagesFetchParamss,
+        fetchParamObjects: chatMessagesFetchParamss,
         newFetchParams,
       })
     );
     if (
       fetchParamsNewOrNot({
-        fetchParamss: chatMessagesFetchParamss,
+        fetchParamObjects: chatMessagesFetchParamss,
         newFetchParams,
       })
     ) {
@@ -668,7 +669,7 @@ export class ChatState {
               chats,
               lastChatMessagesPage,
               chatFormRecord: formRecord,
-              chatMessagesFetchParamss: state.fetchParamss.concat([
+              chatMessagesFetchParamss: state.fetchParamObjects.concat([
                 newFetchParams,
               ]),
               isFetchingChatMessages: false,
@@ -706,11 +707,11 @@ export class ChatState {
                 ? chat.chatmessageSet
                 : [];
               console.log('Chat, chatmessages => ', { chat, chatMessages });
-              const { items, fetchParamss } = subscriptionUpdater({
+              const { items, fetchParamObjects } = subscriptionUpdater({
                 items: chatMessages,
                 method,
                 subscriptionItem: chatMessage,
-                fetchParamss: state.fetchParamss,
+                fetchParamObjects: state.fetchParamObjects,
               });
               chat = { ...chat, chatmessageSet: items };
               let chats = state.chats.filter((c) => c.id != chat.id);
@@ -718,7 +719,7 @@ export class ChatState {
               patchState({
                 chats: chats,
                 chatFormRecord: chat,
-                fetchParamss,
+                fetchParamObjects,
                 chatMessagesSubscribed: true,
               });
             } else {

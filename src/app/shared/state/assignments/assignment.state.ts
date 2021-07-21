@@ -57,7 +57,7 @@ export class AssignmentState {
 
   @Selector()
   static fetchParams(state: AssignmentStateModel): FetchParams {
-    return state.fetchParamss[state.fetchParamss.length - 1];
+    return state.fetchParamObjects[state.fetchParamObjects.length - 1];
   }
   @Selector()
   static listAssignmentOptions(state: AssignmentStateModel): MatSelectOption[] {
@@ -105,7 +105,8 @@ export class AssignmentState {
     const state = getState();
     const lastPageNumber = state.lastPage;
     const newPageNumber =
-      state.fetchParamss[state.fetchParamss.length - 1].currentPage + 1;
+      state.fetchParamObjects[state.fetchParamObjects.length - 1].currentPage +
+      1;
     const newSearchParams: SearchParams = {
       ...defaultSearchParams,
       newPageNumber,
@@ -128,10 +129,10 @@ export class AssignmentState {
     console.log('Fetching assignments from assignment state');
     let { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, fetchParamss, assignmentsSubscribed } = state;
+    const { fetchPolicy, fetchParamObjects, assignmentsSubscribed } = state;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
     let newFetchParams = updateFetchParams({
-      fetchParamss,
+      fetchParamObjects,
       newPageNumber,
       newPageSize,
       newSearchQuery,
@@ -141,7 +142,7 @@ export class AssignmentState {
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
-    if (fetchParamsNewOrNot({ fetchParamss, newFetchParams })) {
+    if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
       patchState({ isFetching: true });
       console.log('variables for assignments fetch ', { variables });
       this.apollo
@@ -171,7 +172,7 @@ export class AssignmentState {
           patchState({
             assignments,
             lastPage,
-            fetchParamss: state.fetchParamss.concat([newFetchParams]),
+            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
             isFetching: false,
           });
           if (!assignmentsSubscribed) {
@@ -200,15 +201,15 @@ export class AssignmentState {
           });
           const method = result?.data?.notifyAssignment?.method;
           const assignment = result?.data?.notifyAssignment?.assignment;
-          const { items, fetchParamss } = subscriptionUpdater({
+          const { items, fetchParamObjects } = subscriptionUpdater({
             items: state.assignments,
             method,
             subscriptionItem: assignment,
-            fetchParamss: state.fetchParamss,
+            fetchParamObjects: state.fetchParamObjects,
           });
           patchState({
             assignments: items,
-            fetchParamss,
+            fetchParamObjects,
             assignmentsSubscribed: true,
           });
         });

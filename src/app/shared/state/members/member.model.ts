@@ -40,7 +40,7 @@ export interface MemberStateModel {
   members: User[];
   membersSubscribed: boolean;
   fetchPolicy: FetchPolicy;
-  fetchParamss: FetchParams[];
+  fetchParamObjects: FetchParams[];
   memberFormId: string;
   memberFormRecord: User;
   isFetchingFormRecord: boolean;
@@ -54,7 +54,7 @@ export const defaultMemberState: MemberStateModel = {
   members: [],
   membersSubscribed: false,
   fetchPolicy: null,
-  fetchParamss: [],
+  fetchParamObjects: [],
   memberFormId: null,
   memberFormRecord: emptyMemberFormRecord,
   isFetchingFormRecord: false,

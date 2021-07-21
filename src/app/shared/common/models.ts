@@ -66,6 +66,7 @@ export type FetchParams = {
   pageSize: number;
   offset: number; // the number of records in all pages prior to current page combined
   searchQuery: string;
+  columnFilters: any;
 };
 
 export const startingFetchParams: FetchParams = {
@@ -74,6 +75,7 @@ export const startingFetchParams: FetchParams = {
   pageSize: defaultPageSize,
   offset: 0,
   searchQuery: defaultSearchParams.newSearchQuery,
+  columnFilters: null,
 };
 
 export type CurrentMember = {

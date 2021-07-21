@@ -79,7 +79,7 @@ export class MemberState {
 
   @Selector()
   static fetchParams(state: MemberStateModel): FetchParams {
-    return state.fetchParamss[state.fetchParamss.length - 1];
+    return state.fetchParamObjects[state.fetchParamObjects.length - 1];
   }
 
   @Selector()
@@ -108,7 +108,6 @@ export class MemberState {
     this.store.dispatch(
       new FetchMembersAction({
         searchParams: defaultSearchParams,
-        columnFilters: {},
       })
     );
   }
@@ -119,16 +118,17 @@ export class MemberState {
     { payload }: FetchMembersAction
   ) {
     const state = getState();
-    const { searchParams, columnFilters } = payload;
-    const { fetchPolicy, fetchParamss, membersSubscribed } = state;
-    const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
+    const { searchParams } = payload;
+    const { fetchPolicy, fetchParamObjects, membersSubscribed } = state;
+    const { newSearchQuery, newPageSize, newPageNumber, columnFilters } =
+      searchParams;
     let newFetchParams = updateFetchParams({
-      fetchParamss,
+      fetchParamObjects,
       newPageNumber,
       newPageSize,
       newSearchQuery,
     });
-    if (fetchParamsNewOrNot({ fetchParamss, newFetchParams })) {
+    if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
       patchState({ isFetching: true });
       console.log('new pagination object after the update method => ', {
         newFetchParams,
@@ -160,7 +160,7 @@ export class MemberState {
           });
           patchState({
             members: response,
-            fetchParamss: state.fetchParamss.concat([newFetchParams]),
+            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
             isFetching: false,
           });
           if (!membersSubscribed) {
@@ -186,15 +186,15 @@ export class MemberState {
           });
           const method = result?.data?.notifyUser?.method;
           const member = result?.data?.notifyUser?.member;
-          const { items, fetchParamss } = subscriptionUpdater({
+          const { items, fetchParamObjects } = subscriptionUpdater({
             items: state.members,
             method,
             subscriptionItem: member,
-            fetchParamss: state.fetchParamss,
+            fetchParamObjects: state.fetchParamObjects,
           });
           patchState({
             members: items,
-            fetchParamss,
+            fetchParamObjects,
             membersSubscribed: true,
           });
         });

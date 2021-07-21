@@ -18,7 +18,7 @@ export interface AnnouncementStateModel {
   lastPage: number;
   announcementsSubscribed: boolean;
   fetchPolicy: FetchPolicy;
-  fetchParamss: FetchParams[];
+  fetchParamObjects: FetchParams[];
   announcementFormId: number;
   announcementFormRecord: Announcement;
   isFetching: boolean;
@@ -32,7 +32,7 @@ export const defaultAnnouncementState: AnnouncementStateModel = {
   lastPage: null,
   announcementsSubscribed: false,
   fetchPolicy: null,
-  fetchParamss: [],
+  fetchParamObjects: [],
   announcementFormId: null,
   announcementFormRecord: emptyAnnouncementFormRecord,
   isFetching: false,

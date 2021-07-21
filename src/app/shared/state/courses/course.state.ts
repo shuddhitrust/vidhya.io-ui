@@ -57,7 +57,7 @@ export class CourseState {
 
   @Selector()
   static fetchParams(state: CourseStateModel): FetchParams {
-    return state.fetchParamss[state.fetchParamss.length - 1];
+    return state.fetchParamObjects[state.fetchParamObjects.length - 1];
   }
   @Selector()
   static listCourseOptions(state: CourseStateModel): MatSelectOption[] {
@@ -105,7 +105,8 @@ export class CourseState {
     const state = getState();
     const lastPageNumber = state.lastPage;
     const newPageNumber =
-      state.fetchParamss[state.fetchParamss.length - 1].currentPage + 1;
+      state.fetchParamObjects[state.fetchParamObjects.length - 1].currentPage +
+      1;
     const newSearchParams: SearchParams = {
       ...defaultSearchParams,
       newPageNumber,
@@ -127,10 +128,10 @@ export class CourseState {
     console.log('Fetching courses from course state');
     let { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, fetchParamss, coursesSubscribed } = state;
+    const { fetchPolicy, fetchParamObjects, coursesSubscribed } = state;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
     let newFetchParams = updateFetchParams({
-      fetchParamss,
+      fetchParamObjects,
       newPageNumber,
       newPageSize,
       newSearchQuery,
@@ -140,7 +141,7 @@ export class CourseState {
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
-    if (fetchParamsNewOrNot({ fetchParamss, newFetchParams })) {
+    if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
       patchState({ isFetching: true });
       console.log('variables for courses fetch ', { variables });
       this.apollo
@@ -163,7 +164,7 @@ export class CourseState {
           });
           patchState({
             courses: response,
-            fetchParamss: state.fetchParamss.concat([newFetchParams]),
+            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
             isFetching: false,
           });
           if (!coursesSubscribed) {
@@ -189,15 +190,15 @@ export class CourseState {
           });
           const method = result?.data?.notifyCourse?.method;
           const course = result?.data?.notifyCourse?.course;
-          const { items, fetchParamss } = subscriptionUpdater({
+          const { items, fetchParamObjects } = subscriptionUpdater({
             items: state.courses,
             method,
             subscriptionItem: course,
-            fetchParamss: state.fetchParamss,
+            fetchParamObjects: state.fetchParamObjects,
           });
           patchState({
             courses: items,
-            fetchParamss,
+            fetchParamObjects,
             coursesSubscribed: true,
           });
         });

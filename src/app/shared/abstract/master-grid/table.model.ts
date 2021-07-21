@@ -1,3 +1,4 @@
+import { AnyARecord } from 'dns';
 import { pageSizeOptions } from './table.config';
 
 export const defaultPageSize = pageSizeOptions[0].value;
@@ -8,7 +9,7 @@ export class SearchParams {
   sortField: string = null;
   sortOrder: string = null;
   newSearchQuery: string = null;
-  columnFilters: object = {};
+  columnFilters: any = null;
 }
 
 export interface ColWidth {

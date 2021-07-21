@@ -57,9 +57,7 @@ export class MembersTableComponent implements OnInit {
   }
 
   fetchMembers(searchParams: SearchParams) {
-    this.store.dispatch(
-      new FetchMembersAction({ searchParams, columnFilters: {} })
-    );
+    this.store.dispatch(new FetchMembersAction({ searchParams }));
   }
 
   forceRefetchMembers(searchParams: SearchParams) {

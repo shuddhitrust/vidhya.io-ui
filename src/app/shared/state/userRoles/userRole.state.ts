@@ -94,7 +94,7 @@ export class UserRoleState {
 
   @Selector()
   static fetchParams(state: UserRoleStateModel): FetchParams {
-    return state.fetchParamss[state.fetchParamss.length - 1];
+    return state.fetchParamObjects[state.fetchParamObjects.length - 1];
   }
 
   @Selector()
@@ -132,15 +132,15 @@ export class UserRoleState {
   ) {
     const { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, fetchParamss, userRolesSubscribed } = state;
+    const { fetchPolicy, fetchParamObjects, userRolesSubscribed } = state;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
     let newFetchParams = updateFetchParams({
-      fetchParamss,
+      fetchParamObjects,
       newPageNumber,
       newPageSize,
       newSearchQuery,
     });
-    if (fetchParamsNewOrNot({ fetchParamss, newFetchParams })) {
+    if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
       patchState({ isFetching: true });
       console.log('new pagination object after the update method => ', {
         newFetchParams,
@@ -170,7 +170,7 @@ export class UserRoleState {
           });
           patchState({
             roles: response,
-            fetchParamss: state.fetchParamss.concat([newFetchParams]),
+            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
             isFetching: false,
           });
           if (!userRolesSubscribed) {
@@ -199,15 +199,15 @@ export class UserRoleState {
           });
           const method = result?.data?.notifyUserRole?.method;
           const userRole = result?.data?.notifyUserRole?.userRole;
-          const { items, fetchParamss } = subscriptionUpdater({
+          const { items, fetchParamObjects } = subscriptionUpdater({
             items: state.roles,
             method,
             subscriptionItem: userRole,
-            fetchParamss: state.fetchParamss,
+            fetchParamObjects: state.fetchParamObjects,
           });
           patchState({
             roles: items,
-            fetchParamss,
+            fetchParamObjects,
             userRolesSubscribed: true,
           });
         });

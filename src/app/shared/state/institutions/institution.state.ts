@@ -60,7 +60,7 @@ export class InstitutionState {
 
   @Selector()
   static fetchParams(state: InstitutionStateModel): FetchParams {
-    return state.fetchParamss[state.fetchParamss.length - 1];
+    return state.fetchParamObjects[state.fetchParamObjects.length - 1];
   }
   @Selector()
   static listInstitutionOptions(
@@ -113,16 +113,16 @@ export class InstitutionState {
     { payload }: FetchInstitutionsAction
   ) {
     const state = getState();
-    const { institutionsSubscribed, fetchParamss } = state;
+    const { institutionsSubscribed, fetchParamObjects } = state;
     const { searchParams } = payload;
     const { newSearchQuery, newPageSize, newPageNumber } = searchParams;
     let newFetchParams = updateFetchParams({
-      fetchParamss,
+      fetchParamObjects,
       newPageNumber,
       newPageSize,
       newSearchQuery,
     });
-    if (fetchParamsNewOrNot({ fetchParamss, newFetchParams })) {
+    if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
       patchState({ isFetching: true });
       console.log('new pagination object after the update method => ', {
         newFetchParams,
@@ -149,7 +149,7 @@ export class InstitutionState {
           console.log('new institutions from fetch ', response);
           patchState({
             institutions: response,
-            fetchParamss: state.fetchParamss.concat([newFetchParams]),
+            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
             isFetching: false,
           });
           if (!institutionsSubscribed) {
@@ -178,15 +178,15 @@ export class InstitutionState {
           });
           const method = result?.data?.notifyInstitution?.method;
           const institution = result?.data?.notifyInstitution?.institution;
-          const { items, fetchParamss } = subscriptionUpdater({
+          const { items, fetchParamObjects } = subscriptionUpdater({
             items: state.institutions,
             method,
             subscriptionItem: institution,
-            fetchParamss: state.fetchParamss,
+            fetchParamObjects: state.fetchParamObjects,
           });
           patchState({
             institutions: items,
-            fetchParamss,
+            fetchParamObjects,
             institutionsSubscribed: true,
           });
         });
