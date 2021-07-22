@@ -22,7 +22,7 @@ import { DeleteUserRoleAction } from 'src/app/shared/state/userRoles/userRole.ac
 })
 export class RoleProfileComponent {
   profileData: any = {};
-  resource = resources.USER_ROLES;
+  resource = resources.USER_ROLE;
   resourceActions = RESOURCE_ACTIONS;
   constructor(
     public dialog: MatDialog,

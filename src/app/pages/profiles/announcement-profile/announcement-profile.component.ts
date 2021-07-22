@@ -28,7 +28,7 @@ import { AuthorizationService } from 'src/app/shared/api/authorization/authoriza
   styleUrls: ['./announcement-profile.component.scss'],
 })
 export class AnnouncementProfileComponent implements OnInit, OnDestroy {
-  resource = resources.ANNOUNCEMENTS;
+  resource = resources.ANNOUNCEMENT;
   resourceActions = RESOURCE_ACTIONS;
   @Select(AnnouncementState.getAnnouncementFormRecord)
   announcement$: Observable<Announcement>;

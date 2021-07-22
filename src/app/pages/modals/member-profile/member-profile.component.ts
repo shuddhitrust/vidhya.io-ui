@@ -23,7 +23,7 @@ import { DeleteMemberAction } from 'src/app/shared/state/members/member.actions'
 })
 export class MemberProfileComponent {
   profileData: any = {};
-  resource = resources.MEMBERS;
+  resource = resources.MEMBER;
   resourceActions = RESOURCE_ACTIONS;
 
   constructor(

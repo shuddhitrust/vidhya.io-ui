@@ -24,7 +24,7 @@ import { MEMBERS_LABEL } from '../../static/dashboard/tabs/admin-dashboard/admin
 })
 export class MembersTableComponent implements OnInit {
   tableTitle: string = MEMBERS_LABEL;
-  resource: string = resources.MEMBERS;
+  resource: string = resources.MEMBER;
   members: object[];
   @Select(MemberState.listMembers)
   rows$: Observable<User[]>;

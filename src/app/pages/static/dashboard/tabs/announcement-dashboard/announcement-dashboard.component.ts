@@ -26,7 +26,7 @@ import { AnnouncementState } from 'src/app/shared/state/announcements/announceme
   ],
 })
 export class AnnouncementDashboardComponent implements OnInit {
-  resource: string = resources.ANNOUNCEMENTS;
+  resource: string = resources.ANNOUNCEMENT;
   resourceActions = RESOURCE_ACTIONS;
 
   @Select(AnnouncementState.listAnnouncements)

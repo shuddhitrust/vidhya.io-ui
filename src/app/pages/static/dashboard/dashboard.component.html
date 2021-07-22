@@ -13,7 +13,7 @@
     </div>
   </mat-tab>
   <mat-tab
-    *ngIf="authorizeResourceMethod(resources.ANNOUNCEMENTS)"
+    *ngIf="authorizeResourceMethod(resources.ANNOUNCEMENT)"
     [label]="tabIndexList[1]"
   >
     <div class="mat-tab">
@@ -21,7 +21,7 @@
     </div>
   </mat-tab>
   <mat-tab
-    *ngIf="authorizeResourceMethod(resources.ASSIGNMENTS)"
+    *ngIf="authorizeResourceMethod(resources.ASSIGNMENT)"
     [label]="tabIndexList[2]"
   >
     <div class="mat-tab">
@@ -30,19 +30,19 @@
   </mat-tab>
   <mat-tab
     [label]="tabIndexList[3]"
-    *ngIf="authorizeResourceMethod(resources.COURSES)"
+    *ngIf="authorizeResourceMethod(resources.COURSE)"
   >
     <div class="mat-tab"><app-course-dashboard></app-course-dashboard></div>
   </mat-tab>
   <mat-tab
     [label]="tabIndexList[4]"
-    *ngIf="authorizeResourceMethod(resources.GROUPS)"
+    *ngIf="authorizeResourceMethod(resources.GROUP)"
   >
     <div class="mat-tab"><app-group-dashboard></app-group-dashboard></div>
   </mat-tab>
   <mat-tab
     [label]="tabIndexList[5]"
-    *ngIf="authorizeResourceMethod(resources.REPORTS)"
+    *ngIf="authorizeResourceMethod(resources.REPORT)"
   >
     <div class="mat-tab"><app-report-dashboard></app-report-dashboard></div>
   </mat-tab>

@@ -28,7 +28,7 @@ import { AuthorizationService } from 'src/app/shared/api/authorization/authoriza
   styleUrls: ['./group-profile.component.scss'],
 })
 export class GroupProfileComponent implements OnInit, OnDestroy {
-  resource = resources.GROUPS;
+  resource = resources.GROUP;
   resourceActions = RESOURCE_ACTIONS;
   @Select(GroupState.getGroupFormRecord)
   group$: Observable<Group>;

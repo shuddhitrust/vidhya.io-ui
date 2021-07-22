@@ -23,12 +23,12 @@ export class AdminDashboardComponent implements OnInit {
   @Input() entities: any[] = [];
 
   moderation: string = resources.MODERATION;
-  userRoles: string = resources.USER_ROLES;
-  institutions: string = resources.INSTITUTIONS;
-  members: string = resources.MEMBERS;
-  institutionAdmins: string = resources.INSTITUTION_ADMINS;
-  classAdmins: string = resources.CLASS_ADMINS;
-  learners: string = resources.LEARNERS;
+  userRoles: string = resources.USER_ROLE;
+  institutions: string = resources.INSTITUTION;
+  members: string = resources.MEMBER;
+  institutionAdmins: string = resources.INSTITUTION_ADMIN;
+  classAdmins: string = resources.CLASS_ADMIN;
+  learners: string = resources.LEARNER;
   selectedEntity;
 
   constructor(

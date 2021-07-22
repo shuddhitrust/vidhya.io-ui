@@ -34,12 +34,12 @@ const tabIndexList = {
 
 const adminEntities = [
   { value: resources.MODERATION, label: MODERATION_LABEL },
-  { value: resources.USER_ROLES, label: USER_ROLES_LABEL },
-  { value: resources.INSTITUTIONS, label: INSTITUTIONS_LABEL },
-  { value: resources.MEMBERS, label: MEMBERS_LABEL },
-  { value: resources.INSTITUTION_ADMINS, label: INSTITUTION_ADMINS_LABEL },
-  { value: resources.CLASS_ADMINS, label: CLASS_ADMINS_LABEL },
-  { value: resources.LEARNERS, label: LEARNERS_LABEL },
+  { value: resources.USER_ROLE, label: USER_ROLES_LABEL },
+  { value: resources.INSTITUTION, label: INSTITUTIONS_LABEL },
+  { value: resources.MEMBER, label: MEMBERS_LABEL },
+  { value: resources.INSTITUTION_ADMIN, label: INSTITUTION_ADMINS_LABEL },
+  { value: resources.CLASS_ADMIN, label: CLASS_ADMINS_LABEL },
+  { value: resources.LEARNER, label: LEARNERS_LABEL },
 ];
 
 @Component({

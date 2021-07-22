@@ -25,7 +25,7 @@ import { CourseState } from 'src/app/shared/state/courses/course.state';
   ],
 })
 export class CourseDashboardComponent implements OnInit {
-  resource: string = resources.COURSES;
+  resource: string = resources.COURSE;
   resourceActions = RESOURCE_ACTIONS;
 
   @Select(CourseState.listCourses)

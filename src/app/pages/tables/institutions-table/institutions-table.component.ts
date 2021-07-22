@@ -28,7 +28,7 @@ import { INSTITUTIONS_LABEL } from '../../static/dashboard/tabs/admin-dashboard/
 })
 export class InstitutionsTableComponent implements OnInit {
   tableTitle: string = INSTITUTIONS_LABEL;
-  resource: string = resources.INSTITUTIONS;
+  resource: string = resources.INSTITUTION;
   institutions: object[];
   @Select(InstitutionState.listInstitutions)
   rows$: Observable<Institution[]>;

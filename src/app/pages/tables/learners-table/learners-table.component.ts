@@ -24,7 +24,7 @@ import { LEARNERS_LABEL } from '../../static/dashboard/tabs/admin-dashboard/admi
 })
 export class LearnersTableComponent implements OnInit {
   tableTitle: string = LEARNERS_LABEL;
-  resource: string = resources.LEARNERS;
+  resource: string = resources.LEARNER;
   members: object[];
   @Select(MemberState.listMembers)
   rows$: Observable<User[]>;

@@ -27,7 +27,7 @@ import { GroupState } from 'src/app/shared/state/groups/group.state';
   ],
 })
 export class GroupDashboardComponent implements OnInit {
-  resource: string = resources.ANNOUNCEMENTS;
+  resource: string = resources.ANNOUNCEMENT;
   resourceActions = RESOURCE_ACTIONS;
   @Select(GroupState.listGroups)
   groups$: Observable<Group[]>;

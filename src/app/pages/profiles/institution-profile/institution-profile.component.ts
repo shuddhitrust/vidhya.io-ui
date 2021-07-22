@@ -27,7 +27,7 @@ import { AuthorizationService } from 'src/app/shared/api/authorization/authoriza
   styleUrls: ['./institution-profile.component.scss'],
 })
 export class InstitutionProfileComponent implements OnInit {
-  resource = resources.INSTITUTIONS;
+  resource = resources.INSTITUTION;
   resourceActions = RESOURCE_ACTIONS;
   params: object = {};
   @Select(InstitutionState.getInstitutionFormRecord)

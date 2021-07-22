@@ -25,7 +25,7 @@ import { AssignmentState } from 'src/app/shared/state/assignments/assignment.sta
   ],
 })
 export class AssignmentDashboardComponent implements OnInit {
-  resource: string = resources.ANNOUNCEMENTS;
+  resource: string = resources.ANNOUNCEMENT;
   resourceActions = RESOURCE_ACTIONS;
 
   @Select(AssignmentState.listAssignments)

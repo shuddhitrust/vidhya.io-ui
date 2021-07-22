@@ -21,7 +21,7 @@ import { DeleteInstitutionAction } from 'src/app/shared/state/institutions/insti
 })
 export class InstitutionModalComponent {
   profileData: Institution;
-  resource = resources.INSTITUTIONS;
+  resource = resources.INSTITUTION;
   resourceActions = RESOURCE_ACTIONS;
 
   constructor(

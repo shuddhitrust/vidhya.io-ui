@@ -233,18 +233,17 @@ type ResourceActions = {
 
 export type UserPermissions = {
   MODERATION: ResourceActions;
-  LEARNERS: ResourceActions;
-  CLASS_ADMINS: ResourceActions;
-  MEMBERS: ResourceActions;
-  INSTITUTION_ADMINS: ResourceActions;
-  INSTITUTION_MEMBERS: ResourceActions;
-  INSTITUTIONS: ResourceActions;
-  ANNOUNCEMENTS: ResourceActions;
-  ASSIGNMENTS: ResourceActions;
-  COURSES: ResourceActions;
-  GROUPS: ResourceActions;
-  REPORTS: ResourceActions;
-  USER_ROLES: ResourceActions;
+  LEARNER: ResourceActions;
+  CLASS_ADMIN: ResourceActions;
+  MEMBER: ResourceActions;
+  INSTITUTION_ADMIN: ResourceActions;
+  INSTITUTION: ResourceActions;
+  ANNOUNCEMENT: ResourceActions;
+  ASSIGNMENT: ResourceActions;
+  COURSE: ResourceActions;
+  GROUP: ResourceActions;
+  REPORT: ResourceActions;
+  USER_ROLE: ResourceActions;
   OWN_PROFILE: ResourceActions;
 };
 
@@ -258,34 +257,32 @@ const defaultActions: ResourceActions = {
 
 export const resources = {
   MODERATION: 'MODERATION',
-  LEARNERS: 'LEARNERS',
-  CLASS_ADMINS: 'CLASS_ADMINS',
-  MEMBERS: 'MEMBERS',
-  INSTITUTION_ADMINS: 'INSTITUTION_ADMINS',
-  INSTITUTION_MEMBERS: 'INSTITUTION_MEMBERS',
-  INSTITUTIONS: 'INSTITUTIONS',
-  ANNOUNCEMENTS: 'ANNOUNCEMENTS',
-  ASSIGNMENTS: 'ASSIGNMENTS',
-  COURSES: 'COURSES',
-  GROUPS: 'GROUPS',
-  REPORTS: 'REPORTS',
-  USER_ROLES: 'USER_ROLES',
+  USER_ROLE: 'USER_ROLE',
+  MEMBER: 'MEMBER',
+  INSTITUTION_ADMIN: 'INSTITUTION_ADMIN',
+  CLASS_ADMIN: 'CLASS_ADMIN',
+  LEARNER: 'LEARNER',
+  INSTITUTION: 'INSTITUTION',
+  ANNOUNCEMENT: 'ANNOUNCEMENT',
+  ASSIGNMENT: 'ASSIGNMENT',
+  COURSE: 'COURSE',
+  GROUP: 'GROUP',
+  REPORT: 'REPORT',
   OWN_PROFILE: 'OWN_PROFILE',
 };
 
 export const defaultResourcePermissions: UserPermissions = {
   MODERATION: defaultActions,
-  LEARNERS: defaultActions,
-  CLASS_ADMINS: defaultActions,
-  MEMBERS: defaultActions,
-  INSTITUTION_ADMINS: defaultActions,
-  INSTITUTION_MEMBERS: defaultActions,
-  INSTITUTIONS: defaultActions,
-  ANNOUNCEMENTS: defaultActions,
-  ASSIGNMENTS: defaultActions,
-  COURSES: defaultActions,
-  GROUPS: defaultActions,
-  REPORTS: defaultActions,
-  USER_ROLES: defaultActions,
+  LEARNER: defaultActions,
+  CLASS_ADMIN: defaultActions,
+  MEMBER: defaultActions,
+  INSTITUTION_ADMIN: defaultActions,
+  INSTITUTION: defaultActions,
+  ANNOUNCEMENT: defaultActions,
+  ASSIGNMENT: defaultActions,
+  COURSE: defaultActions,
+  GROUP: defaultActions,
+  REPORT: defaultActions,
+  USER_ROLE: defaultActions,
   OWN_PROFILE: defaultActions,
 };

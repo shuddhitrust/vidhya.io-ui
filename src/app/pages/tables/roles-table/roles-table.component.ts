@@ -24,7 +24,7 @@ import { USER_ROLES_LABEL } from '../../static/dashboard/tabs/admin-dashboard/ad
 })
 export class RolesTableComponent implements OnInit {
   tableTitle: string = USER_ROLES_LABEL;
-  resource: string = resources.USER_ROLES;
+  resource: string = resources.USER_ROLE;
   roles: object[];
   @Select(UserRoleState.listRoles)
   rows$: Observable<User[]>;
