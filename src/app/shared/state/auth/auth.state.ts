@@ -368,9 +368,8 @@ export class AuthState {
         })
       );
       patchState({ isFetchingCurrentMember: true });
-      this.apollo
-        .watchQuery({ query: AUTH_QUERIES.ME })
-        .valueChanges.subscribe(({ data }: any) => {
+      this.apollo.watchQuery({ query: AUTH_QUERIES.ME }).valueChanges.subscribe(
+        ({ data }: any) => {
           patchState({ isFetchingCurrentMember: false });
 
           this.store.dispatch(
@@ -382,7 +381,17 @@ export class AuthState {
             'initiating UpdateCurrentUserInStateAction from getCurrentUser'
           );
           this.store.dispatch(new UpdateCurrentUserInStateAction({ user }));
-        });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetchingCurrentMember: false });
+        }
+      );
     }
   }
 

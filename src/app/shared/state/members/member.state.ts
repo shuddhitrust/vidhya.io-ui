@@ -149,26 +149,39 @@ export class MemberState {
           variables,
           fetchPolicy,
         })
-        .valueChanges.subscribe(({ data }: any) => {
-          const response = data.users;
-          const totalCount = response[0]?.totalCount
-            ? response[0]?.totalCount
-            : 0;
-          newFetchParams = { ...newFetchParams, totalCount };
-          console.log('from after getting members', {
-            totalCount,
-            response,
-            newFetchParams,
-          });
-          patchState({
-            members: response,
-            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
-            isFetching: false,
-          });
-          if (!membersSubscribed) {
-            this.store.dispatch(new MemberSubscriptionAction());
+        .valueChanges.subscribe(
+          ({ data }: any) => {
+            const response = data.users;
+            const totalCount = response[0]?.totalCount
+              ? response[0]?.totalCount
+              : 0;
+            newFetchParams = { ...newFetchParams, totalCount };
+            console.log('from after getting members', {
+              totalCount,
+              response,
+              newFetchParams,
+            });
+            patchState({
+              members: response,
+              fetchParamObjects: state.fetchParamObjects.concat([
+                newFetchParams,
+              ]),
+              isFetching: false,
+            });
+            if (!membersSubscribed) {
+              this.store.dispatch(new MemberSubscriptionAction());
+            }
+          },
+          (error) => {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(error),
+                action: 'error',
+              })
+            );
+            patchState({ isFetching: false });
           }
-        });
+        );
     }
   }
 
@@ -216,10 +229,21 @@ export class MemberState {
         variables: { id },
         fetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(({ data }: any) => {
-        const response = data.member;
-        patchState({ memberFormRecord: response, isFetching: false });
-      });
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          const response = data.member;
+          patchState({ memberFormRecord: response, isFetching: false });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetching: false });
+        }
+      );
   }
 
   @Action(CreateUpdateMemberAction)

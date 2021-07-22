@@ -153,34 +153,47 @@ export class AssignmentState {
           variables,
           fetchPolicy,
         })
-        .valueChanges.subscribe(({ data }: any) => {
-          console.log('resposne to get assignments query ', { data });
-          const response = data.assignments;
-          const totalCount = response[0]?.totalCount
-            ? response[0]?.totalCount
-            : 0;
-          newFetchParams = { ...newFetchParams, totalCount };
-          console.log('from after getting assignments', {
-            totalCount,
-            response,
-            newFetchParams,
-          });
-          let assignments = state.assignments;
-          assignments = assignments.concat(response);
-          let lastPage = null;
-          if (response.length < newFetchParams.pageSize) {
-            lastPage = newFetchParams.currentPage;
+        .valueChanges.subscribe(
+          ({ data }: any) => {
+            console.log('resposne to get assignments query ', { data });
+            const response = data.assignments;
+            const totalCount = response[0]?.totalCount
+              ? response[0]?.totalCount
+              : 0;
+            newFetchParams = { ...newFetchParams, totalCount };
+            console.log('from after getting assignments', {
+              totalCount,
+              response,
+              newFetchParams,
+            });
+            let assignments = state.assignments;
+            assignments = assignments.concat(response);
+            let lastPage = null;
+            if (response.length < newFetchParams.pageSize) {
+              lastPage = newFetchParams.currentPage;
+            }
+            patchState({
+              assignments,
+              lastPage,
+              fetchParamObjects: state.fetchParamObjects.concat([
+                newFetchParams,
+              ]),
+              isFetching: false,
+            });
+            if (!assignmentsSubscribed) {
+              this.store.dispatch(new AssignmentSubscriptionAction());
+            }
+          },
+          (error) => {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(error),
+                action: 'error',
+              })
+            );
+            patchState({ isFetching: false });
           }
-          patchState({
-            assignments,
-            lastPage,
-            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
-            isFetching: false,
-          });
-          if (!assignmentsSubscribed) {
-            this.store.dispatch(new AssignmentSubscriptionAction());
-          }
-        });
+        );
     }
   }
 
@@ -231,10 +244,21 @@ export class AssignmentState {
         variables: { id },
         fetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(({ data }: any) => {
-        const response = data.assignment;
-        patchState({ assignmentFormRecord: response, isFetching: false });
-      });
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          const response = data.assignment;
+          patchState({ assignmentFormRecord: response, isFetching: false });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetching: false });
+        }
+      );
   }
 
   @Action(CreateUpdateAssignmentAction)

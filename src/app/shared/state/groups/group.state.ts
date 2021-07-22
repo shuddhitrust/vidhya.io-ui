@@ -152,34 +152,47 @@ export class GroupState {
           variables,
           fetchPolicy,
         })
-        .valueChanges.subscribe(({ data }: any) => {
-          console.log('resposne to get groups query ', { data });
-          const response = data.groups;
-          const totalCount = response[0]?.totalCount
-            ? response[0]?.totalCount
-            : 0;
-          newFetchParams = { ...newFetchParams, totalCount };
-          console.log('from after getting groups', {
-            totalCount,
-            response,
-            newFetchParams,
-          });
-          let groups = state.groups;
-          groups = groups.concat(response);
-          let lastPage = null;
-          if (response.length < newFetchParams.pageSize) {
-            lastPage = newFetchParams.currentPage;
+        .valueChanges.subscribe(
+          ({ data }: any) => {
+            console.log('resposne to get groups query ', { data });
+            const response = data.groups;
+            const totalCount = response[0]?.totalCount
+              ? response[0]?.totalCount
+              : 0;
+            newFetchParams = { ...newFetchParams, totalCount };
+            console.log('from after getting groups', {
+              totalCount,
+              response,
+              newFetchParams,
+            });
+            let groups = state.groups;
+            groups = groups.concat(response);
+            let lastPage = null;
+            if (response.length < newFetchParams.pageSize) {
+              lastPage = newFetchParams.currentPage;
+            }
+            patchState({
+              groups,
+              lastPage,
+              fetchParamObjects: state.fetchParamObjects.concat([
+                newFetchParams,
+              ]),
+              isFetching: false,
+            });
+            if (!groupsSubscribed) {
+              this.store.dispatch(new GroupSubscriptionAction());
+            }
+          },
+          (error) => {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(error),
+                action: 'error',
+              })
+            );
+            patchState({ isFetching: false });
           }
-          patchState({
-            groups,
-            lastPage,
-            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
-            isFetching: false,
-          });
-          if (!groupsSubscribed) {
-            this.store.dispatch(new GroupSubscriptionAction());
-          }
-        });
+        );
     }
   }
 
@@ -227,10 +240,21 @@ export class GroupState {
         variables: { id },
         fetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(({ data }: any) => {
-        const response = data.group;
-        patchState({ groupFormRecord: response, isFetching: false });
-      });
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          const response = data.group;
+          patchState({ groupFormRecord: response, isFetching: false });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetching: false });
+        }
+      );
   }
 
   @Action(CreateUpdateGroupAction)

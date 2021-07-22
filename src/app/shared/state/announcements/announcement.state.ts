@@ -163,34 +163,47 @@ export class AnnouncementState {
           variables,
           fetchPolicy,
         })
-        .valueChanges.subscribe(({ data }: any) => {
-          console.log('resposne to get announcements query ', { data });
-          const response = data.announcements;
-          const totalCount = response[0]?.totalCount
-            ? response[0]?.totalCount
-            : 0;
-          newFetchParams = { ...newFetchParams, totalCount };
-          console.log('from after getting announcements', {
-            totalCount,
-            response,
-            newFetchParams,
-          });
-          let announcements = state.announcements;
-          announcements = announcements.concat(response);
-          let lastPage = null;
-          if (response.length < newFetchParams.pageSize) {
-            lastPage = newFetchParams.currentPage;
+        .valueChanges.subscribe(
+          ({ data }: any) => {
+            console.log('resposne to get announcements query ', { data });
+            const response = data.announcements;
+            const totalCount = response[0]?.totalCount
+              ? response[0]?.totalCount
+              : 0;
+            newFetchParams = { ...newFetchParams, totalCount };
+            console.log('from after getting announcements', {
+              totalCount,
+              response,
+              newFetchParams,
+            });
+            let announcements = state.announcements;
+            announcements = announcements.concat(response);
+            let lastPage = null;
+            if (response.length < newFetchParams.pageSize) {
+              lastPage = newFetchParams.currentPage;
+            }
+            patchState({
+              lastPage,
+              announcements,
+              fetchParamObjects: state.fetchParamObjects.concat([
+                newFetchParams,
+              ]),
+              isFetching: false,
+            });
+            if (!announcementsSubscribed) {
+              this.store.dispatch(new AnnouncementSubscriptionAction());
+            }
+          },
+          (error) => {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(error),
+                action: 'error',
+              })
+            );
+            patchState({ isFetching: false });
           }
-          patchState({
-            lastPage,
-            announcements,
-            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
-            isFetching: false,
-          });
-          if (!announcementsSubscribed) {
-            this.store.dispatch(new AnnouncementSubscriptionAction());
-          }
-        });
+        );
     }
   }
 
@@ -241,10 +254,21 @@ export class AnnouncementState {
         variables: { id },
         fetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(({ data }: any) => {
-        const response = data.announcement;
-        patchState({ announcementFormRecord: response, isFetching: false });
-      });
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          const response = data.announcement;
+          patchState({ announcementFormRecord: response, isFetching: false });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetching: false });
+        }
+      );
   }
 
   @Action(CreateUpdateAnnouncementAction)

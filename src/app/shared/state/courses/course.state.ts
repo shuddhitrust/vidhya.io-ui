@@ -152,27 +152,40 @@ export class CourseState {
           variables,
           fetchPolicy,
         })
-        .valueChanges.subscribe(({ data }: any) => {
-          console.log('resposne to get courses query ', { data });
-          const response = data.courses;
-          const totalCount = response[0]?.totalCount
-            ? response[0]?.totalCount
-            : 0;
-          newFetchParams = { ...newFetchParams, totalCount };
-          console.log('from after getting courses', {
-            totalCount,
-            response,
-            newFetchParams,
-          });
-          patchState({
-            courses: response,
-            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
-            isFetching: false,
-          });
-          if (!coursesSubscribed) {
-            this.store.dispatch(new CourseSubscriptionAction());
+        .valueChanges.subscribe(
+          ({ data }: any) => {
+            console.log('resposne to get courses query ', { data });
+            const response = data.courses;
+            const totalCount = response[0]?.totalCount
+              ? response[0]?.totalCount
+              : 0;
+            newFetchParams = { ...newFetchParams, totalCount };
+            console.log('from after getting courses', {
+              totalCount,
+              response,
+              newFetchParams,
+            });
+            patchState({
+              courses: response,
+              fetchParamObjects: state.fetchParamObjects.concat([
+                newFetchParams,
+              ]),
+              isFetching: false,
+            });
+            if (!coursesSubscribed) {
+              this.store.dispatch(new CourseSubscriptionAction());
+            }
+          },
+          (error) => {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(error),
+                action: 'error',
+              })
+            );
+            patchState({ isFetching: false });
           }
-        });
+        );
     }
   }
 
@@ -220,10 +233,21 @@ export class CourseState {
         variables: { id },
         fetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(({ data }: any) => {
-        const response = data.course;
-        patchState({ courseFormRecord: response, isFetching: false });
-      });
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          const response = data.course;
+          patchState({ courseFormRecord: response, isFetching: false });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetching: false });
+        }
+      );
   }
 
   @Action(CreateUpdateCourseAction)

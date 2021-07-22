@@ -179,58 +179,70 @@ export class ChatState {
         mutation: CHAT_QUERIES.CHAT_SEARCH,
         variables: { query },
       })
-      .subscribe(({ data }: any) => {
-        console.log('Chat search respose => ', { data });
-        const response = data.chatSearch ? data.chatSearch : [];
-        let results: ChatSearchResult[] = [];
+      .subscribe(
+        ({ data }: any) => {
+          console.log('Chat search respose => ', { data });
+          const response = data.chatSearch ? data.chatSearch : [];
+          let results: ChatSearchResult[] = [];
 
-        results = results.concat(
-          response.users.map((u) => {
-            return {
-              title: constructUserFullName(u),
-              subtitle: parseDateTime(u.lastActive),
-              avatar: u.avatar,
-              userId: u.id,
-              chatId: null,
-            };
-          })
-        );
+          results = results.concat(
+            response.users.map((u) => {
+              return {
+                title: constructUserFullName(u),
+                subtitle: parseDateTime(u.lastActive),
+                avatar: u.avatar,
+                userId: u.id,
+                chatId: null,
+              };
+            })
+          );
 
-        results = results.concat(
-          response.groups.map((g) => {
-            return {
-              title: g.name,
-              subtitle: 'Group Chat',
-              avatar: g.avatar,
-              userId: null,
-              chatId: g.chat?.id,
-            };
-          })
-        );
+          results = results.concat(
+            response.groups.map((g) => {
+              return {
+                title: g.name,
+                subtitle: 'Group Chat',
+                avatar: g.avatar,
+                userId: null,
+                chatId: g.chat?.id,
+              };
+            })
+          );
 
-        results = results.concat(
-          response.chatMessages.map((c) => {
-            const index = c.message?.indexOf(query);
-            let message = c.message;
-            if (message.length > query.length + 25) {
-              message =
-                c.message?.slice(index > 5 ? index - 5 : 0, index + 20) + '...';
-            }
-            return {
-              title: message,
-              subtitle: parseDateTime(c.createdAt),
-              avatar: defaultLogos.chat,
-              userId: null,
-              chatId: c.chat.id,
-            };
-          })
-        );
-        console.log('results => ', { results });
-        patchState({
-          chatSearchResults: results,
-          isFetchingChatMembers: false,
-        });
-      });
+          results = results.concat(
+            response.chatMessages.map((c) => {
+              const index = c.message?.indexOf(query);
+              let message = c.message;
+              if (message.length > query.length + 25) {
+                message =
+                  c.message?.slice(index > 5 ? index - 5 : 0, index + 20) +
+                  '...';
+              }
+              return {
+                title: message,
+                subtitle: parseDateTime(c.createdAt),
+                avatar: defaultLogos.chat,
+                userId: null,
+                chatId: c.chat.id,
+              };
+            })
+          );
+          console.log('results => ', { results });
+          patchState({
+            chatSearchResults: results,
+            isFetchingChatMembers: false,
+          });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetchingChatMembers: false });
+        }
+      );
   }
 
   @Action(FetchNextChatsAction)
@@ -289,66 +301,81 @@ export class ChatState {
           variables,
           fetchPolicy: 'network-only',
         })
-        .valueChanges.subscribe(({ data }: any) => {
-          const response = data.chats;
-          console.log('response from fetchChats => ', { response });
-          const totalCount = response[0]?.totalCount
-            ? response[0]?.totalCount
-            : 0;
-          newFetchParams = { ...newFetchParams, totalCount };
-          let chats = state.chats;
-          let responseChats = response.chats;
-          let responseGroups = response.groups;
+        .valueChanges.subscribe(
+          ({ data }: any) => {
+            const response = data.chats;
+            console.log('response from fetchChats => ', { response });
+            const totalCount = response[0]?.totalCount
+              ? response[0]?.totalCount
+              : 0;
+            newFetchParams = { ...newFetchParams, totalCount };
+            let chats = state.chats;
+            let responseChats = response.chats;
+            let responseGroups = response.groups;
 
-          // Parsing the individual chats in to chat objects
-          responseChats = responseChats.map((chat) => {
-            let member;
-            console.log('Chat => ', chat);
-            if (chat.individualMemberOne?.id == this.currentMember?.id) {
-              member = chat.individualMemberTwo;
-            } else if (chat.individualMemberTwo?.id == this.currentMember?.id) {
-              member = chat.individualMemberOne;
+            // Parsing the individual chats in to chat objects
+            responseChats = responseChats.map((chat) => {
+              let member;
+              console.log('Chat => ', chat);
+              if (chat.individualMemberOne?.id == this.currentMember?.id) {
+                member = chat.individualMemberTwo;
+              } else if (
+                chat.individualMemberTwo?.id == this.currentMember?.id
+              ) {
+                member = chat.individualMemberOne;
+              }
+              console.log('member => ', member);
+              const preppedChat = {
+                id: chat.id,
+                name: constructUserFullName(member),
+                subtitle: parseDateTime(member.lastActive),
+                avatar: member.avatar,
+                chatmessageSet: [],
+              };
+              return preppedChat;
+            });
+            // Parsing the groups into chat objects
+            console.log('responseGroups', { responseGroups });
+            responseGroups = responseGroups.map((group) => {
+              const preppedChat = {
+                id: group?.chat?.id,
+                name: group?.name,
+                subtitle: `${group?.members?.length} members`,
+                avatar: group?.avatar ? group?.avatar : defaultLogos.user,
+                chatmessageSet: [],
+              };
+              return preppedChat;
+            });
+            console.log('after parsing responseGroups', { responseGroups });
+
+            chats = chats.concat(responseChats).concat(responseGroups);
+
+            let lastChatPage = null;
+            if (response.length < newFetchParams.pageSize) {
+              lastChatPage = newFetchParams.currentPage;
             }
-            console.log('member => ', member);
-            const preppedChat = {
-              id: chat.id,
-              name: constructUserFullName(member),
-              subtitle: parseDateTime(member.lastActive),
-              avatar: member.avatar,
-              chatmessageSet: [],
-            };
-            return preppedChat;
-          });
-          // Parsing the groups into chat objects
-          console.log('responseGroups', { responseGroups });
-          responseGroups = responseGroups.map((group) => {
-            const preppedChat = {
-              id: group?.chat?.id,
-              name: group?.name,
-              subtitle: `${group?.members?.length} members`,
-              avatar: group?.avatar ? group?.avatar : defaultLogos.user,
-              chatmessageSet: [],
-            };
-            return preppedChat;
-          });
-          console.log('after parsing responseGroups', { responseGroups });
-
-          chats = chats.concat(responseChats).concat(responseGroups);
-
-          let lastChatPage = null;
-          if (response.length < newFetchParams.pageSize) {
-            lastChatPage = newFetchParams.currentPage;
+            patchState({
+              chats,
+              lastChatPage,
+              fetchParamObjects: state.fetchParamObjects.concat([
+                newFetchParams,
+              ]),
+              isFetching: false,
+            });
+            if (!state.chatMessagesSubscribed) {
+              this.store.dispatch(new ChatMessageSubscriptionAction());
+            }
+          },
+          (error) => {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(error),
+                action: 'error',
+              })
+            );
+            patchState({ isFetching: false });
           }
-          patchState({
-            chats,
-            lastChatPage,
-            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
-            isFetching: false,
-          });
-          if (!state.chatMessagesSubscribed) {
-            this.store.dispatch(new ChatMessageSubscriptionAction());
-          }
-        });
+        );
     }
   }
 
@@ -399,18 +426,29 @@ export class ChatState {
         variables: { id },
         fetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(({ data }: any) => {
-        const response = data.chat;
-        console.log('Response for getChat => ', { data });
-        const state = getState();
-        const chats = [response, ...state.chats];
-        patchState({
-          chatFormRecord: response,
-          lastChatMessagesPage: null,
-          chats,
-          isFetching: false,
-        });
-      });
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          const response = data.chat;
+          console.log('Response for getChat => ', { data });
+          const state = getState();
+          const chats = [response, ...state.chats];
+          patchState({
+            chatFormRecord: response,
+            lastChatMessagesPage: null,
+            chats,
+            isFetching: false,
+          });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetching: false });
+        }
+      );
   }
 
   @Action(GetIntoChatAction)
@@ -647,39 +685,52 @@ export class ChatState {
           variables,
           fetchPolicy: 'network-only',
         })
-        .valueChanges.subscribe(({ data }: any) => {
-          const response = data.chatMessages;
-          const totalCount = response[0]?.totalCount
-            ? response[0]?.totalCount
-            : 0;
-          newFetchParams = { ...newFetchParams, totalCount };
-          let chat: ChatUIObject = state.chats.find((c) => c.id == chatId);
-          if (chat) {
-            console.log('line 460 from chat state => ', { chat, response });
-            const chatmessageSet = chat.chatmessageSet.concat(response);
-            chat = { ...chat, chatmessageSet };
-            let chats = state.chats.filter((c) => c.id != chat.id);
-            chats = [chat, ...chats];
-            let formRecord =
-              state.chatFormRecord.id == chat.id ? chat : state.chatFormRecord;
+        .valueChanges.subscribe(
+          ({ data }: any) => {
+            const response = data.chatMessages;
+            const totalCount = response[0]?.totalCount
+              ? response[0]?.totalCount
+              : 0;
+            newFetchParams = { ...newFetchParams, totalCount };
+            let chat: ChatUIObject = state.chats.find((c) => c.id == chatId);
+            if (chat) {
+              console.log('line 460 from chat state => ', { chat, response });
+              const chatmessageSet = chat.chatmessageSet.concat(response);
+              chat = { ...chat, chatmessageSet };
+              let chats = state.chats.filter((c) => c.id != chat.id);
+              chats = [chat, ...chats];
+              let formRecord =
+                state.chatFormRecord.id == chat.id
+                  ? chat
+                  : state.chatFormRecord;
 
-            //  Checking if the number of chat messages received is less than the limit
-            // if it is less, then we declare that as the last page
-            let lastChatMessagesPage = null;
-            if (response.length < newFetchParams.pageSize) {
-              lastChatMessagesPage = newFetchParams.currentPage;
+              //  Checking if the number of chat messages received is less than the limit
+              // if it is less, then we declare that as the last page
+              let lastChatMessagesPage = null;
+              if (response.length < newFetchParams.pageSize) {
+                lastChatMessagesPage = newFetchParams.currentPage;
+              }
+              patchState({
+                chats,
+                lastChatMessagesPage,
+                chatFormRecord: formRecord,
+                chatMessagesFetchParamss: state.fetchParamObjects.concat([
+                  newFetchParams,
+                ]),
+                isFetchingChatMessages: false,
+              });
             }
-            patchState({
-              chats,
-              lastChatMessagesPage,
-              chatFormRecord: formRecord,
-              chatMessagesFetchParamss: state.fetchParamObjects.concat([
-                newFetchParams,
-              ]),
-              isFetchingChatMessages: false,
-            });
+          },
+          (error) => {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(error),
+                action: 'error',
+              })
+            );
+            patchState({ isFetchingChatMessages: false });
           }
-        });
+        );
     }
   }
 

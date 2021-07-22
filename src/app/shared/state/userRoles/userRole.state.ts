@@ -159,26 +159,39 @@ export class UserRoleState {
           variables,
           fetchPolicy,
         })
-        .valueChanges.subscribe(({ data }: any) => {
-          const response = data.userRoles;
-          const totalCount = response[0]?.totalCount
-            ? response[0]?.totalCount
-            : 0;
-          newFetchParams = { ...newFetchParams, totalCount };
-          console.log('from after getting roles', {
-            totalCount,
-            response,
-            newFetchParams,
-          });
-          patchState({
-            roles: response,
-            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
-            isFetching: false,
-          });
-          if (!userRolesSubscribed) {
-            this.store.dispatch(new UserRoleSubscriptionAction());
+        .valueChanges.subscribe(
+          ({ data }: any) => {
+            const response = data.userRoles;
+            const totalCount = response[0]?.totalCount
+              ? response[0]?.totalCount
+              : 0;
+            newFetchParams = { ...newFetchParams, totalCount };
+            console.log('from after getting roles', {
+              totalCount,
+              response,
+              newFetchParams,
+            });
+            patchState({
+              roles: response,
+              fetchParamObjects: state.fetchParamObjects.concat([
+                newFetchParams,
+              ]),
+              isFetching: false,
+            });
+            if (!userRolesSubscribed) {
+              this.store.dispatch(new UserRoleSubscriptionAction());
+            }
+          },
+          (error) => {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(error),
+                action: 'error',
+              })
+            );
+            patchState({ isFetching: false });
           }
-        });
+        );
     }
   }
 
@@ -229,20 +242,33 @@ export class UserRoleState {
         variables: { id },
         fetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(({ data }: any) => {
-        let response = data.userRole;
-        console.log('resource from getUserRoleAction', { data, response });
-        const userRolePermissions = JSON.parse(response.permissions.toString());
-        console.log('userRolePermissions => ', { userRolePermissions });
-        const permissions = constructPermissions(userRolePermissions);
-        const userRoleFormRecord = {
-          id: response.id,
-          name: response.name,
-          description: response.description,
-          permissions,
-        };
-        patchState({ userRoleFormRecord, isFetching: false });
-      });
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          let response = data.userRole;
+          console.log('resource from getUserRoleAction', { data, response });
+          const userRolePermissions = JSON.parse(
+            response.permissions.toString()
+          );
+          console.log('userRolePermissions => ', { userRolePermissions });
+          const permissions = constructPermissions(userRolePermissions);
+          const userRoleFormRecord = {
+            id: response.id,
+            name: response.name,
+            description: response.description,
+            permissions,
+          };
+          patchState({ userRoleFormRecord, isFetching: false });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetching: false });
+        }
+      );
   }
 
   @Action(CreateUpdateUserRoleAction)

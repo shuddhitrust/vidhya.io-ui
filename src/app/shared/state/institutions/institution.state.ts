@@ -141,23 +141,36 @@ export class InstitutionState {
           variables,
           fetchPolicy: 'network-only',
         })
-        .valueChanges.subscribe(({ data }: any) => {
-          const response = data.institutions;
-          const totalCount = response[0]?.totalCount
-            ? response[0]?.totalCount
-            : 0;
+        .valueChanges.subscribe(
+          ({ data }: any) => {
+            const response = data.institutions;
+            const totalCount = response[0]?.totalCount
+              ? response[0]?.totalCount
+              : 0;
 
-          newFetchParams = { ...newFetchParams, totalCount };
-          console.log('new institutions from fetch ', response);
-          patchState({
-            institutions: response,
-            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
-            isFetching: false,
-          });
-          if (!institutionsSubscribed) {
-            this.store.dispatch(new InstitutionSubscriptionAction());
+            newFetchParams = { ...newFetchParams, totalCount };
+            console.log('new institutions from fetch ', response);
+            patchState({
+              institutions: response,
+              fetchParamObjects: state.fetchParamObjects.concat([
+                newFetchParams,
+              ]),
+              isFetching: false,
+            });
+            if (!institutionsSubscribed) {
+              this.store.dispatch(new InstitutionSubscriptionAction());
+            }
+          },
+          (error) => {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(error),
+                action: 'error',
+              })
+            );
+            patchState({ isFetching: false });
           }
-        });
+        );
     }
   }
 
@@ -208,10 +221,21 @@ export class InstitutionState {
         variables: { id },
         fetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(({ data }: any) => {
-        const response = data.institution;
-        patchState({ institutionFormRecord: response, isFetching: false });
-      });
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          const response = data.institution;
+          patchState({ institutionFormRecord: response, isFetching: false });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetching: false });
+        }
+      );
   }
 
   @Action(CreateUpdateInstitutionAction)
