@@ -26,6 +26,9 @@ The following instructions assumes that you are attempting to setup the project 
 4. Spin up the Docker container with `docker run -v ${PWD}:/app -v /app/node_modules -p 4201:4200 --rm vidhya-ui:dev`
    1. The application should be available on `https://localhost/4201`
 
+## Important Quirks to Note
+
+1. We're recognizing User Groups through User Roles and they are identified not by the id of the User Role record, but by name. So the names of the User Roles need to be constant and standard. They're stored in the UI in the `shared/common/constants.ts` file and the same object can be found in teh API in the `common.constants.py`. So when creating these User Roles in the DB for the first, the same names must be used as in these constants files.
 
 ## Useful Links
 1. [Setup Docker for an Angular application](https://mherman.org/blog/dockerizing-an-angular-app/)
