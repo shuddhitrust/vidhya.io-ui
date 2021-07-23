@@ -5,15 +5,23 @@ import {
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Store } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
+import { Observable } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
+import { convertKeyToLabel } from 'src/app/shared/common/functions';
 import {
+  defaultResourcePermissions,
   resources,
   RESOURCE_ACTIONS,
   User,
+  UserRole,
 } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
-import { DeleteUserRoleAction } from 'src/app/shared/state/userRoles/userRole.actions';
+import {
+  DeleteUserRoleAction,
+  GetUserRoleAction,
+} from 'src/app/shared/state/userRoles/userRole.actions';
+import { UserRoleState } from 'src/app/shared/state/userRoles/userRole.state';
 
 @Component({
   selector: 'app-role-profile',
@@ -24,6 +32,28 @@ export class RoleProfileComponent {
   profileData: any = {};
   resource = resources.USER_ROLE;
   resourceActions = RESOURCE_ACTIONS;
+  LIST = RESOURCE_ACTIONS.LIST;
+  GET = RESOURCE_ACTIONS.GET;
+  CREATE = RESOURCE_ACTIONS.CREATE;
+  UPDATE = RESOURCE_ACTIONS.UPDATE;
+  DELETE = RESOURCE_ACTIONS.DELETE;
+  scopes = [
+    'resource',
+    this.LIST,
+    this.GET,
+    this.CREATE,
+    this.UPDATE,
+    this.DELETE,
+  ];
+  @Select(UserRoleState.getUserRoleFormRecord)
+  userRoleFormRecord$: Observable<UserRole>;
+  @Select(UserRoleState.isFetching)
+  isFetching$: Observable<boolean>;
+  isFetching = false;
+  permissionsObject: object = defaultResourcePermissions;
+  permissionsTable: object[] = this.auth.convertPermissionsToTable(
+    this.permissionsObject
+  );
   constructor(
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<RoleProfileComponent>,
@@ -34,6 +64,24 @@ export class RoleProfileComponent {
     private auth: AuthorizationService
   ) {
     this.profileData = data;
+    this.store.dispatch(new GetUserRoleAction({ id: this.profileData.id }));
+    this.userRoleFormRecord$.subscribe((val) => {
+      if (val) {
+        this.profileData = val;
+        this.permissionsObject = this.profileData.permissions;
+        this.permissionsTable = this.auth.convertPermissionsToTable(
+          this.permissionsObject
+        );
+      }
+    });
+    this.isFetching$.subscribe((val) => {
+      this.isFetching = val;
+    });
+    console.log({
+      profileData: this.profileData,
+      permissionsObject: this.permissionsObject,
+      permissionsTable: this.permissionsTable,
+    });
   }
 
   closeDialog(): void {
@@ -42,6 +90,10 @@ export class RoleProfileComponent {
 
   authorizeResourceMethod(action) {
     return this.auth.authorizeResource(this.resource, action, {});
+  }
+
+  keyToLabel(key) {
+    return convertKeyToLabel(key);
   }
 
   editRole() {
