@@ -22,6 +22,7 @@ import {
   UserRole,
 } from 'src/app/shared/common/models';
 import { convertKeyToLabel } from 'src/app/shared/common/functions';
+import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 
 @Component({
   selector: 'app-add-edit-user-role',
@@ -55,7 +56,7 @@ export class AddEditUserRoleComponent implements OnInit {
   formSubmitting$: Observable<boolean>;
   userRoleForm: FormGroup;
   permissionsObject: object = defaultResourcePermissions;
-  permissionsTable: object[] = convertPermissionsToTable(
+  permissionsTable: object[] = this.auth.convertPermissionsToTable(
     this.permissionsObject
   );
   permissionItems: string[] = Object.keys(defaultResourcePermissions);
@@ -63,7 +64,8 @@ export class AddEditUserRoleComponent implements OnInit {
     private location: Location,
     private store: Store,
     private route: ActivatedRoute,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private auth: AuthorizationService
   ) {
     this.userRoleForm = this.setupUserRoleFormGroup();
     this.userRoleFormRecord$.subscribe((val) => {
@@ -92,7 +94,9 @@ export class AddEditUserRoleComponent implements OnInit {
     });
     this.permissionsObject = formGroup.get('permissions').value;
     this.permissionItems = Object.keys(this.permissionsObject);
-    this.permissionsTable = convertPermissionsToTable(this.permissionsObject);
+    this.permissionsTable = this.auth.convertPermissionsToTable(
+      this.permissionsObject
+    );
     console.log('before setting the table => ', {
       permissionsObject: this.permissionsObject,
       permissionsTable: this.permissionsTable,
@@ -126,7 +130,9 @@ export class AddEditUserRoleComponent implements OnInit {
       }
       newPermissionsObject[item] = resource;
       this.permissionsObject = newPermissionsObject;
-      this.permissionsTable = convertPermissionsToTable(this.permissionsObject);
+      this.permissionsTable = this.auth.convertPermissionsToTable(
+        this.permissionsObject
+      );
     }
   }
 
@@ -140,7 +146,9 @@ export class AddEditUserRoleComponent implements OnInit {
     }
     newPermissionsObject[item] = resource;
     this.permissionsObject = newPermissionsObject;
-    this.permissionsTable = convertPermissionsToTable(this.permissionsObject);
+    this.permissionsTable = this.auth.convertPermissionsToTable(
+      this.permissionsObject
+    );
   }
 
   togglePermission(item, action) {
@@ -149,7 +157,9 @@ export class AddEditUserRoleComponent implements OnInit {
     resource[action] = !resource[action];
     newPermissionsObject[item] = resource;
     this.permissionsObject = newPermissionsObject;
-    this.permissionsTable = convertPermissionsToTable(this.permissionsObject);
+    this.permissionsTable = this.auth.convertPermissionsToTable(
+      this.permissionsObject
+    );
   }
 
   goBack() {
@@ -168,27 +178,3 @@ export class AddEditUserRoleComponent implements OnInit {
     );
   }
 }
-
-const convertPermissionsToTable = (permissionsObject: object): object[] => {
-  let permissionsTableData = [];
-  const permissionItems = Object.keys(permissionsObject);
-  for (let i = 0; i < permissionItems.length; i++) {
-    const resource = permissionItems[i];
-    permissionsTableData[i] = {
-      resource,
-    };
-    const resourceActions = Object.keys(RESOURCE_ACTIONS);
-    for (let j = 0; j < resourceActions.length; j++) {
-      const resourceAction = resourceActions[j];
-      permissionsTableData[i] = {
-        ...permissionsTableData[i],
-        [resourceAction]:
-          typeof permissionsObject[resource][resourceAction] == 'boolean'
-            ? permissionsObject[resource][resourceAction]
-            : false,
-      };
-    }
-  }
-  console.log('after constructing the table => ', { permissionsTableData });
-  return permissionsTableData;
-};

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import {
   CurrentMember,
+  defaultResourcePermissions,
   resources,
   RESOURCE_ACTIONS,
   UserPermissions,
@@ -92,5 +93,31 @@ export class AuthorizationService {
       // console.log('VERDICT => ', { recordConstraint, verdict });
       return verdict;
     }
+  };
+
+  public convertPermissionsToTable = (
+    permissionsObject: object = defaultResourcePermissions
+  ): object[] => {
+    let permissionsTableData = [];
+    const permissionItems = Object.keys(permissionsObject);
+    for (let i = 0; i < permissionItems.length; i++) {
+      const resource = permissionItems[i];
+      permissionsTableData[i] = {
+        resource,
+      };
+      const resourceActions = Object.keys(RESOURCE_ACTIONS);
+      for (let j = 0; j < resourceActions.length; j++) {
+        const resourceAction = resourceActions[j];
+        permissionsTableData[i] = {
+          ...permissionsTableData[i],
+          [resourceAction]:
+            typeof permissionsObject[resource][resourceAction] == 'boolean'
+              ? permissionsObject[resource][resourceAction]
+              : false,
+        };
+      }
+    }
+    console.log('after constructing the table => ', { permissionsTableData });
+    return permissionsTableData;
   };
 }
