@@ -124,54 +124,50 @@ export class InstitutionState {
       newSearchQuery,
       newColumnFilters,
     });
-    if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
-      patchState({ isFetching: true });
-      console.log('new pagination object after the update method => ', {
-        newFetchParams,
-      });
-      const variables = {
-        searchField: newSearchQuery,
-        limit: newFetchParams.pageSize,
-        offset: newFetchParams.offset,
-      };
-      console.log('variables for institutions fetch ', { variables });
-      this.apollo
-        .watchQuery({
-          query: INSTITUTION_QUERIES.GET_INSTITUTIONS,
-          variables,
-          fetchPolicy: 'network-only',
-        })
-        .valueChanges.subscribe(
-          ({ data }: any) => {
-            const response = data.institutions;
-            const totalCount = response[0]?.totalCount
-              ? response[0]?.totalCount
-              : 0;
+    patchState({ isFetching: true });
+    console.log('new pagination object after the update method => ', {
+      newFetchParams,
+    });
+    const variables = {
+      searchField: newSearchQuery,
+      limit: newFetchParams.pageSize,
+      offset: newFetchParams.offset,
+    };
+    console.log('variables for institutions fetch ', { variables });
+    this.apollo
+      .watchQuery({
+        query: INSTITUTION_QUERIES.GET_INSTITUTIONS,
+        variables,
+        fetchPolicy: 'network-only',
+      })
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          const response = data.institutions;
+          const totalCount = response[0]?.totalCount
+            ? response[0]?.totalCount
+            : 0;
 
-            newFetchParams = { ...newFetchParams, totalCount };
-            console.log('new institutions from fetch ', response);
-            patchState({
-              institutions: response,
-              fetchParamObjects: state.fetchParamObjects.concat([
-                newFetchParams,
-              ]),
-              isFetching: false,
-            });
-            if (!institutionsSubscribed) {
-              this.store.dispatch(new InstitutionSubscriptionAction());
-            }
-          },
-          (error) => {
-            this.store.dispatch(
-              new ShowNotificationAction({
-                message: getErrorMessageFromGraphQLResponse(error),
-                action: 'error',
-              })
-            );
-            patchState({ isFetching: false });
+          newFetchParams = { ...newFetchParams, totalCount };
+          console.log('new institutions from fetch ', response);
+          patchState({
+            institutions: response,
+            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
+            isFetching: false,
+          });
+          if (!institutionsSubscribed) {
+            this.store.dispatch(new InstitutionSubscriptionAction());
           }
-        );
-    }
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetching: false });
+        }
+      );
   }
 
   @Action(InstitutionSubscriptionAction)

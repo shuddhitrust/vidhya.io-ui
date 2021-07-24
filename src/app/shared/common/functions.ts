@@ -79,20 +79,20 @@ export const fetchParamsNewOrNot = ({
     fetchParamObjects,
     newFetchParams,
   });
-  let result = false;
-  if (fetchParamObjects.length < 1) {
-    return true;
-  }
+  let result = true;
+  // if (fetchParamObjects.length < 1) {
+  //   return true;
+  // }
   for (let i = 0; i < fetchParamObjects.length; i++) {
     const fetchParams = fetchParamObjects[i];
     if (
-      fetchParams.currentPage != newFetchParams.currentPage ||
-      fetchParams.pageSize != newFetchParams.pageSize ||
-      fetchParams.offset != newFetchParams.offset ||
-      fetchParams.searchQuery != newFetchParams.searchQuery ||
-      !compareObjects(fetchParams.columnFilters, newFetchParams.columnFilters)
+      fetchParams.currentPage == newFetchParams.currentPage &&
+      fetchParams.pageSize == newFetchParams.pageSize &&
+      fetchParams.offset == newFetchParams.offset &&
+      fetchParams.searchQuery == newFetchParams.searchQuery &&
+      compareObjects(fetchParams.columnFilters, newFetchParams.columnFilters)
     ) {
-      return true;
+      return false;
     }
   }
   console.log('fetchParamsNewOrNot result => ', { result });

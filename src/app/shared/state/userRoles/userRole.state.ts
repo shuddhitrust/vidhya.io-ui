@@ -142,57 +142,53 @@ export class UserRoleState {
       newSearchQuery,
       newColumnFilters,
     });
-    if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
-      patchState({ isFetching: true });
-      console.log('new pagination object after the update method => ', {
-        newFetchParams,
-      });
-      const variables = {
-        searchField: newSearchQuery,
-        limit: newFetchParams.pageSize,
-        offset: newFetchParams.offset,
-      };
-      console.log('variables for roles fetch ', { variables });
-      this.apollo
-        .watchQuery({
-          query: USER_ROLE_QUERIES.GET_USER_ROLES,
-          variables,
-          fetchPolicy,
-        })
-        .valueChanges.subscribe(
-          ({ data }: any) => {
-            const response = data.userRoles;
-            const totalCount = response[0]?.totalCount
-              ? response[0]?.totalCount
-              : 0;
-            newFetchParams = { ...newFetchParams, totalCount };
-            console.log('from after getting roles', {
-              totalCount,
-              response,
-              newFetchParams,
-            });
-            patchState({
-              roles: response,
-              fetchParamObjects: state.fetchParamObjects.concat([
-                newFetchParams,
-              ]),
-              isFetching: false,
-            });
-            if (!userRolesSubscribed) {
-              this.store.dispatch(new UserRoleSubscriptionAction());
-            }
-          },
-          (error) => {
-            this.store.dispatch(
-              new ShowNotificationAction({
-                message: getErrorMessageFromGraphQLResponse(error),
-                action: 'error',
-              })
-            );
-            patchState({ isFetching: false });
+    patchState({ isFetching: true });
+    console.log('new pagination object after the update method => ', {
+      newFetchParams,
+    });
+    const variables = {
+      searchField: newSearchQuery,
+      limit: newFetchParams.pageSize,
+      offset: newFetchParams.offset,
+    };
+    console.log('variables for roles fetch ', { variables });
+    this.apollo
+      .watchQuery({
+        query: USER_ROLE_QUERIES.GET_USER_ROLES,
+        variables,
+        fetchPolicy,
+      })
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          const response = data.userRoles;
+          const totalCount = response[0]?.totalCount
+            ? response[0]?.totalCount
+            : 0;
+          newFetchParams = { ...newFetchParams, totalCount };
+          console.log('from after getting roles', {
+            totalCount,
+            response,
+            newFetchParams,
+          });
+          patchState({
+            roles: response,
+            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
+            isFetching: false,
+          });
+          if (!userRolesSubscribed) {
+            this.store.dispatch(new UserRoleSubscriptionAction());
           }
-        );
-    }
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetching: false });
+        }
+      );
   }
 
   @Action(UserRoleSubscriptionAction)
