@@ -13,14 +13,14 @@ import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   FetchChaptersAction,
   FetchNextChaptersAction,
-} from 'src/app/shared/state/assignments/assignment.actions';
-import { ChapterState } from 'src/app/shared/state/assignments/assignment.state';
+} from 'src/app/shared/state/chapters/chapter.actions';
+import { ChapterState } from 'src/app/shared/state/chapters/chapter.state';
 
 @Component({
-  selector: 'app-assignment-dashboard',
-  templateUrl: './assignment-dashboard.component.html',
+  selector: 'app-chapter-dashboard',
+  templateUrl: './chapter-dashboard.component.html',
   styleUrls: [
-    './assignment-dashboard.component.scss',
+    './chapter-dashboard.component.scss',
     './../../../../../shared/common/shared-styles.css',
   ],
 })
@@ -29,7 +29,7 @@ export class ChapterDashboardComponent implements OnInit {
   resourceActions = RESOURCE_ACTIONS;
 
   @Select(ChapterState.listChapters)
-  assignments$: Observable<Chapter[]>;
+  chapters$: Observable<Chapter[]>;
 
   @Select(ChapterState.isFetching)
   isFetching$: Observable<boolean>;
@@ -62,9 +62,9 @@ export class ChapterDashboardComponent implements OnInit {
     this.router.navigateByUrl(uiroutes.CHAPTER_FORM_ROUTE.route);
   }
 
-  openChapter(assignment) {
+  openChapter(chapter) {
     this.router.navigate([uiroutes.CHAPTER_PROFILE_ROUTE.route], {
-      queryParams: { id: assignment.id },
+      queryParams: { id: chapter.id },
     });
   }
 }

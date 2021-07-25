@@ -91,11 +91,11 @@ export const uiroutes = {
     },
   },
   CHAPTER_PROFILE_ROUTE: {
-    route: 'assignment',
+    route: 'chapter',
     auth: { resource: resources.CHAPTER, actions: [RESOURCE_ACTIONS.GET] },
   },
   CHAPTER_FORM_ROUTE: {
-    route: 'assignment-form',
+    route: 'chapterrm',
     auth: {
       resource: resources.CHAPTER,
       actions: [RESOURCE_ACTIONS.CREATE, RESOURCE_ACTIONS.UPDATE],

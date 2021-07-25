@@ -12,7 +12,7 @@
 </div>
 <span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
   <span *ngIf="!(isFetching$ | async); else loading">
-    <span *ngIf="(assignments$ | async).length > 0; else feedEmpty">
+    <span *ngIf="(chapters$ | async).length > 0; else feedEmpty">
       <div
         class="scroll-feed"
         infiniteScroll
@@ -22,9 +22,9 @@
         [fromRoot]="true"
         (scrolled)="onScroll()"
       >
-        <div *ngFor="let assignment of assignments$ | async">
-          <span class="feed-card" (click)="openChapter(assignment)">
-            {{ assignment.title }}
+        <div *ngFor="let chapter of chapters$ | async">
+          <span class="feed-card" (click)="openChapter(chapter)">
+            {{ chapter.title }}
           </span>
         </div>
       </div>
@@ -32,7 +32,7 @@
   </span>
 
   <ng-template #feedEmpty>
-    <p class="center-title">There are no assignments for you!</p>
+    <p class="center-title">There are no chapters for you!</p>
   </ng-template>
 
   <ng-template #loading>

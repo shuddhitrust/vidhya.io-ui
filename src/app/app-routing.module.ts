@@ -18,7 +18,7 @@ import { AnnouncementProfileComponent } from './pages/profiles/announcement-prof
 import { AddEditAnnouncementComponent } from './pages/forms/add-edit-announcement/add-edit-announcement.component';
 import { OwnProfileComponent } from './pages/profiles/own-user-profile/own-profile.component';
 import { AddEditCourseComponent } from './pages/forms/add-edit-course/add-edit-course.component';
-import { AddEditChapterComponent } from './pages/forms/add-edit-assignment/add-edit-assignment.component';
+import { AddEditChapterComponent } from './pages/forms/add-edit-chapter/add-edit-chapter.component';
 import { InstitutionProfileComponent } from './pages/profiles/institution-profile/institution-profile.component';
 import { AddEditUserRoleComponent } from './pages/forms/add-edit-user-role/add-edit-user-role.component';
 import { ChatComponent } from './pages/static/chat/chat.component';

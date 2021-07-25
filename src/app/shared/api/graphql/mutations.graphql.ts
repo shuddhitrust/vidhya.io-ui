@@ -253,7 +253,7 @@ export const CHAPTER_MUTATIONS = {
     mutation createChapter($input: ChapterInput!) {
       createChapter(input: $input) {
         ok
-        assignment {
+        chapter {
           id
           title
         }
@@ -264,7 +264,7 @@ export const CHAPTER_MUTATIONS = {
     mutation updateChapter($id: ID!, $input: ChapterInput!) {
       updateChapter(id: $id, input: $input) {
         ok
-        assignment {
+        chapter {
           id
           title
         }
@@ -275,7 +275,7 @@ export const CHAPTER_MUTATIONS = {
     mutation deleteChapter($id: ID!) {
       deleteChapter(id: $id) {
         ok
-        assignment {
+        chapter {
           id
           title
         }

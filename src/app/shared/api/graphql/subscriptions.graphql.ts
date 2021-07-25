@@ -94,10 +94,10 @@ export const SUBSCRIPTIONS = {
       }
     }
   `,
-  assignment: gql`
-    subscription assignment {
+  chapter: gql`
+    subscription chapter {
       notifyChapter {
-        assignment {
+        chapter {
           id
           title
           instructions
