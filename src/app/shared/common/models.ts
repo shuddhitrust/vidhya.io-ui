@@ -198,7 +198,7 @@ export type Course = {
   updatedAt?: string;
 };
 
-export type Assignment = {
+export type Chapter = {
   id: number;
   title: string;
   instructions: string;
@@ -239,7 +239,7 @@ export type UserPermissions = {
   INSTITUTION_ADMIN: ResourceActions;
   INSTITUTION: ResourceActions;
   ANNOUNCEMENT: ResourceActions;
-  ASSIGNMENT: ResourceActions;
+  CHAPTER: ResourceActions;
   COURSE: ResourceActions;
   GROUP: ResourceActions;
   REPORT: ResourceActions;
@@ -264,7 +264,7 @@ export const resources = {
   LEARNER: 'LEARNER',
   INSTITUTION: 'INSTITUTION',
   ANNOUNCEMENT: 'ANNOUNCEMENT',
-  ASSIGNMENT: 'ASSIGNMENT',
+  CHAPTER: 'CHAPTER',
   COURSE: 'COURSE',
   GROUP: 'GROUP',
   REPORT: 'REPORT',
@@ -279,7 +279,7 @@ export const defaultResourcePermissions: UserPermissions = {
   INSTITUTION_ADMIN: defaultActions,
   INSTITUTION: defaultActions,
   ANNOUNCEMENT: defaultActions,
-  ASSIGNMENT: defaultActions,
+  CHAPTER: defaultActions,
   COURSE: defaultActions,
   GROUP: defaultActions,
   REPORT: defaultActions,

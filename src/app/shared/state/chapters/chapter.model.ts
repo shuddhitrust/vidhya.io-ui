@@ -12,13 +12,13 @@ export const emptyChapterFormRecord: Chapter = {
   course: null,
 };
 export interface ChapterStateModel {
-  assignments: Chapter[];
+  chapters: Chapter[];
   lastPage: number;
-  assignmentsSubscribed: boolean;
+  chaptersSubscribed: boolean;
   fetchPolicy: FetchPolicy;
   fetchParamObjects: FetchParams[];
-  assignmentFormId: number;
-  assignmentFormRecord: Chapter;
+  chapterFormId: number;
+  chapterFormRecord: Chapter;
   isFetching: boolean;
   errorFetching: boolean;
   formSubmitting: boolean;
@@ -26,13 +26,13 @@ export interface ChapterStateModel {
 }
 
 export const defaultChapterState: ChapterStateModel = {
-  assignments: [],
+  chapters: [],
   lastPage: null,
-  assignmentsSubscribed: false,
+  chaptersSubscribed: false,
   fetchPolicy: null,
   fetchParamObjects: [],
-  assignmentFormId: null,
-  assignmentFormRecord: emptyChapterFormRecord,
+  chapterFormId: null,
+  chapterFormRecord: emptyChapterFormRecord,
   isFetching: false,
   errorFetching: false,
   formSubmitting: false,

@@ -4,7 +4,7 @@ import {
   emptyChapterFormRecord,
   ChapterFormCloseURL,
   ChapterStateModel,
-} from './assignment.model';
+} from './chapter.model';
 
 import { Injectable } from '@angular/core';
 import {
@@ -16,7 +16,7 @@ import {
   ForceRefetchChaptersAction,
   GetChapterAction,
   ResetChapterFormAction,
-} from './assignment.actions';
+} from './chapter.actions';
 import { CHAPTER_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
 import { Chapter, MatSelectOption, FetchParams } from '../../common/models';
@@ -34,7 +34,7 @@ import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
 import { SearchParams } from '../../abstract/master-grid/table.model';
 
 @State<ChapterStateModel>({
-  name: 'assignmentState',
+  name: 'chapterState',
   defaults: defaultChapterState,
 })
 @Injectable()
@@ -47,7 +47,7 @@ export class ChapterState {
 
   @Selector()
   static listChapters(state: ChapterStateModel): Chapter[] {
-    return state.assignments;
+    return state.chapters;
   }
 
   @Selector()
@@ -61,7 +61,7 @@ export class ChapterState {
   }
   @Selector()
   static listChapterOptions(state: ChapterStateModel): MatSelectOption[] {
-    const options: MatSelectOption[] = state.assignments.map((i) => {
+    const options: MatSelectOption[] = state.chapters.map((i) => {
       const option: MatSelectOption = {
         value: i.id,
         label: i.title,
@@ -89,7 +89,7 @@ export class ChapterState {
 
   @Selector()
   static getChapterFormRecord(state: ChapterStateModel): Chapter {
-    return state.assignmentFormRecord;
+    return state.chapterFormRecord;
   }
 
   @Action(ForceRefetchChaptersAction)
@@ -126,10 +126,10 @@ export class ChapterState {
     { getState, patchState }: StateContext<ChapterStateModel>,
     { payload }: FetchChaptersAction
   ) {
-    console.log('Fetching assignments from assignment state');
+    console.log('Fetching chapters from chapter state');
     let { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, fetchParamObjects, assignmentsSubscribed } = state;
+    const { fetchPolicy, fetchParamObjects, chaptersSubscribed } = state;
     const { newSearchQuery, newPageSize, newPageNumber, newColumnFilters } =
       searchParams;
     let newFetchParams = updateFetchParams({
@@ -146,7 +146,7 @@ export class ChapterState {
     };
     if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
       patchState({ isFetching: true });
-      console.log('variables for assignments fetch ', { variables });
+      console.log('variables for chapters fetch ', { variables });
       this.apollo
         .watchQuery({
           query: CHAPTER_QUERIES.GET_CHAPTERS,
@@ -155,32 +155,32 @@ export class ChapterState {
         })
         .valueChanges.subscribe(
           ({ data }: any) => {
-            console.log('resposne to get assignments query ', { data });
-            const response = data.assignments;
+            console.log('resposne to get chapters query ', { data });
+            const response = data.chapters;
             const totalCount = response[0]?.totalCount
               ? response[0]?.totalCount
               : 0;
             newFetchParams = { ...newFetchParams, totalCount };
-            console.log('from after getting assignments', {
+            console.log('from after getting chapters', {
               totalCount,
               response,
               newFetchParams,
             });
-            let assignments = state.assignments;
-            assignments = assignments.concat(response);
+            let chapters = state.chapters;
+            chapters = chapters.concat(response);
             let lastPage = null;
             if (response.length < newFetchParams.pageSize) {
               lastPage = newFetchParams.currentPage;
             }
             patchState({
-              assignments,
+              chapters,
               lastPage,
               fetchParamObjects: state.fetchParamObjects.concat([
                 newFetchParams,
               ]),
               isFetching: false,
             });
-            if (!assignmentsSubscribed) {
+            if (!chaptersSubscribed) {
               this.store.dispatch(new ChapterSubscriptionAction());
             }
           },
@@ -203,29 +203,29 @@ export class ChapterState {
     patchState,
   }: StateContext<ChapterStateModel>) {
     const state = getState();
-    if (!state.assignmentsSubscribed) {
+    if (!state.chaptersSubscribed) {
       this.apollo
         .subscribe({
-          query: SUBSCRIPTIONS.assignment,
+          query: SUBSCRIPTIONS.chapter,
         })
         .subscribe((result: any) => {
           const state = getState();
-          console.log('assignment subscription result ', {
-            assignments: state.assignments,
+          console.log('chapter subscription result ', {
+            chapters: state.chapters,
             result,
           });
           const method = result?.data?.notifyChapter?.method;
-          const assignment = result?.data?.notifyChapter?.assignment;
+          const chapter = result?.data?.notifyChapter?.chapter;
           const { items, fetchParamObjects } = subscriptionUpdater({
-            items: state.assignments,
+            items: state.chapters,
             method,
-            subscriptionItem: assignment,
+            subscriptionItem: chapter,
             fetchParamObjects: state.fetchParamObjects,
           });
           patchState({
-            assignments: items,
+            chapters: items,
             fetchParamObjects,
-            assignmentsSubscribed: true,
+            chaptersSubscribed: true,
           });
         });
     }
@@ -246,8 +246,8 @@ export class ChapterState {
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
-          const response = data.assignment;
-          patchState({ assignmentFormRecord: response, isFetching: false });
+          const response = data.chapter;
+          patchState({ chapterFormRecord: response, isFetching: false });
         },
         (error) => {
           this.store.dispatch(
@@ -296,7 +296,7 @@ export class ChapterState {
               ? data.updateChapter
               : data.createChapter;
             patchState({ formSubmitting: false });
-            console.log('update assignment ', { response });
+            console.log('update chapter ', { response });
             if (response.ok) {
               this.store.dispatch(
                 new ShowNotificationAction({
@@ -310,7 +310,7 @@ export class ChapterState {
               formDirective.resetForm();
               this.router.navigateByUrl(ChapterFormCloseURL);
               patchState({
-                assignmentFormRecord: emptyChapterFormRecord,
+                chapterFormRecord: emptyChapterFormRecord,
                 fetchPolicy: 'network-only',
               });
             } else {
@@ -359,7 +359,7 @@ export class ChapterState {
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteChapter;
-          console.log('from delete assignment ', { data });
+          console.log('from delete chapter ', { data });
           if (response.ok) {
             this.router.navigateByUrl(ChapterFormCloseURL);
             this.store.dispatch(
@@ -396,7 +396,7 @@ export class ChapterState {
   @Action(ResetChapterFormAction)
   resetChapterForm({ patchState }: StateContext<ChapterStateModel>) {
     patchState({
-      assignmentFormRecord: emptyChapterFormRecord,
+      chapterFormRecord: emptyChapterFormRecord,
       formSubmitting: false,
     });
   }

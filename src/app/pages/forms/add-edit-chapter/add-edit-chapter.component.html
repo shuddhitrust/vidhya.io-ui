@@ -4,9 +4,9 @@
 <h2 class="center-title">Chapter Form</h2>
 <div class="col-lg-8 col-sm-12 form-container">
   <form
-    [formGroup]="assignmentForm"
+    [formGroup]="chapterForm"
     novalidate
-    (submit)="submitForm(assignmentForm, formDirective)"
+    (submit)="submitForm(chapterForm, formDirective)"
     #formDirective="ngForm"
   >
     <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
@@ -15,12 +15,12 @@
         matInput
         formControlName="title"
         required
-        placeholder="Title of the assignment"
+        placeholder="Title of the chapter"
       />
       <small
         class="validation-error"
         *ngIf="
-          assignmentForm.get('title').hasError('required') &&
+          chapterForm.get('title').hasError('required') &&
           formDirective.submitted
         "
       >
@@ -39,7 +39,7 @@
       <small
         class="validation-error"
         *ngIf="
-          assignmentForm.get('instructions').hasError('required') &&
+          chapterForm.get('instructions').hasError('required') &&
           formDirective.submitted
         "
       >

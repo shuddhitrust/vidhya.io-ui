@@ -18,7 +18,7 @@ import {
 
 export const ADMIN = 'Admin';
 export const ANNOUNCEMENTS = 'Announcements';
-export const ASSIGNMENTS = 'Assignments';
+export const CHAPTERS = 'Chapters';
 export const COURSES = 'Courses';
 export const GROUPS = 'Groups';
 export const REPORTS = 'Reports';
@@ -26,7 +26,7 @@ export const REPORTS = 'Reports';
 const tabIndexList = {
   0: ADMIN,
   1: ANNOUNCEMENTS,
-  2: ASSIGNMENTS,
+  2: CHAPTERS,
   3: COURSES,
   4: GROUPS,
   5: REPORTS,

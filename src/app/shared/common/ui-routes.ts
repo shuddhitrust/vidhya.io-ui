@@ -90,14 +90,14 @@ export const uiroutes = {
       actions: [RESOURCE_ACTIONS.CREATE, RESOURCE_ACTIONS.UPDATE],
     },
   },
-  ASSIGNMENT_PROFILE_ROUTE: {
+  CHAPTER_PROFILE_ROUTE: {
     route: 'assignment',
-    auth: { resource: resources.ASSIGNMENT, actions: [RESOURCE_ACTIONS.GET] },
+    auth: { resource: resources.CHAPTER, actions: [RESOURCE_ACTIONS.GET] },
   },
-  ASSIGNMENT_FORM_ROUTE: {
+  CHAPTER_FORM_ROUTE: {
     route: 'assignment-form',
     auth: {
-      resource: resources.ASSIGNMENT,
+      resource: resources.CHAPTER,
       actions: [RESOURCE_ACTIONS.CREATE, RESOURCE_ACTIONS.UPDATE],
     },
   },

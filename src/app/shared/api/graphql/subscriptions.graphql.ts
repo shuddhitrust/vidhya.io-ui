@@ -96,7 +96,7 @@ export const SUBSCRIPTIONS = {
   `,
   assignment: gql`
     subscription assignment {
-      notifyAssignment {
+      notifyChapter {
         assignment {
           id
           title

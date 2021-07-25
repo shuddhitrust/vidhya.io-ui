@@ -12,18 +12,18 @@ import { ActivatedRoute } from '@angular/router';
 import {
   CreateUpdateChapterAction,
   GetChapterAction,
-} from 'src/app/shared/state/assignments/assignment.actions';
-import { ChapterState } from 'src/app/shared/state/assignments/assignment.state';
+} from 'src/app/shared/state/chapters/chapter.actions';
+import { ChapterState } from 'src/app/shared/state/chapters/chapter.state';
 import { Observable } from 'rxjs';
-import { emptyChapterFormRecord } from 'src/app/shared/state/assignments/assignment.model';
+import { emptyChapterFormRecord } from 'src/app/shared/state/chapters/chapter.model';
 import { Chapter, MatSelectOption } from 'src/app/shared/common/models';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { GroupState } from 'src/app/shared/state/groups/group.state';
 @Component({
-  selector: 'app-add-edit-assignment',
-  templateUrl: './add-edit-assignment.component.html',
+  selector: 'app-add-edit-chapter',
+  templateUrl: './add-edit-chapter.component.html',
   styleUrls: [
-    './add-edit-assignment.component.scss',
+    './add-edit-chapter.component.scss',
     './../../../shared/common/shared-styles.css',
   ],
 })
@@ -31,7 +31,7 @@ export class AddEditChapterComponent implements OnInit {
   formSubmitting: boolean = false;
   params: object = {};
   @Select(ChapterState.getChapterFormRecord)
-  assignmentFormRecord$: Observable<Chapter>;
+  chapterFormRecord$: Observable<Chapter>;
   @Select(GroupState.listGroupOptions)
   groupOptions$: Observable<MatSelectOption[]>;
   @Select(ChapterState.formSubmitting)
@@ -42,8 +42,8 @@ export class AddEditChapterComponent implements OnInit {
   @Select(AuthState.getCurrentUserId)
   currentUserId$: Observable<number>;
   currentUserId: number = 4;
-  assignmentFormRecord: Chapter = emptyChapterFormRecord;
-  assignmentForm: FormGroup;
+  chapterFormRecord: Chapter = emptyChapterFormRecord;
+  chapterForm: FormGroup;
 
   constructor(
     private location: Location,
@@ -51,12 +51,10 @@ export class AddEditChapterComponent implements OnInit {
     private route: ActivatedRoute,
     private fb: FormBuilder
   ) {
-    this.assignmentForm = this.setupChapterFormGroup();
-    this.assignmentFormRecord$.subscribe((val) => {
-      this.assignmentFormRecord = val;
-      this.assignmentForm = this.setupChapterFormGroup(
-        this.assignmentFormRecord
-      );
+    this.chapterForm = this.setupChapterFormGroup();
+    this.chapterFormRecord$.subscribe((val) => {
+      this.chapterFormRecord = val;
+      this.chapterForm = this.setupChapterFormGroup(this.chapterFormRecord);
     });
 
     this.currentUserId$.subscribe((val) => {
@@ -65,14 +63,14 @@ export class AddEditChapterComponent implements OnInit {
   }
 
   setupChapterFormGroup = (
-    assignmentFormRecord: Chapter = emptyChapterFormRecord
+    chapterFormRecord: Chapter = emptyChapterFormRecord
   ): FormGroup => {
     console.log('the current User id ', this.currentUserId);
     return this.fb.group({
-      id: [assignmentFormRecord?.id],
-      title: [assignmentFormRecord?.title, Validators.required],
-      instructions: [assignmentFormRecord?.instructions, Validators.required],
-      course: [assignmentFormRecord?.course?.id, Validators.required],
+      id: [chapterFormRecord?.id],
+      title: [chapterFormRecord?.title, Validators.required],
+      instructions: [chapterFormRecord?.instructions, Validators.required],
+      course: [chapterFormRecord?.course?.id, Validators.required],
     });
   };
   ngOnInit(): void {
@@ -90,7 +88,7 @@ export class AddEditChapterComponent implements OnInit {
   }
 
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {
-    console.log('assignment submit form value => ', form.value);
+    console.log('chapter submit form value => ', form.value);
     this.store.dispatch(
       new CreateUpdateChapterAction({
         form,

@@ -5,16 +5,16 @@ import { Observable } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import {
-  Assignment,
+  Chapter,
   resources,
   RESOURCE_ACTIONS,
 } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
-  FetchAssignmentsAction,
-  FetchNextAssignmentsAction,
+  FetchChaptersAction,
+  FetchNextChaptersAction,
 } from 'src/app/shared/state/assignments/assignment.actions';
-import { AssignmentState } from 'src/app/shared/state/assignments/assignment.state';
+import { ChapterState } from 'src/app/shared/state/assignments/assignment.state';
 
 @Component({
   selector: 'app-assignment-dashboard',
@@ -24,14 +24,14 @@ import { AssignmentState } from 'src/app/shared/state/assignments/assignment.sta
     './../../../../../shared/common/shared-styles.css',
   ],
 })
-export class AssignmentDashboardComponent implements OnInit {
+export class ChapterDashboardComponent implements OnInit {
   resource: string = resources.ANNOUNCEMENT;
   resourceActions = RESOURCE_ACTIONS;
 
-  @Select(AssignmentState.listAssignments)
-  assignments$: Observable<Assignment[]>;
+  @Select(ChapterState.listChapters)
+  assignments$: Observable<Chapter[]>;
 
-  @Select(AssignmentState.isFetching)
+  @Select(ChapterState.isFetching)
   isFetching$: Observable<boolean>;
   isFetching: boolean;
 
@@ -41,7 +41,7 @@ export class AssignmentDashboardComponent implements OnInit {
     private auth: AuthorizationService
   ) {
     this.store.dispatch(
-      new FetchAssignmentsAction({ searchParams: defaultSearchParams })
+      new FetchChaptersAction({ searchParams: defaultSearchParams })
     );
     this.isFetching$.subscribe((val) => {
       this.isFetching = val;
@@ -55,15 +55,15 @@ export class AssignmentDashboardComponent implements OnInit {
   onScroll() {
     console.log('scrolling groups');
     if (!this.isFetching) {
-      this.store.dispatch(new FetchNextAssignmentsAction());
+      this.store.dispatch(new FetchNextChaptersAction());
     }
   }
-  createAssignment() {
-    this.router.navigateByUrl(uiroutes.ASSIGNMENT_FORM_ROUTE.route);
+  createChapter() {
+    this.router.navigateByUrl(uiroutes.CHAPTER_FORM_ROUTE.route);
   }
 
-  openAssignment(assignment) {
-    this.router.navigate([uiroutes.ASSIGNMENT_PROFILE_ROUTE.route], {
+  openChapter(assignment) {
+    this.router.navigate([uiroutes.CHAPTER_PROFILE_ROUTE.route], {
       queryParams: { id: assignment.id },
     });
   }

@@ -30,7 +30,7 @@ import { NotificationState } from './shared/state/notifications/notification.sta
 import { LoadingState } from './shared/state/loading/loading.state';
 import { AdminDashboardComponent } from './pages/static/dashboard/tabs/admin-dashboard/admin-dashboard.component';
 import { AnnouncementDashboardComponent } from './pages/static/dashboard/tabs/announcement-dashboard/announcement-dashboard.component';
-import { AssignmentDashboardComponent } from './pages/static/dashboard/tabs/assignment-dashboard/assignment-dashboard.component';
+import { ChapterDashboardComponent } from './pages/static/dashboard/tabs/assignment-dashboard/assignment-dashboard.component';
 import { GroupDashboardComponent } from './pages/static/dashboard/tabs/group-dashboard/group-dashboard.component';
 import { CourseDashboardComponent } from './pages/static/dashboard/tabs/course-dashboard/course-dashboard.component';
 import { ReportDashboardComponent } from './pages/static/dashboard/tabs/report-dashboard/report-dashboard.component';
@@ -87,9 +87,9 @@ registerLocaleData(en);
 /** config ng-zorro-antd i18n **/
 import { NZ_I18N, en_US } from 'ng-zorro-antd/i18n';
 import { CourseState } from './shared/state/courses/course.state';
-import { AssignmentState } from './shared/state/assignments/assignment.state';
+import { ChapterState } from './shared/state/assignments/assignment.state';
 import { AddEditCourseComponent } from './pages/forms/add-edit-course/add-edit-course.component';
-import { AddEditAssignmentComponent } from './pages/forms/add-edit-assignment/add-edit-assignment.component';
+import { AddEditChapterComponent } from './pages/forms/add-edit-assignment/add-edit-assignment.component';
 import {
   InstitutionDeleteConfirmationDialog,
   InstitutionProfileComponent,
@@ -129,7 +129,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
     SupportComponent,
     AdminDashboardComponent,
     AnnouncementDashboardComponent,
-    AssignmentDashboardComponent,
+    ChapterDashboardComponent,
     GroupDashboardComponent,
     CourseDashboardComponent,
     ReportDashboardComponent,
@@ -156,7 +156,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
     MemberDeleteConfirmationDialog,
     MemberProfileComponent,
     AddEditCourseComponent,
-    AddEditAssignmentComponent,
+    AddEditChapterComponent,
     OwnProfileComponent,
     GroupMemberReviewDialog,
     LoginModalComponent,
@@ -197,7 +197,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
           GroupState,
           AnnouncementState,
           CourseState,
-          AssignmentState,
+          ChapterState,
           OptionsState,
           UserRoleState,
           ChatState,

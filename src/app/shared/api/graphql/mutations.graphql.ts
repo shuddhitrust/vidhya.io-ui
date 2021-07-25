@@ -248,10 +248,10 @@ export const COURSE_MUTATIONS = {
   `,
 };
 
-export const ASSIGNMENT_MUTATIONS = {
-  CREATE_ASSIGNMENT: gql`
-    mutation createAssignment($input: AssignmentInput!) {
-      createAssignment(input: $input) {
+export const CHAPTER_MUTATIONS = {
+  CREATE_CHAPTER: gql`
+    mutation createChapter($input: ChapterInput!) {
+      createChapter(input: $input) {
         ok
         assignment {
           id
@@ -260,9 +260,9 @@ export const ASSIGNMENT_MUTATIONS = {
       }
     }
   `,
-  UPDATE_ASSIGNMENT: gql`
-    mutation updateAssignment($id: ID!, $input: AssignmentInput!) {
-      updateAssignment(id: $id, input: $input) {
+  UPDATE_CHAPTER: gql`
+    mutation updateChapter($id: ID!, $input: ChapterInput!) {
+      updateChapter(id: $id, input: $input) {
         ok
         assignment {
           id
@@ -271,9 +271,9 @@ export const ASSIGNMENT_MUTATIONS = {
       }
     }
   `,
-  DELETE_ASSIGNMENT: gql`
-    mutation deleteAssignment($id: ID!) {
-      deleteAssignment(id: $id) {
+  DELETE_CHAPTER: gql`
+    mutation deleteChapter($id: ID!) {
+      deleteChapter(id: $id) {
         ok
         assignment {
           id

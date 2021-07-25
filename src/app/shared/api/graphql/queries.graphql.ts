@@ -257,8 +257,8 @@ export const COURSE_QUERIES = {
   `,
 };
 
-export const ASSIGNMENT_QUERIES = {
-  GET_ASSIGNMENT: gql`
+export const CHAPTER_QUERIES = {
+  GET_CHAPTER: gql`
     query assignment($id: ID!) {
       assignment(id: $id) {
         id
@@ -271,7 +271,7 @@ export const ASSIGNMENT_QUERIES = {
       }
     }
   `,
-  GET_ASSIGNMENTS: gql`
+  GET_CHAPTERS: gql`
     query assignments($searchField: String, $limit: Int, $offset: Int) {
       assignments(searchField: $searchField, limit: $limit, offset: $offset) {
         id

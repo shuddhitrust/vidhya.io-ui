@@ -1,13 +1,13 @@
 <div class="feed-header-block">
-  <h2>Assignments</h2>
+  <h2>Chapters</h2>
   <button
     *ngIf="authorizeResourceMethod(resourceActions.CREATE)"
-    (click)="createAssignment()"
+    (click)="createChapter()"
     class="floating-header-button-top"
     mat-raised-button
     color="primary"
   >
-    Create Assignment
+    Create Chapter
   </button>
 </div>
 <span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
@@ -23,7 +23,7 @@
         (scrolled)="onScroll()"
       >
         <div *ngFor="let assignment of assignments$ | async">
-          <span class="feed-card" (click)="openAssignment(assignment)">
+          <span class="feed-card" (click)="openChapter(assignment)">
             {{ assignment.title }}
           </span>
         </div>
