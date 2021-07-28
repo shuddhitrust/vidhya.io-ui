@@ -268,6 +268,12 @@ export const CHAPTER_QUERIES = {
           id
           title
         }
+        section {
+          id
+          title
+        }
+        dueDate
+        points
       }
     }
   `,
@@ -281,6 +287,168 @@ export const CHAPTER_QUERIES = {
           id
           title
         }
+        section {
+          id
+          title
+        }
+        dueDate
+        points
+      }
+    }
+  `,
+};
+
+export const EXERCISE_QUERIES = {
+  GET_EXERCISE: gql`
+    query exercise($id: ID!) {
+      exercise(id: $id) {
+        id
+        prompt
+        chapter {
+          id
+          title
+        }
+        questionType
+        required
+        options
+        points
+      }
+    }
+  `,
+  GET_EXERCISES: gql`
+    query exercises($chapterId: ID!, $searchField: String, $limit: Int, $offset: Int) {
+      exercises(chapterId: $chapterId, searchField: $searchField, limit: $limit, offset: $offset) {
+        id
+        prompt
+        questionType
+        required
+        options
+        points
+      }
+    }
+  `,
+};
+
+export const EXERCISE_FILE_ATTACHMENT_QUERIES = {
+  GET_EXERCISE_FILE_ATTACHMENT: gql`
+    query exerciseFileAttachment($id: ID!) {
+      exerciseFileAttachment(id: $id) {
+        id
+        name
+        exercise {
+          id
+        }
+        description
+      }
+    }
+  `,
+  GET_EXERCISE_FILE_ATTACHMENTS: gql`
+    query exerciseFileAttachments($exerciseId: ID!, $searchField: String, $limit: Int, $offset: Int) {
+      exerciseFileAttachments(exerciseId: $exerciseId, searchField: $searchField, limit: $limit, offset: $offset) {
+        id
+        name
+        exercise {
+          id
+        }
+        description
+      }
+    }
+  `,
+};
+
+export const EXERCISE_SUBMISSION_QUERIES = {
+  GET_EXERCISE_SUBMISSION: gql`
+    query exerciseSubmission($id: ID!) {
+      exerciseSubmission(id: $id) {
+        id
+        participant {
+          id
+          firstName
+          lastName
+          institution {
+            id
+            name
+          }
+        }
+        exercise {
+          id
+        }
+        option
+        answer
+        files
+        points
+        status
+      }
+    }
+  `,
+  GET_EXERCISE_SUBMISSIONS: gql`
+    query exerciseSubmissions($exerciseId: ID, $participantId: ID, $searchField: String, $limit: Int, $offset: Int) {
+      exerciseSubmissions(exerciseId: $exerciseId, participantId: $participantId, searchField: $searchField, limit: $limit, offset: $offset) {
+        id
+        participant {
+          id
+          firstName
+          lastName
+          institution {
+            id
+            name
+          }
+        }
+        exercise {
+          id
+        }
+        option
+        answer
+        files
+        points
+        status
+      }
+    }
+  `,
+};
+
+export const REPORT_QUERIES = {
+  GET_REPORT: gql`
+    query report($id: ID!) {
+      report(id: $id) {
+        id
+        participant {
+          id
+          firstName
+          lastName
+        }
+        course {
+          id
+          title
+        }
+        institution {
+          id
+          name
+        }
+        completed
+        score
+      }
+    }
+  `,
+  GET_REPORTS: gql`
+    query reports($participantId: ID, $courseId: ID, $institutionId: ID, $searchField: String, $limit: Int, $offset: Int) {
+      reports(participantId: $participantId, courseId: $courseId, institutionId: $institutionId, searchField: $searchField, limit: $limit, offset: $offset) {
+        id
+        participant {
+          id
+          firstName
+          lastName
+        }
+        course {
+          id
+          title
+        }
+        institution {
+          id
+          name
+        }
+        completed
+        score
       }
     }
   `,

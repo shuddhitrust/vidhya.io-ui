@@ -81,8 +81,8 @@ export const USER_ROLE_MUTATIONS = {
     }
   `,
   UPDATE_USER_ROLE: gql`
-    mutation updateUserRole($id: ID!, $input: UserRoleInput!) {
-      updateUserRole(id: $id, input: $input) {
+    mutation updateUserRole($roleName: string!, $input: UserRoleInput!) {
+      updateUserRole(roleName: $roleName, input: $input) {
         ok
         userRole {
           id
@@ -92,8 +92,8 @@ export const USER_ROLE_MUTATIONS = {
     }
   `,
   DELETE_USER_ROLE: gql`
-    mutation deleteUserRole($id: ID!) {
-      deleteUserRole(id: $id) {
+    mutation deleteUserRole($roleName: String!) {
+      deleteUserRole(roleName: $roleName) {
         ok
         userRole {
           id
@@ -278,6 +278,142 @@ export const CHAPTER_MUTATIONS = {
         chapter {
           id
           title
+        }
+      }
+    }
+  `,
+};
+
+export const EXERCISE_MUTATIONS = {
+  CREATE_EXERCISE: gql`
+    mutation createExercise($input: ExerciseInput!) {
+      createExercise(input: $input) {
+        ok
+        exercise {
+          id
+          prompt
+        }
+      }
+    }
+  `,
+  UPDATE_EXERCISE: gql`
+    mutation updateExercise($id: ID!, $input: ExerciseInput!) {
+      updateExercise(id: $id, input: $input) {
+        ok
+        exercise {
+          id
+          prompt
+        }
+      }
+    }
+  `,
+  DELETE_EXERCISE: gql`
+    mutation deleteExercise($id: ID!) {
+      deleteExercise(id: $id) {
+        ok
+        exercise {
+          id
+          prompt
+        }
+      }
+    }
+  `,
+};
+
+export const EXERCISE_FILE_ATTACHMENT_MUTATIONS = {
+  CREATE_EXERCISE_FILE_ATTACHMENT: gql`
+    mutation createExerciseFileAttachment($input: ExerciseFileAttachmentInput!) {
+      createExerciseFileAttachment(input: $input) {
+        ok
+        exerciseFileAttachment {
+          id
+        }
+      }
+    }
+  `,
+  UPDATE_EXERCISE_FILE_ATTACHMENT: gql`
+    mutation updateExerciseFileAttachment($id: ID!, $input: ExerciseFileAttachmentInput!) {
+      updateExerciseFileAttachment(id: $id, input: $input) {
+        ok
+        exerciseFileAttachment {
+          id
+        }
+      }
+    }
+  `,
+  DELETE_EXERCISE_FILE_ATTACHMENT: gql`
+    mutation deleteExerciseFileAttachment($id: ID!) {
+      deleteExerciseFileAttachment(id: $id) {
+        ok
+        exerciseFileAttachment {
+          id
+        }
+      }
+    }
+  `,
+};
+
+export const EXERCISE_SUBMISSION_MUTATIONS = {
+  CREATE_EXERCISE_SUBMISSION: gql`
+    mutation createExerciseSubmission($input: ExerciseSubmissionInput!) {
+      createExerciseSubmission(input: $input) {
+        ok
+        exerciseSubmission {
+          id
+        }
+      }
+    }
+  `,
+  UPDATE_EXERCISE_SUBMISSION: gql`
+    mutation updateExerciseSubmission($id: ID!, $input: ExerciseSubmissionInput!) {
+      updateExerciseSubmission(id: $id, input: $input) {
+        ok
+        exerciseSubmission {
+          id
+        }
+      }
+    }
+  `,
+  DELETE_EXERCISE_SUBMISSION: gql`
+    mutation deleteExerciseSubmission($id: ID!) {
+      deleteExerciseSubmission(id: $id) {
+        ok
+        exerciseSubmission {
+          id
+          title
+        }
+      }
+    }
+  `,
+};
+
+export const REPORT_MUTATIONS = {
+  CREATE_REPORT: gql`
+    mutation createReport($input: ReportInput!) {
+      createReport(input: $input) {
+        ok
+        report {
+          id
+        }
+      }
+    }
+  `,
+  UPDATE_REPORT: gql`
+    mutation updateReport($id: ID!, $input: ReportInput!) {
+      updateReport(id: $id, input: $input) {
+        ok
+        report {
+          id
+        }
+      }
+    }
+  `,
+  DELETE_REPORT: gql`
+    mutation deleteReport($id: ID!) {
+      deleteReport(id: $id) {
+        ok
+        report {
+          id
         }
       }
     }
