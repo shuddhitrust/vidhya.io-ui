@@ -94,13 +94,121 @@ export const SUBSCRIPTIONS = {
       }
     }
   `,
+  courseSection: gql`
+    subscription courseSection {
+      notifyCourseSection {
+        courseSection {
+          id
+          title
+          index
+          course {
+            id
+            title
+          }
+        }
+        method
+      }
+    }
+  `,
   chapter: gql`
     subscription chapter {
       notifyChapter {
         chapter {
+        id
+        title
+        instructions
+        course {
           id
           title
-          instructions
+        }
+        section {
+          id
+          title
+        }
+        dueDate
+        points
+        }
+        method
+      }
+    }
+  `,
+  exercise: gql`
+    subscription exercise {
+      notifyExercise {
+        exercise {
+              id
+          prompt
+          questionType
+          required
+          options
+          points
+        }
+        method
+      }
+    }
+  `,
+  exerciseFileAttachment: gql`
+    subscription exerciseFileAttachment {
+      notifyExerciseFileAttachment {
+        exerciseFileAttachment {
+        id
+        name
+        exercise {
+          id
+        }
+        description
+        }
+        method
+      }
+    }
+  `,
+  exerciseSubmission: gql`
+    subscription exerciseSubmission {
+      notifyExerciseSubmission {
+        exerciseSubmission {
+        id
+        participant {
+          id
+          firstName
+          lastName
+          institution {
+            id
+            name
+          }
+        }
+        exercise {
+          id
+        }
+        option
+        answer
+        files
+        points
+        status
+        }
+        method
+      }
+    }
+  `,
+  report: gql`
+    subscription report {
+      notifyReport {
+        report {
+           id
+        participant {
+          id
+          firstName
+          lastName
+        }
+        course {
+          id
+          title
+        }
+        institution {
+          id
+          name
+        }
+        completed
+        score
         }
         method
       }

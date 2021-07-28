@@ -37,28 +37,7 @@ export type HotToastStatus =
 
 export type MatSelectOption = { label: string; value: number | string };
 
-export type Chat = {
-  id: number;
-  chatType: string;
-  group: Group;
-  individualMemberOne: User;
-  individualMemberTwo: User;
-  chatmessageSet: ChatMessage[];
-  createdAt?: string;
-  updatedAt?: string;
-};
 
-export type ChatMessage = {
-  id: number;
-  message: string;
-  author: {
-    id: number;
-    firstName: string;
-    avatar: string;
-  };
-  createdAt?: string;
-  updatedAt?: string;
-};
 
 export type FetchParams = {
   currentPage: number;
@@ -198,11 +177,52 @@ export type Course = {
   updatedAt?: string;
 };
 
+export type CourseSection = {
+
+}
+
 export type Chapter = {
   id: number;
   title: string;
   instructions: string;
   course: Course;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type Exercise = {
+
+}
+
+export type ExerciseFileAttachment = {
+
+}
+
+export type ExerciseSubmission = {
+
+}
+
+export type Report = {}
+
+export type Chat = {
+  id: number;
+  chatType: string;
+  group: Group;
+  individualMemberOne: User;
+  individualMemberTwo: User;
+  chatmessageSet: ChatMessage[];
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type ChatMessage = {
+  id: number;
+  message: string;
+  author: {
+    id: number;
+    firstName: string;
+    avatar: string;
+  };
   createdAt?: string;
   updatedAt?: string;
 };

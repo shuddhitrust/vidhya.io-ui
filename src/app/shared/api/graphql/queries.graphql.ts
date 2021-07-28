@@ -257,6 +257,35 @@ export const COURSE_QUERIES = {
   `,
 };
 
+export const COURSE_SECTION_QUERIES = {
+  GET_COURSE_SECTION: gql`
+    query courseSection($id: ID!) {
+      courseSection(id: $id) {
+        id
+        title
+        index
+        course {
+          id
+          title
+        }
+      }
+    }
+  `,
+  GET_COURSE_SECTIONS: gql`
+    query courseSections($courseId: ID!, $searchField: String, $limit: Int, $offset: Int) {
+      courseSections(courseId: $courseId, searchField: $searchField, limit: $limit, offset: $offset) {
+        id
+        title
+        index
+        course {
+          id
+          title
+        }
+      }
+    }
+  `,
+};
+
 export const CHAPTER_QUERIES = {
   GET_CHAPTER: gql`
     query chapter($id: ID!) {

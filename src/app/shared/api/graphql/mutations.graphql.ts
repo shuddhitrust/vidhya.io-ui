@@ -248,6 +248,42 @@ export const COURSE_MUTATIONS = {
   `,
 };
 
+export const COURSE_SECTION_MUTATIONS = {
+  CREATE_COURSE_SECTION: gql`
+    mutation createCourseSection($input: CourseSectionInput!) {
+      createCourseSection(input: $input) {
+        ok
+        courseSection {
+          id
+          title
+        }
+      }
+    }
+  `,
+  UPDATE_COURSE_SECTION: gql`
+    mutation updateCourseSection($id: ID!, $input: CourseSectionInput!) {
+      updateCourseSection(id: $id, input: $input) {
+        ok
+        courseSection {
+          id
+          title
+        }
+      }
+    }
+  `,
+  DELETE_COURSE_SECTION: gql`
+    mutation deleteCourseSection($id: ID!) {
+      deleteCourseSection(id: $id) {
+        ok
+        courseSection {
+          id
+          title
+        }
+      }
+    }
+  `,
+};
+
 export const CHAPTER_MUTATIONS = {
   CREATE_CHAPTER: gql`
     mutation createChapter($input: ChapterInput!) {
