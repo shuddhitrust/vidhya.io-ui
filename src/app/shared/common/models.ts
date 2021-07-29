@@ -113,7 +113,6 @@ export const UPDATE = 'UPDATE';
 export const DELETE = 'DELETE';
 
 export type UserRole = {
-  id?: number;
   name: string;
   description: string;
   permissions: object;

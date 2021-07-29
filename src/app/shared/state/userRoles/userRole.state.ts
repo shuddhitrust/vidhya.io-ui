@@ -79,7 +79,7 @@ export class UserRoleState {
   static listRoleOptions(state: UserRoleStateModel): MatSelectOption[] {
     const options: MatSelectOption[] = state.roles.map((i) => {
       const option: MatSelectOption = {
-        value: i.id,
+        value: i.name,
         label: `${i.name} (${i.description})`,
       };
       return option;

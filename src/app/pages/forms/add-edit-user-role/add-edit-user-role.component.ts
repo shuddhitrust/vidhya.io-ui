@@ -82,7 +82,6 @@ export class AddEditUserRoleComponent implements OnInit {
     console.log('setting up the userRole form ', { userRoleFormRecord });
 
     const formGroup = this.fb.group({
-      id: [userRoleFormRecord.id],
       name: [userRoleFormRecord.name, Validators.required],
       description: [userRoleFormRecord.description, Validators.required],
       permissions: [
