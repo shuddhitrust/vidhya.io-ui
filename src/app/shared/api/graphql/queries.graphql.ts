@@ -15,7 +15,6 @@ export const AUTH_QUERIES = {
           name
         }
         role {
-          id
           name
           permissions
         }
@@ -79,7 +78,6 @@ export const USER_QUERIES = {
         avatar
         membershipStatus
         role {
-          id
           name
         }
         institution {
@@ -95,9 +93,8 @@ export const USER_QUERIES = {
 
 export const USER_ROLE_QUERIES = {
   GET_USER_ROLE: gql`
-    query userRole($id: ID!) {
-      userRole(id: $id) {
-        id
+    query userRole($roleName: String!) {
+      userRole(roleName: $roleName) {
         name
         description
         permissions
@@ -107,7 +104,6 @@ export const USER_ROLE_QUERIES = {
   GET_USER_ROLES: gql`
     query userRoles($searchField: String, $limit: Int, $offset: Int) {
       userRoles(searchField: $searchField, limit: $limit, offset: $offset) {
-        id
         name
         description
       }
@@ -307,8 +303,8 @@ export const CHAPTER_QUERIES = {
     }
   `,
   GET_CHAPTERS: gql`
-    query chapters($searchField: String, $limit: Int, $offset: Int) {
-      chapters(searchField: $searchField, limit: $limit, offset: $offset) {
+    query chapters($courseId: ID!, $searchField: String, $limit: Int, $offset: Int) {
+      chapters(courseId: $courseId, searchField: $searchField, limit: $limit, offset: $offset) {
         id
         title
         instructions
