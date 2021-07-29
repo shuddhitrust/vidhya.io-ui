@@ -65,6 +65,17 @@ export const uiroutes = {
       actions: [RESOURCE_ACTIONS.CREATE, RESOURCE_ACTIONS.UPDATE],
     },
   },
+  GRADING_PROFILE_ROUTE: {
+    route: 'grading',
+    auth: { resource: resources.GRADING, actions: [RESOURCE_ACTIONS.GET] },
+  },
+  GRADING_FORM_ROUTE: {
+    route: 'grading-form',
+    auth: {
+      resource: resources.GRADING,
+      actions: [RESOURCE_ACTIONS.CREATE, RESOURCE_ACTIONS.UPDATE],
+    },
+  },
   ANNOUNCEMENT_PROFILE_ROUTE: {
     route: 'announcement',
     auth: {

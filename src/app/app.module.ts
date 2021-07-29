@@ -115,6 +115,12 @@ import {
 } from './pages/modals/moderate-user/user-moderation.component';
 import { UserModerationRendererComponent } from './shared/cell-renderers/user-moderation/user-moderation-renderer.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { CourseSectionState } from './shared/state/courseSections/courseSection.state';
+import { ExerciseState } from './shared/state/exercises/exercise.state';
+import { ExerciseFileAttachmentState } from './shared/state/exerciseFileAttachments/exerciseFileAttachment.state';
+import { ExerciseSubmissionState } from './shared/state/exerciseSubmissions/exerciseSubmission.state';
+import { ReportState } from './shared/state/reports/report.state';
+import { GradingDashboardComponent } from './pages/static/dashboard/tabs/grading-dashboard/grading-dashboard.component';
 
 @NgModule({
   declarations: [
@@ -173,6 +179,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
     UserModerationRendererComponent,
     UserApprovalConfirmationDialog,
     UserDenialConfirmationDialog,
+    GradingDashboardComponent
   ],
   imports: [
     BrowserModule,
@@ -197,7 +204,12 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
           GroupState,
           AnnouncementState,
           CourseState,
+          CourseSectionState,
           ChapterState,
+          ExerciseState,
+          ExerciseFileAttachmentState,
+          ExerciseSubmissionState,
+          ReportState,
           OptionsState,
           UserRoleState,
           ChatState,

@@ -1,0 +1,32 @@
+<div class="feed-header-block">
+  <h2>Grading</h2>
+</div>
+<span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
+  <span *ngIf="!(isFetching$ | async); else loading">
+    <span *ngIf="(exerciseSubmissions$ | async).length > 0; else feedEmpty">
+      <div
+        class="scroll-feed"
+        infiniteScroll
+        [infiniteScrollDistance]="2"
+        [infiniteScrollThrottle]="50"
+        infiniteScrollContainer=".scroll-feed"
+        [fromRoot]="true"
+        (scrolled)="onScroll()"
+      >
+        <div *ngFor="let exerciseSubmission of exerciseSubmissions$ | async">
+          <span class="feed-card" (click)="openExerciseSubmission(exerciseSubmission)">
+            {{ constructUserName(exerciseSubmission.participant) }}
+          </span>
+        </div>
+      </div>
+    </span>
+  </span>
+
+  <ng-template #feedEmpty>
+    <p class="center-title">There are no submissions to grade!</p>
+  </ng-template>
+
+  <ng-template #loading>
+    <app-simple-loading-spinner></app-simple-loading-spinner>
+  </ng-template>
+</span>

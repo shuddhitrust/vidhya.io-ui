@@ -21,6 +21,7 @@ export const ANNOUNCEMENTS = 'Announcements';
 export const CHAPTERS = 'Chapters';
 export const COURSES = 'Courses';
 export const GROUPS = 'Groups';
+export const GRADING = 'Grading';
 export const REPORTS = 'Reports';
 
 const tabIndexList = {
@@ -29,7 +30,8 @@ const tabIndexList = {
   2: CHAPTERS,
   3: COURSES,
   4: GROUPS,
-  5: REPORTS,
+  5: GRADING,
+  6: REPORTS,
 };
 
 const adminEntities = [

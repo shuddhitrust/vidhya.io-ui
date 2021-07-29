@@ -40,6 +40,11 @@
   >
     <div class="mat-tab"><app-group-dashboard></app-group-dashboard></div>
   </mat-tab>
+  <mat-tab [label]="tabIndexList[4]" *ngIf="authorizeResourceMethod(resources.GRADING)">
+    <div class="mat-tab">
+      <app-grading-dashboard></app-grading-dashboard>
+    </div>
+  </mat-tab>
   <mat-tab
     [label]="tabIndexList[5]"
     *ngIf="authorizeResourceMethod(resources.REPORT)"
