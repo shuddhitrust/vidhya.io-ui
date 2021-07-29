@@ -78,6 +78,27 @@ import { OptionsState } from './shared/state/options/options.state';
 import { LoginModalComponent } from './pages/modals/login/login-modal.component';
 import { HotToastModule } from '@ngneat/hot-toast';
 import { PaginatorComponent } from './shared/abstract/master-grid/components/paginator/paginator.component';
+import * as _moment from 'moment';
+// tslint:disable-next-line:no-duplicate-imports
+import { default as _rollupMoment } from 'moment';
+/** Date picker date format */
+
+const moment = _rollupMoment || _moment;
+
+// See the Moment.js docs for the meaning of these formats:
+// https://momentjs.com/docs/#/displaying/format/
+export const MY_FORMATS = {
+  parse: {
+    dateInput: 'YYYY-MM-DD',
+  },
+  display: {
+    dateInput: 'YYYY-MM-DD',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
+
 
 /** config angular i18n **/
 import { registerLocaleData } from '@angular/common';
@@ -121,7 +142,9 @@ import { ExerciseFileAttachmentState } from './shared/state/exerciseFileAttachme
 import { ExerciseSubmissionState } from './shared/state/exerciseSubmissions/exerciseSubmission.state';
 import { ReportState } from './shared/state/reports/report.state';
 import { GradingDashboardComponent } from './pages/static/dashboard/tabs/grading-dashboard/grading-dashboard.component';
-
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 @NgModule({
   declarations: [
     AppComponent,
@@ -233,6 +256,11 @@ import { GradingDashboardComponent } from './pages/static/dashboard/tabs/grading
     { provide: NZ_I18N, useValue: en_US },
     RegistrationFormAuthGuard,
     FormBuilder,
+    {provide: DateAdapter,
+    useClass:MomentDateAdapter,
+    deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS]
+  },
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
   bootstrap: [AppComponent],
 })
