@@ -29,20 +29,31 @@
     </mat-form-field>
 
     <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
-      <mat-label>Description</mat-label>
+      <mat-label>Blurb</mat-label>
       <input
         matInput
-        formControlName="description"
+        formControlName="blurb"
         required
-        placeholder="Course description"
+        placeholder="A very brief description of the course"
       />
       <small
         class="validation-error"
         *ngIf="
-          courseForm.get('description').hasError('required') &&
+          courseForm.get('blurb').hasError('required') &&
           formDirective.submitted
         "
       >
+        Blurb is required
+      </small>
+    </mat-form-field>
+
+    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" required placeholder="Detailed description of the course"></textarea>
+      <small class="validation-error" *ngIf="
+          courseForm.get('description').hasError('required') &&
+          formDirective.submitted
+        ">
         Description is required
       </small>
     </mat-form-field>
@@ -62,6 +73,53 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
+
+    <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Mandatory Prerequisites</mat-label>
+      <mat-select multiple formControlName="mandatoryPrerequisites" placeholder="Courses required to be eligible for this course">
+        <mat-option *ngFor="let course of courseOptions$ | async" [value]="course.value">
+          {{ course.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Recommended Prerequisites</mat-label>
+      <mat-select multiple formControlName="recommendedPrerequisites"
+        placeholder="Optional course requirements">
+        <mat-option *ngFor="let course of courseOptions$ | async" [value]="course.value">
+          {{ course.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Expected start date</mat-label>
+      <input matInput [matDatepicker]="startdatepicker" [min]="currentDate" formControlName="startDate">
+      <mat-datepicker-toggle matSuffix [for]="startdatepicker"></mat-datepicker-toggle>
+      <mat-datepicker #startdatepicker [startAt]="currentDate">
+        <mat-datepicker-actions>
+          <button mat-button matDatepickerCancel>Cancel</button>
+          <button mat-raised-button color="primary" matDatepickerApply>Apply</button>
+        </mat-datepicker-actions>
+      </mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Expected end date</mat-label>
+      <input matInput [matDatepicker]="enddatepicker" [min]="this.courseForm.get('startDate').value ? this.courseForm.get('startDate').value : this.currentDate" formControlName="endDate">
+      <mat-datepicker-toggle matSuffix [for]="enddatepicker"></mat-datepicker-toggle>
+      <mat-datepicker #enddatepicker [startAt]="courseForm.get('startDate').value ? courseForm.get('startDate').value : currentDate">
+        <mat-datepicker-actions>
+          <button mat-button matDatepickerCancel>Cancel</button>
+          <button mat-raised-button color="primary" matDatepickerApply>Apply</button>
+        </mat-datepicker-actions>
+      </mat-datepicker>
+    </mat-form-field>
+
+      <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+        <mat-label>Credit Hours (expected hrs/week of effort required)</mat-label>
+        <input matInput type="number" formControlName="creditHours" placeholder="Number of hours/week" />
+      </mat-form-field>
     <button
       type="submit"
       class="floating-button-bottom"

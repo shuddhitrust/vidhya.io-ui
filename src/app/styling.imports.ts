@@ -14,11 +14,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
-
+import { MatDatepickerModule } from '@angular/material/datepicker';
 // Zorro
 import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
+import { MatNativeDateModule } from '@angular/material/core';
 
 const components = [
   MatToolbarModule,
@@ -36,6 +37,8 @@ const components = [
   MatSelectModule,
   MatCheckboxModule,
   MatTableModule,
+  MatDatepickerModule,
+  MatNativeDateModule,
   NzPaginationModule,
   NzListModule,
   NzLayoutModule,

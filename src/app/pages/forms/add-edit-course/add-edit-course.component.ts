@@ -11,6 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import {
   CreateUpdateCourseAction,
+  FetchCoursesAction,
   GetCourseAction,
 } from 'src/app/shared/state/courses/course.actions';
 import { CourseState } from 'src/app/shared/state/courses/course.state';
@@ -33,18 +34,21 @@ import { defaultSearchParams } from 'src/app/shared/common/constants';
 export class AddEditCourseComponent implements OnInit {
   formSubmitting: boolean = false;
   params: object = {};
+  currentDate = new Date();
   @Select(CourseState.getCourseFormRecord)
   courseFormRecord$: Observable<Course>;
   @Select(InstitutionState.listInstitutionOptions)
   institutionOptions$: Observable<MatSelectOption[]>;
   @Select(CourseState.formSubmitting)
   formSubmitting$: Observable<boolean>;
+  @Select(CourseState.listCourseOptions)
+  courseOptions$: Observable<MatSelectOption[]>;
   @Select(AuthState.getCurrentMemberInstitutionId)
   currentMemberInstitutionId$: Observable<number>;
   currentMemberInstitutionId: number = 1;
   @Select(AuthState.getCurrentUserId)
   currentUserId$: Observable<number>;
-  currentUserId: number = 4;
+  currentUserId: number;
   courseFormRecord: Course = emptyCourseFormRecord;
   courseForm: FormGroup;
 
@@ -57,15 +61,19 @@ export class AddEditCourseComponent implements OnInit {
     this.store.dispatch(
       new FetchInstitutionsAction({ searchParams: defaultSearchParams })
     );
-    this.courseForm = this.setupCourseFormGroup();
+    this.store.dispatch(
+      new FetchCoursesAction({searchParams: defaultSearchParams})
+    );
+    this.currentUserId$.subscribe(val => {
+      console.log('from current user id in constructor => ', val)
+      this.currentUserId = val;
+    });
     this.courseFormRecord$.subscribe((val) => {
       this.courseFormRecord = val;
       this.courseForm = this.setupCourseFormGroup(this.courseFormRecord);
     });
-
-    this.currentUserId$.subscribe((val) => {
-      this.currentUserId = val;
-    });
+    
+    this.courseForm = this.setupCourseFormGroup();
   }
 
   setupCourseFormGroup = (
@@ -81,15 +89,30 @@ export class AddEditCourseComponent implements OnInit {
         Validators.required,
       ],
       title: [courseFormRecord?.title, Validators.required],
+      blurb: [courseFormRecord?.blurb, Validators.required],
+      description: [courseFormRecord?.description, Validators.required],
       institutions: [
         courseFormRecord.institutions?.map((i) => i.id)
           ? courseFormRecord.institutions?.map((i) => i.id)
           : [],
-        Validators.required,
+
       ],
-      description: [courseFormRecord?.description, Validators.required],
+      mandatoryPrerequisites: [
+        courseFormRecord.mandatoryPrerequisites?.map((i) => i.id)
+          ? courseFormRecord.mandatoryPrerequisites?.map((i) => i.id)
+          : []
+      ],
+      recommendedPrerequisites: [
+        courseFormRecord.recommendedPrerequisites?.map((i) => i.id)
+          ? courseFormRecord.recommendedPrerequisites?.map((i) => i.id)
+          : []
+      ],
+      startDate: [courseFormRecord?.startDate],
+      endDate: [courseFormRecord?.endDate],
+      creditHours: [courseFormRecord?.creditHours],
     });
   };
+
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       this.params = params;
@@ -105,7 +128,10 @@ export class AddEditCourseComponent implements OnInit {
   }
 
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {
-    console.log('course submit form value => ', form.value);
+    const startDate = form.get('startDate').value.toString().substring(1, 11);
+    const endDate = form.get('endDate').value.toString().substring(1, 11);
+    form.get('startDate').setValue(startDate)
+    form.get('endDate').setValue(endDate)
     this.store.dispatch(
       new CreateUpdateCourseAction({
         form,

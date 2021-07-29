@@ -172,13 +172,13 @@ export type Course = {
   blurb: string;
   description: string;
   instructor: User;
-  institutions: Institution[];
-  participants: User[];
-  mandatoryPrerequisites: Course[];
-  recommendedPrerequisites: Course[];
-  startDate: string;
-  endDate: string;
-  creditHours: number;
+  institutions?: Institution[];
+  participants?: User[];
+  mandatoryPrerequisites?: Course[];
+  recommendedPrerequisites?: Course[];
+  startDate?: string;
+  endDate?: string;
+  creditHours?: number;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -187,7 +187,9 @@ export type CourseSection = {
   id: number;
   title: string;
   index: number;
-  course: any;
+  course: Course;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export type Chapter = {
@@ -195,10 +197,10 @@ export type Chapter = {
   title: string;
   instructions: string;
   course: Course;
-  section: CourseSection;
-  prerequisites: Chapter[];
-  dueDate: string;
-  points: number;
+  section?: CourseSection;
+  prerequisites?: Chapter[];
+  dueDate?: string;
+  points?: number;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -209,25 +211,31 @@ export type Exercise = {
   chapter: any;
   questionType: string;
   required: boolean;
-  options: string[];
-  points: number;
+  options?: string[];
+  points?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export type ExerciseFileAttachment = {
   id: number;
   exercise: any;
   name: string;
-  description: string;
+  description?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export type ExerciseSubmission = {
   id: number;
   exercise: any;
   participant: any;
-  option: string;
-  answer: string;
-  files: string[];
-  points: number;
+  option?: string;
+  answer?: string;
+  files?: string[];
+  points?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export type Report = {
@@ -237,6 +245,8 @@ export type Report = {
   institution: any;
   completed: number;
   score: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export type Chat = {
