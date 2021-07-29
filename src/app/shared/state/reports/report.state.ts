@@ -70,7 +70,7 @@ export class ReportState {
     const options: MatSelectOption[] = state.reports.map((i) => {
       const option: MatSelectOption = {
         value: i.id,
-        label: i.title,
+        label: i.participant.firstName,
       };
       return option;
     });

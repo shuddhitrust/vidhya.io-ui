@@ -7,11 +7,11 @@ import {
 
 export const emptyReportFormRecord: Report = {
   id: null,
-  title: null,
-  author: null,
-  message: null,
+  participant: null,
+  course: null,
   institution: null,
-  groups: [],
+  completed: null,
+  score: null,
 };
 export interface ReportStateModel {
   reports: Report[];

@@ -178,7 +178,10 @@ export type Course = {
 };
 
 export type CourseSection = {
-
+  id: number;
+  title: string;
+  index: number;
+  course: any;
 }
 
 export type Chapter = {
@@ -191,18 +194,40 @@ export type Chapter = {
 };
 
 export type Exercise = {
-
+  id: number;
+  prompt: string;
+  chapter: any;
+  questionType: string;
+  required: boolean;
+  options: string[];
+  points: number;
 }
 
 export type ExerciseFileAttachment = {
-
+  id: number;
+  exercise: any;
+  name: string;
+  description: string;
 }
 
 export type ExerciseSubmission = {
-
+  id: number;
+  exercise: any;
+  participant: any;
+  option: string;
+  answer: string;
+  files: string[];
+  points: number;
 }
 
-export type Report = {}
+export type Report = {
+  id: number;
+  participant: any;
+  course: any;
+  institution: any;
+  completed: number;
+  score: number;
+}
 
 export type Chat = {
   id: number;
@@ -251,21 +276,7 @@ type ResourceActions = {
   DELETE: boolean;
 };
 
-export type UserPermissions = {
-  MODERATION: ResourceActions;
-  LEARNER: ResourceActions;
-  CLASS_ADMIN: ResourceActions;
-  MEMBER: ResourceActions;
-  INSTITUTION_ADMIN: ResourceActions;
-  INSTITUTION: ResourceActions;
-  ANNOUNCEMENT: ResourceActions;
-  CHAPTER: ResourceActions;
-  COURSE: ResourceActions;
-  GROUP: ResourceActions;
-  REPORT: ResourceActions;
-  USER_ROLE: ResourceActions;
-  OWN_PROFILE: ResourceActions;
-};
+
 
 const defaultActions: ResourceActions = {
   LIST: true,
@@ -287,8 +298,26 @@ export const resources = {
   CHAPTER: 'CHAPTER',
   COURSE: 'COURSE',
   GROUP: 'GROUP',
+  GRADING: 'GRADING',
   REPORT: 'REPORT',
   OWN_PROFILE: 'OWN_PROFILE',
+};
+
+export type UserPermissions = {
+  MODERATION: ResourceActions;
+  LEARNER: ResourceActions;
+  CLASS_ADMIN: ResourceActions;
+  MEMBER: ResourceActions;
+  INSTITUTION_ADMIN: ResourceActions;
+  INSTITUTION: ResourceActions;
+  ANNOUNCEMENT: ResourceActions;
+  CHAPTER: ResourceActions;
+  COURSE: ResourceActions;
+  GROUP: ResourceActions;
+  GRADING: ResourceActions;
+  REPORT: ResourceActions;
+  USER_ROLE: ResourceActions;
+  OWN_PROFILE: ResourceActions;
 };
 
 export const defaultResourcePermissions: UserPermissions = {
@@ -302,6 +331,7 @@ export const defaultResourcePermissions: UserPermissions = {
   CHAPTER: defaultActions,
   COURSE: defaultActions,
   GROUP: defaultActions,
+  GRADING: defaultActions,
   REPORT: defaultActions,
   USER_ROLE: defaultActions,
   OWN_PROFILE: defaultActions,

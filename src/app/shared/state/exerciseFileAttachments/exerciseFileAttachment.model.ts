@@ -7,11 +7,9 @@ import {
 
 export const emptyExerciseFileAttachmentFormRecord: ExerciseFileAttachment = {
   id: null,
-  title: null,
-  author: null,
-  message: null,
-  institution: null,
-  groups: [],
+  exercise: null,
+  name: null,
+  description: null,
 };
 export interface ExerciseFileAttachmentStateModel {
   exerciseFileAttachments: ExerciseFileAttachment[];

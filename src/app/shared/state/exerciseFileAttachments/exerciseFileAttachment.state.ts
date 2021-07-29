@@ -70,7 +70,7 @@ export class ExerciseFileAttachmentState {
     const options: MatSelectOption[] = state.exerciseFileAttachments.map((i) => {
       const option: MatSelectOption = {
         value: i.id,
-        label: i.title,
+        label: i.description,
       };
       return option;
     });

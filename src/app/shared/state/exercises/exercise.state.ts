@@ -70,7 +70,7 @@ export class ExerciseState {
     const options: MatSelectOption[] = state.exercises.map((i) => {
       const option: MatSelectOption = {
         value: i.id,
-        label: i.title,
+        label: i.prompt,
       };
       return option;
     });

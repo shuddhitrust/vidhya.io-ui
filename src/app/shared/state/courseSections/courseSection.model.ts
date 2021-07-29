@@ -10,9 +10,8 @@ import { uiroutes } from '../../common/ui-routes';
 export const emptyCourseSectionFormRecord: CourseSection = {
   id: null,
   title: null,
-  description: null,
-  instructor: null,
-  institutions: [],
+  index: null,
+  course: null,
 };
 export interface CourseSectionStateModel {
   courseSections: CourseSection[];

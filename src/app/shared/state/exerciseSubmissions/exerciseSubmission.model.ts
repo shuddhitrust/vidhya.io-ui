@@ -7,11 +7,12 @@ import {
 
 export const emptyExerciseSubmissionFormRecord: ExerciseSubmission = {
   id: null,
-  title: null,
-  author: null,
-  message: null,
-  institution: null,
-  groups: [],
+  exercise: null,
+  participant: null,
+  option: null,
+  answer: null,
+  files: null,
+  points: null
 };
 export interface ExerciseSubmissionStateModel {
   exerciseSubmissions: ExerciseSubmission[];
