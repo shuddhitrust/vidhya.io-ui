@@ -169,9 +169,16 @@ export type Institution = {
 export type Course = {
   id: number;
   title: string;
-  description: String;
+  blurb: string;
+  description: string;
   instructor: User;
   institutions: Institution[];
+  participants: User[];
+  mandatoryPrerequisites: Course[];
+  recommendedPrerequisites: Course[];
+  startDate: string;
+  endDate: string;
+  creditHours: number;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -188,6 +195,10 @@ export type Chapter = {
   title: string;
   instructions: string;
   course: Course;
+  section: CourseSection;
+  prerequisites: Chapter[];
+  dueDate: string;
+  points: number;
   createdAt?: string;
   updatedAt?: string;
 };
