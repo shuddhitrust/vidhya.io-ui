@@ -140,6 +140,7 @@ export class ChapterState {
       newColumnFilters,
     });
     const variables = {
+      courseId: newColumnFilters.courseId,
       searchField: newSearchQuery,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
