@@ -224,16 +224,24 @@ export const COURSE_QUERIES = {
       course(id: $id) {
         id
         title
+        blurb
+        description
         instructor {
           id
           firstName
           lastName
         }
-        description
         institutions {
           id
           name
         }
+        participants {
+          id
+          firstName
+        }
+        startDate
+        endDate
+        creditHours
       }
     }
   `,

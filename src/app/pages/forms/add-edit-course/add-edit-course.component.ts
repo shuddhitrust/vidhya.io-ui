@@ -22,7 +22,8 @@ import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { GroupState } from 'src/app/shared/state/groups/group.state';
 import { InstitutionState } from 'src/app/shared/state/institutions/institution.state';
 import { FetchInstitutionsAction } from 'src/app/shared/state/institutions/institution.actions';
-import { defaultSearchParams } from 'src/app/shared/common/constants';
+import { dateFormat, defaultSearchParams } from 'src/app/shared/common/constants';
+import * as moment from 'moment';
 @Component({
   selector: 'app-add-edit-course',
   templateUrl: './add-edit-course.component.html',
@@ -128,10 +129,6 @@ export class AddEditCourseComponent implements OnInit {
   }
 
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {
-    const startDate = form.get('startDate').value.toString().substring(1, 11);
-    const endDate = form.get('endDate').value.toString().substring(1, 11);
-    form.get('startDate').setValue(startDate)
-    form.get('endDate').setValue(endDate)
     this.store.dispatch(
       new CreateUpdateCourseAction({
         form,
