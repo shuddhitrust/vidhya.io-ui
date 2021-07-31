@@ -89,14 +89,26 @@ const moment = _rollupMoment || _moment;
 // https://momentjs.com/docs/#/displaying/format/
 export const MY_FORMATS = {
   parse: {
-    dateInput: 'YYYY-MM-DD',
+    dateInput: 'LL',
   },
   display: {
-    dateInput: 'YYYY-MM-DD',
+    dateInput: 'LL',
     monthYearLabel: 'MMM YYYY',
     dateA11yLabel: 'LL',
     monthYearA11yLabel: 'MMMM YYYY',
   },
+};
+
+const CUSTOM_DATETIME_FORMATS: NgxMatDateFormats = {
+  parse: {
+    dateInput: "l, LTS"
+  },
+  display: {
+    dateInput: "l, LTS",
+    monthYearLabel: "MMM YYYY",
+    dateA11yLabel: "LL",
+    monthYearA11yLabel: "MMMM YYYY"
+  }
 };
 
 
@@ -145,6 +157,8 @@ import { GradingDashboardComponent } from './pages/static/dashboard/tabs/grading
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { CourseDeleteConfirmationDialog, CourseProfileComponent } from './pages/profiles/course-profile/course-profile.component';
+import { NgxMatDateFormats, NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
 @NgModule({
   declarations: [
     AppComponent,
@@ -202,7 +216,9 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/materia
     UserModerationRendererComponent,
     UserApprovalConfirmationDialog,
     UserDenialConfirmationDialog,
-    GradingDashboardComponent
+    GradingDashboardComponent,
+    CourseProfileComponent,
+    CourseDeleteConfirmationDialog
   ],
   imports: [
     BrowserModule,
@@ -260,7 +276,8 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/materia
     useClass:MomentDateAdapter,
     deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS]
   },
-    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+  { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+  { provide: NGX_MAT_DATE_FORMATS, useValue: CUSTOM_DATETIME_FORMATS }
   ],
   bootstrap: [AppComponent],
 })

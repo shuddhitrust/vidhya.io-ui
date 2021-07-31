@@ -9,7 +9,7 @@ import {
 import { AuthStateModel, defaultAuthState } from './auth.model';
 import {
   CurrentMember,
-  MembershipStatus,
+  MembershipStatusOptions,
   User,
   UserPermissions,
 } from '../../common/models';
@@ -437,7 +437,7 @@ export class AuthState {
     } else {
       const isFullyAuthenticated =
         isLoggedIn == true &&
-        newCurrentMember?.membershipStatus == MembershipStatus.APPROVED;
+        newCurrentMember?.membershipStatus == MembershipStatusOptions.APPROVED;
       console.log('*1* Updating current member from updateCurrentUserInState', {
         currentMember: newCurrentMember,
         isFullyAuthenticated,
@@ -1247,7 +1247,7 @@ const getDecodedToken = (token) => {
 
 const calculateFirstTiimeSetup = (currentMember: CurrentMember): boolean => {
   const firstTimeSetup =
-    currentMember?.membershipStatus == MembershipStatus.UNINITIALIZED;
+    currentMember?.membershipStatus == MembershipStatusOptions.UNINITIALIZED;
   console.log('firsttimesetup calculated => ', { firstTimeSetup });
   return firstTimeSetup;
 };

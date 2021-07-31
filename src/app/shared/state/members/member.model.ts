@@ -6,7 +6,7 @@ import {
 import {
   FetchPolicy,
   MatSelectOption,
-  MembershipStatus,
+  MembershipStatusOptions,
   FetchParams,
   startingFetchParams,
   User,
@@ -65,7 +65,7 @@ export const defaultMemberState: MemberStateModel = {
 };
 
 export const membershipStatusOptions: MatSelectOption[] =
-  autoGenOptions(MembershipStatus); // autoGenOptions(MembershipStatus);
+  autoGenOptions(MembershipStatusOptions); // autoGenOptions(MembershipStatusOptions);
 
 export const memberColumns: any[] = [
   {

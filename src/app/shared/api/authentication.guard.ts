@@ -37,7 +37,7 @@ export class AuthenticationGuard implements CanActivate {
       // this.membershipStatus = this.authState.membershipStatus;
       this.isFullyAuthenticated = this.authState.isFullyAuthenticated;
       this.isLoggedIn = this.authState.isLoggedIn;
-      // this.activeMember = this.membershipStatus == MembershipStatus.ACTIVE;
+      // this.activeMember = this.membershipStatus == MembershipStatusOptions.ACTIVE;
     });
   }
   canActivate(

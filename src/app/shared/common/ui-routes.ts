@@ -106,7 +106,7 @@ export const uiroutes = {
     auth: { resource: resources.CHAPTER, actions: [RESOURCE_ACTIONS.GET] },
   },
   CHAPTER_FORM_ROUTE: {
-    route: 'chapterrm',
+    route: 'chapter-form',
     auth: {
       resource: resources.CHAPTER,
       actions: [RESOURCE_ACTIONS.CREATE, RESOURCE_ACTIONS.UPDATE],

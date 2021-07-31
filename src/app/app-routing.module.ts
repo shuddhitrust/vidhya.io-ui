@@ -23,6 +23,7 @@ import { InstitutionProfileComponent } from './pages/profiles/institution-profil
 import { AddEditUserRoleComponent } from './pages/forms/add-edit-user-role/add-edit-user-role.component';
 import { ChatComponent } from './pages/static/chat/chat.component';
 import { PasswordResetComponent } from './pages/forms/password-reset/password-reset.component';
+import { CourseProfileComponent } from './pages/profiles/course-profile/course-profile.component';
 // import { InstitutionProfileComponent } from './pages/modals/institution-profile/institution-profile.component';
 
 const routes: Routes = [
@@ -98,6 +99,13 @@ const routes: Routes = [
     component: AddEditCourseComponent,
     canActivate: [AuthenticationGuard],
     data: uiroutes.COURSE_FORM_ROUTE.auth,
+    pathMatch: 'full',
+  },
+    {
+    path: uiroutes.COURSE_PROFILE_ROUTE.route,
+    component: CourseProfileComponent,
+    canActivate: [AuthenticationGuard],
+    data: uiroutes.COURSE_PROFILE_ROUTE.auth,
     pathMatch: 'full',
   },
   {

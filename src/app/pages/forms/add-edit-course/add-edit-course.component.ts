@@ -19,10 +19,9 @@ import { Observable } from 'rxjs';
 import { emptyCourseFormRecord } from 'src/app/shared/state/courses/course.model';
 import { Course, MatSelectOption } from 'src/app/shared/common/models';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
-import { GroupState } from 'src/app/shared/state/groups/group.state';
 import { InstitutionState } from 'src/app/shared/state/institutions/institution.state';
 import { FetchInstitutionsAction } from 'src/app/shared/state/institutions/institution.actions';
-import { dateFormat, defaultSearchParams } from 'src/app/shared/common/constants';
+import { defaultSearchParams } from 'src/app/shared/common/constants';
 import * as moment from 'moment';
 @Component({
   selector: 'app-add-edit-course',
@@ -44,6 +43,7 @@ export class AddEditCourseComponent implements OnInit {
   formSubmitting$: Observable<boolean>;
   @Select(CourseState.listCourseOptions)
   courseOptions$: Observable<MatSelectOption[]>;
+  courseOptions: MatSelectOption[];
   @Select(AuthState.getCurrentMemberInstitutionId)
   currentMemberInstitutionId$: Observable<number>;
   currentMemberInstitutionId: number = 1;
@@ -69,12 +69,20 @@ export class AddEditCourseComponent implements OnInit {
       console.log('from current user id in constructor => ', val)
       this.currentUserId = val;
     });
+    this.courseForm = this.setupCourseFormGroup();
+    this.courseOptions$.subscribe(val => {
+      this.courseOptions = val
+    })
+    
     this.courseFormRecord$.subscribe((val) => {
       this.courseFormRecord = val;
       this.courseForm = this.setupCourseFormGroup(this.courseFormRecord);
+      // Filtering out the current coursee from the options
+      this.courseOptions = this.courseOptions.filter(o => {
+        return o.value !== this.courseFormRecord?.id;
+      })
     });
     
-    this.courseForm = this.setupCourseFormGroup();
   }
 
   setupCourseFormGroup = (

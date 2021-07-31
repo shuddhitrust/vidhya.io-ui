@@ -311,7 +311,7 @@ export const CHAPTER_QUERIES = {
     }
   `,
   GET_CHAPTERS: gql`
-    query chapters($courseId: ID!, $searchField: String, $limit: Int, $offset: Int) {
+    query chapters($courseId: ID, $searchField: String, $limit: Int, $offset: Int) {
       chapters(courseId: $courseId, searchField: $searchField, limit: $limit, offset: $offset) {
         id
         title

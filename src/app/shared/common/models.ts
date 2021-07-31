@@ -78,17 +78,36 @@ export const SUBSCRIPTION_METHODS = {
   DELETE_METHOD: 'DELETE',
 };
 
+
+export type ChatType = | 'IL' | 'GP';
 export const ChatTypes = {
   INDIVIDUAL: 'IL',
   GROUP: 'GP',
 };
 
-export const MembershipStatus = {
+export type MembershipStatus = |'UI' | 'PE' | 'AP' | 'SU';
+
+export const MembershipStatusOptions = {
   UNINITIALIZED: 'UI',
   PENDING: 'PE',
   APPROVED: 'AP',
   SUSPENDED: 'SU',
 };
+
+export type GroupType = |'CL'|'TE' | 'CO';
+
+export const GroupTypeOptions = {
+  class: 'CL',
+  team: 'TE',
+  coordination: 'CO',
+};
+
+export type ExerciseQuestionType = | 'OP'|'DE'|'FL';
+export const ExerciseQuestionTypeOptions = {
+  options: 'OP',
+  description: 'DE',
+  file: 'FL'
+}
 
 export type User = {
   id?: number;
@@ -115,7 +134,7 @@ export const DELETE = 'DELETE';
 export type UserRole = {
   name: string;
   description: string;
-  permissions: object;
+  permissions: object | string;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -123,34 +142,28 @@ export type UserRole = {
 export type Announcement = {
   id: number;
   title: string;
-  author: User;
+  author:any;
   message: string;
-  institution: Institution;
-  groups: Group[];
+  institution: any;
+  groups: any[];
   createdAt?: string;
   updatedAt?: string;
 };
+
 
 export type Group = {
   id: number;
   avatar: string;
   name: string;
   description: string;
-  institution: {
-    id: number;
-  };
-  members: User[];
-  admins: User[];
-  groupType: string;
+  institution: any;
+  members: any[];
+  admins: any[];
+  groupType: GroupType;
   createdAt?: string;
   updatedAt?: string;
 };
 
-export const GroupType = {
-  class: 'CL',
-  team: 'TE',
-  coordination: 'CO',
-};
 
 export type Institution = {
   id: number;
@@ -171,11 +184,11 @@ export type Course = {
   title: string;
   blurb: string;
   description: string;
-  instructor: User;
-  institutions?: Institution[];
-  participants?: User[];
-  mandatoryPrerequisites?: Course[];
-  recommendedPrerequisites?: Course[];
+  instructor: any;
+  institutions?: any[];
+  participants?: any[];
+  mandatoryPrerequisites?: any[];
+  recommendedPrerequisites?: any[];
   startDate?: string;
   endDate?: string;
   creditHours?: number;
@@ -187,7 +200,7 @@ export type CourseSection = {
   id: number;
   title: string;
   index: number;
-  course: Course;
+  course: any;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -196,20 +209,22 @@ export type Chapter = {
   id: number;
   title: string;
   instructions: string;
-  course: Course;
-  section?: CourseSection;
-  prerequisites?: Chapter[];
+  course: any;
+  section?: any;
+  prerequisites?: any[];
   dueDate?: string;
   points?: number;
   createdAt?: string;
   updatedAt?: string;
 };
 
+
+
 export type Exercise = {
   id: number;
   prompt: string;
   chapter: any;
-  questionType: string;
+  questionType:ExerciseQuestionType;
   required: boolean;
   options?: string[];
   points?: number;
@@ -240,7 +255,7 @@ export type ExerciseSubmission = {
 
 export type Report = {
   id: number;
-  participant: any;
+  participant:any;
   course: any;
   institution: any;
   completed: number;
@@ -249,13 +264,15 @@ export type Report = {
   updatedAt?: string;
 }
 
+
+
 export type Chat = {
   id: number;
-  chatType: string;
-  group: Group;
-  individualMemberOne: User;
-  individualMemberTwo: User;
-  chatmessageSet: ChatMessage[];
+  chatType: ChatType;
+  group: Group | number;
+  individualMemberOne: User | number;
+  individualMemberTwo: User | number;
+  chatmessageSet: ChatMessage[] | number[];
   createdAt?: string;
   updatedAt?: string;
 };
@@ -263,11 +280,7 @@ export type Chat = {
 export type ChatMessage = {
   id: number;
   message: string;
-  author: {
-    id: number;
-    firstName: string;
-    avatar: string;
-  };
+  author: User | number;
   createdAt?: string;
   updatedAt?: string;
 };

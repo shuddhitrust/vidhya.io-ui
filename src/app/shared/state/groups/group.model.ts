@@ -3,7 +3,7 @@ import { autoGenOptions } from '../../common/functions';
 import {
   FetchPolicy,
   Group,
-  GroupType,
+  GroupTypeOptions,
   MatSelectOption,
   FetchParams,
   startingFetchParams,
@@ -52,4 +52,4 @@ export const defaultGroupState: GroupStateModel = {
 export const GroupFormCloseURL =
   uiroutes.DASHBOARD_ROUTE.route + '?tab=' + GROUPS;
 
-export const groupTypeOptions: MatSelectOption[] = autoGenOptions(GroupType);
+export const groupTypeOptions: MatSelectOption[] = autoGenOptions(GroupTypeOptions);

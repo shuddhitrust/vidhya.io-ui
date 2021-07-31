@@ -77,7 +77,7 @@
     <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
       <mat-label>Mandatory Prerequisites</mat-label>
       <mat-select multiple formControlName="mandatoryPrerequisites" placeholder="Courses required to be eligible for this course">
-        <mat-option *ngFor="let course of courseOptions$ | async" [value]="course.value">
+        <mat-option *ngFor="let course of courseOptions" [value]="course.value">
           {{ course.label }}
         </mat-option>
       </mat-select>
@@ -87,7 +87,7 @@
       <mat-label>Recommended Prerequisites</mat-label>
       <mat-select multiple formControlName="recommendedPrerequisites"
         placeholder="Optional course requirements">
-        <mat-option *ngFor="let course of courseOptions$ | async" [value]="course.value">
+        <mat-option *ngFor="let course of courseOptions" [value]="course.value">
           {{ course.label }}
         </mat-option>
       </mat-select>

@@ -19,6 +19,12 @@ export class ChapterSubscriptionAction {
   constructor() {}
 }
 
+export class SetCourseInChapterForm {
+  static readonly type = '[CHAPTER] Set course in form'
+
+  constructor(public payload: {courseId: number}){}
+}
+
 export class ForceRefetchChaptersAction {
   static readonly type = '[CHAPTERS] Fetch from network';
 

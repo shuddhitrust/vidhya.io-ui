@@ -16,6 +16,7 @@ import {
   ForceRefetchChaptersAction,
   GetChapterAction,
   ResetChapterFormAction,
+  SetCourseInChapterForm,
 } from './chapter.actions';
 import { CHAPTER_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
@@ -59,6 +60,7 @@ export class ChapterState {
   static fetchParams(state: ChapterStateModel): FetchParams {
     return state.fetchParamObjects[state.fetchParamObjects.length - 1];
   }
+
   @Selector()
   static listChapterOptions(state: ChapterStateModel): MatSelectOption[] {
     const options: MatSelectOption[] = state.chapters.map((i) => {
@@ -91,6 +93,16 @@ export class ChapterState {
   static getChapterFormRecord(state: ChapterStateModel): Chapter {
     return state.chapterFormRecord;
   }
+
+  @Action(SetCourseInChapterForm)
+  setCourseInChapterForm({getState, patchState}: StateContext<ChapterStateModel>, {payload}: SetCourseInChapterForm) {
+    const {courseId} = payload;
+    const state = getState();
+    let {chapterFormRecord} = state;
+    chapterFormRecord = {...chapterFormRecord, course: courseId }
+    patchState({chapterFormRecord})
+  }
+  
 
   @Action(ForceRefetchChaptersAction)
   forceRefetchChapters({ patchState }: StateContext<ChapterStateModel>) {

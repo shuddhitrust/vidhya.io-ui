@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { MembershipStatus } from 'src/app/shared/common/models';
+import { MembershipStatusOptions } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { VerifyAccountAction } from 'src/app/shared/state/auth/auth.actions';
 import { AuthStateModel } from 'src/app/shared/state/auth/auth.model';
@@ -36,12 +36,12 @@ export class HomeComponent implements OnInit {
     });
     this.membershipStatus$.subscribe((val) => {
       console.log('*1* Membership status changed ', {
-        currentMembershipStatus: this.membershipStatus,
-        newMembershipStatus: val,
+        currentMembershipStatusOptions: this.membershipStatus,
+        newMembershipStatusOptions: val,
       });
       if (this.membershipStatus != val && val !== undefined) {
         this.membershipStatus = val;
-        this.processMembershipStatus();
+        this.processMembershipStatusOptions();
       }
     });
 
@@ -55,21 +55,21 @@ export class HomeComponent implements OnInit {
     });
 
     // this.pendingApproval =
-    //   this.authState.membershipStatus == MembershipStatus.PENDING_APPROVAL;
+    //   this.authState.membershipStatus == MembershipStatusOptions.PENDING_APPROVAL;
     // this.suspended =
-    //   this.authState.membershipStatus == MembershipStatus.SUSPENDED;
+    //   this.authState.membershipStatus == MembershipStatusOptions.SUSPENDED;
     console.log('from the home page => ', {
       pendingApproval: this.pendingApproval,
       suspended: this.suspended,
     });
   }
 
-  processMembershipStatus() {
+  processMembershipStatusOptions() {
     console.log(
-      '*1* Sending pending approval notification from processMembershipStatus',
+      '*1* Sending pending approval notification from processMembershipStatusOptions',
       { membershipStatus: this.membershipStatus }
     );
-    if (this.membershipStatus == MembershipStatus.PENDING) {
+    if (this.membershipStatus == MembershipStatusOptions.PENDING) {
       this.store.dispatch(
         new ShowNotificationAction({
           message:

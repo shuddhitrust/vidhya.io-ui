@@ -1,0 +1,21 @@
+h2 {
+  text-align: center;
+}
+
+.course-card {
+  text-align: center;
+  display: block;
+  margin: 2px auto;
+  // padding: 20px;
+  width: 80%;
+}
+
+.course-card > small {
+  margin-top: 0px;
+  padding-top: 0px;
+}
+
+.profile-button {
+  float: right;
+  margin: 5px 10px;
+}

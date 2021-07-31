@@ -15,11 +15,16 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import {
+          NgxMatDatetimePickerModule, 
+          NgxMatNativeDateModule, 
+          NgxMatTimepickerModule 
+} from '@angular-material-components/datetime-picker';
 // Zorro
 import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
-import { MatNativeDateModule } from '@angular/material/core';
 
 const components = [
   MatToolbarModule,
