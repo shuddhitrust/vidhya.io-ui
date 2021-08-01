@@ -159,6 +159,8 @@ import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/mat
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { CourseDeleteConfirmationDialog, CourseProfileComponent } from './pages/profiles/course-profile/course-profile.component';
 import { NgxMatDateFormats, NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
+import { ChapterDeleteConfirmationDialog, ChapterProfileComponent } from './pages/profiles/chapter-profile/chapter-profile.component';
+import { AddEditExerciseComponent } from './pages/forms/add-edit-exercise/add-edit-exercise.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -218,7 +220,10 @@ import { NgxMatDateFormats, NGX_MAT_DATE_FORMATS } from '@angular-material-compo
     UserDenialConfirmationDialog,
     GradingDashboardComponent,
     CourseProfileComponent,
-    CourseDeleteConfirmationDialog
+    CourseDeleteConfirmationDialog,
+    ChapterProfileComponent,
+    ChapterDeleteConfirmationDialog,
+    AddEditExerciseComponent
   ],
   imports: [
     BrowserModule,
