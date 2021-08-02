@@ -294,7 +294,8 @@ export class ExerciseState {
     let { formSubmitting } = state;
     if (form.valid) {
       formSubmitting = true;
-      patchState({ formSubmitting });
+      let errorFetching = false;
+      patchState({ formSubmitting, errorFetching});
       const values = form.value;
       console.log('Exercise Form values', values);
       const updateForm = values.id == null ? false : true;
@@ -333,10 +334,14 @@ export class ExerciseState {
               formDirective.resetForm();
               // this.router.navigateByUrl(ExerciseFormCloseURL);
               patchState({
+                errorSubmitting: false,
                 exerciseFormRecord: emptyExerciseFormRecord,
                 fetchPolicy: 'network-only',
               });
             } else {
+              patchState({
+                errorSubmitting: true
+              })
               this.store.dispatch(
                 new ShowNotificationAction({
                   message: getErrorMessageFromGraphQLResponse(response?.errors),

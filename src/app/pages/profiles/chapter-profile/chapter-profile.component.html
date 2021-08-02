@@ -71,7 +71,7 @@
 <ng-template #exerciseCard let-exercise='exercise' let-index="index">
   <span class="exercise-form-card">
     <p>{{ exercise.prompt }}</p>
-    <p>{{ exercise.questionType }}</p>
+    <p>{{ showQuestionTypeLabel(exercise.questionType) }}</p>
   </span>
 </ng-template>
 
@@ -106,13 +106,15 @@
         <input hidden=true matInput>
         <mat-checkbox matInput formControlName="required">Required exercise (Participant cannot mark this chapter as completed without submitting this)</mat-checkbox>
       </mat-form-field>
+      <span class="form-element-block col-lg-12 col-md-12 col-sm-12"
+        *ngIf="exerciseForm.get('questionType').value == questionTypes.options">
 
+      <ng-container *ngTemplateOutlet="optionsTemplate"></ng-container>
+</span>
       <span class="form-element-block col-lg-12 col-md-12 col-sm-12" *ngIf="exerciseForm.get('questionType').value == questionTypes.description">
         <p>Participant will be expected to respond with a short description to the prompt</p>
       </span>
-      <span class="form-element-block col-lg-12 col-md-12 col-sm-12" *ngIf="exerciseForm.get('questionType').value == questionTypes.options">
-        <p>Participant will be expected to respond with a selection of options</p>
-      </span>
+      
       <span class="form-element-block col-lg-12 col-md-12 col-sm-12" *ngIf="exerciseForm.get('questionType').value == questionTypes.file">
         <p>Participant will be expected to respond with the upload of an image file</p>
       </span>
@@ -122,4 +124,19 @@
         {{ (formSubmitting$ | async) === true ? "Submitting..." : "Submit new exercise" }}
       </button>
     </form>
+</ng-template>
+
+
+<ng-template #optionsTemplate>
+    <p>Participant will be expected to choose one correct response from the following options</p>
+    <div *ngFor="let option of exerciseFormOptions; let i = index; trackBy:trackByFn">
+      <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
+        <mat-label>Option {{i +1}}</mat-label>
+        <input matInput [(ngModel)]="exerciseFormOptions[i]" placeholder="Enter an option" />
+      </mat-form-field>
+    </div>
+    <button type="button" *ngIf="enableAddNewOption()" (click)="addOption()" class="center-button" mat-raised-button
+      color="secondary">
+      Add Option
+  </button>
 </ng-template>

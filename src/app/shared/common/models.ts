@@ -105,7 +105,7 @@ export const GroupTypeOptions = {
 export type ExerciseQuestionType = | 'OP'|'DE'|'FL';
 export const ExerciseQuestionTypeOptions = {
   options: 'OP',
-  description: 'DE',
+  descriptive_answer: 'DE',
   file: 'FL'
 }
 

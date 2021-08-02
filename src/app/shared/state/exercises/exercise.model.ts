@@ -10,7 +10,7 @@ export const emptyExerciseFormRecord: Exercise = {
   prompt: null,
   chapter: null,
   questionType: null,
-  required: null,
+  required: true,
   options: null,
   points: null
 };

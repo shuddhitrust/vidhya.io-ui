@@ -28,10 +28,13 @@ import { FetchChaptersAction, FetchNextChaptersAction } from 'src/app/shared/sta
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { ExerciseState } from 'src/app/shared/state/exercises/exercise.state';
 import { CreateUpdateExerciseAction, FetchExercisesAction, FetchNextExercisesAction, ResetExerciseFormAction } from 'src/app/shared/state/exercises/exercise.actions';
-import { autoGenOptions, parseDateTime } from 'src/app/shared/common/functions';
+import { autoGenOptions, getOptionLabel, parseDateTime } from 'src/app/shared/common/functions';
 import { emptyExerciseFormRecord } from 'src/app/shared/state/exercises/exercise.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
  
+
+const startingExerciseFormOptions = [''];
 @Component({
   selector: 'app-chapter-profile',
   templateUrl: './chapter-profile.component.html',
@@ -55,8 +58,15 @@ export class ChapterProfileComponent implements OnInit, OnDestroy {
   showExerciseForm: boolean = false;
   @Select(ExerciseState.formSubmitting)
   formSubmitting$: Observable<boolean>;
+  formSubmitting: boolean;
+  @Select(ExerciseState.errorFetching)
+  errorFetching$: Observable<boolean>
+  errorFetching: boolean;
   questionTypes: any = ExerciseQuestionTypeOptions;
   questionTypeOptions: MatSelectOption[] = autoGenOptions(this.questionTypes);
+  exerciseFormOptions: string[] = startingExerciseFormOptions;
+  invalidOptions: boolean = false;
+  formErrorMessages: string = '';
   constructor(
     public dialog: MatDialog,
     private location: Location,
@@ -75,6 +85,18 @@ export class ChapterProfileComponent implements OnInit, OnDestroy {
         this.fetchExercises();
         this.exerciseForm = this.setupExerciseForm();
       });
+      this.formSubmitting$.subscribe(val => {
+        if(this.formSubmitting && !val && !this.errorFetching) {
+          this.showExerciseForm = false;
+        }
+        this.formSubmitting = val;
+      })
+      this.errorFetching$.subscribe(val => {
+        this.errorFetching = val;
+        if(!this.errorFetching && !this.formSubmitting) {
+          this.showExerciseForm = false;
+        }
+      })
   }
 
   setupExerciseForm(exerciseFormRecord: Exercise = emptyExerciseFormRecord) {
@@ -84,7 +106,7 @@ export class ChapterProfileComponent implements OnInit, OnDestroy {
       chapter: [this.chapter?.id, Validators.required],
       questionType: [exerciseFormRecord?.questionType],
       points: [exerciseFormRecord?.points],
-      required: [true],
+      required: [exerciseFormRecord?.required],
       options: [exerciseFormRecord?.options]
     });
   }
@@ -154,18 +176,63 @@ export class ChapterProfileComponent implements OnInit, OnDestroy {
   }
   addExercise() {
     this.showExerciseForm = true;
-    console.log('exercise form value ', this.exerciseForm.value)
+    this.exerciseForm = this.setupExerciseForm()
+    this.exerciseFormOptions = startingExerciseFormOptions;
+    this.resetFormOptionErrors();
+  }
+
+  trackByFn(index: any, item: any) {
+   return index;
+}
+
+enableAddNewOption() {
+  // Checking if the exercise form options is less than 5 options and if the last option was valid or not
+  return this.exerciseFormOptions.length < 5 && this.exerciseFormOptions[this.exerciseFormOptions.length-1].length;
+}
+
+  addOption() {
+    this.exerciseFormOptions = this.exerciseFormOptions.concat(['']);
+  }
+
+  sanitizeAndUpdateOptions(form) {
+    let options = null;
+      if(form.get('questionType').value == this.questionTypes.options) {
+      options = this.exerciseFormOptions.filter(o => o.length > 0);
+      if(options.length < 2 ) {
+        this.invalidOptions = true;
+        if(!this.formErrorMessages.includes("Please fill in at least 2 options"))
+        this.formErrorMessages = "Please fill in at least 2 options";
+      }else {
+        this.resetFormOptionErrors();
+    }
+    } else {
+      this.resetFormOptionErrors();
+    } 
+    form.get('options').setValue(options);
+  }
+
+  resetFormOptionErrors() {
+      this.invalidOptions = false;
+      this.formErrorMessages = "";
   }
 
   submitExerciseForm(form, formDirective) {
     console.log('exercise submit form value => ', form.value);
-    this.store.dispatch(
-      new CreateUpdateExerciseAction({
-        form,
-        formDirective,
-      })
-    );
-    this.showExerciseForm = false;
+    this.sanitizeAndUpdateOptions(form)
+    if(!this.invalidOptions) {
+      this.store.dispatch(
+        new CreateUpdateExerciseAction({
+          form,
+          formDirective,
+        })
+      );
+    } else {
+      this.store.dispatch(new ShowNotificationAction({message: this.formErrorMessages, action: 'error'}))
+    }
+  }
+
+  showQuestionTypeLabel(value) {
+    return getOptionLabel(value, this.questionTypeOptions);
   }
 
 
