@@ -12,7 +12,8 @@ export const emptyExerciseFormRecord: Exercise = {
   questionType: null,
   required: true,
   options: null,
-  points: null
+  files: null,
+  points: null,
 };
 export interface ExerciseStateModel {
   exercises: Exercise[];

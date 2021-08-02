@@ -63,6 +63,8 @@
   </button>
 
 </div>
+<br />
+<br />
 
 <ng-template #loading>
   <app-simple-loading-spinner></app-simple-loading-spinner>
@@ -72,6 +74,17 @@
   <span class="exercise-form-card">
     <p>{{ exercise.prompt }}</p>
     <p>{{ showQuestionTypeLabel(exercise.questionType) }}</p>
+    <div *ngIf="exercise.options">
+      <ul *ngFor="let option of exercise.options">
+        {{option}}
+      </ul>
+    </div>
+    <div *ngIf="exercise.files">
+      <ul *ngFor="let file of exercise.files">
+        <p>{{file.name}}</p>
+        <p>{{file.description}}</p>
+      </ul>
+    </div>
   </span>
 </ng-template>
 
@@ -106,22 +119,32 @@
         <input hidden=true matInput>
         <mat-checkbox matInput formControlName="required">Required exercise (Participant cannot mark this chapter as completed without submitting this)</mat-checkbox>
       </mat-form-field>
-      <span class="form-element-block col-lg-12 col-md-12 col-sm-12"
-        *ngIf="exerciseForm.get('questionType').value == questionTypes.options">
-
-      <ng-container *ngTemplateOutlet="optionsTemplate"></ng-container>
-</span>
+      
       <span class="form-element-block col-lg-12 col-md-12 col-sm-12" *ngIf="exerciseForm.get('questionType').value == questionTypes.description">
         <p>Participant will be expected to respond with a short description to the prompt</p>
       </span>
-      
-      <span class="form-element-block col-lg-12 col-md-12 col-sm-12" *ngIf="exerciseForm.get('questionType').value == questionTypes.file">
-        <p>Participant will be expected to respond with the upload of an image file</p>
+
+      <span class="form-element-block col-lg-12 col-md-12 col-sm-12"
+        *ngIf="exerciseForm.get('questionType').value == questionTypes.options">
+          <ng-container *ngTemplateOutlet="optionsTemplate"></ng-container>
       </span>
+      
+      <span class="form-element-block col-lg-12 col-md-12 col-sm-12"
+        *ngIf="exerciseForm.get('questionType').value == questionTypes.file">
+        <ng-container *ngTemplateOutlet="filesTemplate"></ng-container>
+      </span>
+
       <br />
       <button class="form-element-block" type="submit"  mat-raised-button color="primary"
         [disabled]="(formSubmitting$ | async) === true">
         {{ (formSubmitting$ | async) === true ? "Submitting..." : "Submit new exercise" }}
+      </button>
+      <button class="form-element-block" style="float: right;" type="button" mat-raised-button color="warn" (click)="closeExerciseForm()">
+        close
+      </button>
+      <button class="form-element-block"  style="float: right;" type="button" mat-raised-button color="secondary"
+        (click)="resetExerciseForm()">
+        Reset
       </button>
     </form>
 </ng-template>
@@ -138,5 +161,22 @@
     <button type="button" *ngIf="enableAddNewOption()" (click)="addOption()" class="center-button" mat-raised-button
       color="secondary">
       Add Option
+  </button>
+</ng-template>
+
+<ng-template #filesTemplate>
+  <p>Participant will be expected to upload the following images</p>
+  <div *ngFor="let file of exerciseFormFiles; let i = index; trackBy:trackByFn">
+    <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>File {{i +1}}</mat-label>
+      <input matInput [(ngModel)]="exerciseFormFiles[i].name" placeholder="Enter the name of the file" />
+    </mat-form-field>
+    <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
+        <input matInput [(ngModel)]="exerciseFormFiles[i].description" placeholder="Optiona description for what needs to be in the image" />
+    </mat-form-field>
+  </div>
+  <button type="button" (click)="addFile()" class="center-button" mat-raised-button
+    color="secondary">
+    Add File
   </button>
 </ng-template>

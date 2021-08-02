@@ -228,6 +228,7 @@ export type Exercise = {
   required: boolean;
   options?: string[];
   points?: number;
+  files?: any[],
   createdAt?: string;
   updatedAt?: string;
 }

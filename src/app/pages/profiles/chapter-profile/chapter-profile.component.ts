@@ -18,6 +18,7 @@ import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   Chapter,
   Exercise,
+  ExerciseFileAttachment,
   ExerciseQuestionTypeOptions,
   MatSelectOption,
   resources,
@@ -32,9 +33,11 @@ import { autoGenOptions, getOptionLabel, parseDateTime } from 'src/app/shared/co
 import { emptyExerciseFormRecord } from 'src/app/shared/state/exercises/exercise.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
- 
+import { emptyExerciseFileAttachmentFormRecord } from 'src/app/shared/state/exerciseFileAttachments/exerciseFileAttachment.model';
+
 
 const startingExerciseFormOptions = [''];
+const startingExerciseFormFiles: any[] = [emptyExerciseFileAttachmentFormRecord];
 @Component({
   selector: 'app-chapter-profile',
   templateUrl: './chapter-profile.component.html',
@@ -65,6 +68,7 @@ export class ChapterProfileComponent implements OnInit, OnDestroy {
   questionTypes: any = ExerciseQuestionTypeOptions;
   questionTypeOptions: MatSelectOption[] = autoGenOptions(this.questionTypes);
   exerciseFormOptions: string[] = startingExerciseFormOptions;
+  exerciseFormFiles: ExerciseFileAttachment[] = startingExerciseFormFiles;
   invalidOptions: boolean = false;
   formErrorMessages: string = '';
   constructor(
@@ -107,7 +111,8 @@ export class ChapterProfileComponent implements OnInit, OnDestroy {
       questionType: [exerciseFormRecord?.questionType],
       points: [exerciseFormRecord?.points],
       required: [exerciseFormRecord?.required],
-      options: [exerciseFormRecord?.options]
+      options: [exerciseFormRecord?.options],
+      files: [exerciseFormRecord?.files]
     });
   }
 
@@ -174,11 +179,19 @@ export class ChapterProfileComponent implements OnInit, OnDestroy {
       this.store.dispatch(new FetchNextExercisesAction());
     }
   }
-  addExercise() {
-    this.showExerciseForm = true;
-    this.exerciseForm = this.setupExerciseForm()
+  resetExerciseForm() {
+    this.exerciseForm = this.setupExerciseForm();
     this.exerciseFormOptions = startingExerciseFormOptions;
     this.resetFormOptionErrors();
+  }
+  addExercise() {
+    this.resetExerciseForm();
+    this.showExerciseForm = true;
+  }
+
+  closeExerciseForm() {
+    this.resetExerciseForm();
+    this.showExerciseForm = false;
   }
 
   trackByFn(index: any, item: any) {
@@ -190,8 +203,17 @@ enableAddNewOption() {
   return this.exerciseFormOptions.length < 5 && this.exerciseFormOptions[this.exerciseFormOptions.length-1].length;
 }
 
+enableAddNewFile() {
+  // Checking if the exercise form options is less than 5 options and if the last option was valid or not
+  return this.exerciseFormFiles.length < 5 && this.exerciseFormOptions[this.exerciseFormOptions.length-1].length;
+}
+
   addOption() {
     this.exerciseFormOptions = this.exerciseFormOptions.concat(['']);
+  }
+
+  addFile() {
+    this.exerciseFormFiles = this.exerciseFormFiles.concat([emptyExerciseFileAttachmentFormRecord])
   }
 
   sanitizeAndUpdateOptions(form) {

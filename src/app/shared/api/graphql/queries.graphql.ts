@@ -357,6 +357,10 @@ export const EXERCISE_QUERIES = {
         required
         options
         points
+        files {
+          name
+          description
+        }
       }
     }
   `,
