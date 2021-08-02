@@ -357,37 +357,6 @@ export const EXERCISE_QUERIES = {
         required
         options
         points
-        files {
-          name
-          description
-        }
-      }
-    }
-  `,
-};
-
-export const EXERCISE_FILE_ATTACHMENT_QUERIES = {
-  GET_EXERCISE_FILE_ATTACHMENT: gql`
-    query exerciseFileAttachment($id: ID!) {
-      exerciseFileAttachment(id: $id) {
-        id
-        name
-        exercise {
-          id
-        }
-        description
-      }
-    }
-  `,
-  GET_EXERCISE_FILE_ATTACHMENTS: gql`
-    query exerciseFileAttachments($exerciseId: ID!, $searchField: String, $limit: Int, $offset: Int) {
-      exerciseFileAttachments(exerciseId: $exerciseId, searchField: $searchField, limit: $limit, offset: $offset) {
-        id
-        name
-        exercise {
-          id
-        }
-        description
       }
     }
   `,

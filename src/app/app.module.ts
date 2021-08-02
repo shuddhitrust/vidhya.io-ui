@@ -99,17 +99,6 @@ export const MY_FORMATS = {
   },
 };
 
-const CUSTOM_DATETIME_FORMATS: NgxMatDateFormats = {
-  parse: {
-    dateInput: "l, LTS"
-  },
-  display: {
-    dateInput: "l, LTS",
-    monthYearLabel: "MMM YYYY",
-    dateA11yLabel: "LL",
-    monthYearA11yLabel: "MMMM YYYY"
-  }
-};
 
 
 /** config angular i18n **/
@@ -150,11 +139,9 @@ import { UserModerationRendererComponent } from './shared/cell-renderers/user-mo
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { CourseSectionState } from './shared/state/courseSections/courseSection.state';
 import { ExerciseState } from './shared/state/exercises/exercise.state';
-import { ExerciseFileAttachmentState } from './shared/state/exerciseFileAttachments/exerciseFileAttachment.state';
 import { ExerciseSubmissionState } from './shared/state/exerciseSubmissions/exerciseSubmission.state';
 import { ReportState } from './shared/state/reports/report.state';
 import { GradingDashboardComponent } from './pages/static/dashboard/tabs/grading-dashboard/grading-dashboard.component';
-import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { CourseDeleteConfirmationDialog, CourseProfileComponent } from './pages/profiles/course-profile/course-profile.component';
@@ -251,7 +238,6 @@ import { AddEditExerciseComponent } from './pages/forms/add-edit-exercise/add-ed
           CourseSectionState,
           ChapterState,
           ExerciseState,
-          ExerciseFileAttachmentState,
           ExerciseSubmissionState,
           ReportState,
           OptionsState,
@@ -282,7 +268,6 @@ import { AddEditExerciseComponent } from './pages/forms/add-edit-exercise/add-ed
     deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS]
   },
   { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
-  { provide: NGX_MAT_DATE_FORMATS, useValue: CUSTOM_DATETIME_FORMATS }
   ],
   bootstrap: [AppComponent],
 })

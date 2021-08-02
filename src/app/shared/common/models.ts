@@ -102,11 +102,12 @@ export const GroupTypeOptions = {
   coordination: 'CO',
 };
 
-export type ExerciseQuestionType = | 'OP'|'DE'|'FL';
+export type ExerciseQuestionType = | 'OP'|'DE'|'IM'|'LI';
 export const ExerciseQuestionTypeOptions = {
   options: 'OP',
   descriptive_answer: 'DE',
-  file: 'FL'
+  image_upload: 'IM',
+  link: 'LI'
 }
 
 export type User = {
@@ -229,15 +230,6 @@ export type Exercise = {
   options?: string[];
   points?: number;
   files?: any[],
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-export type ExerciseFileAttachment = {
-  id: number;
-  exercise: any;
-  name: string;
-  description?: string;
   createdAt?: string;
   updatedAt?: string;
 }

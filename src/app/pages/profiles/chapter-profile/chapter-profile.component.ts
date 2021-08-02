@@ -18,14 +18,12 @@ import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   Chapter,
   Exercise,
-  ExerciseFileAttachment,
   ExerciseQuestionTypeOptions,
   MatSelectOption,
   resources,
   RESOURCE_ACTIONS,
 } from 'src/app/shared/common/models';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
-import { FetchChaptersAction, FetchNextChaptersAction } from 'src/app/shared/state/chapters/chapter.actions';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { ExerciseState } from 'src/app/shared/state/exercises/exercise.state';
 import { CreateUpdateExerciseAction, FetchExercisesAction, FetchNextExercisesAction, ResetExerciseFormAction } from 'src/app/shared/state/exercises/exercise.actions';
@@ -33,11 +31,18 @@ import { autoGenOptions, getOptionLabel, parseDateTime } from 'src/app/shared/co
 import { emptyExerciseFormRecord } from 'src/app/shared/state/exercises/exercise.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
-import { emptyExerciseFileAttachmentFormRecord } from 'src/app/shared/state/exerciseFileAttachments/exerciseFileAttachment.model';
+import { ExerciseSubmissionState } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.state';
 
 
-const startingExerciseFormOptions = [''];
-const startingExerciseFormFiles: any[] = [emptyExerciseFileAttachmentFormRecord];
+const startingExerciseFormOptions = ['', ''];
+
+const questionTypeDescriptions = {
+  [ExerciseQuestionTypeOptions.options]: 'Participant will be expected to choose one correct response from the following options',
+  [ExerciseQuestionTypeOptions.descriptive_answer]: 'Participant will be expected to respond with a short description to the prompt',
+  [ExerciseQuestionTypeOptions.image_upload]: 'Participant will be expected to upload files. They may upload multiple files, but must at least upload one file to mark this exercise as complete.',
+  [ExerciseQuestionTypeOptions.link]: 'Participant will be expected to enter a link'
+}
+
 @Component({
   selector: 'app-chapter-profile',
   templateUrl: './chapter-profile.component.html',
@@ -65,10 +70,10 @@ export class ChapterProfileComponent implements OnInit, OnDestroy {
   @Select(ExerciseState.errorFetching)
   errorFetching$: Observable<boolean>
   errorFetching: boolean;
+  questionTypeDescriptions = questionTypeDescriptions;
   questionTypes: any = ExerciseQuestionTypeOptions;
   questionTypeOptions: MatSelectOption[] = autoGenOptions(this.questionTypes);
   exerciseFormOptions: string[] = startingExerciseFormOptions;
-  exerciseFormFiles: ExerciseFileAttachment[] = startingExerciseFormFiles;
   invalidOptions: boolean = false;
   formErrorMessages: string = '';
   constructor(
@@ -90,16 +95,10 @@ export class ChapterProfileComponent implements OnInit, OnDestroy {
         this.exerciseForm = this.setupExerciseForm();
       });
       this.formSubmitting$.subscribe(val => {
-        if(this.formSubmitting && !val && !this.errorFetching) {
-          this.showExerciseForm = false;
-        }
         this.formSubmitting = val;
       })
       this.errorFetching$.subscribe(val => {
         this.errorFetching = val;
-        if(!this.errorFetching && !this.formSubmitting) {
-          this.showExerciseForm = false;
-        }
       })
   }
 
@@ -112,7 +111,6 @@ export class ChapterProfileComponent implements OnInit, OnDestroy {
       points: [exerciseFormRecord?.points],
       required: [exerciseFormRecord?.required],
       options: [exerciseFormRecord?.options],
-      files: [exerciseFormRecord?.files]
     });
   }
 
@@ -203,18 +201,11 @@ enableAddNewOption() {
   return this.exerciseFormOptions.length < 5 && this.exerciseFormOptions[this.exerciseFormOptions.length-1].length;
 }
 
-enableAddNewFile() {
-  // Checking if the exercise form options is less than 5 options and if the last option was valid or not
-  return this.exerciseFormFiles.length < 5 && this.exerciseFormOptions[this.exerciseFormOptions.length-1].length;
-}
 
   addOption() {
     this.exerciseFormOptions = this.exerciseFormOptions.concat(['']);
   }
 
-  addFile() {
-    this.exerciseFormFiles = this.exerciseFormFiles.concat([emptyExerciseFileAttachmentFormRecord])
-  }
 
   sanitizeAndUpdateOptions(form) {
     let options = null;
