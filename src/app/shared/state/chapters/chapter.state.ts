@@ -33,6 +33,7 @@ import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
 import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
 import { SearchParams } from '../../abstract/master-grid/table.model';
+import { Location } from '@angular/common'
 
 @State<ChapterStateModel>({
   name: 'chapterState',
@@ -43,7 +44,8 @@ export class ChapterState {
   constructor(
     private apollo: Apollo,
     private store: Store,
-    private router: Router
+    private router: Router,
+    private location: Location,
   ) {}
 
   @Selector()
@@ -321,7 +323,8 @@ export class ChapterState {
               );
               form.reset();
               formDirective.resetForm();
-              this.router.navigateByUrl(ChapterFormCloseURL);
+              // this.router.navigateByUrl(ChapterFormCloseURL);
+              this.location.back();
               patchState({
                 chapterFormRecord: emptyChapterFormRecord,
                 fetchPolicy: 'network-only',

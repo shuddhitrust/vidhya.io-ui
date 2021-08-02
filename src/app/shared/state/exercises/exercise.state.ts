@@ -149,7 +149,20 @@ export class ExerciseState {
       newSearchQuery,
       newColumnFilters,
     });
+    // // Resetting list of exercises if chapterId filter is different
+    // if(fetchParamObjects.length > 0) {
+    //   const lastKnownFetchParamObjects = fetchParamObjects[fetchParamObjects.length-1];
+    //   console.log('lastKnownFetchParams', {lastKnownFetchParamObjects, fetchParamObjects})
+    //   const lastUsedChapterId = lastKnownFetchParamObjects['columnFilters']['chapterId'];
+    //   console.log('lastUsedChapterId => ',{lastUsedChapterId});
+    //   if(lastUsedChapterId != newColumnFilters.chapterId) {
+    //     console.log('resetting the exercises because this is different')
+    //     patchState({exercises: []});
+    //   }
+
+    // }
     const variables = {
+      chapterId: newColumnFilters.chapterId,
       searchField: newSearchQuery,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
@@ -318,7 +331,7 @@ export class ExerciseState {
               );
               form.reset();
               formDirective.resetForm();
-              this.router.navigateByUrl(ExerciseFormCloseURL);
+              // this.router.navigateByUrl(ExerciseFormCloseURL);
               patchState({
                 exerciseFormRecord: emptyExerciseFormRecord,
                 fetchPolicy: 'network-only',
@@ -405,9 +418,6 @@ export class ExerciseState {
 
   @Action(ResetExerciseFormAction)
   resetExerciseForm({ patchState }: StateContext<ExerciseStateModel>) {
-    patchState({
-      exerciseFormRecord: emptyExerciseFormRecord,
-      formSubmitting: false,
-    });
+    patchState(defaultExerciseState);
   }
 }

@@ -38,7 +38,7 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
   @Select(CourseState.getCourseFormRecord)
   course$: Observable<Course>;
   course: Course;
-  @Select(ChapterState.getChapterFormRecord)
+  @Select(ChapterState.listChapters)
   chapters$: Observable<Chapter[]>;
   @Select(ChapterState.isFetching)
   isFetchingChapters$: Observable<boolean>;
@@ -54,7 +54,7 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
     private router: Router,
     private auth: AuthorizationService
   ) {
-    this.fetchChapters()
+    // this.fetchChapters()
     this.isFetchingChapters$.subscribe((val) => {
       this.isFetchingChapters = val;
     });

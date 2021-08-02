@@ -25,25 +25,22 @@
 
   <div class="chapter-card">
     <h2>{{ chapter?.title }}</h2>
+    <p class="left">{{ chapter?.instructions }}</p>
+    <small class="left" style="font-style: italic" *ngIf="chapter?.dueDate">Due on {{ parseDate(chapter?.dueDate) }}
+      </small>
   </div>
 </span>
 
 <div class="feed-header-block">
   <h2>Exercises</h2>
-  <button *ngIf="authorizeResourceMethod(resourceActions.CREATE)" (click)="createExercise()"
-    class="floating-header-button-top" mat-raised-button color="primary">
-    Create Exercise
-  </button>
 </div>
 <span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
   <span *ngIf="!(isFetchingExercises$ | async); else loading">
-    <span *ngIf="(exercises$ | async).length > 0; else feedEmpty">
+    <span *ngIf="(exercises$ | async).length  > 0; else feedEmpty">
       <div class="scroll-feed" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50"
         infiniteScrollContainer=".scroll-feed" [fromRoot]="true" (scrolled)="onScroll()">
-        <div *ngFor="let exercise of exercises$ | async">
-          <span class="feed-card" >
-            {{ exercise.prompt }}
-          </span>
+        <div *ngFor="let exercise of exercises$ | async; let i = index">
+<ng-container *ngTemplateOutlet="exerciseCard; context: {exercise: exercise, index: i}"></ng-container>
         </div>
       </div>
     </span>
@@ -55,6 +52,74 @@
 
 </span>
 
+<br />
+        <div *ngIf="showExerciseForm">
+          <ng-container *ngTemplateOutlet="exerciseFormTemplate"></ng-container>
+        </div>
+<div class="container">
+  <button *ngIf="authorizeResourceMethod(resourceActions.CREATE) && !showExerciseForm" (click)="addExercise()" class="center-button"
+     mat-raised-button color="primary">
+    Add Exercise
+  </button>
+
+</div>
+
 <ng-template #loading>
   <app-simple-loading-spinner></app-simple-loading-spinner>
+</ng-template>
+
+<ng-template #exerciseCard let-exercise='exercise' let-index="index">
+  <span class="exercise-form-card">
+    <p>{{ exercise.prompt }}</p>
+    <p>{{ exercise.questionType }}</p>
+  </span>
+</ng-template>
+
+<ng-template #exerciseFormTemplate>
+    <form class="form-container" [formGroup]="exerciseForm" novalidate (submit)="submitExerciseForm(exerciseForm, formDirective)" #formDirective="ngForm">
+      <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+        <mat-label>Prompt</mat-label>
+        <input matInput formControlName="prompt" required placeholder="Prompt of the exercise" />
+        <small class="validation-error" *ngIf="
+              exerciseForm.get('prompt').hasError('required') &&
+              formDirective.submitted
+            ">
+          Prompt is required
+        </small>
+      </mat-form-field>
+    <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Question type</mat-label>
+      <mat-select formControlName="questionType"
+        placeholder="Select the type of response you expect">
+        <mat-option *ngFor="let type of questionTypeOptions" [value]="type.value">
+          {{ type.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+      <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
+        <mat-label>Points</mat-label>
+        <input matInput type="number" formControlName="points" placeholder="Points for the chapter" />
+      </mat-form-field>
+
+      <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+        <input hidden=true matInput>
+        <mat-checkbox matInput formControlName="required">Required exercise (Participant cannot mark this chapter as completed without submitting this)</mat-checkbox>
+      </mat-form-field>
+
+      <span class="form-element-block col-lg-12 col-md-12 col-sm-12" *ngIf="exerciseForm.get('questionType').value == questionTypes.description">
+        <p>Participant will be expected to respond with a short description to the prompt</p>
+      </span>
+      <span class="form-element-block col-lg-12 col-md-12 col-sm-12" *ngIf="exerciseForm.get('questionType').value == questionTypes.options">
+        <p>Participant will be expected to respond with a selection of options</p>
+      </span>
+      <span class="form-element-block col-lg-12 col-md-12 col-sm-12" *ngIf="exerciseForm.get('questionType').value == questionTypes.file">
+        <p>Participant will be expected to respond with the upload of an image file</p>
+      </span>
+      <br />
+      <button class="form-element-block" type="submit"  mat-raised-button color="primary"
+        [disabled]="(formSubmitting$ | async) === true">
+        {{ (formSubmitting$ | async) === true ? "Submitting..." : "Submit new exercise" }}
+      </button>
+    </form>
 </ng-template>

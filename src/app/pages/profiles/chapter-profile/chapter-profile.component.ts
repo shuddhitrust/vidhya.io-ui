@@ -18,6 +18,8 @@ import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   Chapter,
   Exercise,
+  ExerciseQuestionTypeOptions,
+  MatSelectOption,
   resources,
   RESOURCE_ACTIONS,
 } from 'src/app/shared/common/models';
@@ -25,7 +27,10 @@ import { AuthorizationService } from 'src/app/shared/api/authorization/authoriza
 import { FetchChaptersAction, FetchNextChaptersAction } from 'src/app/shared/state/chapters/chapter.actions';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { ExerciseState } from 'src/app/shared/state/exercises/exercise.state';
-import { FetchNextExercisesAction } from 'src/app/shared/state/exercises/exercise.actions';
+import { CreateUpdateExerciseAction, FetchExercisesAction, FetchNextExercisesAction, ResetExerciseFormAction } from 'src/app/shared/state/exercises/exercise.actions';
+import { autoGenOptions, parseDateTime } from 'src/app/shared/common/functions';
+import { emptyExerciseFormRecord } from 'src/app/shared/state/exercises/exercise.model';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
  
 @Component({
   selector: 'app-chapter-profile',
@@ -46,33 +51,58 @@ export class ChapterProfileComponent implements OnInit, OnDestroy {
   isFetchingExercises: boolean;  
   @Select(ChapterState.isFetching)
   isFetchingChapter$: Observable<boolean>;
-
+  exerciseForm: FormGroup = this.setupExerciseForm();
+  showExerciseForm: boolean = false;
+  @Select(ExerciseState.formSubmitting)
+  formSubmitting$: Observable<boolean>;
+  questionTypes: any = ExerciseQuestionTypeOptions;
+  questionTypeOptions: MatSelectOption[] = autoGenOptions(this.questionTypes);
   constructor(
     public dialog: MatDialog,
     private location: Location,
     private route: ActivatedRoute,
     private store: Store,
     private router: Router,
-    private auth: AuthorizationService
-  ) {
-    this.fetchExercises()
-    this.isFetchingExercises$.subscribe((val) => {
-      this.isFetchingExercises = val;
+    private auth: AuthorizationService,
+    private fb: FormBuilder
+    ) {
+      this.isFetchingExercises$.subscribe((val) => {
+        this.isFetchingExercises = val;
+      });
+      this.chapter$.subscribe((val) => {
+        this.chapter = val;
+        console.log('Current chapter => ',  this.chapter)
+        this.fetchExercises();
+        this.exerciseForm = this.setupExerciseForm();
+      });
+  }
+
+  setupExerciseForm(exerciseFormRecord: Exercise = emptyExerciseFormRecord) {
+    return this.fb.group({
+      id: [exerciseFormRecord?.id],
+      prompt: [exerciseFormRecord?.prompt, Validators.required],
+      chapter: [this.chapter?.id, Validators.required],
+      questionType: [exerciseFormRecord?.questionType],
+      points: [exerciseFormRecord?.points],
+      required: [true],
+      options: [exerciseFormRecord?.options]
     });
-    this.chapter$.subscribe((val) => {
-      this.chapter = val;
-      this.fetchExercises();
-    });
+  }
+
+  parseDate(date) {
+    return parseDateTime(date);
   }
 
   chapterFilters() {
-    return {chapterId: this.chapter?.id}
+    return this.chapter?.id ? {chapterId: this.chapter?.id} : false;
   }
 
   fetchExercises() {
-    this.store.dispatch(
-      new FetchChaptersAction({ searchParams: {...defaultSearchParams, newColumnFilters: this.chapterFilters()} })
-    );
+    if(this.chapterFilters()) {
+      this.store.dispatch(
+        new FetchExercisesAction({ searchParams: {...defaultSearchParams, newColumnFilters: this.chapterFilters()} })
+      );
+    }
   }
 
   authorizeResourceMethod(action) {
@@ -92,7 +122,7 @@ export class ChapterProfileComponent implements OnInit, OnDestroy {
 
   editChapter() {
     this.router.navigate([uiroutes.CHAPTER_FORM_ROUTE.route], {
-      queryParams: { id: this.chapter.id },
+      queryParams: { id: this.chapter?.id },
       queryParamsHandling: 'merge',
       skipLocationChange: false,
     });
@@ -113,7 +143,7 @@ export class ChapterProfileComponent implements OnInit, OnDestroy {
     console.log('payload before passing to action => ', {
       id: this.chapter.id,
     });
-    this.store.dispatch(new DeleteChapterAction({ id: this.chapter.id }));
+    this.store.dispatch(new DeleteChapterAction({ id: this.chapter?.id }));
   }
 
     onScroll() {
@@ -122,12 +152,26 @@ export class ChapterProfileComponent implements OnInit, OnDestroy {
       this.store.dispatch(new FetchNextExercisesAction());
     }
   }
-  createExercise() {
+  addExercise() {
+    this.showExerciseForm = true;
+    console.log('exercise form value ', this.exerciseForm.value)
+  }
+
+  submitExerciseForm(form, formDirective) {
+    console.log('exercise submit form value => ', form.value);
+    this.store.dispatch(
+      new CreateUpdateExerciseAction({
+        form,
+        formDirective,
+      })
+    );
+    this.showExerciseForm = false;
   }
 
 
 
   ngOnDestroy(): void {
+    this.store.dispatch(new ResetExerciseFormAction());
     this.store.dispatch(new ResetChapterFormAction());
   }
 }
