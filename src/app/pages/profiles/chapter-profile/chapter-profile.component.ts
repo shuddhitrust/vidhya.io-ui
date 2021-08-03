@@ -18,7 +18,9 @@ import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   Chapter,
   Exercise,
+  ExerciseKey,
   ExerciseQuestionTypeOptions,
+  ExerciseSubmission,
   MatSelectOption,
   resources,
   RESOURCE_ACTIONS,
@@ -26,28 +28,56 @@ import {
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { ExerciseState } from 'src/app/shared/state/exercises/exercise.state';
-import { CreateUpdateExerciseAction, FetchExercisesAction, FetchNextExercisesAction, ResetExerciseFormAction } from 'src/app/shared/state/exercises/exercise.actions';
-import { autoGenOptions, getOptionLabel, parseDateTime } from 'src/app/shared/common/functions';
-import { emptyExerciseFormRecord } from 'src/app/shared/state/exercises/exercise.model';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  CreateUpdateExerciseAction,
+  FetchExercisesAction,
+  FetchNextExercisesAction,
+  ResetExerciseFormAction,
+} from 'src/app/shared/state/exercises/exercise.actions';
+import {
+  autoGenOptions,
+  getOptionLabel,
+  parseDateTime,
+} from 'src/app/shared/common/functions';
+import {
+  emptyExerciseFormRecord,
+  emptyExerciseKeyFormRecord,
+} from 'src/app/shared/state/exercises/exercise.model';
+import {
+  FormBuilder,
+  FormGroup,
+  FormGroupDirective,
+  Validators,
+} from '@angular/forms';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { ExerciseSubmissionState } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.state';
-
+import { emptyExerciseSubmissionFormRecord } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.model';
 
 const startingExerciseFormOptions = ['', ''];
 
 const questionTypeDescriptions = {
-  [ExerciseQuestionTypeOptions.options]: 'Participant will be expected to choose one correct response from the following options',
-  [ExerciseQuestionTypeOptions.descriptive_answer]: 'Participant will be expected to respond with a short description to the prompt',
-  [ExerciseQuestionTypeOptions.image_upload]: 'Participant will be expected to upload files. They may upload multiple files, but must at least upload one file to mark this exercise as complete.',
-  [ExerciseQuestionTypeOptions.link]: 'Participant will be expected to enter a link'
-}
+  [ExerciseQuestionTypeOptions.options]:
+    'Participant will be expected to choose one correct response from the following options',
+  [ExerciseQuestionTypeOptions.descriptive_answer]:
+    'Participant will be expected to respond with a short description to the prompt',
+  [ExerciseQuestionTypeOptions.image_upload]:
+    'Participant will be expected to upload files. They may upload multiple files, but must at least upload one file to mark this exercise as complete.',
+  [ExerciseQuestionTypeOptions.link]:
+    'Participant will be expected to enter a link',
+};
+
+type previewImage = {
+  url: string;
+  file: any;
+};
 
 @Component({
   selector: 'app-chapter-profile',
   templateUrl: './chapter-profile.component.html',
-  styleUrls: ['./chapter-profile.component.scss','./../../../shared/common/shared-styles.css'
- ],
+  styleUrls: [
+    './chapter-profile.component.scss',
+    './../../../shared/common/shared-styles.css',
+  ],
 })
 export class ChapterProfileComponent implements OnInit, OnDestroy {
   resource = resources.CHAPTER;
@@ -59,7 +89,7 @@ export class ChapterProfileComponent implements OnInit, OnDestroy {
   exercises$: Observable<Exercise[]>;
   @Select(ExerciseState.isFetching)
   isFetchingExercises$: Observable<boolean>;
-  isFetchingExercises: boolean;  
+  isFetchingExercises: boolean;
   @Select(ChapterState.isFetching)
   isFetchingChapter$: Observable<boolean>;
   exerciseForm: FormGroup = this.setupExerciseForm();
@@ -68,7 +98,7 @@ export class ChapterProfileComponent implements OnInit, OnDestroy {
   formSubmitting$: Observable<boolean>;
   formSubmitting: boolean;
   @Select(ExerciseState.errorFetching)
-  errorFetching$: Observable<boolean>
+  errorFetching$: Observable<boolean>;
   errorFetching: boolean;
   questionTypeDescriptions = questionTypeDescriptions;
   questionTypes: any = ExerciseQuestionTypeOptions;
@@ -76,6 +106,9 @@ export class ChapterProfileComponent implements OnInit, OnDestroy {
   exerciseFormOptions: string[] = startingExerciseFormOptions;
   invalidOptions: boolean = false;
   formErrorMessages: string = '';
+  exerciseKey: any = { validAnswers: [''] };
+  exerciseSubmission: ExerciseSubmission = emptyExerciseSubmissionFormRecord;
+  imagesQueuedForUpload: previewImage[] = [];
   constructor(
     public dialog: MatDialog,
     private location: Location,
@@ -84,22 +117,22 @@ export class ChapterProfileComponent implements OnInit, OnDestroy {
     private router: Router,
     private auth: AuthorizationService,
     private fb: FormBuilder
-    ) {
-      this.isFetchingExercises$.subscribe((val) => {
-        this.isFetchingExercises = val;
-      });
-      this.chapter$.subscribe((val) => {
-        this.chapter = val;
-        console.log('Current chapter => ',  this.chapter)
-        this.fetchExercises();
-        this.exerciseForm = this.setupExerciseForm();
-      });
-      this.formSubmitting$.subscribe(val => {
-        this.formSubmitting = val;
-      })
-      this.errorFetching$.subscribe(val => {
-        this.errorFetching = val;
-      })
+  ) {
+    this.isFetchingExercises$.subscribe((val) => {
+      this.isFetchingExercises = val;
+    });
+    this.chapter$.subscribe((val) => {
+      this.chapter = val;
+      console.log('Current chapter => ', this.chapter);
+      this.fetchExercises();
+      this.exerciseForm = this.setupExerciseForm();
+    });
+    this.formSubmitting$.subscribe((val) => {
+      this.formSubmitting = val;
+    });
+    this.errorFetching$.subscribe((val) => {
+      this.errorFetching = val;
+    });
   }
 
   setupExerciseForm(exerciseFormRecord: Exercise = emptyExerciseFormRecord) {
@@ -108,9 +141,13 @@ export class ChapterProfileComponent implements OnInit, OnDestroy {
       prompt: [exerciseFormRecord?.prompt, Validators.required],
       chapter: [this.chapter?.id, Validators.required],
       questionType: [exerciseFormRecord?.questionType],
+      options: [exerciseFormRecord?.options],
       points: [exerciseFormRecord?.points],
       required: [exerciseFormRecord?.required],
-      options: [exerciseFormRecord?.options],
+      validOption: [],
+      validAnswers: [],
+      referenceLink: [],
+      referenceImages: [],
     });
   }
 
@@ -119,13 +156,18 @@ export class ChapterProfileComponent implements OnInit, OnDestroy {
   }
 
   chapterFilters() {
-    return this.chapter?.id ? {chapterId: this.chapter?.id} : false;
+    return this.chapter?.id ? { chapterId: this.chapter?.id } : false;
   }
 
   fetchExercises() {
-    if(this.chapterFilters()) {
+    if (this.chapterFilters()) {
       this.store.dispatch(
-        new FetchExercisesAction({ searchParams: {...defaultSearchParams, newColumnFilters: this.chapterFilters()} })
+        new FetchExercisesAction({
+          searchParams: {
+            ...defaultSearchParams,
+            newColumnFilters: this.chapterFilters(),
+          },
+        })
       );
     }
   }
@@ -171,7 +213,7 @@ export class ChapterProfileComponent implements OnInit, OnDestroy {
     this.store.dispatch(new DeleteChapterAction({ id: this.chapter?.id }));
   }
 
-    onScroll() {
+  onScroll() {
     console.log('scrolling exercises');
     if (!this.isFetchingExercises) {
       this.store.dispatch(new FetchNextExercisesAction());
@@ -193,46 +235,117 @@ export class ChapterProfileComponent implements OnInit, OnDestroy {
   }
 
   trackByFn(index: any, item: any) {
-   return index;
-}
+    return index;
+  }
 
-enableAddNewOption() {
-  // Checking if the exercise form options is less than 5 options and if the last option was valid or not
-  return this.exerciseFormOptions.length < 5 && this.exerciseFormOptions[this.exerciseFormOptions.length-1].length;
-}
-
+  enableAddNewOption() {
+    // Checking if the exercise form options is less than 5 options and if the last option was valid or not
+    return (
+      this.exerciseFormOptions.length < 5 &&
+      this.exerciseFormOptions[this.exerciseFormOptions.length - 1].length
+    );
+  }
 
   addOption() {
     this.exerciseFormOptions = this.exerciseFormOptions.concat(['']);
   }
 
+  enableAddNewValidAnswer() {
+    // Checking if the exercise form options is less than 5 options and if the last option was valid or not
+    return (
+      this.exerciseKey?.validAnswers?.length < 5 &&
+      this.exerciseKey?.validAnswers[this.exerciseKey?.validAnswers?.length - 1]
+        .length
+    );
+  }
+  addValidAnswer() {
+    this.exerciseKey.validAnswers = this.exerciseKey?.validAnswers?.concat([
+      '',
+    ]);
+  }
 
   sanitizeAndUpdateOptions(form) {
     let options = null;
-      if(form.get('questionType').value == this.questionTypes.options) {
-      options = this.exerciseFormOptions.filter(o => o.length > 0);
-      if(options.length < 2 ) {
+    if (form.get('questionType').value == this.questionTypes.options) {
+      options = this.exerciseFormOptions.filter((o) => o.length > 0);
+      if (options.length < 2) {
         this.invalidOptions = true;
-        if(!this.formErrorMessages.includes("Please fill in at least 2 options"))
-        this.formErrorMessages = "Please fill in at least 2 options";
-      }else {
+        if (
+          !this.formErrorMessages.includes('Please fill in at least 2 options')
+        )
+          this.formErrorMessages = 'Please fill in at least 2 options';
+      } else {
         this.resetFormOptionErrors();
-    }
+      }
     } else {
       this.resetFormOptionErrors();
-    } 
+    }
     form.get('options').setValue(options);
   }
 
   resetFormOptionErrors() {
-      this.invalidOptions = false;
-      this.formErrorMessages = "";
+    this.invalidOptions = false;
+    this.formErrorMessages = '';
+  }
+
+  uploadReferenceImages() {}
+
+  updateGradingKeyInExerciseForm(form) {
+    console.log('exerciseKey', { exerciseKey: this.exerciseKey });
+    form.get('validOption').setValue(this.exerciseKey.option);
+    let allValidAnswers = [this.exerciseKey?.answer].concat(
+      this.exerciseKey?.validAnswers
+    );
+    allValidAnswers = allValidAnswers.filter((a) => a?.length > 0); // removing empty answers if any
+    allValidAnswers = [...new Set(allValidAnswers)]; // removing duplicates
+    form.get('validAnswers').setValue(allValidAnswers);
+    form.get('referenceLink').setValue(this.exerciseKey.link);
+    form.get('referenceImages').setValue([]);
+  }
+
+  updateExerciseFormOptions() {
+    this.exerciseForm.get('options').setValue(this.exerciseFormOptions);
+  }
+
+  showQuestionTypeLabel(value) {
+    return getOptionLabel(value, this.questionTypeOptions);
+  }
+
+  updateExerciseSubmissionOption(option) {
+    let newExerciseSubmission = Object.assign({}, this.exerciseSubmission);
+    newExerciseSubmission.option = option;
+    this.exerciseSubmission = newExerciseSubmission;
+  }
+
+  addImageFileToSubmission(event) {
+    if (event.target.files.length > 0) {
+      let previewImageObject: previewImage = { file: null, url: null };
+      const file = event.target.files[0];
+      previewImageObject.file = file;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const url = reader.result as string;
+        previewImageObject.url = url;
+      };
+      reader.readAsDataURL(file);
+
+      this.imagesQueuedForUpload.push(previewImageObject);
+      console.log('updated imagesQueuedForUpload', {
+        imagesQueuedForUpload: this.imagesQueuedForUpload,
+      });
+    }
+  }
+
+  removePreviewImage(i) {
+    this.imagesQueuedForUpload.splice(i, 1);
   }
 
   submitExerciseForm(form, formDirective) {
     console.log('exercise submit form value => ', form.value);
-    this.sanitizeAndUpdateOptions(form)
-    if(!this.invalidOptions) {
+    this.sanitizeAndUpdateOptions(form);
+    this.updateGradingKeyInExerciseForm(form);
+    if (!this.invalidOptions) {
       this.store.dispatch(
         new CreateUpdateExerciseAction({
           form,
@@ -240,15 +353,14 @@ enableAddNewOption() {
         })
       );
     } else {
-      this.store.dispatch(new ShowNotificationAction({message: this.formErrorMessages, action: 'error'}))
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message: this.formErrorMessages,
+          action: 'error',
+        })
+      );
     }
   }
-
-  showQuestionTypeLabel(value) {
-    return getOptionLabel(value, this.questionTypeOptions);
-  }
-
-
 
   ngOnDestroy(): void {
     this.store.dispatch(new ResetExerciseFormAction());

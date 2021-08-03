@@ -37,8 +37,6 @@ export type HotToastStatus =
 
 export type MatSelectOption = { label: string; value: number | string };
 
-
-
 export type FetchParams = {
   currentPage: number;
   totalCount: number;
@@ -78,14 +76,13 @@ export const SUBSCRIPTION_METHODS = {
   DELETE_METHOD: 'DELETE',
 };
 
-
-export type ChatType = | 'IL' | 'GP';
+export type ChatType = 'IL' | 'GP';
 export const ChatTypes = {
   INDIVIDUAL: 'IL',
   GROUP: 'GP',
 };
 
-export type MembershipStatus = |'UI' | 'PE' | 'AP' | 'SU';
+export type MembershipStatus = 'UI' | 'PE' | 'AP' | 'SU';
 
 export const MembershipStatusOptions = {
   UNINITIALIZED: 'UI',
@@ -94,7 +91,7 @@ export const MembershipStatusOptions = {
   SUSPENDED: 'SU',
 };
 
-export type GroupType = |'CL'|'TE' | 'CO';
+export type GroupType = 'CL' | 'TE' | 'CO';
 
 export const GroupTypeOptions = {
   class: 'CL',
@@ -102,13 +99,13 @@ export const GroupTypeOptions = {
   coordination: 'CO',
 };
 
-export type ExerciseQuestionType = | 'OP'|'DE'|'IM'|'LI';
+export type ExerciseQuestionType = 'OP' | 'DE' | 'IM' | 'LI';
 export const ExerciseQuestionTypeOptions = {
   options: 'OP',
   descriptive_answer: 'DE',
   image_upload: 'IM',
-  link: 'LI'
-}
+  link: 'LI',
+};
 
 export type User = {
   id?: number;
@@ -143,14 +140,13 @@ export type UserRole = {
 export type Announcement = {
   id: number;
   title: string;
-  author:any;
+  author: any;
   message: string;
   institution: any;
   groups: any[];
   createdAt?: string;
   updatedAt?: string;
 };
-
 
 export type Group = {
   id: number;
@@ -164,7 +160,6 @@ export type Group = {
   createdAt?: string;
   updatedAt?: string;
 };
-
 
 export type Institution = {
   id: number;
@@ -204,7 +199,7 @@ export type CourseSection = {
   course: any;
   createdAt?: string;
   updatedAt?: string;
-}
+};
 
 export type Chapter = {
   id: number;
@@ -219,20 +214,26 @@ export type Chapter = {
   updatedAt?: string;
 };
 
-
-
 export type Exercise = {
   id: number;
   prompt: string;
   chapter: any;
-  questionType:ExerciseQuestionType;
+  questionType: ExerciseQuestionType;
   required: boolean;
   options?: string[];
   points?: number;
-  files?: any[],
   createdAt?: string;
   updatedAt?: string;
-}
+};
+
+export type ExerciseKey = {
+  id: number;
+  exercise: any;
+  validOption: string;
+  validAnswers: string[];
+  referenceLink: string;
+  referenceImages: string[];
+};
 
 export type ExerciseSubmission = {
   id: number;
@@ -240,24 +241,23 @@ export type ExerciseSubmission = {
   participant: any;
   option?: string;
   answer?: string;
-  files?: string[];
+  link?: string;
+  images?: string[];
   points?: number;
   createdAt?: string;
   updatedAt?: string;
-}
+};
 
 export type Report = {
   id: number;
-  participant:any;
+  participant: any;
   course: any;
   institution: any;
   completed: number;
   score: number;
   createdAt?: string;
   updatedAt?: string;
-}
-
-
+};
 
 export type Chat = {
   id: number;
@@ -301,8 +301,6 @@ type ResourceActions = {
   UPDATE: boolean;
   DELETE: boolean;
 };
-
-
 
 const defaultActions: ResourceActions = {
   LIST: true,

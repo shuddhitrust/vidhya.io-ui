@@ -276,8 +276,18 @@ export const COURSE_SECTION_QUERIES = {
     }
   `,
   GET_COURSE_SECTIONS: gql`
-    query courseSections($courseId: ID!, $searchField: String, $limit: Int, $offset: Int) {
-      courseSections(courseId: $courseId, searchField: $searchField, limit: $limit, offset: $offset) {
+    query courseSections(
+      $courseId: ID!
+      $searchField: String
+      $limit: Int
+      $offset: Int
+    ) {
+      courseSections(
+        courseId: $courseId
+        searchField: $searchField
+        limit: $limit
+        offset: $offset
+      ) {
         id
         title
         index
@@ -311,8 +321,18 @@ export const CHAPTER_QUERIES = {
     }
   `,
   GET_CHAPTERS: gql`
-    query chapters($courseId: ID, $searchField: String, $limit: Int, $offset: Int) {
-      chapters(courseId: $courseId, searchField: $searchField, limit: $limit, offset: $offset) {
+    query chapters(
+      $courseId: ID
+      $searchField: String
+      $limit: Int
+      $offset: Int
+    ) {
+      chapters(
+        courseId: $courseId
+        searchField: $searchField
+        limit: $limit
+        offset: $offset
+      ) {
         id
         title
         instructions
@@ -349,8 +369,18 @@ export const EXERCISE_QUERIES = {
     }
   `,
   GET_EXERCISES: gql`
-    query exercises($chapterId: ID!, $searchField: String, $limit: Int, $offset: Int) {
-      exercises(chapterId: $chapterId, searchField: $searchField, limit: $limit, offset: $offset) {
+    query exercises(
+      $chapterId: ID!
+      $searchField: String
+      $limit: Int
+      $offset: Int
+    ) {
+      exercises(
+        chapterId: $chapterId
+        searchField: $searchField
+        limit: $limit
+        offset: $offset
+      ) {
         id
         prompt
         questionType
@@ -381,15 +411,28 @@ export const EXERCISE_SUBMISSION_QUERIES = {
         }
         option
         answer
-        files
+        link
+        images
         points
         status
       }
     }
   `,
   GET_EXERCISE_SUBMISSIONS: gql`
-    query exerciseSubmissions($exerciseId: ID, $participantId: ID, $searchField: String, $limit: Int, $offset: Int) {
-      exerciseSubmissions(exerciseId: $exerciseId, participantId: $participantId, searchField: $searchField, limit: $limit, offset: $offset) {
+    query exerciseSubmissions(
+      $exerciseId: ID
+      $participantId: ID
+      $searchField: String
+      $limit: Int
+      $offset: Int
+    ) {
+      exerciseSubmissions(
+        exerciseId: $exerciseId
+        participantId: $participantId
+        searchField: $searchField
+        limit: $limit
+        offset: $offset
+      ) {
         id
         participant {
           id
@@ -405,7 +448,8 @@ export const EXERCISE_SUBMISSION_QUERIES = {
         }
         option
         answer
-        files
+        link
+        images
         points
         status
       }
@@ -437,8 +481,22 @@ export const REPORT_QUERIES = {
     }
   `,
   GET_REPORTS: gql`
-    query reports($participantId: ID, $courseId: ID, $institutionId: ID, $searchField: String, $limit: Int, $offset: Int) {
-      reports(participantId: $participantId, courseId: $courseId, institutionId: $institutionId, searchField: $searchField, limit: $limit, offset: $offset) {
+    query reports(
+      $participantId: ID
+      $courseId: ID
+      $institutionId: ID
+      $searchField: String
+      $limit: Int
+      $offset: Int
+    ) {
+      reports(
+        participantId: $participantId
+        courseId: $courseId
+        institutionId: $institutionId
+        searchField: $searchField
+        limit: $limit
+        offset: $offset
+      ) {
         id
         participant {
           id

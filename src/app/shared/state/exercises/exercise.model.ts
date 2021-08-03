@@ -3,6 +3,7 @@ import {
   Exercise,
   FetchParams,
   startingFetchParams,
+  ExerciseKey,
 } from '../../common/models';
 
 export const emptyExerciseFormRecord: Exercise = {
@@ -12,9 +13,18 @@ export const emptyExerciseFormRecord: Exercise = {
   questionType: null,
   required: true,
   options: null,
-  files: null,
   points: null,
 };
+
+export const emptyExerciseKeyFormRecord: ExerciseKey = {
+  id: null,
+  exercise: null,
+  validOption: null,
+  validAnswers: [],
+  referenceLink: null,
+  referenceImages: [],
+};
+
 export interface ExerciseStateModel {
   exercises: Exercise[];
   lastPage: number;

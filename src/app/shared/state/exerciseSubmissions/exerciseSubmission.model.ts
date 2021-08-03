@@ -11,8 +11,8 @@ export const emptyExerciseSubmissionFormRecord: ExerciseSubmission = {
   participant: null,
   option: null,
   answer: null,
-  files: null,
-  points: null
+  images: null,
+  points: null,
 };
 export interface ExerciseSubmissionStateModel {
   exerciseSubmissions: ExerciseSubmission[];
