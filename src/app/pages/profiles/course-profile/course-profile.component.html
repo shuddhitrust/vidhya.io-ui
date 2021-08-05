@@ -22,7 +22,19 @@
   >
     <mat-icon>edit</mat-icon>
   </button>
-
+  <button
+    *ngIf="
+      authorizeResourceMethod(resourceActions.UPDATE) &&
+      course.status == courseStatusOptions.draft
+    "
+    mat-raised-button
+    color="info"
+    [class.button-loading]="isFetchingCourse$ | async"
+    class="profile-button"
+    (click)="publishCourse()"
+  >
+    Publish
+  </button>
   <div class="course-card">
     <h2>{{ course?.title }}</h2>
     <small>{{ course?.blurb }}</small>

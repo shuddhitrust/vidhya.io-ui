@@ -247,8 +247,8 @@ export const COURSE_MUTATIONS = {
     }
   `,
   PUBLISH_COURSE: gql`
-    mutation publishCourse($id: ID!) {
-      publishCourse(id: $id) {
+    mutation publishCourse($id: ID!, $publishChapters: Boolean!) {
+      publishCourse(id: $id, publishChapters: $publishChapters) {
         ok
         course {
           id

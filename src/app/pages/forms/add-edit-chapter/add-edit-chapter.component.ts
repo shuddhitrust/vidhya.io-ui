@@ -16,7 +16,12 @@ import {
 import { ChapterState } from 'src/app/shared/state/chapters/chapter.state';
 import { Observable } from 'rxjs';
 import { emptyChapterFormRecord } from 'src/app/shared/state/chapters/chapter.model';
-import { Chapter, Course, MatSelectOption } from 'src/app/shared/common/models';
+import {
+  Chapter,
+  ChapterStatusOptions,
+  Course,
+  MatSelectOption,
+} from 'src/app/shared/common/models';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { GroupState } from 'src/app/shared/state/groups/group.state';
 import { FetchCoursesAction } from 'src/app/shared/state/courses/course.actions';
@@ -32,6 +37,7 @@ import { CourseState } from 'src/app/shared/state/courses/course.state';
 })
 export class AddEditChapterComponent implements OnInit {
   formSubmitting: boolean = false;
+  chapterStatusOptions = ChapterStatusOptions;
   currentDate = new Date();
   params: object = {};
   @Select(ChapterState.getChapterFormRecord)
@@ -49,9 +55,9 @@ export class AddEditChapterComponent implements OnInit {
   chapterFormRecord: Chapter = emptyChapterFormRecord;
   chapterForm: FormGroup;
   @Select(CourseState.listCourseOptions)
-  courseOptions$: Observable<MatSelectOption[]>
+  courseOptions$: Observable<MatSelectOption[]>;
   @Select(ChapterState.listChapterOptions)
-  chapterOptions$: Observable<MatSelectOption[]>
+  chapterOptions$: Observable<MatSelectOption[]>;
 
   constructor(
     private location: Location,
@@ -59,12 +65,16 @@ export class AddEditChapterComponent implements OnInit {
     private route: ActivatedRoute,
     private fb: FormBuilder
   ) {
-    this.store.dispatch(new FetchCoursesAction({searchParams: defaultSearchParams}));
+    this.store.dispatch(
+      new FetchCoursesAction({ searchParams: defaultSearchParams })
+    );
     this.chapterForm = this.setupChapterFormGroup();
-    this.courseOptions$.subscribe(val => console.log('ChapterFormRecord course options = >', val))
+    this.courseOptions$.subscribe((val) =>
+      console.log('ChapterFormRecord course options = >', val)
+    );
     this.chapterFormRecord$.subscribe((val) => {
       this.chapterFormRecord = val;
-      console.log('ChapterFormRecord => ', val)
+      console.log('ChapterFormRecord => ', val);
       this.chapterForm = this.setupChapterFormGroup(this.chapterFormRecord);
     });
 
@@ -89,6 +99,7 @@ export class AddEditChapterComponent implements OnInit {
       ],
       dueDate: [chapterFormRecord?.dueDate],
       points: [chapterFormRecord?.points],
+      status: [chapterFormRecord?.status],
     });
   };
   ngOnInit(): void {

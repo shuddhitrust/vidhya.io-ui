@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import {
   DeleteChapterAction,
   GetChapterAction,
+  PublishChapterAction,
   ResetChapterFormAction,
 } from 'src/app/shared/state/chapters/chapter.actions';
 import { ChapterState } from 'src/app/shared/state/chapters/chapter.state';
@@ -17,6 +18,7 @@ import {
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   Chapter,
+  ChapterStatusOptions,
   Exercise,
   ExerciseKey,
   ExerciseQuestionTypeOptions,
@@ -83,6 +85,7 @@ type previewImage = {
 export class ChapterProfileComponent implements OnInit, OnDestroy {
   resource = resources.CHAPTER;
   resourceActions = RESOURCE_ACTIONS;
+  chapterStatusOptions = ChapterStatusOptions;
   @Select(ChapterState.getChapterFormRecord)
   chapter$: Observable<Chapter>;
   chapter: Chapter;
@@ -212,6 +215,10 @@ export class ChapterProfileComponent implements OnInit, OnDestroy {
       id: this.chapter.id,
     });
     this.store.dispatch(new DeleteChapterAction({ id: this.chapter?.id }));
+  }
+
+  publishChapter() {
+    this.store.dispatch(new PublishChapterAction({ id: this.chapter.id }));
   }
 
   editExercise(exercise) {

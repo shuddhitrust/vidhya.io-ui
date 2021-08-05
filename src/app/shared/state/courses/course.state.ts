@@ -334,12 +334,6 @@ export class CourseState {
     }
   }
 
-  @Action(PublishCourseAction)
-  PublishCourseAction(
-    { getState, patchState }: StateContext<CourseStateModel>,
-    { payload }: PublishCourseAction
-  ) {}
-
   @Action(DeleteCourseAction)
   deleteCourse(
     {}: StateContext<CourseStateModel>,
@@ -366,6 +360,50 @@ export class CourseState {
             this.store.dispatch(
               new ForceRefetchCoursesAction({
                 searchParams: defaultSearchParams,
+              })
+            );
+          } else {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(response?.errors),
+                action: 'error',
+              })
+            );
+          }
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+        }
+      );
+  }
+
+  @Action(PublishCourseAction)
+  PublishCourseAction(
+    {}: StateContext<CourseStateModel>,
+    { payload }: PublishCourseAction
+  ) {
+    let { id, publishChapters } = payload;
+    this.apollo
+      .mutate({
+        mutation: COURSE_MUTATIONS.PUBLISH_COURSE,
+        variables: { id, publishChapters },
+      })
+      .subscribe(
+        ({ data }: any) => {
+          const response = data.publishCourse;
+          console.log('from publish course ', { data });
+          if (response.ok) {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: `Course ${
+                  publishChapters ? 'and its chapters' : ''
+                } published successfully!`,
+                action: 'success',
               })
             );
           } else {

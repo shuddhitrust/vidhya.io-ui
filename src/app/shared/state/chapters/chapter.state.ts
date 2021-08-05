@@ -365,9 +365,45 @@ export class ChapterState {
 
   @Action(PublishChapterAction)
   PublishCourseAction(
-    { getState, patchState }: StateContext<ChapterStateModel>,
+    {}: StateContext<ChapterStateModel>,
     { payload }: PublishChapterAction
-  ) {}
+  ) {
+    let { id } = payload;
+    this.apollo
+      .mutate({
+        mutation: CHAPTER_MUTATIONS.PUBLISH_CHAPTER,
+        variables: { id },
+      })
+      .subscribe(
+        ({ data }: any) => {
+          const response = data.publishCourse;
+          console.log('from publish chapter ', { data });
+          if (response.ok) {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: `Chapter published successfully!`,
+                action: 'success',
+              })
+            );
+          } else {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(response?.errors),
+                action: 'error',
+              })
+            );
+          }
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+        }
+      );
+  }
 
   @Action(DeleteChapterAction)
   deleteChapter(

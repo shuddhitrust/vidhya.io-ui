@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import {
   DeleteCourseAction,
   GetCourseAction,
+  PublishCourseAction,
   ResetCourseFormAction,
 } from 'src/app/shared/state/courses/course.actions';
 import { CourseState } from 'src/app/shared/state/courses/course.state';
@@ -18,19 +19,26 @@ import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   Chapter,
   Course,
+  CourseStatusOptions,
   resources,
   RESOURCE_ACTIONS,
 } from 'src/app/shared/common/models';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { ChapterState } from 'src/app/shared/state/chapters/chapter.state';
-import { FetchChaptersAction, FetchNextChaptersAction, SetCourseInChapterForm } from 'src/app/shared/state/chapters/chapter.actions';
+import {
+  FetchChaptersAction,
+  FetchNextChaptersAction,
+  SetCourseInChapterForm,
+} from 'src/app/shared/state/chapters/chapter.actions';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
- 
+
 @Component({
   selector: 'app-course-profile',
   templateUrl: './course-profile.component.html',
-  styleUrls: ['./course-profile.component.scss','./../../../shared/common/shared-styles.css'
- ],
+  styleUrls: [
+    './course-profile.component.scss',
+    './../../../shared/common/shared-styles.css',
+  ],
 })
 export class CourseProfileComponent implements OnInit, OnDestroy {
   resource = resources.COURSE;
@@ -42,10 +50,10 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
   chapters$: Observable<Chapter[]>;
   @Select(ChapterState.isFetching)
   isFetchingChapters$: Observable<boolean>;
-  isFetchingChapters: boolean;  
+  isFetchingChapters: boolean;
   @Select(CourseState.isFetching)
   isFetchingCourse$: Observable<boolean>;
-
+  courseStatusOptions = CourseStatusOptions;
   constructor(
     public dialog: MatDialog,
     private location: Location,
@@ -65,18 +73,23 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
   }
 
   chapterFilters() {
-    return {courseId: this.course?.id}
+    return { courseId: this.course?.id };
   }
 
   fetchChapters() {
     this.store.dispatch(
-      new FetchChaptersAction({ searchParams: {...defaultSearchParams, newColumnFilters: this.chapterFilters()} })
+      new FetchChaptersAction({
+        searchParams: {
+          ...defaultSearchParams,
+          newColumnFilters: this.chapterFilters(),
+        },
+      })
     );
   }
 
   authorizeResourceMethod(action) {
     return this.auth.authorizeResource(this.resource, action, {
-      adminIds: [this.course?.instructor?.id]
+      adminIds: [this.course?.instructor?.id],
     });
   }
 
@@ -117,14 +130,16 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
     this.store.dispatch(new DeleteCourseAction({ id: this.course.id }));
   }
 
-    onScroll() {
+  onScroll() {
     console.log('scrolling groups');
     if (!this.isFetchingChapters) {
       this.store.dispatch(new FetchNextChaptersAction());
     }
   }
   createChapter() {
-    this.store.dispatch(new SetCourseInChapterForm({courseId: this.course?.id}))
+    this.store.dispatch(
+      new SetCourseInChapterForm({ courseId: this.course?.id })
+    );
     this.router.navigateByUrl(uiroutes.CHAPTER_FORM_ROUTE.route);
   }
 
@@ -134,7 +149,11 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
     });
   }
 
-
+  publishCourse() {
+    this.store.dispatch(
+      new PublishCourseAction({ id: this.course.id, publishChapters: true })
+    );
+  }
 
   ngOnDestroy(): void {
     this.store.dispatch(new ResetCourseFormAction());

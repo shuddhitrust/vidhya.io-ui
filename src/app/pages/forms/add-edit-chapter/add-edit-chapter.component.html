@@ -49,24 +49,39 @@
 
     <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
       <mat-label>Course</mat-label>
-      <mat-select formControlName="course"
-        placeholder="The course that this chapter belongs to">
-        <mat-option *ngFor="let course of courseOptions$ | async" [value]="course.value">
+      <mat-select
+        formControlName="course"
+        placeholder="The course that this chapter belongs to"
+      >
+        <mat-option
+          *ngFor="let course of courseOptions$ | async"
+          [value]="course.value"
+        >
           {{ course.label }}
         </mat-option>
       </mat-select>
-            <small class="validation-error" *ngIf="
-                      chapterForm.get('course').hasError('required') &&
-                      formDirective.submitted
-                    ">
-              Course is required
-            </small>
+      <small
+        class="validation-error"
+        *ngIf="
+          chapterForm.get('course').hasError('required') &&
+          formDirective.submitted
+        "
+      >
+        Course is required
+      </small>
     </mat-form-field>
 
     <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
       <mat-label>Prerequisites</mat-label>
-      <mat-select multiple formControlName="prerequisites" placeholder="Select the prerequisite chapters to unlock this chapter">
-        <mat-option *ngFor="let chapter of chapterOptions$ | async" [value]="chapter.value">
+      <mat-select
+        multiple
+        formControlName="prerequisites"
+        placeholder="Select the prerequisite chapters to unlock this chapter"
+      >
+        <mat-option
+          *ngFor="let chapter of chapterOptions$ | async"
+          [value]="chapter.value"
+        >
           {{ chapter.label }}
         </mat-option>
       </mat-select>
@@ -74,31 +89,55 @@
 
     <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
       <mat-label>Due date</mat-label>
-      <input matInput [matDatepicker]="datepicker"
+      <input
+        matInput
+        [matDatepicker]="datepicker"
         [min]="currentDate"
-        formControlName="dueDate">
-      <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
-      <mat-datepicker #datepicker
-        [startAt]="currentDate">
+        formControlName="dueDate"
+      />
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="datepicker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #datepicker [startAt]="currentDate">
         <mat-datepicker-actions>
           <button mat-button matDatepickerCancel>Cancel</button>
-          <button mat-raised-button color="primary" matDatepickerApply>Apply</button>
+          <button mat-raised-button color="primary" matDatepickerApply>
+            Apply
+          </button>
         </mat-datepicker-actions>
       </mat-datepicker>
     </mat-form-field>
 
     <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
       <mat-label>Points</mat-label>
-      <input matInput type="number" formControlName="points" placeholder="Points for the chapter" />
+      <input
+        matInput
+        type="number"
+        formControlName="points"
+        placeholder="Points for the chapter"
+      />
     </mat-form-field>
     <button
       type="submit"
+      (click)="chapterForm.get('status').setValue(chapterStatusOptions.draft)"
+      mat-raised-button
+      color="secondary"
+      [disabled]="(formSubmitting$ | async) === true"
+    >
+      {{ (formSubmitting$ | async) === true ? "Saving..." : "Save draft" }}
+    </button>
+    <button
+      type="submit"
+      (click)="
+        chapterForm.get('status').setValue(chapterStatusOptions.published)
+      "
       class="floating-button-bottom"
       mat-raised-button
       color="primary"
       [disabled]="(formSubmitting$ | async) === true"
     >
-      {{ (formSubmitting$ | async) === true ? "Submitting..." : "Submit" }}
+      {{ (formSubmitting$ | async) === true ? "Publishing..." : "Publish" }}
     </button>
   </form>
 </div>
