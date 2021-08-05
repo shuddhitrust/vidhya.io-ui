@@ -246,6 +246,18 @@ export const COURSE_MUTATIONS = {
       }
     }
   `,
+  PUBLISH_COURSE: gql`
+    mutation publishCourse($id: ID!) {
+      publishCourse(id: $id) {
+        ok
+        course {
+          id
+          title
+          status
+        }
+      }
+    }
+  `,
 };
 
 export const COURSE_SECTION_MUTATIONS = {
@@ -318,6 +330,18 @@ export const CHAPTER_MUTATIONS = {
       }
     }
   `,
+  PUBLISH_CHAPTER: gql`
+    mutation publishChapter($id: ID!) {
+      publishChapter(id: $id) {
+        ok
+        chapter {
+          id
+          title
+          status
+        }
+      }
+    }
+  `,
 };
 
 export const EXERCISE_MUTATIONS = {
@@ -356,7 +380,6 @@ export const EXERCISE_MUTATIONS = {
   `,
 };
 
-
 export const EXERCISE_SUBMISSION_MUTATIONS = {
   CREATE_EXERCISE_SUBMISSION: gql`
     mutation createExerciseSubmission($input: ExerciseSubmissionInput!) {
@@ -369,7 +392,10 @@ export const EXERCISE_SUBMISSION_MUTATIONS = {
     }
   `,
   UPDATE_EXERCISE_SUBMISSION: gql`
-    mutation updateExerciseSubmission($id: ID!, $input: ExerciseSubmissionInput!) {
+    mutation updateExerciseSubmission(
+      $id: ID!
+      $input: ExerciseSubmissionInput!
+    ) {
       updateExerciseSubmission(id: $id, input: $input) {
         ok
         exerciseSubmission {

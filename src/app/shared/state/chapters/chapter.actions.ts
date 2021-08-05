@@ -20,9 +20,9 @@ export class ChapterSubscriptionAction {
 }
 
 export class SetCourseInChapterForm {
-  static readonly type = '[CHAPTER] Set course in form'
+  static readonly type = '[CHAPTER] Set course in form';
 
-  constructor(public payload: {courseId: number}){}
+  constructor(public payload: { courseId: number }) {}
 }
 
 export class ForceRefetchChaptersAction {
@@ -56,6 +56,12 @@ export class ResetChapterFormAction {
 
 export class DeleteChapterAction {
   static readonly type = '[CHAPTER] Delete';
+
+  constructor(public payload: idPayload) {}
+}
+
+export class PublishChapterAction {
+  static readonly type = '[CHAPTER] Publish';
 
   constructor(public payload: idPayload) {}
 }

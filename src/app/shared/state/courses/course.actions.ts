@@ -54,3 +54,9 @@ export class DeleteCourseAction {
 
   constructor(public payload: idPayload) {}
 }
+
+export class PublishCourseAction {
+  static readonly type = '[COURSE] Publish';
+
+  constructor(public payload: { id: number; publishChapters: boolean }) {}
+}

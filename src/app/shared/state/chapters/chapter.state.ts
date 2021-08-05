@@ -14,6 +14,7 @@ import {
   FetchNextChaptersAction,
   ForceRefetchChaptersAction,
   GetChapterAction,
+  PublishChapterAction,
   ResetChapterFormAction,
   SetCourseInChapterForm,
 } from './chapter.actions';
@@ -361,6 +362,12 @@ export class ChapterState {
       );
     }
   }
+
+  @Action(PublishChapterAction)
+  PublishCourseAction(
+    { getState, patchState }: StateContext<ChapterStateModel>,
+    { payload }: PublishChapterAction
+  ) {}
 
   @Action(DeleteChapterAction)
   deleteChapter(

@@ -15,6 +15,7 @@ import {
   FetchNextCoursesAction,
   ForceRefetchCoursesAction,
   GetCourseAction,
+  PublishCourseAction,
   ResetCourseFormAction,
 } from './course.actions';
 import { COURSE_QUERIES } from '../../api/graphql/queries.graphql';
@@ -32,6 +33,7 @@ import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
 import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
 import { SearchParams } from '../../abstract/master-grid/table.model';
+import { StateContextFactory } from '@ngxs/store/src/internal/state-context-factory';
 
 @State<CourseStateModel>({
   name: 'courseState',
@@ -331,6 +333,12 @@ export class CourseState {
       );
     }
   }
+
+  @Action(PublishCourseAction)
+  PublishCourseAction(
+    { getState, patchState }: StateContext<CourseStateModel>,
+    { payload }: PublishCourseAction
+  ) {}
 
   @Action(DeleteCourseAction)
   deleteCourse(

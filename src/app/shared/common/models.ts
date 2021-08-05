@@ -107,8 +107,15 @@ export const ExerciseQuestionTypeOptions = {
   link: 'LI',
 };
 
-export type CourseStatus = 'DR' | 'PU';
+export type CourseStatus = 'DR' | 'PU' | 'AR';
 export const CourseStatusOptions = {
+  draft: 'DR',
+  published: 'PU',
+  archived: 'AR',
+};
+
+export type ChapterStatus = 'DR' | 'PU';
+export const ChapterStatusOptions = {
   draft: 'DR',
   published: 'PU',
 };
@@ -217,7 +224,7 @@ export type Chapter = {
   prerequisites?: any[];
   dueDate?: string;
   points?: number;
-  status: CourseStatus;
+  status: ChapterStatus;
   createdAt?: string;
   updatedAt?: string;
 };
