@@ -3,6 +3,7 @@ import {
   Chapter,
   FetchParams,
   startingFetchParams,
+  CourseStatusOptions,
 } from '../../common/models';
 
 export const emptyChapterFormRecord: Chapter = {
@@ -10,6 +11,7 @@ export const emptyChapterFormRecord: Chapter = {
   title: null,
   instructions: null,
   course: null,
+  status: 'DR',
 };
 export interface ChapterStateModel {
   chapters: Chapter[];

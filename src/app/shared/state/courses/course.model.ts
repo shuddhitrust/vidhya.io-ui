@@ -4,6 +4,7 @@ import {
   Course,
   FetchParams,
   startingFetchParams,
+  CourseStatusOptions,
 } from '../../common/models';
 import { uiroutes } from '../../common/ui-routes';
 
@@ -20,6 +21,7 @@ export const emptyCourseFormRecord: Course = {
   startDate: null,
   endDate: null,
   creditHours: null,
+  status: 'DR',
 };
 export interface CourseStateModel {
   courses: Course[];

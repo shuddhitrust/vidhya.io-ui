@@ -242,6 +242,7 @@ export const COURSE_QUERIES = {
         startDate
         endDate
         creditHours
+        status
       }
     }
   `,
@@ -256,6 +257,7 @@ export const COURSE_QUERIES = {
           lastName
         }
         description
+        status
       }
     }
   `,
@@ -310,6 +312,7 @@ export const CHAPTER_QUERIES = {
         course {
           id
           title
+          status
         }
         section {
           id
@@ -317,6 +320,7 @@ export const CHAPTER_QUERIES = {
         }
         dueDate
         points
+        status
       }
     }
   `,
@@ -339,6 +343,7 @@ export const CHAPTER_QUERIES = {
         course {
           id
           title
+          status
         }
         section {
           id
@@ -346,6 +351,7 @@ export const CHAPTER_QUERIES = {
         }
         dueDate
         points
+        status
       }
     }
   `,
