@@ -99,8 +99,6 @@ export const MY_FORMATS = {
   },
 };
 
-
-
 /** config angular i18n **/
 import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
@@ -142,11 +140,28 @@ import { ExerciseState } from './shared/state/exercises/exercise.state';
 import { ExerciseSubmissionState } from './shared/state/exerciseSubmissions/exerciseSubmission.state';
 import { ReportState } from './shared/state/reports/report.state';
 import { GradingDashboardComponent } from './pages/static/dashboard/tabs/grading-dashboard/grading-dashboard.component';
-import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
-import { CourseDeleteConfirmationDialog, CourseProfileComponent } from './pages/profiles/course-profile/course-profile.component';
-import { NgxMatDateFormats, NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
-import { ChapterDeleteConfirmationDialog, ChapterProfileComponent } from './pages/profiles/chapter-profile/chapter-profile.component';
+import {
+  MomentDateAdapter,
+  MAT_MOMENT_DATE_ADAPTER_OPTIONS,
+} from '@angular/material-moment-adapter';
+import {
+  DateAdapter,
+  MAT_DATE_FORMATS,
+  MAT_DATE_LOCALE,
+} from '@angular/material/core';
+import {
+  CourseDeleteConfirmationDialog,
+  CourseProfileComponent,
+} from './pages/profiles/course-profile/course-profile.component';
+import {
+  NgxMatDateFormats,
+  NGX_MAT_DATE_FORMATS,
+} from '@angular-material-components/datetime-picker';
+import {
+  ChapterDeleteConfirmationDialog,
+  ChapterProfileComponent,
+  ExercicseDeleteConfirmationDialog,
+} from './pages/profiles/chapter-profile/chapter-profile.component';
 import { AddEditExerciseComponent } from './pages/forms/add-edit-exercise/add-edit-exercise.component';
 @NgModule({
   declarations: [
@@ -210,7 +225,8 @@ import { AddEditExerciseComponent } from './pages/forms/add-edit-exercise/add-ed
     CourseDeleteConfirmationDialog,
     ChapterProfileComponent,
     ChapterDeleteConfirmationDialog,
-    AddEditExerciseComponent
+    ExercicseDeleteConfirmationDialog,
+    AddEditExerciseComponent,
   ],
   imports: [
     BrowserModule,
@@ -263,11 +279,12 @@ import { AddEditExerciseComponent } from './pages/forms/add-edit-exercise/add-ed
     { provide: NZ_I18N, useValue: en_US },
     RegistrationFormAuthGuard,
     FormBuilder,
-    {provide: DateAdapter,
-    useClass:MomentDateAdapter,
-    deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS]
-  },
-  { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+    {
+      provide: DateAdapter,
+      useClass: MomentDateAdapter,
+      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
+    },
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
   bootstrap: [AppComponent],
 })

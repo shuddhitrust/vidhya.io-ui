@@ -2,7 +2,6 @@ import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 import {
   defaultExerciseState,
   emptyExerciseFormRecord,
-  ExerciseFormCloseURL,
   ExerciseStateModel,
 } from './exercise.model';
 
@@ -19,11 +18,7 @@ import {
 } from './exercise.actions';
 import { EXERCISE_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
-import {
-  Exercise,
-  MatSelectOption,
-  FetchParams,
-} from '../../common/models';
+import { Exercise, MatSelectOption, FetchParams } from '../../common/models';
 import { EXERCISE_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
@@ -64,9 +59,7 @@ export class ExerciseState {
     return state.fetchParamObjects[state.fetchParamObjects.length - 1];
   }
   @Selector()
-  static listExerciseOptions(
-    state: ExerciseStateModel
-  ): MatSelectOption[] {
+  static listExerciseOptions(state: ExerciseStateModel): MatSelectOption[] {
     const options: MatSelectOption[] = state.exercises.map((i) => {
       const option: MatSelectOption = {
         value: i.id,
@@ -94,16 +87,12 @@ export class ExerciseState {
   }
 
   @Selector()
-  static getExerciseFormRecord(
-    state: ExerciseStateModel
-  ): Exercise {
+  static getExerciseFormRecord(state: ExerciseStateModel): Exercise {
     return state.exerciseFormRecord;
   }
 
   @Action(ForceRefetchExercisesAction)
-  forceRefetchExercises({
-    patchState,
-  }: StateContext<ExerciseStateModel>) {
+  forceRefetchExercises({ patchState }: StateContext<ExerciseStateModel>) {
     patchState({ fetchPolicy: 'network-only' });
     this.store.dispatch(
       new FetchExercisesAction({ searchParams: defaultSearchParams })
@@ -295,7 +284,7 @@ export class ExerciseState {
     if (form.valid) {
       formSubmitting = true;
       let errorFetching = false;
-      patchState({ formSubmitting, errorFetching});
+      patchState({ formSubmitting, errorFetching });
       const values = form.value;
       console.log('Exercise Form values', values);
       const updateForm = values.id == null ? false : true;
@@ -332,7 +321,6 @@ export class ExerciseState {
               );
               form.reset();
               formDirective.resetForm();
-              // this.router.navigateByUrl(ExerciseFormCloseURL);
               patchState({
                 errorSubmitting: false,
                 exerciseFormRecord: emptyExerciseFormRecord,
@@ -340,8 +328,8 @@ export class ExerciseState {
               });
             } else {
               patchState({
-                errorSubmitting: true
-              })
+                errorSubmitting: true,
+              });
               this.store.dispatch(
                 new ShowNotificationAction({
                   message: getErrorMessageFromGraphQLResponse(response?.errors),
@@ -389,7 +377,6 @@ export class ExerciseState {
           const response = data.deleteExercise;
           console.log('from delete exercise ', { data });
           if (response.ok) {
-            this.router.navigateByUrl(ExerciseFormCloseURL);
             this.store.dispatch(
               new ShowNotificationAction({
                 message: 'Exercise deleted successfully!',

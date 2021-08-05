@@ -30,6 +30,7 @@ import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { ExerciseState } from 'src/app/shared/state/exercises/exercise.state';
 import {
   CreateUpdateExerciseAction,
+  DeleteExerciseAction,
   FetchExercisesAction,
   FetchNextExercisesAction,
   ResetExerciseFormAction,
@@ -213,6 +214,30 @@ export class ChapterProfileComponent implements OnInit, OnDestroy {
     this.store.dispatch(new DeleteChapterAction({ id: this.chapter?.id }));
   }
 
+  editExercise(exercise) {
+    console.log('editing exercise ', { exercise });
+    this.resetExerciseForm();
+    this.exerciseForm = this.setupExerciseForm(exercise);
+    this.showExerciseForm = true;
+  }
+  deleteExerciseConfirmation(exercise) {
+    const dialogRef = this.dialog.open(ExercicseDeleteConfirmationDialog, {
+      data: exercise,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('close dialog result for exercise => ', result);
+      if (result == true) {
+        this.deleteExercise(exercise);
+      }
+    });
+  }
+  deleteExercise(exercise) {
+    console.log('payload before passing to action => ', {
+      id: exercise.id,
+    });
+    this.store.dispatch(new DeleteExerciseAction({ id: exercise?.id }));
+  }
   onScroll() {
     console.log('scrolling exercises');
     if (!this.isFetchingExercises) {
@@ -376,5 +401,16 @@ export class ChapterDeleteConfirmationDialog {
   constructor(
     public dialogRef: MatDialogRef<ChapterDeleteConfirmationDialog>,
     @Inject(MAT_DIALOG_DATA) public data: Chapter
+  ) {}
+}
+
+@Component({
+  selector: 'exercise-delete-confirmation-dialog',
+  templateUrl: './delete-exercise-confirmation-dialog.html',
+})
+export class ExercicseDeleteConfirmationDialog {
+  constructor(
+    public dialogRef: MatDialogRef<ExercicseDeleteConfirmationDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: Exercise
   ) {}
 }

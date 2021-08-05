@@ -2,7 +2,6 @@ import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 import {
   defaultChapterState,
   emptyChapterFormRecord,
-  ChapterFormCloseURL,
   ChapterStateModel,
 } from './chapter.model';
 
@@ -33,7 +32,7 @@ import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
 import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
 import { SearchParams } from '../../abstract/master-grid/table.model';
-import { Location } from '@angular/common'
+import { Location } from '@angular/common';
 
 @State<ChapterStateModel>({
   name: 'chapterState',
@@ -45,7 +44,7 @@ export class ChapterState {
     private apollo: Apollo,
     private store: Store,
     private router: Router,
-    private location: Location,
+    private location: Location
   ) {}
 
   @Selector()
@@ -97,14 +96,16 @@ export class ChapterState {
   }
 
   @Action(SetCourseInChapterForm)
-  setCourseInChapterForm({getState, patchState}: StateContext<ChapterStateModel>, {payload}: SetCourseInChapterForm) {
-    const {courseId} = payload;
+  setCourseInChapterForm(
+    { getState, patchState }: StateContext<ChapterStateModel>,
+    { payload }: SetCourseInChapterForm
+  ) {
+    const { courseId } = payload;
     const state = getState();
-    let {chapterFormRecord} = state;
-    chapterFormRecord = {...chapterFormRecord, course: courseId }
-    patchState({chapterFormRecord})
+    let { chapterFormRecord } = state;
+    chapterFormRecord = { ...chapterFormRecord, course: courseId };
+    patchState({ chapterFormRecord });
   }
-  
 
   @Action(ForceRefetchChaptersAction)
   forceRefetchChapters({ patchState }: StateContext<ChapterStateModel>) {
@@ -377,7 +378,6 @@ export class ChapterState {
           const response = data.deleteChapter;
           console.log('from delete chapter ', { data });
           if (response.ok) {
-            this.router.navigateByUrl(ChapterFormCloseURL);
             this.store.dispatch(
               new ShowNotificationAction({
                 message: 'Chapter deleted successfully!',

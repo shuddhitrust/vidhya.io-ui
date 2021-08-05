@@ -50,12 +50,27 @@
         (scrolled)="onScroll()"
       >
         <div *ngFor="let exercise of exercises$ | async; let i = index">
-          <ng-container
-            *ngTemplateOutlet="
-              exerciseCard;
-              context: { exercise: exercise, index: i }
+          <div
+            *ngIf="
+              showExerciseForm && exerciseForm.get('id').value == exercise.id
             "
-          ></ng-container>
+          >
+            <ng-container
+              *ngTemplateOutlet="exerciseFormTemplate"
+            ></ng-container>
+          </div>
+          <div
+            *ngIf="
+              !(showExerciseForm && exerciseForm.get('id').value == exercise.id)
+            "
+          >
+            <ng-container
+              *ngTemplateOutlet="
+                exerciseCard;
+                context: { exercise: exercise, index: i }
+              "
+            ></ng-container>
+          </div>
         </div>
       </div>
     </span>
@@ -63,7 +78,7 @@
 </span>
 
 <br />
-<div *ngIf="showExerciseForm">
+<div *ngIf="showExerciseForm && exerciseForm.get('id').value == null">
   <ng-container *ngTemplateOutlet="exerciseFormTemplate"></ng-container>
 </div>
 <div class="container">
@@ -90,6 +105,27 @@
 
 <ng-template #exerciseCard let-exercise="exercise" let-index="index">
   <span class="exercise-form-card">
+    <button
+      *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
+      mat-mini-fab
+      type="button"
+      color="warn"
+      class="profile-button"
+      (click)="deleteExerciseConfirmation(exercise)"
+    >
+      <mat-icon>delete</mat-icon>
+    </button>
+    <button
+      *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
+      mat-mini-fab
+      type="button"
+      color="info"
+      [class.button-loading]="isFetchingChapter$ | async"
+      class="profile-button"
+      (click)="editExercise(exercise)"
+    >
+      <mat-icon>edit</mat-icon>
+    </button>
     <p>{{ exercise.prompt }}</p>
     <p>
       {{ showQuestionTypeLabel(exercise.questionType) }} -

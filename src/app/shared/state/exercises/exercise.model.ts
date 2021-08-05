@@ -52,6 +52,3 @@ export const defaultExerciseState: ExerciseStateModel = {
   formSubmitting: false,
   errorSubmitting: false,
 };
-
-export const ExerciseFormCloseURL =
-  'dashboard?adminSection=Institutions&tab=Exercises';

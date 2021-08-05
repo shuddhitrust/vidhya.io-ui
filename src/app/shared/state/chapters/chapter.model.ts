@@ -38,6 +38,3 @@ export const defaultChapterState: ChapterStateModel = {
   formSubmitting: false,
   errorSubmitting: false,
 };
-
-export const ChapterFormCloseURL =
-  'dashboard?adminSection=Institutions&tab=Chapters';
