@@ -19,6 +19,7 @@ import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   Chapter,
   ChapterStatusOptions,
+  CourseStatusOptions,
   Exercise,
   ExerciseKey,
   ExerciseQuestionTypeOptions,
@@ -85,6 +86,7 @@ type previewImage = {
 export class ChapterProfileComponent implements OnInit, OnDestroy {
   resource = resources.CHAPTER;
   resourceActions = RESOURCE_ACTIONS;
+  courseStatusOptions = CourseStatusOptions;
   chapterStatusOptions = ChapterStatusOptions;
   @Select(ChapterState.getChapterFormRecord)
   chapter$: Observable<Chapter>;
@@ -217,6 +219,18 @@ export class ChapterProfileComponent implements OnInit, OnDestroy {
     this.store.dispatch(new DeleteChapterAction({ id: this.chapter?.id }));
   }
 
+  showExerciseFormInsteadOfCard(exercise) {
+    return (
+      this.showExerciseForm && this.exerciseForm.get('id').value == exercise.id
+    );
+  }
+  showPublishChapterButton() {
+    return (
+      this.authorizeResourceMethod(this.resourceActions.UPDATE) &&
+      this.chapter.status == this.chapterStatusOptions.draft &&
+      this.chapter?.course?.status == this.courseStatusOptions.published
+    );
+  }
   publishChapter() {
     this.store.dispatch(new PublishChapterAction({ id: this.chapter.id }));
   }

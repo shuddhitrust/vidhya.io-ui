@@ -25,10 +25,7 @@
     <mat-icon>edit</mat-icon>
   </button>
   <button
-    *ngIf="
-      authorizeResourceMethod(resourceActions.UPDATE) &&
-      chapter.status == chapterStatusOptions.draft
-    "
+    *ngIf="showPublishChapterButton()"
     mat-raised-button
     color="info"
     [class.button-loading]="isFetchingChapter$ | async"
@@ -63,18 +60,14 @@
       >
         <div *ngFor="let exercise of exercises$ | async; let i = index">
           <div
-            *ngIf="
-              showExerciseForm && exerciseForm.get('id').value == exercise.id
-            "
+            *ngIf="showExerciseFormInsteadOfCard(exercise)"
           >
             <ng-container
               *ngTemplateOutlet="exerciseFormTemplate"
             ></ng-container>
           </div>
           <div
-            *ngIf="
-              !(showExerciseForm && exerciseForm.get('id').value == exercise.id)
-            "
+            *ngIf="!showExerciseFormInsteadOfCard(exercise)"
           >
             <ng-container
               *ngTemplateOutlet="
