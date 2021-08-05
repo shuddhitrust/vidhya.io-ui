@@ -85,20 +85,20 @@
   </mat-card>
   <mat-dialog-actions class="card-actions">
     <button
-      mat-raised-button
+      mat-mini-fab
       color="primary"
       *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
       (click)="editRole()"
     >
-      Edit
+      <mat-icon>edit</mat-icon>
     </button>
     <button
-      mat-raised-button
+      mat-mini-fab
       color="warn"
       *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
       (click)="deleteConfirmation()"
     >
-      Delete
+      <mat-icon>delete</mat-icon>
     </button>
   </mat-dialog-actions>
 </div>

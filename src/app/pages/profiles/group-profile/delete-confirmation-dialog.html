@@ -15,12 +15,7 @@
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-raised-button mat-dialog-close>Cancel</button>
-  <button
-    mat-raised-button
-    [mat-dialog-close]="true"
-    cdkFocusInitial
-    color="warn"
-  >
-    Delete
+  <button mat-mini-fab [mat-dialog-close]="true" cdkFocusInitial color="warn">
+    <mat-icon>delete</mat-icon>
   </button>
 </mat-dialog-actions>

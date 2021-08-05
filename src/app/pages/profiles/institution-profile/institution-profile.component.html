@@ -3,21 +3,21 @@
 </button>
 <button
   *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
-  mat-raised-button
+  mat-mini-fab
   color="warn"
   class="profile-button"
   (click)="deleteConfirmation()"
 >
-  Delete
+  <mat-icon>delete</mat-icon>
 </button>
 <button
   *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
-  mat-raised-button
+  mat-mini-fab
   color="info"
   class="profile-button"
   (click)="editInstitution()"
 >
-  Edit
+  <mat-icon>edit</mat-icon>
 </button>
 <div class="institution-card">
   <h2>{{ institution?.name }}</h2>

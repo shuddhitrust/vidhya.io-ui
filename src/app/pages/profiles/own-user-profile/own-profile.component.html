@@ -2,13 +2,8 @@
   <mat-icon>keyboard_backspace</mat-icon>
 </button>
 
-<button
-  mat-raised-button
-  color="info"
-  class="profile-button"
-  (click)="editMember()"
->
-  Edit
+<button mat-mini-fab color="info" class="profile-button" (click)="editMember()">
+  <mat-icon>edit</mat-icon>
 </button>
 <div class="member-card">
   <h2>{{ currentMember?.firstName }}</h2>

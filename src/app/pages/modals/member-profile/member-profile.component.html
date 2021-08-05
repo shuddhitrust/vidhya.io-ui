@@ -20,12 +20,12 @@
       Edit
     </button>
     <button
-      mat-raised-button
+      mat-mini-fab
       color="warn"
       *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
       (click)="deleteConfirmation()"
     >
-      Delete
+      <mat-icon>delete</mat-icon>
     </button>
   </mat-dialog-actions>
 </div>

@@ -5,22 +5,22 @@
 <span *ngIf="!(isFetchingCourse$ | async)">
   <button
     *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
-    mat-raised-button
+    mat-mini-fab
     color="warn"
     class="profile-button"
     (click)="deleteConfirmation()"
   >
-    Delete
+    <mat-icon>delete</mat-icon>
   </button>
   <button
     *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
-    mat-raised-button
+    mat-mini-fab
     color="info"
     [class.button-loading]="isFetchingCourse$ | async"
     class="profile-button"
     (click)="editCourse()"
   >
-    Edit
+    <mat-icon>edit</mat-icon>
   </button>
 
   <div class="course-card">
@@ -31,16 +31,28 @@
 
 <div class="feed-header-block">
   <h2>Chapters</h2>
-  <button *ngIf="authorizeResourceMethod(resourceActions.CREATE)" (click)="createChapter()"
-    class="floating-header-button-top" mat-raised-button color="primary">
+  <button
+    *ngIf="authorizeResourceMethod(resourceActions.CREATE)"
+    (click)="createChapter()"
+    class="floating-header-button-top"
+    mat-raised-button
+    color="primary"
+  >
     Create Chapter
   </button>
 </div>
 <span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
   <span *ngIf="!(isFetchingChapters$ | async); else loading">
     <span *ngIf="(chapters$ | async).length > 0; else feedEmpty">
-      <div class="scroll-feed" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50"
-        infiniteScrollContainer=".scroll-feed" [fromRoot]="true" (scrolled)="onScroll()">
+      <div
+        class="scroll-feed"
+        infiniteScroll
+        [infiniteScrollDistance]="2"
+        [infiniteScrollThrottle]="50"
+        infiniteScrollContainer=".scroll-feed"
+        [fromRoot]="true"
+        (scrolled)="onScroll()"
+      >
         <div *ngFor="let chapter of chapters$ | async">
           <span class="feed-card" (click)="openChapter(chapter)">
             {{ chapter.title }}
@@ -53,7 +65,6 @@
   <ng-template #feedEmpty>
     <p class="center-title">There are no chapters in this course</p>
   </ng-template>
-
 </span>
 
 <ng-template #loading>

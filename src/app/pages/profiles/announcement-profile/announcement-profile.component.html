@@ -5,12 +5,12 @@
 <span *ngIf="!(isFetchingAnnouncement$ | async)">
   <button
     *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
-    mat-raised-button
+    mat-mini-fab
     color="warn"
     class="profile-button"
     (click)="deleteConfirmation()"
   >
-    Delete
+    <mat-icon>delete</mat-icon>
   </button>
   <div class="announcement-card">
     <h2>{{ announcement.title }}</h2>
