@@ -1,0 +1,153 @@
+<button mat-icon-button (click)="goBack()" class="floating-back-button">
+  <mat-icon>keyboard_backspace</mat-icon>
+</button>
+
+<span *ngIf="!(isFetchingChapter$ | async)">
+  <div class="chapter-card">
+    <h2>{{ chapter?.title }}</h2>
+    <p class="left">{{ chapter?.instructions }}</p>
+    <small class="left" style="font-style: italic" *ngIf="chapter?.dueDate"
+      >Due on {{ parseDate(chapter?.dueDate) }}
+    </small>
+  </div>
+</span>
+
+<div class="feed-header-block">
+  <h2>Exercises</h2>
+</div>
+<span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
+  <span *ngIf="!(isFetchingExercises$ | async); else loading">
+    <span *ngIf="(exercises$ | async).length > 0; else feedEmpty">
+      <div
+        class="scroll-feed"
+        infiniteScroll
+        [infiniteScrollDistance]="2"
+        [infiniteScrollThrottle]="50"
+        infiniteScrollContainer=".scroll-feed"
+        [fromRoot]="true"
+        (scrolled)="onScroll()"
+      >
+        <div *ngFor="let exercise of exercises$ | async; let i = index">
+          <ng-container
+            *ngTemplateOutlet="
+              exerciseCard;
+              context: { exercise: exercise, index: i }
+            "
+          ></ng-container>
+        </div>
+      </div>
+    </span>
+  </span>
+</span>
+<br />
+<br />
+
+<ng-template #feedEmpty>
+  <p class="center-title">There are no exercises in this chapter</p>
+</ng-template>
+
+<ng-template #loading>
+  <app-simple-loading-spinner></app-simple-loading-spinner>
+</ng-template>
+
+<ng-template #exerciseCard let-exercise="exercise" let-index="index">
+  <span class="exercise-form-card">
+    <p>{{ exercise.prompt }}</p>
+    <p>
+      {{ showQuestionTypeLabel(exercise.questionType) }} -
+      {{ questionTypeDescriptions[exercise.questionType] }}
+    </p>
+    <p>{{ exercise.points }} points</p>
+    <div *ngIf="exercise.options">
+      <ul *ngFor="let option of exercise.options">
+        {{
+          option
+        }}
+      </ul>
+    </div>
+  </span>
+</ng-template>
+
+<ng-template #exerciseFormTemplate> </ng-template>
+
+<ng-template #optionsTemplate> </ng-template>
+
+<ng-template #questionTemplate let-question="question" let-response="response">
+  <p class="form-element-block col-lg-12 col-md-12 col-sm-12">
+    {{ question.prompt }}
+  </p>
+  <span
+    class="form-element-block col-lg-12 col-md-12 col-sm-12"
+    *ngIf="question.questionType == questionTypes.descriptive_answer"
+  >
+    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Answer</mat-label>
+      <input matInput [(ngModel)]="response.answer" placeholder="Answer" />
+    </mat-form-field>
+  </span>
+
+  <span
+    class="form-element-block col-lg-12 col-md-12 col-sm-12"
+    *ngIf="question.questionType == questionTypes.options"
+  >
+    <ul
+      class="exercise-submission-options"
+      *ngFor="let option of question.options; let i = index"
+    >
+      <li
+        (click)="updateExerciseSubmissionOption(option)"
+        [class]="
+          option == response.option
+            ? 'exercise-submission-option highlighted-option'
+            : 'exercise-submission-option'
+        "
+      >
+        {{ option }}
+      </li>
+    </ul>
+  </span>
+
+  <span
+    class="form-element-block col-lg-12 col-md-12 col-sm-12"
+    *ngIf="question.questionType == questionTypes.image_upload"
+  >
+    <div class="col-lg-3 col-md-4 col-sm-12 floating-logo">
+      <div
+        *ngIf="imagesQueuedForUpload.length"
+        class="col-lg-12 col-md-12 col-sm-12"
+      >
+        <span *ngFor="let image of imagesQueuedForUpload; let i = index">
+          <img
+            [src]="image.url"
+            alt="Exercise submission"
+            class="logo-upload-preview"
+          />
+
+          <button type="button" mat-button (click)="removePreviewImage(i)">
+            <mat-icon>close</mat-icon>
+          </button>
+        </span>
+      </div>
+      <br />
+      <br />
+      <input
+        #logoUpdate
+        id="logo-choose-button"
+        type="file"
+        accept="image/*"
+        placeholder="Image upload"
+        (change)="addImageFileToSubmission($event)"
+      />
+    </div>
+  </span>
+
+  <span
+    class="form-element-block col-lg-12 col-md-12 col-sm-12"
+    *ngIf="question.questionType == questionTypes.link"
+  >
+    <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Link</mat-label>
+      <input matInput [(ngModel)]="response.link" placeholder="Answer" />
+    </mat-form-field>
+  </span>
+</ng-template>

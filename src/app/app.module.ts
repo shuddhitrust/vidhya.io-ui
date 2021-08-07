@@ -159,10 +159,13 @@ import {
 } from '@angular-material-components/datetime-picker';
 import {
   ChapterDeleteConfirmationDialog,
-  ChapterProfileComponent,
+  ChapterDraftComponent,
   ExercicseDeleteConfirmationDialog,
-} from './pages/profiles/chapter-profile/chapter-profile.component';
+} from './pages/profiles/chapter-profile/draft/chapter-draft.component';
 import { AddEditExerciseComponent } from './pages/forms/add-edit-exercise/add-edit-exercise.component';
+import { ChapterPublishedComponent } from './pages/profiles/chapter-profile/published/chapter-published.component';
+import { ChapterProfileComponent } from './pages/profiles/chapter-profile/chapter-profile.component';
+import { ExerciseKeyState } from './shared/state/exerciseKeys/exerciseKey.state';
 @NgModule({
   declarations: [
     AppComponent,
@@ -227,6 +230,8 @@ import { AddEditExerciseComponent } from './pages/forms/add-edit-exercise/add-ed
     ChapterDeleteConfirmationDialog,
     ExercicseDeleteConfirmationDialog,
     AddEditExerciseComponent,
+    ChapterDraftComponent,
+    ChapterPublishedComponent,
   ],
   imports: [
     BrowserModule,
@@ -255,6 +260,7 @@ import { AddEditExerciseComponent } from './pages/forms/add-edit-exercise/add-ed
           ChapterState,
           ExerciseState,
           ExerciseSubmissionState,
+          ExerciseKeyState,
           ReportState,
           OptionsState,
           UserRoleState,

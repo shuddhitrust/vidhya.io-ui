@@ -463,6 +463,59 @@ export const EXERCISE_SUBMISSION_QUERIES = {
   `,
 };
 
+export const EXERCISE_KEY_QUERIES = {
+  GET_EXERCISE_KEY: gql`
+    query exerciseKey($id: ID!) {
+      exerciseKey(id: $id) {
+        id
+        exercise {
+          id
+          prompt
+          chapter {
+            id
+          }
+          options
+          points
+        }
+        validOption
+        validAnswers
+        referenceLink
+        referenceImages
+      }
+    }
+  `,
+  GET_EXERCISE_KEYS: gql`
+    query exerciseKeys(
+      $chapterId: ID
+      $searchField: String
+      $limit: Int
+      $offset: Int
+    ) {
+      exerciseKeys(
+        chapterId: $chapterId
+        searchField: $searchField
+        limit: $limit
+        offset: $offset
+      ) {
+        id
+        exercise {
+          id
+          prompt
+          chapter {
+            id
+          }
+          options
+          points
+        }
+        validOption
+        validAnswers
+        referenceLink
+        referenceImages
+      }
+    }
+  `,
+};
+
 export const REPORT_QUERIES = {
   GET_REPORT: gql`
     query report($id: ID!) {

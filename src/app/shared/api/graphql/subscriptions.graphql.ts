@@ -188,6 +188,29 @@ export const SUBSCRIPTIONS = {
       }
     }
   `,
+  exerciseKey: gql`
+    subscription exerciseKey {
+      notifyExerciseKey {
+        exerciseKey {
+          id
+          exercise {
+            id
+            prompt
+            chapter {
+              id
+            }
+            options
+            points
+          }
+          validOption
+          validAnswers
+          referenceLink
+          referenceImages
+        }
+        method
+      }
+    }
+  `,
   report: gql`
     subscription report {
       notifyReport {
