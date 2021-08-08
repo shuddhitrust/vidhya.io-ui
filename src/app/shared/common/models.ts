@@ -145,6 +145,7 @@ export const DELETE = 'DELETE';
 export type UserRole = {
   name: string;
   description: string;
+  priority: number;
   permissions: object | string;
   createdAt?: string;
   updatedAt?: string;
@@ -233,6 +234,7 @@ export type Exercise = {
   id: number;
   prompt: string;
   chapter: any;
+  course: any;
   questionType: ExerciseQuestionType;
   required: boolean;
   options?: string[];
@@ -244,6 +246,8 @@ export type Exercise = {
 export type ExerciseKey = {
   id: number;
   exercise: any;
+  chapter: any;
+  course: any;
   validOption: string;
   validAnswers: string[];
   referenceLink: string;
@@ -253,6 +257,8 @@ export type ExerciseKey = {
 export type ExerciseSubmission = {
   id: number;
   exercise: any;
+  chapter: any;
+  course: any;
   participant: any;
   option?: string;
   answer?: string;
@@ -338,6 +344,7 @@ export const resources = {
   COURSE: 'COURSE',
   GROUP: 'GROUP',
   GRADING: 'GRADING',
+  EXERCISE_KEY: 'EXERCISE_KEY',
   REPORT: 'REPORT',
   OWN_PROFILE: 'OWN_PROFILE',
 };
@@ -354,6 +361,7 @@ export type UserPermissions = {
   COURSE: ResourceActions;
   GROUP: ResourceActions;
   GRADING: ResourceActions;
+  EXERCISE_KEY: ResourceActions;
   REPORT: ResourceActions;
   USER_ROLE: ResourceActions;
   OWN_PROFILE: ResourceActions;
@@ -371,6 +379,7 @@ export const defaultResourcePermissions: UserPermissions = {
   COURSE: defaultActions,
   GROUP: defaultActions,
   GRADING: defaultActions,
+  EXERCISE_KEY: defaultActions,
   REPORT: defaultActions,
   USER_ROLE: defaultActions,
   OWN_PROFILE: defaultActions,

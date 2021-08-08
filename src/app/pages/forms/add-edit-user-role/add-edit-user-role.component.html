@@ -28,6 +28,25 @@
       </small>
     </mat-form-field>
     <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Priority</mat-label>
+      <input
+        type="number"
+        matInput
+        formControlName="priority"
+        required
+        placeholder="Priority of the User Role"
+      />
+      <small
+        class="validation-error"
+        *ngIf="
+          userRoleForm.get('priority').hasError('required') &&
+          formDirective.submitted
+        "
+      >
+        Priority is required
+      </small>
+    </mat-form-field>
+    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
       <mat-label>Description</mat-label>
       <input
         matInput

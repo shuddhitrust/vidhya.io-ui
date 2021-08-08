@@ -10,6 +10,7 @@ export const emptyExerciseFormRecord: Exercise = {
   id: null,
   prompt: null,
   chapter: null,
+  course: null,
   questionType: null,
   required: true,
   options: null,
@@ -19,6 +20,8 @@ export const emptyExerciseFormRecord: Exercise = {
 export const emptyExerciseKeyFormRecord: ExerciseKey = {
   id: null,
   exercise: null,
+  chapter: null,
+  course: null,
   validOption: null,
   validAnswers: [],
   referenceLink: null,

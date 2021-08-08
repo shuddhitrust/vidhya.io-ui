@@ -54,6 +54,8 @@ import {
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { ExerciseSubmissionState } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.state';
 import { emptyExerciseSubmissionFormRecord } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.model';
+import { ExerciseKeyState } from 'src/app/shared/state/exerciseKeys/exerciseKey.state';
+import { FetchExerciseKeysAction } from 'src/app/shared/state/exerciseKeys/exerciseKey.actions';
 const startingExerciseFormOptions = ['', ''];
 
 const questionTypeDescriptions = {
@@ -88,11 +90,11 @@ export class ChapterDraftComponent implements OnInit {
   @Select(ChapterState.getChapterFormRecord)
   chapter$: Observable<Chapter>;
   chapter: Chapter;
-  @Select(ExerciseState.listExercises)
-  exercises$: Observable<Exercise[]>;
-  @Select(ExerciseState.isFetching)
-  isFetchingExercises$: Observable<boolean>;
-  isFetchingExercises: boolean;
+  @Select(ExerciseKeyState.listExerciseKeys)
+  exerciseKeys$: Observable<ExerciseKey[]>;
+  @Select(ExerciseKeyState.isFetching)
+  isFetchingExerciseKeys$: Observable<boolean>;
+  isFetchingExerciseKeys: boolean;
   @Select(ChapterState.isFetching)
   isFetchingChapter$: Observable<boolean>;
   exerciseForm: FormGroup = this.setupExerciseForm();
@@ -120,13 +122,13 @@ export class ChapterDraftComponent implements OnInit {
     private auth: AuthorizationService,
     private fb: FormBuilder
   ) {
-    this.isFetchingExercises$.subscribe((val) => {
-      this.isFetchingExercises = val;
+    this.isFetchingExerciseKeys$.subscribe((val) => {
+      this.isFetchingExerciseKeys = val;
     });
     this.chapter$.subscribe((val) => {
       this.chapter = val;
       console.log('Current chapter => ', this.chapter);
-      this.fetchExercises();
+      this.fetchExerciseKeys();
       this.exerciseForm = this.setupExerciseForm();
     });
     this.formSubmitting$.subscribe((val) => {
@@ -144,6 +146,7 @@ export class ChapterDraftComponent implements OnInit {
     return this.fb.group({
       id: [exerciseFormRecord?.id],
       prompt: [exerciseFormRecord?.prompt, Validators.required],
+      course: [this.chapter?.course?.id, Validators.required],
       chapter: [this.chapter?.id, Validators.required],
       questionType: [exerciseFormRecord?.questionType],
       options: [exerciseFormRecord?.options],
@@ -164,10 +167,10 @@ export class ChapterDraftComponent implements OnInit {
     return this.chapter?.id ? { chapterId: this.chapter?.id } : false;
   }
 
-  fetchExercises() {
+  fetchExerciseKeys() {
     if (this.chapterFilters()) {
       this.store.dispatch(
-        new FetchExercisesAction({
+        new FetchExerciseKeysAction({
           searchParams: {
             ...defaultSearchParams,
             newColumnFilters: this.chapterFilters(),
@@ -260,7 +263,7 @@ export class ChapterDraftComponent implements OnInit {
   }
   onScroll() {
     console.log('scrolling exercises');
-    if (!this.isFetchingExercises) {
+    if (!this.isFetchingExerciseKeys) {
       this.store.dispatch(new FetchNextExercisesAction());
     }
   }

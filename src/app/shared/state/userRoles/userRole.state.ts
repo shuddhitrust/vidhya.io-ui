@@ -230,12 +230,12 @@ export class UserRoleState {
     { patchState }: StateContext<UserRoleStateModel>,
     { payload }: GetUserRoleAction
   ) {
-    const { id } = payload;
+    const { roleName } = payload;
     patchState({ isFetching: true });
     this.apollo
       .watchQuery({
         query: USER_ROLE_QUERIES.GET_USER_ROLE,
-        variables: { id },
+        variables: { roleName },
         fetchPolicy: 'network-only',
       })
       .valueChanges.subscribe(
@@ -250,6 +250,7 @@ export class UserRoleState {
           const userRoleFormRecord = {
             id: response.id,
             name: response.name,
+            priority: response.priority,
             description: response.description,
             permissions,
           };

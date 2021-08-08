@@ -22,7 +22,7 @@ export class ForceRefetchUserRolesAction {
 export class GetUserRoleAction {
   static readonly type = '[ROLE] Get';
 
-  constructor(public payload: idPayload) {}
+  constructor(public payload: { roleName: string }) {}
 }
 
 export class CreateUpdateUserRoleAction {

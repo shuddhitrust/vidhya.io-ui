@@ -47,8 +47,8 @@
   <h2>Exercises</h2>
 </div>
 <span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
-  <span *ngIf="!(isFetchingExercises$ | async); else loading">
-    <span *ngIf="(exercises$ | async).length > 0; else feedEmpty">
+  <span *ngIf="!(isFetchingExerciseKeys$ | async); else loading">
+    <span *ngIf="(exerciseKeys$ | async).length > 0; else feedEmpty">
       <div
         class="scroll-feed"
         infiniteScroll
@@ -58,17 +58,17 @@
         [fromRoot]="true"
         (scrolled)="onScroll()"
       >
-        <div *ngFor="let exercise of exercises$ | async; let i = index">
-          <div *ngIf="showExerciseFormInsteadOfCard(exercise)">
+        <div *ngFor="let exerciseKey of exerciseKeys$ | async; let i = index">
+          <div *ngIf="showExerciseFormInsteadOfCard(exerciseKey.exercise)">
             <ng-container
               *ngTemplateOutlet="exerciseFormTemplate"
             ></ng-container>
           </div>
-          <div *ngIf="!showExerciseFormInsteadOfCard(exercise)">
+          <div *ngIf="!showExerciseFormInsteadOfCard(exerciseKey.exercise)">
             <ng-container
               *ngTemplateOutlet="
                 exerciseCard;
-                context: { exercise: exercise, index: i }
+                context: { exercise: exerciseKey.exercise, index: i }
               "
             ></ng-container>
           </div>

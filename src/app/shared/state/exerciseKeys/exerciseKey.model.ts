@@ -8,6 +8,8 @@ import {
 export const emptyExerciseKeyFormRecord: ExerciseKey = {
   id: null,
   exercise: null,
+  chapter: null,
+  course: null,
   validOption: null,
   validAnswers: [],
   referenceLink: null,

@@ -74,7 +74,6 @@ export const USER_ROLE_MUTATIONS = {
       createUserRole(input: $input) {
         ok
         userRole {
-          id
           name
         }
       }
@@ -85,7 +84,6 @@ export const USER_ROLE_MUTATIONS = {
       updateUserRole(roleName: $roleName, input: $input) {
         ok
         userRole {
-          id
           name
         }
       }
@@ -96,7 +94,6 @@ export const USER_ROLE_MUTATIONS = {
       deleteUserRole(roleName: $roleName) {
         ok
         userRole {
-          id
           name
         }
       }

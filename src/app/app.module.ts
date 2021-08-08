@@ -162,7 +162,6 @@ import {
   ChapterDraftComponent,
   ExercicseDeleteConfirmationDialog,
 } from './pages/profiles/chapter-profile/draft/chapter-draft.component';
-import { AddEditExerciseComponent } from './pages/forms/add-edit-exercise/add-edit-exercise.component';
 import { ChapterPublishedComponent } from './pages/profiles/chapter-profile/published/chapter-published.component';
 import { ChapterProfileComponent } from './pages/profiles/chapter-profile/chapter-profile.component';
 import { ExerciseKeyState } from './shared/state/exerciseKeys/exerciseKey.state';
@@ -229,7 +228,6 @@ import { ExerciseKeyState } from './shared/state/exerciseKeys/exerciseKey.state'
     ChapterProfileComponent,
     ChapterDeleteConfirmationDialog,
     ExercicseDeleteConfirmationDialog,
-    AddEditExerciseComponent,
     ChapterDraftComponent,
     ChapterPublishedComponent,
   ],

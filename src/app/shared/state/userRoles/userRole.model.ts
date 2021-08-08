@@ -28,6 +28,7 @@ export const defaultChatPermissions = {
 
 export const emptyUserRoleFormRecord: UserRole = {
   name: null,
+  priority: null,
   description: null,
   permissions: defaultResourcePermissions,
 };

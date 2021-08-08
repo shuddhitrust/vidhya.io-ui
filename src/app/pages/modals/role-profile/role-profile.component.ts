@@ -64,7 +64,9 @@ export class RoleProfileComponent {
     private auth: AuthorizationService
   ) {
     this.profileData = data;
-    this.store.dispatch(new GetUserRoleAction({ id: this.profileData.id }));
+    this.store.dispatch(
+      new GetUserRoleAction({ roleName: this.profileData?.name })
+    );
     this.userRoleFormRecord$.subscribe((val) => {
       if (val) {
         this.profileData = val;

@@ -8,6 +8,8 @@ import {
 export const emptyExerciseSubmissionFormRecord: ExerciseSubmission = {
   id: null,
   exercise: null,
+  chapter: null,
+  course: null,
   participant: null,
   option: null,
   answer: null,

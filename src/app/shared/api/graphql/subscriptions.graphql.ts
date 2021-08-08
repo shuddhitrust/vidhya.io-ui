@@ -38,7 +38,6 @@ export const SUBSCRIPTIONS = {
     subscription userrole {
       notifyUserRole {
         userRole {
-          id
           name
           description
           permissions

@@ -83,6 +83,7 @@ export class AddEditUserRoleComponent implements OnInit {
 
     const formGroup = this.fb.group({
       name: [userRoleFormRecord.name, Validators.required],
+      priority: [userRoleFormRecord.priority, Validators.required],
       description: [userRoleFormRecord.description, Validators.required],
       permissions: [
         userRoleFormRecord.permissions
@@ -107,7 +108,7 @@ export class AddEditUserRoleComponent implements OnInit {
       this.params = params;
       const id = params['id'];
       if (id) {
-        this.store.dispatch(new GetUserRoleAction({ id }));
+        this.store.dispatch(new GetUserRoleAction({ roleName: id }));
       }
     });
   }

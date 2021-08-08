@@ -47,7 +47,6 @@ export const USER_QUERIES = {
           name
         }
         role {
-          id
           name
           permissions
         }
@@ -428,6 +427,8 @@ export const EXERCISE_SUBMISSION_QUERIES = {
     query exerciseSubmissions(
       $exerciseId: ID
       $participantId: ID
+      $chapterId: ID
+      $courseId: ID
       $searchField: String
       $limit: Int
       $offset: Int
@@ -435,6 +436,8 @@ export const EXERCISE_SUBMISSION_QUERIES = {
       exerciseSubmissions(
         exerciseId: $exerciseId
         participantId: $participantId
+        chapterId: $chapterId
+        courseId: $courseId
         searchField: $searchField
         limit: $limit
         offset: $offset
@@ -486,13 +489,17 @@ export const EXERCISE_KEY_QUERIES = {
   `,
   GET_EXERCISE_KEYS: gql`
     query exerciseKeys(
+      $exerciseId: ID
       $chapterId: ID
+      $courseId: ID
       $searchField: String
       $limit: Int
       $offset: Int
     ) {
       exerciseKeys(
+        exerciseId: $exerciseId
         chapterId: $chapterId
+        courseId: $courseId
         searchField: $searchField
         limit: $limit
         offset: $offset
