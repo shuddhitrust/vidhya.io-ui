@@ -80,7 +80,7 @@ export const USER_ROLE_MUTATIONS = {
     }
   `,
   UPDATE_USER_ROLE: gql`
-    mutation updateUserRole($roleName: string!, $input: UserRoleInput!) {
+    mutation updateUserRole($roleName: String!, $input: UserRoleInput!) {
       updateUserRole(roleName: $roleName, input: $input) {
         ok
         userRole {

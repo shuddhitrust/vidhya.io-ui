@@ -91,6 +91,7 @@ export class AddEditUserRoleComponent implements OnInit {
           : defaultResourcePermissions,
         Validators.required,
       ],
+      createdAt: [userRoleFormRecord.createdAt],
     });
     this.permissionsObject = formGroup.get('permissions').value;
     this.permissionItems = Object.keys(this.permissionsObject);

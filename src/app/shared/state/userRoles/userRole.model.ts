@@ -31,6 +31,7 @@ export const emptyUserRoleFormRecord: UserRole = {
   priority: null,
   description: null,
   permissions: defaultResourcePermissions,
+  createdAt: null,
 };
 
 export interface UserRoleStateModel {

@@ -95,8 +95,10 @@ export const USER_ROLE_QUERIES = {
     query userRole($roleName: String!) {
       userRole(roleName: $roleName) {
         name
+        priority
         description
         permissions
+        createdAt
       }
     }
   `,
@@ -104,7 +106,9 @@ export const USER_ROLE_QUERIES = {
     query userRoles($searchField: String, $limit: Int, $offset: Int) {
       userRoles(searchField: $searchField, limit: $limit, offset: $offset) {
         name
+        priority
         description
+        createdAt
       }
     }
   `,

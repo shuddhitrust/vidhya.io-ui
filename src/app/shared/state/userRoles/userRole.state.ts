@@ -253,6 +253,7 @@ export class UserRoleState {
             priority: response.priority,
             description: response.description,
             permissions,
+            createdAt: response.createdAt,
           };
           patchState({ userRoleFormRecord, isFetching: false });
         },
@@ -281,12 +282,12 @@ export class UserRoleState {
       patchState({ formSubmitting });
       const values = form.value;
       console.log('UserRole Form values', values);
-      const updateForm = values.id == null ? false : true;
-      const { id, ...sanitizedValues } = values;
+      const updateForm = values.createdAt == null ? false : true;
+      const { createdAt, ...sanitizedValues } = values;
       const variables = updateForm
         ? {
             input: sanitizedValues,
-            id: values.id, // adding id to the mutation variables if it is an update mutation
+            roleName: values.name, // adding id to the mutation variables if it is an update mutation
           }
         : { input: sanitizedValues };
 
