@@ -56,6 +56,8 @@ import { ExerciseSubmissionState } from 'src/app/shared/state/exerciseSubmission
 import { emptyExerciseSubmissionFormRecord } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.model';
 import { ExerciseKeyState } from 'src/app/shared/state/exerciseKeys/exerciseKey.state';
 import { FetchExerciseKeysAction } from 'src/app/shared/state/exerciseKeys/exerciseKey.actions';
+import { UploadService } from 'src/app/shared/api/upload.service';
+import { environment } from 'src/environments/environment';
 const startingExerciseFormOptions = ['', ''];
 
 const questionTypeDescriptions = {
@@ -92,6 +94,7 @@ export class ChapterDraftComponent implements OnInit {
   chapter: Chapter;
   @Select(ExerciseKeyState.listExerciseKeys)
   exerciseKeys$: Observable<ExerciseKey[]>;
+  exerciseKeys: ExerciseKey[];
   @Select(ExerciseKeyState.isFetching)
   isFetchingExerciseKeys$: Observable<boolean>;
   isFetchingExerciseKeys: boolean;
@@ -120,10 +123,14 @@ export class ChapterDraftComponent implements OnInit {
     private store: Store,
     private router: Router,
     private auth: AuthorizationService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private uploadService: UploadService
   ) {
     this.isFetchingExerciseKeys$.subscribe((val) => {
       this.isFetchingExerciseKeys = val;
+    });
+    this.exerciseKeys$.subscribe((val) => {
+      this.exerciseKeys = val;
     });
     this.chapter$.subscribe((val) => {
       this.chapter = val;
@@ -238,9 +245,16 @@ export class ChapterDraftComponent implements OnInit {
   }
 
   editExercise(exercise) {
-    console.log('editing exercise ', { exercise });
+    console.log('editing exercise ', {
+      exercise,
+      exerciseKeys: this.exerciseKeys,
+      exerciseKey: this.exerciseKey,
+    });
     this.resetExerciseForm();
     this.exerciseForm = this.setupExerciseForm(exercise);
+    this.exerciseKey = this.exerciseKeys.find(
+      (e) => e.exercise?.id == exercise.id
+    );
     this.showExerciseForm = true;
   }
   deleteExerciseConfirmation(exercise) {
@@ -336,9 +350,55 @@ export class ChapterDraftComponent implements OnInit {
     this.formErrorMessages = '';
   }
 
-  uploadReferenceImages() {}
+  uploadReferenceImages(form): Promise<boolean> {
+    console.log('uploading reference images', { form: form.value });
+    let newReferenceImages = [];
+    let noErrors = true;
+    function updateNewImages(): Promise<boolean> {
+      console.log('new reference images after upload', {
+        newReferenceImages,
+      });
+      let referenceImages = form.get('referenceImages').value;
+      referenceImages = referenceImages.concat(newReferenceImages);
+      form.get('referenceImages').setValue(referenceImages);
+      console.log('new form value after updating the reference imagbes ', {
+        form: form.value,
+      });
+      return new Promise((resolve, reject) => {
+        if (noErrors) {
+          resolve(true);
+        } else {
+          reject();
+        }
+      });
+    }
+    let i = 0;
+    const uploadFileSequentially = (): Promise<any> => {
+      const formData = new FormData();
+      formData.append('file', this.imagesQueuedForUpload[i].file);
+      this.uploadService.upload(formData).subscribe(
+        (res): Promise<boolean> => {
+          const url = `${environment.api_endpoint}${res.file}`;
+          console.log('uploading new file ', i, url);
+          newReferenceImages = newReferenceImages.concat([url]);
+          if (i == this.imagesQueuedForUpload.length - 1) {
+            return updateNewImages();
+          } else {
+            i++;
+            return uploadFileSequentially();
+          }
+        },
+        (err) => {
+          console.log('image upload failed ', { err });
+          noErrors = false;
+          return updateNewImages();
+        }
+      );
+    };
+    return uploadFileSequentially();
+  }
 
-  updateGradingKeyInExerciseForm(form) {
+  updateGradingKeyInExerciseForm(form): Promise<boolean> {
     console.log('exerciseKey', { exerciseKey: this.exerciseKey });
     form.get('validOption').setValue(this.exerciseKey.option);
     let allValidAnswers = [this.exerciseKey?.answer].concat(
@@ -348,7 +408,9 @@ export class ChapterDraftComponent implements OnInit {
     allValidAnswers = [...new Set(allValidAnswers)]; // removing duplicates
     form.get('validAnswers').setValue(allValidAnswers);
     form.get('referenceLink').setValue(this.exerciseKey.link);
-    form.get('referenceImages').setValue([]);
+    const referenceImages = this.exerciseKey.referenceImages;
+    form.get('referenceImages').setValue(referenceImages);
+    return this.uploadReferenceImages(form);
   }
 
   updateExerciseFormOptions() {
@@ -390,25 +452,30 @@ export class ChapterDraftComponent implements OnInit {
     this.imagesQueuedForUpload.splice(i, 1);
   }
 
+  removeReferenceImage(i) {
+    this.exerciseKey.referenceImages.splice(i, 1);
+  }
+
   submitExerciseForm(form, formDirective) {
     console.log('exercise submit form value => ', form.value);
     this.sanitizeAndUpdateOptions(form);
-    this.updateGradingKeyInExerciseForm(form);
-    if (!this.invalidOptions) {
-      this.store.dispatch(
-        new CreateUpdateExerciseAction({
-          form,
-          formDirective,
-        })
-      );
-    } else {
-      this.store.dispatch(
-        new ShowNotificationAction({
-          message: this.formErrorMessages,
-          action: 'error',
-        })
-      );
-    }
+    this.updateGradingKeyInExerciseForm(form).then(() => {
+      if (!this.invalidOptions) {
+        this.store.dispatch(
+          new CreateUpdateExerciseAction({
+            form,
+            formDirective,
+          })
+        );
+      } else {
+        this.store.dispatch(
+          new ShowNotificationAction({
+            message: 'Something went wrong while submitting this form!',
+            action: 'error',
+          })
+        );
+      }
+    });
   }
 }
 
