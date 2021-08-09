@@ -329,7 +329,7 @@
       <mat-label>Answer {{ i + 1 }}</mat-label>
       <input
         matInput
-        [(ngModel)]="exerciseKey?.validAnswers[i]"
+        [(ngModel)]="exerciseKey?.validAnswers[i + 1]"
         placeholder="Enter an option"
       />
     </mat-form-field>
@@ -356,7 +356,13 @@
   >
     <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
       <mat-label>Answer</mat-label>
-      <input matInput [(ngModel)]="response.answer" placeholder="Answer" />
+      <input
+        matInput
+        [(ngModel)]="
+          response.answer ? response.answer : response.validAnswers[0]
+        "
+        placeholder="Answer"
+      />
     </mat-form-field>
 
     <span *ngIf="authorizeResourceMethod(resourceActions.CREATE)">
@@ -375,7 +381,7 @@
       <li
         (click)="updateExerciseSubmissionOption(option)"
         [class]="
-          option == response.option
+          option == response.validOption
             ? 'exercise-submission-option highlighted-option'
             : 'exercise-submission-option'
         "
@@ -390,6 +396,22 @@
     *ngIf="question.questionType == questionTypes.image_upload"
   >
     <div class="col-lg-3 col-md-4 col-sm-12 floating-logo">
+      <div
+        *ngIf="response.referenceImages?.length"
+        class="col-lg-12 col-md-12 col-sm-12"
+      >
+        <span *ngFor="let image of response.referenceImages; let i = index">
+          <img
+            [src]="image"
+            alt="Exercise submission (already uploaded)"
+            class="logo-upload-preview"
+          />
+
+          <button type="button" mat-button (click)="removeReferenceImage(i)">
+            <mat-icon>close</mat-icon>
+          </button>
+        </span>
+      </div>
       <div
         *ngIf="imagesQueuedForUpload.length"
         class="col-lg-12 col-md-12 col-sm-12"
