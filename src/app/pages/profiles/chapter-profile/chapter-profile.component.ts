@@ -40,11 +40,11 @@ export class ChapterProfileComponent implements OnDestroy {
     });
   }
   showDraft() {
-    console.log(
-      { chapter: this.chapter },
-      'this.chapter.status == this.chapterStatusOptions.draft;',
-      this.chapter.status == this.chapterStatusOptions.draft
-    );
+    // console.log(
+    //   { chapter: this.chapter },
+    //   'this.chapter.status == this.chapterStatusOptions.draft;',
+    //   this.chapter.status == this.chapterStatusOptions.draft
+    // );
     return this.chapter.status == this.chapterStatusOptions.draft;
   }
   authorizeResourceMethod(action) {
