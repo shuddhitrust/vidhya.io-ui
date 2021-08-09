@@ -478,6 +478,8 @@ export const EXERCISE_KEY_QUERIES = {
         exercise {
           id
           prompt
+          questionType
+          required
           chapter {
             id
           }
@@ -512,6 +514,8 @@ export const EXERCISE_KEY_QUERIES = {
         exercise {
           id
           prompt
+          questionType
+          required
           chapter {
             id
           }
