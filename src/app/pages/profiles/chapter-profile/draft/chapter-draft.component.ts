@@ -58,7 +58,14 @@ import { ExerciseKeyState } from 'src/app/shared/state/exerciseKeys/exerciseKey.
 import { FetchExerciseKeysAction } from 'src/app/shared/state/exerciseKeys/exerciseKey.actions';
 import { UploadService } from 'src/app/shared/api/upload.service';
 import { environment } from 'src/environments/environment';
+import { ObserversModule } from '@angular/cdk/observers';
+import { ObserveOnSubscriber } from 'rxjs/internal/operators/observeOn';
 const startingExerciseFormOptions = ['', ''];
+
+type previewImage = {
+  url: string;
+  file: any;
+};
 
 const questionTypeDescriptions = {
   [ExerciseQuestionTypeOptions.options]:
@@ -69,11 +76,6 @@ const questionTypeDescriptions = {
     'Participant will be expected to upload files. They may upload multiple files, but must at least upload one file to mark this exercise as complete.',
   [ExerciseQuestionTypeOptions.link]:
     'Participant will be expected to enter a link',
-};
-
-type previewImage = {
-  url: string;
-  file: any;
 };
 
 @Component({
@@ -350,55 +352,47 @@ export class ChapterDraftComponent implements OnInit {
     this.formErrorMessages = '';
   }
 
-  uploadReferenceImages(form): Promise<boolean> {
-    console.log('uploading reference images', { form: form.value });
+  uploadNewReferenceImages(form): Observable<any> {
     let newReferenceImages = [];
-    let noErrors = true;
-    function updateNewImages(): Promise<boolean> {
-      console.log('new reference images after upload', {
-        newReferenceImages,
-      });
-      let referenceImages = form.get('referenceImages').value;
-      referenceImages = referenceImages.concat(newReferenceImages);
-      form.get('referenceImages').setValue(referenceImages);
-      console.log('new form value after updating the reference imagbes ', {
-        form: form.value,
-      });
-      return new Promise((resolve, reject) => {
-        if (noErrors) {
-          resolve(true);
-        } else {
-          reject();
-        }
-      });
-    }
     let i = 0;
-    const uploadFileSequentially = (): Promise<any> => {
-      const formData = new FormData();
-      formData.append('file', this.imagesQueuedForUpload[i].file);
-      this.uploadService.upload(formData).subscribe(
-        (res): Promise<boolean> => {
-          const url = `${environment.api_endpoint}${res.file}`;
-          console.log('uploading new file ', i, url);
-          newReferenceImages = newReferenceImages.concat([url]);
-          if (i == this.imagesQueuedForUpload.length - 1) {
-            return updateNewImages();
-          } else {
-            i++;
-            return uploadFileSequentially();
+    function uploadImage(): Observable<any> {
+      let returnValue;
+      if (this.imagesQueuedForUpload.length == 0) {
+        returnValue = new Observable((observer) => {
+          observer.next(form);
+        });
+      } else {
+        const formData = new FormData();
+        formData.append('file', this.imagesQueuedForUpload[i].file);
+        this.uploadService.upload(formData).subscribe(
+          (res) => {
+            const url = `${environment.api_endpoint}${res.file}`;
+            console.log('uploading new file ', i, url);
+            newReferenceImages = newReferenceImages.concat([url]);
+            if (i == this.imagesQueuedForUpload.length - 1) {
+              returnValue = new Observable((observer) => {
+                form.get('referenceImages').setValue(newReferenceImages);
+                observer.next(form);
+              });
+            } else {
+              i++;
+              returnValue = uploadImage();
+            }
+          },
+          (err) => {
+            returnValue = new Observable((observer) => {
+              observer.error(err);
+            });
           }
-        },
-        (err) => {
-          console.log('image upload failed ', { err });
-          noErrors = false;
-          return updateNewImages();
-        }
-      );
-    };
-    return uploadFileSequentially();
+        );
+      }
+
+      return returnValue;
+    }
+    return uploadImage();
   }
 
-  updateGradingKeyInExerciseForm(form): Promise<boolean> {
+  updateGradingKeyInExerciseForm(form): Observable<any> {
     console.log('exerciseKey', { exerciseKey: this.exerciseKey });
     form.get('validOption').setValue(this.exerciseKey.option);
     let allValidAnswers = [this.exerciseKey?.answer].concat(
@@ -410,7 +404,7 @@ export class ChapterDraftComponent implements OnInit {
     form.get('referenceLink').setValue(this.exerciseKey.link);
     const referenceImages = this.exerciseKey.referenceImages;
     form.get('referenceImages').setValue(referenceImages);
-    return this.uploadReferenceImages(form);
+    return this.uploadNewReferenceImages(form);
   }
 
   updateExerciseFormOptions() {
@@ -459,23 +453,33 @@ export class ChapterDraftComponent implements OnInit {
   submitExerciseForm(form, formDirective) {
     console.log('exercise submit form value => ', form.value);
     this.sanitizeAndUpdateOptions(form);
-    this.updateGradingKeyInExerciseForm(form).then(() => {
-      if (!this.invalidOptions) {
-        this.store.dispatch(
-          new CreateUpdateExerciseAction({
-            form,
-            formDirective,
-          })
-        );
-      } else {
+    this.updateGradingKeyInExerciseForm(form).subscribe(
+      (form) => {
+        if (!this.invalidOptions) {
+          this.store.dispatch(
+            new CreateUpdateExerciseAction({
+              form,
+              formDirective,
+            })
+          );
+        } else {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: 'Something went wrong while submitting this form!',
+              action: 'error',
+            })
+          );
+        }
+      },
+      (err) => {
         this.store.dispatch(
           new ShowNotificationAction({
-            message: 'Something went wrong while submitting this form!',
+            message: `Something went wrong while submitting this form! ${err}`,
             action: 'error',
           })
         );
       }
-    });
+    );
   }
 }
 
