@@ -49,7 +49,7 @@ export class DeleteMemberAction {
 export class ApproveMemberAction {
   static readonly type = '[MEMBER] Approve';
 
-  constructor(public payload: { userId: number; roleId: number }) {}
+  constructor(public payload: { userId: number; roleName: string }) {}
 }
 
 export class SuspendMemberAction {

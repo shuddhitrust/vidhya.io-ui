@@ -45,8 +45,8 @@ export const USER_MUTATIONS = {
     }
   `,
   APPROVE_USER: gql`
-    mutation approveUser($userId: ID!, $roleId: ID!) {
-      approveUser(userId: $userId, roleId: $roleId) {
+    mutation approveUser($userId: ID!, $roleName: String!) {
+      approveUser(userId: $userId, roleName: $roleName) {
         ok
         user {
           id

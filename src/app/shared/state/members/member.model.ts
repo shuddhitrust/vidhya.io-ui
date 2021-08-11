@@ -64,8 +64,9 @@ export const defaultMemberState: MemberStateModel = {
   errorSubmitting: false,
 };
 
-export const membershipStatusOptions: MatSelectOption[] =
-  autoGenOptions(MembershipStatusOptions); // autoGenOptions(MembershipStatusOptions);
+export const membershipStatusOptions: MatSelectOption[] = autoGenOptions(
+  MembershipStatusOptions
+); // autoGenOptions(MembershipStatusOptions);
 
 export const memberColumns: any[] = [
   {
@@ -75,6 +76,13 @@ export const memberColumns: any[] = [
   {
     field: 'lastName',
     cellRenderer: 'memberRenderer',
+  },
+  {
+    field: 'role',
+    cellRenderer: (params) => {
+      console.log('from member role ', { params });
+      return params?.data?.role?.name;
+    },
   },
   {
     field: 'membershipStatus',

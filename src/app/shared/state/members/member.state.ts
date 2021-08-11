@@ -370,11 +370,11 @@ export class MemberState {
     { getState, patchState }: StateContext<MemberStateModel>,
     { payload }: ApproveMemberAction
   ) {
-    let { userId, roleId } = payload;
+    let { userId, roleName } = payload;
     this.apollo
       .mutate({
         mutation: USER_MUTATIONS.APPROVE_USER,
-        variables: { userId, roleId },
+        variables: { userId, roleName },
       })
       .subscribe(
         ({ data }: any) => {

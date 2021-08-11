@@ -120,7 +120,7 @@ export class UserModerationProfileComponent implements OnInit {
     this.store.dispatch(
       new ApproveMemberAction({
         userId: this.profileData.id,
-        roleId: this.moderationForm.get('role').value,
+        roleName: this.moderationForm.get('role').value,
       })
     );
 
