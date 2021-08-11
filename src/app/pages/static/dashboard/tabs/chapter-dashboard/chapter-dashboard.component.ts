@@ -58,9 +58,6 @@ export class ChapterDashboardComponent implements OnInit {
       this.store.dispatch(new FetchNextChaptersAction());
     }
   }
-  createChapter() {
-    this.router.navigateByUrl(uiroutes.CHAPTER_FORM_ROUTE.route);
-  }
 
   openChapter(chapter) {
     this.router.navigate([uiroutes.CHAPTER_PROFILE_ROUTE.route], {

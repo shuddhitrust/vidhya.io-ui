@@ -18,7 +18,7 @@ import {
 
 export const ADMIN = 'Admin';
 export const ANNOUNCEMENTS = 'Announcements';
-export const CHAPTERS = 'Chapters';
+export const CHAPTERS = 'Assignments';
 export const COURSES = 'Courses';
 export const GROUPS = 'Groups';
 export const GRADING = 'Grading';
