@@ -111,6 +111,7 @@
       mat-mini-fab
       type="button"
       color="warn"
+      [class.button-loading]="isFetchingExerciseKeys$ | async"
       class="profile-button"
       (click)="deleteExerciseConfirmation(exerciseKey)"
     >
@@ -121,7 +122,7 @@
       mat-mini-fab
       type="button"
       color="info"
-      [class.button-loading]="isFetchingChapter$ | async"
+      [class.button-loading]="isFetchingExerciseKeys$ | async"
       class="profile-button"
       (click)="editExercise(exerciseKey)"
     >

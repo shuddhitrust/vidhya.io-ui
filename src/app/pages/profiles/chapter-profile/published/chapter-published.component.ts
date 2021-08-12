@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
@@ -54,6 +54,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { ResetExerciseSubmissionFormAction } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.actions';
+import {
+  ChapterDeleteConfirmationDialog,
+  ExercicseDeleteConfirmationDialog,
+} from '../chapter-profile.component';
 
 const startingExerciseFormOptions = ['', ''];
 
@@ -193,6 +197,50 @@ export class ChapterPublishedComponent implements OnInit {
     this.location.back();
   }
 
+  editChapter() {
+    this.router.navigate([uiroutes.CHAPTER_FORM_ROUTE.route], {
+      queryParams: { id: this.chapter?.id },
+      queryParamsHandling: 'merge',
+      skipLocationChange: false,
+    });
+  }
+  deleteConfirmation() {
+    const dialogRef = this.dialog.open(ChapterDeleteConfirmationDialog, {
+      data: this.chapter,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('close dialog result for announcment => ', result);
+      if (result == true) {
+        this.deleteChapter();
+      }
+    });
+  }
+  deleteChapter() {
+    console.log('payload before passing to action => ', {
+      id: this.chapter.id,
+    });
+    this.store.dispatch(new DeleteChapterAction({ id: this.chapter?.id }));
+  }
+
+  deleteExerciseConfirmation(exercise) {
+    const dialogRef = this.dialog.open(ExercicseDeleteConfirmationDialog, {
+      data: exercise,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('close dialog result for exercise => ', result);
+      if (result == true) {
+        this.deleteExercise(exercise);
+      }
+    });
+  }
+  deleteExercise(exercise) {
+    console.log('payload before passing to action => ', {
+      id: exercise.id,
+    });
+    this.store.dispatch(new DeleteExerciseAction({ id: exercise?.id }));
+  }
   onScroll() {
     console.log('scrolling exercises');
     if (!this.isFetchingExercises) {

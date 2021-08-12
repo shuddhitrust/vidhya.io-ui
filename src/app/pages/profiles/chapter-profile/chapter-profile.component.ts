@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, Inject, OnDestroy } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 
@@ -6,6 +6,7 @@ import { ChapterState } from 'src/app/shared/state/chapters/chapter.state';
 import {
   Chapter,
   ChapterStatusOptions,
+  Exercise,
   resources,
   RESOURCE_ACTIONS,
 } from 'src/app/shared/common/models';
@@ -13,6 +14,7 @@ import { ResetExerciseFormAction } from 'src/app/shared/state/exercises/exercise
 import { ResetChapterFormAction } from 'src/app/shared/state/chapters/chapter.actions';
 import { ResetExerciseSubmissionFormAction } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.actions';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 type previewImage = {
   url: string;
@@ -55,4 +57,26 @@ export class ChapterProfileComponent implements OnDestroy {
     this.store.dispatch(new ResetChapterFormAction());
     this.store.dispatch(new ResetExerciseSubmissionFormAction());
   }
+}
+
+@Component({
+  selector: 'chapter-delete-confirmation-dialog',
+  templateUrl: './delete-confirmation-dialog.html',
+})
+export class ChapterDeleteConfirmationDialog {
+  constructor(
+    public dialogRef: MatDialogRef<ChapterDeleteConfirmationDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: Chapter
+  ) {}
+}
+
+@Component({
+  selector: 'exercise-delete-confirmation-dialog',
+  templateUrl: './delete-exercise-confirmation-dialog.html',
+})
+export class ExercicseDeleteConfirmationDialog {
+  constructor(
+    public dialogRef: MatDialogRef<ExercicseDeleteConfirmationDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: Exercise
+  ) {}
 }

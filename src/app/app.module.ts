@@ -157,13 +157,13 @@ import {
   NgxMatDateFormats,
   NGX_MAT_DATE_FORMATS,
 } from '@angular-material-components/datetime-picker';
-import {
-  ChapterDeleteConfirmationDialog,
-  ChapterDraftComponent,
-  ExercicseDeleteConfirmationDialog,
-} from './pages/profiles/chapter-profile/draft/chapter-draft.component';
+import { ChapterDraftComponent } from './pages/profiles/chapter-profile/draft/chapter-draft.component';
 import { ChapterPublishedComponent } from './pages/profiles/chapter-profile/published/chapter-published.component';
-import { ChapterProfileComponent } from './pages/profiles/chapter-profile/chapter-profile.component';
+import {
+  ChapterProfileComponent,
+  ChapterDeleteConfirmationDialog,
+  ExercicseDeleteConfirmationDialog,
+} from './pages/profiles/chapter-profile/chapter-profile.component';
 import { ExerciseKeyState } from './shared/state/exerciseKeys/exerciseKey.state';
 @NgModule({
   declarations: [

@@ -60,6 +60,10 @@ import { UploadService } from 'src/app/shared/api/upload.service';
 import { environment } from 'src/environments/environment';
 import { ObserversModule } from '@angular/cdk/observers';
 import { ObserveOnSubscriber } from 'rxjs/internal/operators/observeOn';
+import {
+  ChapterDeleteConfirmationDialog,
+  ExercicseDeleteConfirmationDialog,
+} from '../chapter-profile.component';
 const startingExerciseFormOptions = ['', ''];
 
 type previewImage = {
@@ -503,26 +507,4 @@ export class ChapterDraftComponent implements OnInit {
       );
     }
   }
-}
-
-@Component({
-  selector: 'chapter-delete-confirmation-dialog',
-  templateUrl: './delete-confirmation-dialog.html',
-})
-export class ChapterDeleteConfirmationDialog {
-  constructor(
-    public dialogRef: MatDialogRef<ChapterDeleteConfirmationDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: Chapter
-  ) {}
-}
-
-@Component({
-  selector: 'exercise-delete-confirmation-dialog',
-  templateUrl: './delete-exercise-confirmation-dialog.html',
-})
-export class ExercicseDeleteConfirmationDialog {
-  constructor(
-    public dialogRef: MatDialogRef<ExercicseDeleteConfirmationDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: Exercise
-  ) {}
 }
