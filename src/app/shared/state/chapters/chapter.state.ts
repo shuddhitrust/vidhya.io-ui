@@ -198,6 +198,7 @@ export class ChapterState {
             }
             patchState({
               chapters,
+              paginatedChapters,
               lastPage,
               fetchParamObjects: state.fetchParamObjects.concat([
                 newFetchParams,

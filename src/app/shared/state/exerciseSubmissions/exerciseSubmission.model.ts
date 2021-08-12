@@ -18,6 +18,7 @@ export const emptyExerciseSubmissionFormRecord: ExerciseSubmission = {
 };
 export interface ExerciseSubmissionStateModel {
   exerciseSubmissions: ExerciseSubmission[];
+  paginatedExerciseSubmissions: any;
   lastPage: number;
   exerciseSubmissionsSubscribed: boolean;
   fetchPolicy: FetchPolicy;
@@ -32,6 +33,7 @@ export interface ExerciseSubmissionStateModel {
 
 export const defaultExerciseSubmissionState: ExerciseSubmissionStateModel = {
   exerciseSubmissions: [],
+  paginatedExerciseSubmissions: {},
   lastPage: null,
   exerciseSubmissionsSubscribed: false,
   fetchPolicy: null,

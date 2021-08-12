@@ -31,6 +31,7 @@ import {
   fetchParamsNewOrNot,
   subscriptionUpdater,
   updateFetchParams,
+  convertPaginatedListToNormalList,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
@@ -118,12 +119,14 @@ export class ExerciseSubmissionState {
   }: StateContext<ExerciseSubmissionStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastPage;
-    const pageNumber =
-      state.fetchParamObjects[state.fetchParamObjects.length - 1].currentPage +
-      1;
+    const previousFetchParams =
+      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    const pageNumber = previousFetchParams.currentPage + 1;
     const newSearchParams: SearchParams = {
-      ...defaultSearchParams,
       pageNumber,
+      pageSize: previousFetchParams.pageSize,
+      searchQuery: previousFetchParams.searchQuery,
+      columnFilters: previousFetchParams.columnFilters,
     };
     if (
       !lastPageNumber ||
@@ -180,8 +183,16 @@ export class ExerciseSubmissionState {
               response,
               newFetchParams,
             });
-            let exerciseSubmissions = state.exerciseSubmissions;
-            exerciseSubmissions = exerciseSubmissions.concat(response);
+            let paginatedExerciseSubmissions =
+              state.paginatedExerciseSubmissions;
+            paginatedExerciseSubmissions = {
+              ...paginatedExerciseSubmissions,
+              [pageNumber]: response,
+            };
+            console.log({ paginatedExerciseSubmissions });
+            let exerciseSubmissions = convertPaginatedListToNormalList(
+              paginatedExerciseSubmissions
+            );
             let lastPage = null;
             if (response.length < newFetchParams.pageSize) {
               lastPage = newFetchParams.currentPage;
@@ -189,6 +200,7 @@ export class ExerciseSubmissionState {
             patchState({
               lastPage,
               exerciseSubmissions,
+              paginatedExerciseSubmissions,
               fetchParamObjects: state.fetchParamObjects.concat([
                 newFetchParams,
               ]),

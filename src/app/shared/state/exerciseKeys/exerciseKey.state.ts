@@ -26,6 +26,7 @@ import {
   fetchParamsNewOrNot,
   subscriptionUpdater,
   updateFetchParams,
+  convertPaginatedListToNormalList,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
@@ -107,12 +108,14 @@ export class ExerciseKeyState {
   fetchNextExerciseKeys({ getState }: StateContext<ExerciseKeyStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastPage;
-    const pageNumber =
-      state.fetchParamObjects[state.fetchParamObjects.length - 1].currentPage +
-      1;
+    const previousFetchParams =
+      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    const pageNumber = previousFetchParams.currentPage + 1;
     const newSearchParams: SearchParams = {
-      ...defaultSearchParams,
       pageNumber,
+      pageSize: previousFetchParams.pageSize,
+      searchQuery: previousFetchParams.searchQuery,
+      columnFilters: previousFetchParams.columnFilters,
     };
     if (
       !lastPageNumber ||
@@ -168,8 +171,15 @@ export class ExerciseKeyState {
               response,
               newFetchParams,
             });
-            let exerciseKeys = state.exerciseKeys;
-            exerciseKeys = exerciseKeys.concat(response);
+            let paginatedExerciseKeys = state.paginatedExerciseKeys;
+            paginatedExerciseKeys = {
+              ...paginatedExerciseKeys,
+              [pageNumber]: response,
+            };
+            console.log({ paginatedExerciseKeys });
+            let exerciseKeys = convertPaginatedListToNormalList(
+              paginatedExerciseKeys
+            );
             let lastPage = null;
             if (response.length < newFetchParams.pageSize) {
               lastPage = newFetchParams.currentPage;
@@ -177,6 +187,7 @@ export class ExerciseKeyState {
             patchState({
               lastPage,
               exerciseKeys,
+              paginatedExerciseKeys,
               fetchParamObjects: state.fetchParamObjects.concat([
                 newFetchParams,
               ]),

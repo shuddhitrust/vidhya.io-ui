@@ -15,6 +15,7 @@ export const emptyCourseSectionFormRecord: CourseSection = {
 };
 export interface CourseSectionStateModel {
   courseSections: CourseSection[];
+  paginatedCourseSections: any;
   lastPage: number;
   courseSectionsSubscribed: boolean;
   fetchPolicy: FetchPolicy;
@@ -29,6 +30,7 @@ export interface CourseSectionStateModel {
 
 export const defaultCourseSectionState: CourseSectionStateModel = {
   courseSections: [],
+  paginatedCourseSections: {},
   lastPage: null,
   courseSectionsSubscribed: false,
   fetchPolicy: null,

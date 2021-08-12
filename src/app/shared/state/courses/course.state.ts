@@ -28,6 +28,7 @@ import {
   fetchParamsNewOrNot,
   subscriptionUpdater,
   updateFetchParams,
+  convertPaginatedListToNormalList,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
@@ -106,12 +107,14 @@ export class CourseState {
   fetchNextCourses({ getState }: StateContext<CourseStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastPage;
-    const pageNumber =
-      state.fetchParamObjects[state.fetchParamObjects.length - 1].currentPage +
-      1;
+    const previousFetchParams =
+      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    const pageNumber = previousFetchParams.currentPage + 1;
     const newSearchParams: SearchParams = {
-      ...defaultSearchParams,
       pageNumber,
+      pageSize: previousFetchParams.pageSize,
+      searchQuery: previousFetchParams.searchQuery,
+      columnFilters: previousFetchParams.columnFilters,
     };
     if (
       !lastPageNumber ||
@@ -166,8 +169,20 @@ export class CourseState {
               response,
               newFetchParams,
             });
+            let paginatedCourses = state.paginatedCourses;
+            paginatedCourses = {
+              ...paginatedCourses,
+              [pageNumber]: response,
+            };
+            let courses = convertPaginatedListToNormalList(paginatedCourses);
+            let lastPage = null;
+            if (response.length < newFetchParams.pageSize) {
+              lastPage = newFetchParams.currentPage;
+            }
             patchState({
-              courses: response,
+              courses,
+              paginatedCourses,
+              lastPage,
               fetchParamObjects: state.fetchParamObjects.concat([
                 newFetchParams,
               ]),

@@ -23,6 +23,7 @@ export const emptyGroupFormRecord: Group = {
 };
 export interface GroupStateModel {
   groups: Group[];
+  paginatedGroups: any;
   lastPage: number;
   groupsSubscribed: boolean;
   fetchPolicy: FetchPolicy;
@@ -37,6 +38,7 @@ export interface GroupStateModel {
 
 export const defaultGroupState: GroupStateModel = {
   groups: [],
+  paginatedGroups: {},
   lastPage: null,
   groupsSubscribed: false,
   fetchPolicy: null,
@@ -52,4 +54,5 @@ export const defaultGroupState: GroupStateModel = {
 export const GroupFormCloseURL =
   uiroutes.DASHBOARD_ROUTE.route + '?tab=' + GROUPS;
 
-export const groupTypeOptions: MatSelectOption[] = autoGenOptions(GroupTypeOptions);
+export const groupTypeOptions: MatSelectOption[] =
+  autoGenOptions(GroupTypeOptions);

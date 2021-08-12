@@ -27,6 +27,7 @@ import {
   fetchParamsNewOrNot,
   subscriptionUpdater,
   updateFetchParams,
+  convertPaginatedListToNormalList,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
@@ -104,12 +105,14 @@ export class GroupState {
   fetchNextGroups({ getState }: StateContext<GroupStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastPage;
-    const pageNumber =
-      state.fetchParamObjects[state.fetchParamObjects.length - 1].currentPage +
-      1;
+    const previousFetchParams =
+      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    const pageNumber = previousFetchParams.currentPage + 1;
     const newSearchParams: SearchParams = {
-      ...defaultSearchParams,
       pageNumber,
+      pageSize: previousFetchParams.pageSize,
+      searchQuery: previousFetchParams.searchQuery,
+      columnFilters: previousFetchParams.columnFilters,
     };
     if (
       !lastPageNumber ||
@@ -164,14 +167,20 @@ export class GroupState {
               response,
               newFetchParams,
             });
-            let groups = state.groups;
-            groups = groups.concat(response);
+            let paginatedGroups = state.paginatedGroups;
+            paginatedGroups = {
+              ...paginatedGroups,
+              [pageNumber]: response,
+            };
+            console.log({ paginatedGroups });
+            let groups = convertPaginatedListToNormalList(paginatedGroups);
             let lastPage = null;
             if (response.length < newFetchParams.pageSize) {
               lastPage = newFetchParams.currentPage;
             }
             patchState({
               groups,
+              paginatedGroups,
               lastPage,
               fetchParamObjects: state.fetchParamObjects.concat([
                 newFetchParams,

@@ -31,6 +31,7 @@ import {
   fetchParamsNewOrNot,
   subscriptionUpdater,
   updateFetchParams,
+  convertPaginatedListToNormalList,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
@@ -114,12 +115,14 @@ export class AnnouncementState {
   fetchNextAnnouncements({ getState }: StateContext<AnnouncementStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastPage;
-    const pageNumber =
-      state.fetchParamObjects[state.fetchParamObjects.length - 1].currentPage +
-      1;
+    const previousFetchParams =
+      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    const pageNumber = previousFetchParams.currentPage + 1;
     const newSearchParams: SearchParams = {
-      ...defaultSearchParams,
       pageNumber,
+      pageSize: previousFetchParams.pageSize,
+      searchQuery: previousFetchParams.searchQuery,
+      columnFilters: previousFetchParams.columnFilters,
     };
     if (
       !lastPageNumber ||
@@ -175,8 +178,14 @@ export class AnnouncementState {
               response,
               newFetchParams,
             });
-            let announcements = state.announcements;
-            announcements = announcements.concat(response);
+            let paginatedAnnouncements = state.paginatedAnnouncements;
+            paginatedAnnouncements = {
+              ...paginatedAnnouncements,
+              [pageNumber]: response,
+            };
+            let announcements = convertPaginatedListToNormalList(
+              paginatedAnnouncements
+            );
             let lastPage = null;
             if (response.length < newFetchParams.pageSize) {
               lastPage = newFetchParams.currentPage;
@@ -184,6 +193,7 @@ export class AnnouncementState {
             patchState({
               lastPage,
               announcements,
+              paginatedAnnouncements,
               fetchParamObjects: state.fetchParamObjects.concat([
                 newFetchParams,
               ]),

@@ -17,6 +17,7 @@ export const emptyExerciseKeyFormRecord: ExerciseKey = {
 };
 export interface ExerciseKeyStateModel {
   exerciseKeys: ExerciseKey[];
+  paginatedExerciseKeys: any;
   lastPage: number;
   exerciseKeysSubscribed: boolean;
   fetchPolicy: FetchPolicy;
@@ -31,6 +32,7 @@ export interface ExerciseKeyStateModel {
 
 export const defaultExerciseKeyState: ExerciseKeyStateModel = {
   exerciseKeys: [],
+  paginatedExerciseKeys: {},
   lastPage: null,
   exerciseKeysSubscribed: false,
   fetchPolicy: null,

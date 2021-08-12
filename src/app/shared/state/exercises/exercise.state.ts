@@ -26,6 +26,7 @@ import {
   fetchParamsNewOrNot,
   subscriptionUpdater,
   updateFetchParams,
+  convertPaginatedListToNormalList,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
@@ -103,12 +104,14 @@ export class ExerciseState {
   fetchNextExercises({ getState }: StateContext<ExerciseStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastPage;
-    const pageNumber =
-      state.fetchParamObjects[state.fetchParamObjects.length - 1].currentPage +
-      1;
+    const previousFetchParams =
+      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    const pageNumber = previousFetchParams.currentPage + 1;
     const newSearchParams: SearchParams = {
-      ...defaultSearchParams,
       pageNumber,
+      pageSize: previousFetchParams.pageSize,
+      searchQuery: previousFetchParams.searchQuery,
+      columnFilters: previousFetchParams.columnFilters,
     };
     if (
       !lastPageNumber ||
@@ -177,8 +180,14 @@ export class ExerciseState {
               response,
               newFetchParams,
             });
-            let exercises = state.exercises;
-            exercises = exercises.concat(response);
+            let paginatedExercises = state.paginatedExercises;
+            paginatedExercises = {
+              ...paginatedExercises,
+              [pageNumber]: response,
+            };
+            console.log({ paginatedExercises });
+            let exercises =
+              convertPaginatedListToNormalList(paginatedExercises);
             let lastPage = null;
             if (response.length < newFetchParams.pageSize) {
               lastPage = newFetchParams.currentPage;
@@ -186,6 +195,7 @@ export class ExerciseState {
             patchState({
               lastPage,
               exercises,
+              paginatedExercises,
               fetchParamObjects: state.fetchParamObjects.concat([
                 newFetchParams,
               ]),
