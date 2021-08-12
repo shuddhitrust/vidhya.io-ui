@@ -9,7 +9,7 @@ import {
 import { Injectable } from '@angular/core';
 import {
   ExerciseSubmissionSubscriptionAction,
-  CreateUpdateExerciseSubmissionAction,
+  CreateUpdateExerciseSubmissionsAction,
   DeleteExerciseSubmissionAction,
   FetchExerciseSubmissionsAction,
   FetchNextExerciseSubmissionsAction,
@@ -291,53 +291,36 @@ export class ExerciseSubmissionState {
       );
   }
 
-  @Action(CreateUpdateExerciseSubmissionAction)
+  @Action(CreateUpdateExerciseSubmissionsAction)
   createUpdateExerciseSubmission(
     { getState, patchState }: StateContext<ExerciseSubmissionStateModel>,
-    { payload }: CreateUpdateExerciseSubmissionAction
+    { payload }: CreateUpdateExerciseSubmissionsAction
   ) {
     const state = getState();
-    const { form, formDirective } = payload;
+    const { exerciseSubmissions } = payload;
     let { formSubmitting } = state;
-    if (form.valid) {
       formSubmitting = true;
       patchState({ formSubmitting });
-      const values = form.value;
-      console.log('ExerciseSubmission Form values', values);
-      const updateForm = values.id == null ? false : true;
-      const { id, ...sanitizedValues } = values;
-      const variables = updateForm
-        ? {
-            input: sanitizedValues,
-            id: values.id, // adding id to the mutation variables if it is an update mutation
+      const variables = {
+            exerciseSubmissions,
           }
-        : { input: sanitizedValues };
-
       this.apollo
         .mutate({
-          mutation: updateForm
-            ? EXERCISE_SUBMISSION_MUTATIONS.UPDATE_EXERCISE_SUBMISSION
-            : EXERCISE_SUBMISSION_MUTATIONS.CREATE_EXERCISE_SUBMISSION,
+          mutation: EXERCISE_SUBMISSION_MUTATIONS.CREATE_EXERCISE_SUBMISSIONS,
           variables,
         })
         .subscribe(
           ({ data }: any) => {
-            const response = updateForm
-              ? data.updateExerciseSubmission
-              : data.createExerciseSubmission;
+            const response = data.createExerciseSubmission;
             patchState({ formSubmitting: false });
             console.log('update exerciseSubmission ', { response });
             if (response.ok) {
               this.store.dispatch(
                 new ShowNotificationAction({
-                  message: `ExerciseSubmission ${
-                    updateForm ? 'updated' : 'created'
-                  } successfully!`,
+                  message: `Your work was submitted successfully!`,
                   action: 'success',
                 })
               );
-              form.reset();
-              formDirective.resetForm();
               this.router.navigateByUrl(ExerciseSubmissionFormCloseURL);
               patchState({
                 exerciseSubmissionFormRecord: emptyExerciseSubmissionFormRecord,
@@ -364,15 +347,6 @@ export class ExerciseSubmissionState {
             patchState({ formSubmitting: false });
           }
         );
-    } else {
-      this.store.dispatch(
-        new ShowNotificationAction({
-          message:
-            'Please make sure there are no errors in the form before attempting to submit!',
-          action: 'error',
-        })
-      );
-    }
   }
 
   @Action(DeleteExerciseSubmissionAction)

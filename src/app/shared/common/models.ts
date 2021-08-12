@@ -345,6 +345,7 @@ export const resources = {
   GROUP: 'GROUP',
   GRADING: 'GRADING',
   EXERCISE_KEY: 'EXERCISE_KEY',
+  EXERCISE_SUBMISSION: 'EXERCISE_SUBMISSION',
   REPORT: 'REPORT',
   OWN_PROFILE: 'OWN_PROFILE',
 };
@@ -362,6 +363,7 @@ export type UserPermissions = {
   GROUP: ResourceActions;
   GRADING: ResourceActions;
   EXERCISE_KEY: ResourceActions;
+  EXERCISE_SUBMISSION: ResourceActions;
   REPORT: ResourceActions;
   USER_ROLE: ResourceActions;
   OWN_PROFILE: ResourceActions;
@@ -380,6 +382,7 @@ export const defaultResourcePermissions: UserPermissions = {
   GROUP: defaultActions,
   GRADING: defaultActions,
   EXERCISE_KEY: defaultActions,
+  EXERCISE_SUBMISSION: defaultActions,
   REPORT: defaultActions,
   USER_ROLE: defaultActions,
   OWN_PROFILE: defaultActions,

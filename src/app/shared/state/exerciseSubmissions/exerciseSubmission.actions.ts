@@ -1,6 +1,6 @@
 import { FormGroup, FormGroupDirective } from '@angular/forms';
 import { SearchParams } from '../../abstract/master-grid/table.model';
-import { idPayload } from '../../common/models';
+import { ExerciseSubmission, idPayload } from '../../common/models';
 
 export class FetchExerciseSubmissionsAction {
   static readonly type = '[EXERCISE_SUBMISSIONS] Fetch';
@@ -32,13 +32,12 @@ export class GetExerciseSubmissionAction {
   constructor(public payload: idPayload) {}
 }
 
-export class CreateUpdateExerciseSubmissionAction {
+export class CreateUpdateExerciseSubmissionsAction {
   static readonly type = '[EXERCISE_SUBMISSION] Create';
 
   constructor(
     public payload: {
-      form: FormGroup;
-      formDirective: FormGroupDirective;
+      exerciseSubmissions: ExerciseSubmission[];
     }
   ) {}
 }

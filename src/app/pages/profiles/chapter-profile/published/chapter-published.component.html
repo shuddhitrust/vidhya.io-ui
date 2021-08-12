@@ -52,7 +52,11 @@
           <ng-container
             *ngTemplateOutlet="
               exerciseCard;
-              context: { exercise: exercise, index: i }
+              context: {
+                exercise: exercise,
+                response: exerciseSubmissionOf(exercise),
+                index: i
+              }
             "
           ></ng-container>
         </div>
@@ -61,6 +65,16 @@
   </span>
 </span>
 <br />
+<button
+  *ngIf="allowSubmissionCreation()"
+  class="floating-button-bottom"
+  mat-raised-button
+  color="primary"
+  (click)="updateFormBeforeSubmit()"
+  [disabled]="(formSubmitting$ | async) === true"
+>
+  {{ (formSubmitting$ | async) === true ? "Submitting..." : "Submit" }}
+</button>
 <br />
 
 <ng-template #feedEmpty>
@@ -71,7 +85,12 @@
   <app-simple-loading-spinner></app-simple-loading-spinner>
 </ng-template>
 
-<ng-template #exerciseCard let-exercise="exercise" let-index="index">
+<ng-template
+  #exerciseCard
+  let-question="exercise"
+  let-response="response"
+  let-index="index"
+>
   <span class="exercise-form-card">
     <button
       *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
@@ -80,106 +99,113 @@
       color="warn"
       [class.button-loading]="isFetchingExercises$ | async"
       class="profile-button"
-      (click)="deleteExerciseConfirmation(exercise)"
+      (click)="deleteExerciseConfirmation(question)"
     >
       <mat-icon>delete</mat-icon>
     </button>
-    <p>{{ exercise.prompt }}</p>
-    <p>
-      {{ showQuestionTypeLabel(exercise.questionType) }} -
-      {{ questionTypeDescriptions[exercise.questionType] }}
+    <p class="form-element-block col-lg-12 col-md-12 col-sm-12">
+      {{ question.prompt }}
     </p>
-    <p>{{ exercise.points }} points</p>
-    <div *ngIf="exercise.options">
-      <ul *ngFor="let option of exercise.options">
-        {{
-          option
-        }}
-      </ul>
-    </div>
-  </span>
-</ng-template>
-
-<ng-template #exerciseFormTemplate> </ng-template>
-
-<ng-template #optionsTemplate> </ng-template>
-
-<ng-template #questionTemplate let-question="question" let-response="response">
-  <p class="form-element-block col-lg-12 col-md-12 col-sm-12">
-    {{ question.prompt }}
-  </p>
-  <span
-    class="form-element-block col-lg-12 col-md-12 col-sm-12"
-    *ngIf="question.questionType == questionTypes.descriptive_answer"
-  >
-    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
-      <mat-label>Answer</mat-label>
-      <input matInput [(ngModel)]="response.answer" placeholder="Answer" />
-    </mat-form-field>
-  </span>
-
-  <span
-    class="form-element-block col-lg-12 col-md-12 col-sm-12"
-    *ngIf="question.questionType == questionTypes.options"
-  >
-    <ul
-      class="exercise-submission-options"
-      *ngFor="let option of question.options; let i = index"
+    <span
+      class="form-element-block col-lg-12 col-md-12 col-sm-12"
+      *ngIf="question.questionType == questionTypes.descriptive_answer"
     >
-      <li
-        (click)="updateExerciseSubmissionOption(option)"
-        [class]="
-          option == response.option
-            ? 'exercise-submission-option highlighted-option'
-            : 'exercise-submission-option'
-        "
-      >
-        {{ option }}
-      </li>
-    </ul>
-  </span>
+      <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
+        <mat-label>Answer</mat-label>
+        <input
+          matInput
+          (keypress)="updateExerciseSubmissionAnswer($event, question)"
+          placeholder="Specify a possible valid answer"
+        />
+      </mat-form-field>
+    </span>
 
-  <span
-    class="form-element-block col-lg-12 col-md-12 col-sm-12"
-    *ngIf="question.questionType == questionTypes.image_upload"
-  >
-    <div class="col-lg-3 col-md-4 col-sm-12 floating-logo">
-      <div
-        *ngIf="imagesQueuedForUpload.length"
-        class="col-lg-12 col-md-12 col-sm-12"
+    <span
+      class="form-element-block col-lg-12 col-md-12 col-sm-12"
+      *ngIf="question.questionType == questionTypes.options"
+    >
+      <ul
+        class="exercise-submission-options"
+        *ngFor="let option of question.options; let i = index"
       >
-        <span *ngFor="let image of imagesQueuedForUpload; let i = index">
-          <img
-            [src]="image.url"
-            alt="Exercise submission"
-            class="logo-upload-preview"
-          />
+        <li
+          (click)="updateExerciseSubmissionOption(question, option)"
+          [class]="
+            option == response.option
+              ? 'exercise-submission-option highlighted-option'
+              : 'exercise-submission-option'
+          "
+        >
+          {{ option }}
+        </li>
+      </ul>
+    </span>
 
-          <button type="button" mat-button (click)="removePreviewImage(i)">
-            <mat-icon>close</mat-icon>
-          </button>
-        </span>
+    <span
+      class="form-element-block col-lg-12 col-md-12 col-sm-12"
+      *ngIf="question.questionType == questionTypes.image_upload"
+    >
+      <div class="col-lg-3 col-md-4 col-sm-12 floating-logo">
+        <div
+          *ngIf="response.images?.length"
+          class="col-lg-12 col-md-12 col-sm-12"
+        >
+          <span *ngFor="let image of response.images; let i = index">
+            <img
+              [src]="image"
+              alt="Exercise submission (already uploaded)"
+              class="logo-upload-preview"
+            />
+
+            <button
+              type="button"
+              mat-button
+              (click)="removeExistingImage(question, i)"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+          </span>
+        </div>
+        <div
+          *ngIf="imagesQueuedForUpload.length"
+          class="col-lg-12 col-md-12 col-sm-12"
+        >
+          <span *ngFor="let image of imagesQueuedForUpload; let i = index">
+            <img
+              [src]="image.url"
+              alt="Exercise submission"
+              class="logo-upload-preview"
+            />
+
+            <button type="button" mat-button (click)="removePreviewImage(i)">
+              <mat-icon>close</mat-icon>
+            </button>
+          </span>
+        </div>
+        <br />
+        <br />
+        <input
+          id="logo-choose-button"
+          type="file"
+          accept="image/*"
+          placeholder="Image upload"
+          (change)="addImageFileToSubmission($event, question)"
+        />
       </div>
-      <br />
-      <br />
-      <input
-        #logoUpdate
-        id="logo-choose-button"
-        type="file"
-        accept="image/*"
-        placeholder="Image upload"
-        (change)="addImageFileToSubmission($event)"
-      />
-    </div>
-  </span>
+    </span>
 
-  <span
-    class="form-element-block col-lg-12 col-md-12 col-sm-12"
-    *ngIf="question.questionType == questionTypes.link"
-  >
-    <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
-      <mat-label>Link</mat-label>
-      <input matInput [(ngModel)]="response.link" placeholder="Answer" />
-    </mat-form-field>
+    <span
+      class="form-element-block col-lg-12 col-md-12 col-sm-12"
+      *ngIf="question.questionType == questionTypes.link"
+    >
+      <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
+        <mat-label>Link</mat-label>
+        <input
+          matInput
+          (keypress)="updateExerciseSubmissionLink($event, question)"
+          placeholder="Reference Link"
+        />
+      </mat-form-field>
+    </span>
   </span>
 </ng-template>

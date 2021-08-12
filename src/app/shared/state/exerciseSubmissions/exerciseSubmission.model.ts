@@ -4,6 +4,7 @@ import {
   FetchParams,
   startingFetchParams,
 } from '../../common/models';
+import { emptyExerciseFormRecord } from '../exercises/exercise.model';
 
 export const emptyExerciseSubmissionFormRecord: ExerciseSubmission = {
   id: null,

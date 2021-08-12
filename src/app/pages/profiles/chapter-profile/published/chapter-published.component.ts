@@ -27,6 +27,7 @@ import {
   MatSelectOption,
   resources,
   RESOURCE_ACTIONS,
+  User,
 } from 'src/app/shared/common/models';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
@@ -53,11 +54,19 @@ import {
   FormGroupDirective,
   Validators,
 } from '@angular/forms';
-import { ResetExerciseSubmissionFormAction } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.actions';
+import {
+  CreateUpdateExerciseSubmissionsAction,
+  ResetExerciseSubmissionFormAction,
+} from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.actions';
 import {
   ChapterDeleteConfirmationDialog,
   ExercicseDeleteConfirmationDialog,
 } from '../chapter-profile.component';
+import { emptyExerciseSubmissionFormRecord } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.model';
+import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
+import { UploadService } from 'src/app/shared/api/upload.service';
+import { environment } from 'src/environments/environment';
+import { AuthState } from 'src/app/shared/state/auth/auth.state';
 
 const startingExerciseFormOptions = ['', ''];
 
@@ -90,18 +99,20 @@ export class ChapterPublishedComponent implements OnInit {
   resourceActions = RESOURCE_ACTIONS;
   courseStatusOptions = CourseStatusOptions;
   chapterStatusOptions = ChapterStatusOptions;
+  @Select(AuthState.getCurrentMember)
+  currentMember$: Observable<User>;
+  currentMember: User;
   @Select(ChapterState.getChapterFormRecord)
   chapter$: Observable<Chapter>;
   chapter: Chapter;
   @Select(ExerciseState.listExercises)
   exercises$: Observable<Exercise[]>;
+  exercises: Exercise[];
   @Select(ExerciseState.isFetching)
   isFetchingExercises$: Observable<boolean>;
   isFetchingExercises: boolean;
   @Select(ChapterState.isFetching)
   isFetchingChapter$: Observable<boolean>;
-  exerciseForm: FormGroup = this.setupExerciseForm();
-  showExerciseForm: boolean = false;
   @Select(ExerciseState.formSubmitting)
   formSubmitting$: Observable<boolean>;
   formSubmitting: boolean;
@@ -114,8 +125,9 @@ export class ChapterPublishedComponent implements OnInit {
   exerciseFormOptions: string[] = startingExerciseFormOptions;
   invalidOptions: boolean = false;
   formErrorMessages: string = '';
-  exerciseKey: any = { validAnswers: [''] };
+  exerciseSubmissions: ExerciseSubmission[] = [];
   imagesQueuedForUpload: previewImage[] = [];
+  formDirective: FormGroupDirective;
   constructor(
     public dialog: MatDialog,
     private location: Location,
@@ -123,16 +135,30 @@ export class ChapterPublishedComponent implements OnInit {
     private store: Store,
     private router: Router,
     private auth: AuthorizationService,
-    private fb: FormBuilder
+    private uploadService: UploadService
   ) {
+    this.currentMember$.subscribe((val) => {
+      this.currentMember = val;
+    });
     this.isFetchingExercises$.subscribe((val) => {
       this.isFetchingExercises = val;
+    });
+    this.exercises$.subscribe((val) => {
+      this.exercises = val;
+      console.log('this.exercises', { exercises: this.exercises });
+      this.exerciseSubmissions = this.exercises.map(
+        (e: Exercise): ExerciseSubmission => {
+          return this.setupExerciseSubmission(e);
+        }
+      );
+      console.log('exerciseSubmissions', {
+        exerciseSubmissions: this.exerciseSubmissions,
+      });
     });
     this.chapter$.subscribe((val) => {
       this.chapter = val;
       console.log('Current chapter => ', this.chapter);
       this.fetchExercises();
-      this.exerciseForm = this.setupExerciseForm();
     });
     this.formSubmitting$.subscribe((val) => {
       this.formSubmitting = val;
@@ -142,23 +168,24 @@ export class ChapterPublishedComponent implements OnInit {
     });
   }
 
-  setupExerciseForm(exerciseFormRecord: Exercise = emptyExerciseFormRecord) {
-    this.exerciseFormOptions = exerciseFormRecord.options?.length
-      ? exerciseFormRecord.options
-      : startingExerciseFormOptions;
-    return this.fb.group({
-      id: [exerciseFormRecord?.id],
-      prompt: [exerciseFormRecord?.prompt, Validators.required],
-      chapter: [this.chapter?.id, Validators.required],
-      questionType: [exerciseFormRecord?.questionType],
-      options: [exerciseFormRecord?.options],
-      points: [exerciseFormRecord?.points],
-      required: [exerciseFormRecord?.required],
-      validOption: [],
-      validAnswers: [],
-      referenceLink: [],
-      referenceImages: [],
-    });
+  setupExerciseSubmission(exercise: Exercise): ExerciseSubmission {
+    let submission: ExerciseSubmission = Object.assign(
+      {},
+      emptyExerciseSubmissionFormRecord
+    );
+    submission.exercise = exercise?.id;
+    submission.chapter = this.chapter.id;
+    submission.course = exercise?.course?.id;
+    submission.participant = this.currentMember?.id;
+    console.log('submission');
+    return submission;
+  }
+
+  exerciseSubmissionOf(exercise) {
+    const submission = this.exerciseSubmissions.find(
+      (e) => e.exercise == exercise.id
+    );
+    return submission ? submission : emptyExerciseSubmissionFormRecord;
   }
 
   parseDate(date) {
@@ -184,6 +211,13 @@ export class ChapterPublishedComponent implements OnInit {
 
   authorizeResourceMethod(action) {
     return this.auth.authorizeResource(this.resource, action);
+  }
+
+  allowSubmissionCreation() {
+    return this.auth.authorizeResource(
+      resources.EXERCISE_SUBMISSION,
+      this.resourceActions.CREATE
+    );
   }
 
   ngOnInit(): void {
@@ -252,57 +286,76 @@ export class ChapterPublishedComponent implements OnInit {
     return index;
   }
 
-  sanitizeAndUpdateOptions(form) {
-    let options = null;
-    if (form.get('questionType').value == this.questionTypes.options) {
-      options = this.exerciseFormOptions.filter((o) => o.length > 0);
-      if (options.length < 2) {
-        this.invalidOptions = true;
-        if (
-          !this.formErrorMessages.includes('Please fill in at least 2 options')
-        )
-          this.formErrorMessages = 'Please fill in at least 2 options';
-      } else {
-        this.resetFormOptionErrors();
-      }
-    } else {
-      this.resetFormOptionErrors();
-    }
-    form.get('options').setValue(options);
-  }
-
-  resetFormOptionErrors() {
-    this.invalidOptions = false;
-    this.formErrorMessages = '';
-  }
-
-  uploadReferenceImages() {}
-
-  updateGradingKeyInExerciseForm(form) {
-    console.log('exerciseKey', { exerciseKey: this.exerciseKey });
-    form.get('validOption').setValue(this.exerciseKey.option);
-    let allValidAnswers = [this.exerciseKey?.answer].concat(
-      this.exerciseKey?.validAnswers
-    );
-    allValidAnswers = allValidAnswers.filter((a) => a?.length > 0); // removing empty answers if any
-    allValidAnswers = [...new Set(allValidAnswers)]; // removing duplicates
-    form.get('validAnswers').setValue(allValidAnswers);
-    form.get('referenceLink').setValue(this.exerciseKey.link);
-    form.get('referenceImages').setValue([]);
-  }
-
   showQuestionTypeLabel(value) {
     return getOptionLabel(value, this.questionTypeOptions);
   }
 
-  updateExerciseSubmissionOption(option) {
-    console.log({ option });
-    let newExerciseSubmission = Object.assign({}, this.exerciseKey);
-    newExerciseSubmission.option = option;
-    this.exerciseKey = newExerciseSubmission;
+  updateExerciseSubmissionAnswer(event, question) {
+    console.log('from updateExerciseSubmissionAnswer', { question, event });
   }
 
-  addImageFileToSubmission(event) {
+  updateExerciseSubmissionLink(event, question) {
+    console.log('from updateExerciseSubmissionLink', { question, event });
+  }
+
+  updateExerciseSubmissionOption(question, option) {
+    console.log({ option });
+    let exerciseSubmission = this.exerciseSubmissions.find(
+      (e) => e.exercise?.id == question.id
+    );
+    let newExerciseSubmission = Object.assign({}, exerciseSubmission);
+    newExerciseSubmission.option = option;
+    const newExerciseSubmissions = this.exerciseSubmissions.map((e) => {
+      return e.exercise?.id == question.id ? newExerciseSubmission : e;
+    });
+    this.exerciseSubmissions = newExerciseSubmissions;
+  }
+
+  uploadImage(imageIndex) {
+    // if (this.imagesQueuedForUpload.length == 0) {
+    //   this.submitExerciseForm();
+    // } else {
+    //   const formData = new FormData();
+    //   formData.append('file', this.imagesQueuedForUpload[imageIndex].file);
+    //   this.uploadService.upload(formData).subscribe(
+    //     (res) => {
+    //       const url = `${environment.api_endpoint}${res.file}`;
+    //       console.log('uploading new file ', imageIndex, url);
+    //       const existingReferenceImages = form.get('referenceImages').value;
+    //       // We update the referenceImages field in the form with the new url
+    //       const newReferenceImages = existingReferenceImages.concat(url);
+    //       form.get('referenceImages').setValue(newReferenceImages);
+    //       // Checking if this is the final image to be uploaded..
+    //       if (imageIndex == this.imagesQueuedForUpload.length - 1) {
+    //         // if it is, then we update the form and submit it.
+    //         this.submitExerciseForm();
+    //       } else {
+    //         imageIndex++;
+    //         this.uploadImage(imageIndex);
+    //       }
+    //     },
+    //     (err) => {
+    //       console.log('Error while uploading image', { err });
+    //       this.store.dispatch(
+    //         new ShowNotificationAction({
+    //           message:
+    //             'Something went wrong while uploading the reference images!',
+    //           action: 'error',
+    //         })
+    //       );
+    //     }
+    //   );
+    // }
+  }
+
+  uploadNewImages() {
+    console.log('Starting to upload reference images', {
+      imagesQueuedForUpload: this.imagesQueuedForUpload,
+    });
+    this.uploadImage(0);
+  }
+
+  addImageFileToSubmission(event, question) {
     if (event.target.files.length > 0) {
       let previewImageObject: previewImage = { file: null, url: null };
       const file = event.target.files[0];
@@ -324,5 +377,42 @@ export class ChapterPublishedComponent implements OnInit {
 
   removePreviewImage(i) {
     this.imagesQueuedForUpload.splice(i, 1);
+  }
+  removeExistingImage(question, i) {
+    let exerciseSubmission = this.exerciseSubmissions.find(
+      (e) => e.id == question.id
+    );
+    let newImages = Object.assign([], exerciseSubmission.images);
+    newImages.splice(i, 1);
+    exerciseSubmission = {
+      ...exerciseSubmission,
+      images: newImages,
+    };
+    this.exerciseSubmissions = this.exerciseSubmissions.map((e) =>
+      e.id == question.id ? exerciseSubmission : e
+    );
+  }
+  updateFormBeforeSubmit() {
+    console.log('imagesQueuedForUpload', {
+      imagesQueuedForUpload: this.imagesQueuedForUpload,
+    });
+    this.uploadNewImages();
+  }
+
+  submitExerciseForm() {
+    if (!this.invalidOptions) {
+      this.store.dispatch(
+        new CreateUpdateExerciseSubmissionsAction({
+          exerciseSubmissions: this.exerciseSubmissions,
+        })
+      );
+    } else {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message: 'Something went wrong while submitting this form!',
+          action: 'error',
+        })
+      );
+    }
   }
 }
