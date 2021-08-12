@@ -116,8 +116,9 @@ export class ChapterDraftComponent implements OnInit {
   exerciseFormOptions: string[] = startingExerciseFormOptions;
   invalidOptions: boolean = false;
   formErrorMessages: string = '';
-  exerciseKey: any = { validAnswers: [''] };
+  exerciseKey: any = emptyExerciseKeyFormRecord;
   imagesQueuedForUpload: previewImage[] = [];
+  formDirective: FormGroupDirective;
   constructor(
     public dialog: MatDialog,
     private location: Location,
@@ -148,23 +149,36 @@ export class ChapterDraftComponent implements OnInit {
     });
   }
 
-  setupExerciseForm(exerciseFormRecord: Exercise = emptyExerciseFormRecord) {
-    this.exerciseFormOptions = exerciseFormRecord.options?.length
-      ? exerciseFormRecord.options
+  sanitizeExerciseKeyRecord(exerciseKeyRecord) {
+    this.exerciseFormOptions = exerciseKeyRecord.exercise?.options?.length
+      ? exerciseKeyRecord?.exercise?.options
       : startingExerciseFormOptions;
+    const validAnswers =
+      exerciseKeyRecord?.validAnswers.length > 0
+        ? exerciseKeyRecord?.validAnswers
+        : [''];
+    let finalExerciseKeyRecord = { ...exerciseKeyRecord, validAnswers };
+    this.exerciseKey = finalExerciseKeyRecord;
+    return this.exerciseKey;
+  }
+
+  setupExerciseForm(
+    exerciseKeyRecord: ExerciseKey = emptyExerciseKeyFormRecord
+  ) {
+    exerciseKeyRecord = this.sanitizeExerciseKeyRecord(exerciseKeyRecord);
     return this.fb.group({
-      id: [exerciseFormRecord?.id],
-      prompt: [exerciseFormRecord?.prompt, Validators.required],
+      id: [exerciseKeyRecord?.exercise?.id],
+      prompt: [exerciseKeyRecord?.exercise?.prompt, Validators.required],
       course: [this.chapter?.course?.id, Validators.required],
       chapter: [this.chapter?.id, Validators.required],
-      questionType: [exerciseFormRecord?.questionType],
-      options: [exerciseFormRecord?.options],
-      points: [exerciseFormRecord?.points],
-      required: [exerciseFormRecord?.required],
-      validOption: [],
-      validAnswers: [],
-      referenceLink: [],
-      referenceImages: [],
+      questionType: [exerciseKeyRecord?.exercise?.questionType],
+      options: [exerciseKeyRecord?.exercise?.options],
+      points: [exerciseKeyRecord?.exercise?.points],
+      required: [exerciseKeyRecord?.exercise?.required],
+      validOption: [exerciseKeyRecord?.validOption],
+      validAnswers: [exerciseKeyRecord?.validAnswers],
+      referenceLink: [exerciseKeyRecord?.referenceLink],
+      referenceImages: [exerciseKeyRecord?.referenceImages],
     });
   }
 
@@ -246,17 +260,15 @@ export class ChapterDraftComponent implements OnInit {
     this.store.dispatch(new PublishChapterAction({ id: this.chapter.id }));
   }
 
-  editExercise(exercise) {
+  editExercise(exerciseKey) {
+    const exercise = exerciseKey?.exercise;
+    this.resetExerciseForm();
+    this.exerciseForm = this.setupExerciseForm(exerciseKey);
     console.log('editing exercise ', {
       exercise,
       exerciseKeys: this.exerciseKeys,
-      exerciseKey: this.exerciseKey,
+      exerciseKey: exerciseKey,
     });
-    this.resetExerciseForm();
-    this.exerciseForm = this.setupExerciseForm(exercise);
-    this.exerciseKey = this.exerciseKeys.find(
-      (e) => e.exercise?.id == exercise.id
-    );
     this.showExerciseForm = true;
   }
   deleteExerciseConfirmation(exercise) {
@@ -271,7 +283,8 @@ export class ChapterDraftComponent implements OnInit {
       }
     });
   }
-  deleteExercise(exercise) {
+  deleteExercise(exerciseKey) {
+    const exercise = exerciseKey?.exercise;
     console.log('payload before passing to action => ', {
       id: exercise.id,
     });
@@ -286,6 +299,7 @@ export class ChapterDraftComponent implements OnInit {
   resetExerciseForm() {
     this.exerciseForm = this.setupExerciseForm();
     this.exerciseFormOptions = startingExerciseFormOptions;
+    this.imagesQueuedForUpload = [];
     this.resetFormOptionErrors();
   }
   addExercise() {
@@ -315,17 +329,19 @@ export class ChapterDraftComponent implements OnInit {
   }
 
   enableAddNewValidAnswer() {
+    const lastAnswerExists =
+      this.exerciseKey?.validAnswers.length > 0
+        ? this.exerciseKey?.validAnswers[
+            this.exerciseKey?.validAnswers?.length - 1
+          ].length
+        : true;
     // Checking if the exercise form options is less than 5 options and if the last option was valid or not
-    return (
-      this.exerciseKey?.validAnswers?.length < 5 &&
-      this.exerciseKey?.validAnswers[this.exerciseKey?.validAnswers?.length - 1]
-        .length
-    );
+    return this.exerciseKey?.validAnswers?.length < 5 && lastAnswerExists;
   }
   addValidAnswer() {
-    this.exerciseKey.validAnswers = this.exerciseKey?.validAnswers?.concat([
-      '',
-    ]);
+    let newValidAnswers = Object.assign([], this.exerciseKey.validAnswers);
+    newValidAnswers = newValidAnswers.concat(['']);
+    this.exerciseKey = { ...this.exerciseKey, validAnswers: newValidAnswers };
   }
 
   sanitizeAndUpdateOptions(form) {
@@ -352,59 +368,61 @@ export class ChapterDraftComponent implements OnInit {
     this.formErrorMessages = '';
   }
 
-  uploadNewReferenceImages(form): Observable<any> {
-    let newReferenceImages = [];
-    let i = 0;
-    function uploadImage(): Observable<any> {
-      let returnValue;
-      if (this.imagesQueuedForUpload.length == 0) {
-        returnValue = new Observable((observer) => {
-          observer.next(form);
-        });
-      } else {
-        const formData = new FormData();
-        formData.append('file', this.imagesQueuedForUpload[i].file);
-        this.uploadService.upload(formData).subscribe(
-          (res) => {
-            const url = `${environment.api_endpoint}${res.file}`;
-            console.log('uploading new file ', i, url);
-            newReferenceImages = newReferenceImages.concat([url]);
-            if (i == this.imagesQueuedForUpload.length - 1) {
-              returnValue = new Observable((observer) => {
-                form.get('referenceImages').setValue(newReferenceImages);
-                observer.next(form);
-              });
-            } else {
-              i++;
-              returnValue = uploadImage();
-            }
-          },
-          (err) => {
-            returnValue = new Observable((observer) => {
-              observer.error(err);
-            });
+  uploadImage(imageIndex, form) {
+    if (this.imagesQueuedForUpload.length == 0) {
+      this.submitExerciseForm(form);
+    } else {
+      const formData = new FormData();
+      formData.append('file', this.imagesQueuedForUpload[imageIndex].file);
+      this.uploadService.upload(formData).subscribe(
+        (res) => {
+          const url = `${environment.api_endpoint}${res.file}`;
+          console.log('uploading new file ', imageIndex, url);
+          const existingReferenceImages = form.get('referenceImages').value;
+          // We update the referenceImages field in the form with the new url
+          const newReferenceImages = existingReferenceImages.concat(url);
+          form.get('referenceImages').setValue(newReferenceImages);
+          // Checking if this is the final image to be uploaded..
+          if (imageIndex == this.imagesQueuedForUpload.length - 1) {
+            // if it is, then we update the form and submit it.
+            this.submitExerciseForm(form);
+          } else {
+            imageIndex++;
+            this.uploadImage(imageIndex, form);
           }
-        );
-      }
-
-      return returnValue;
+        },
+        (err) => {
+          console.log('Error while uploading image', { err });
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message:
+                'Something went wrong while uploading the reference images!',
+              action: 'error',
+            })
+          );
+        }
+      );
     }
-    return uploadImage();
   }
 
-  updateGradingKeyInExerciseForm(form): Observable<any> {
+  uploadNewReferenceImages(form) {
+    console.log('Starting to upload reference images', {
+      imagesQueuedForUpload: this.imagesQueuedForUpload,
+    });
+    this.uploadImage(0, form);
+  }
+
+  updateGradingKeyInExerciseForm(form) {
     console.log('exerciseKey', { exerciseKey: this.exerciseKey });
-    form.get('validOption').setValue(this.exerciseKey.option);
-    let allValidAnswers = [this.exerciseKey?.answer].concat(
-      this.exerciseKey?.validAnswers
-    );
+    form.get('validOption').setValue(this.exerciseKey.validOption);
+    let allValidAnswers = this.exerciseKey?.validAnswers;
     allValidAnswers = allValidAnswers.filter((a) => a?.length > 0); // removing empty answers if any
     allValidAnswers = [...new Set(allValidAnswers)]; // removing duplicates
     form.get('validAnswers').setValue(allValidAnswers);
-    form.get('referenceLink').setValue(this.exerciseKey.link);
+    form.get('referenceLink').setValue(this.exerciseKey.referenceLink);
     const referenceImages = this.exerciseKey.referenceImages;
     form.get('referenceImages').setValue(referenceImages);
-    return this.uploadNewReferenceImages(form);
+    this.uploadNewReferenceImages(form);
   }
 
   updateExerciseFormOptions() {
@@ -415,11 +433,11 @@ export class ChapterDraftComponent implements OnInit {
     return getOptionLabel(value, this.questionTypeOptions);
   }
 
-  updateExerciseSubmissionOption(option) {
+  updateExerciseKeyOption(option) {
     console.log({ option });
-    let newExerciseSubmission = Object.assign({}, this.exerciseKey);
-    newExerciseSubmission.option = option;
-    this.exerciseKey = newExerciseSubmission;
+    let newExerciseKey = Object.assign({}, this.exerciseKey);
+    newExerciseKey.validOption = option;
+    this.exerciseKey = newExerciseKey;
   }
 
   addImageFileToSubmission(event) {
@@ -447,39 +465,43 @@ export class ChapterDraftComponent implements OnInit {
   }
 
   removeReferenceImage(i) {
-    this.exerciseKey.referenceImages.splice(i, 1);
+    let newReferenceImages = Object.assign(
+      [],
+      this.exerciseKey.referenceImages
+    );
+    newReferenceImages.splice(i, 1);
+    this.exerciseKey = {
+      ...this.exerciseKey,
+      referenceImages: newReferenceImages,
+    };
   }
 
-  submitExerciseForm(form, formDirective) {
-    console.log('exercise submit form value => ', form.value);
+  updateFormBeforeSubmit(form, formDirective) {
+    console.log('imagesQueuedForUpload', {
+      imagesQueuedForUpload: this.imagesQueuedForUpload,
+    });
+    this.formDirective = formDirective;
     this.sanitizeAndUpdateOptions(form);
-    this.updateGradingKeyInExerciseForm(form).subscribe(
-      (form) => {
-        if (!this.invalidOptions) {
-          this.store.dispatch(
-            new CreateUpdateExerciseAction({
-              form,
-              formDirective,
-            })
-          );
-        } else {
-          this.store.dispatch(
-            new ShowNotificationAction({
-              message: 'Something went wrong while submitting this form!',
-              action: 'error',
-            })
-          );
-        }
-      },
-      (err) => {
-        this.store.dispatch(
-          new ShowNotificationAction({
-            message: `Something went wrong while submitting this form! ${err}`,
-            action: 'error',
-          })
-        );
-      }
-    );
+    this.updateGradingKeyInExerciseForm(form);
+  }
+
+  submitExerciseForm(form) {
+    console.log('exercise submit form value => ', form.value);
+    if (!this.invalidOptions) {
+      this.store.dispatch(
+        new CreateUpdateExerciseAction({
+          form,
+          formDirective: this.formDirective,
+        })
+      );
+    } else {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message: 'Something went wrong while submitting this form!',
+          action: 'error',
+        })
+      );
+    }
   }
 }
 

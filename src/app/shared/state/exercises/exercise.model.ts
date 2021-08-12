@@ -19,11 +19,11 @@ export const emptyExerciseFormRecord: Exercise = {
 
 export const emptyExerciseKeyFormRecord: ExerciseKey = {
   id: null,
-  exercise: null,
+  exercise: emptyExerciseFormRecord,
   chapter: null,
   course: null,
   validOption: null,
-  validAnswers: [],
+  validAnswers: [''],
   referenceLink: null,
   referenceImages: [],
 };

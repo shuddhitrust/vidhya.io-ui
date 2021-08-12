@@ -68,7 +68,7 @@
             <ng-container
               *ngTemplateOutlet="
                 exerciseCard;
-                context: { exercise: exerciseKey.exercise, index: i }
+                context: { exerciseKey: exerciseKey, index: i }
               "
             ></ng-container>
           </div>
@@ -104,7 +104,7 @@
   <app-simple-loading-spinner></app-simple-loading-spinner>
 </ng-template>
 
-<ng-template #exerciseCard let-exercise="exercise" let-index="index">
+<ng-template #exerciseCard let-exerciseKey="exerciseKey" let-index="index">
   <span class="exercise-form-card">
     <button
       *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
@@ -112,7 +112,7 @@
       type="button"
       color="warn"
       class="profile-button"
-      (click)="deleteExerciseConfirmation(exercise)"
+      (click)="deleteExerciseConfirmation(exerciseKey)"
     >
       <mat-icon>delete</mat-icon>
     </button>
@@ -123,19 +123,19 @@
       color="info"
       [class.button-loading]="isFetchingChapter$ | async"
       class="profile-button"
-      (click)="editExercise(exercise)"
+      (click)="editExercise(exerciseKey)"
     >
       <mat-icon>edit</mat-icon>
     </button>
 
-    <p>{{ exercise.prompt }}</p>
+    <p>{{ exerciseKey?.exercise.prompt }}</p>
     <p>
-      {{ showQuestionTypeLabel(exercise.questionType) }} -
-      {{ questionTypeDescriptions[exercise.questionType] }}
+      {{ showQuestionTypeLabel(exerciseKey?.exercise.questionType) }} -
+      {{ questionTypeDescriptions[exerciseKey?.exercise.questionType] }}
     </p>
-    <p>{{ exercise.points }} points</p>
-    <div *ngIf="exercise.options">
-      <ul *ngFor="let option of exercise.options">
+    <p>{{ exerciseKey?.exercise?.points }} points</p>
+    <div *ngIf="exerciseKey?.exercise?.options">
+      <ul *ngFor="let option of exerciseKey?.exercise?.options">
         {{
           option
         }}
@@ -149,7 +149,7 @@
     class="form-container"
     [formGroup]="exerciseForm"
     novalidate
-    (submit)="submitExerciseForm(exerciseForm, formDirective)"
+    (submit)="updateFormBeforeSubmit(exerciseForm, formDirective)"
     #formDirective="ngForm"
   >
     <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
@@ -317,7 +317,7 @@
 </ng-template>
 
 <ng-template #validAnswersTemplate>
-  <p class="form-element-block">Alternate valid answers</p>
+  <p class="form-element-block">Possible valid answers</p>
   <div
     *ngFor="
       let answer of exerciseKey?.validAnswers;
@@ -329,11 +329,12 @@
       <mat-label>Answer {{ i + 1 }}</mat-label>
       <input
         matInput
-        [(ngModel)]="exerciseKey?.validAnswers[i + 1]"
-        placeholder="Enter an option"
+        [(ngModel)]="exerciseKey?.validAnswers[i]"
+        placeholder="Specify a possible valid answer"
       />
     </mat-form-field>
   </div>
+  <br />
   <button
     type="button"
     *ngIf="enableAddNewValidAnswer()"
@@ -354,20 +355,7 @@
     class="form-element-block col-lg-12 col-md-12 col-sm-12"
     *ngIf="question.questionType == questionTypes.descriptive_answer"
   >
-    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
-      <mat-label>Answer</mat-label>
-      <input
-        matInput
-        [(ngModel)]="
-          response.answer ? response.answer : response.validAnswers[0]
-        "
-        placeholder="Answer"
-      />
-    </mat-form-field>
-
-    <span *ngIf="authorizeResourceMethod(resourceActions.CREATE)">
-      <ng-container *ngTemplateOutlet="validAnswersTemplate"></ng-container>
-    </span>
+    <ng-container *ngTemplateOutlet="validAnswersTemplate"></ng-container>
   </span>
 
   <span
@@ -379,7 +367,7 @@
       *ngFor="let option of question.options; let i = index"
     >
       <li
-        (click)="updateExerciseSubmissionOption(option)"
+        (click)="updateExerciseKeyOption(option)"
         [class]="
           option == response.validOption
             ? 'exercise-submission-option highlighted-option'
@@ -447,7 +435,11 @@
   >
     <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
       <mat-label>Link</mat-label>
-      <input matInput [(ngModel)]="response.link" placeholder="Answer" />
+      <input
+        matInput
+        [(ngModel)]="response.referenceLink"
+        placeholder="Reference Link"
+      />
     </mat-form-field>
   </span>
 </ng-template>

@@ -48,10 +48,6 @@ export class ChapterProfileComponent implements OnDestroy {
     return this.chapter.status == this.chapterStatusOptions.draft;
   }
   authorizeResourceMethod(action) {
-    console.log(
-      'this.auth.authorizeResource(this.resource, action);',
-      this.auth.authorizeResource(this.resource, action)
-    );
     return this.auth.authorizeResource(this.resource, action);
   }
   ngOnDestroy(): void {
