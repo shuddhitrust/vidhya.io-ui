@@ -1,25 +1,26 @@
 <button mat-icon-button (click)="goBack()" class="floating-back-button">
   <mat-icon>keyboard_backspace</mat-icon>
 </button>
-<button
-  *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
-  mat-mini-fab
-  color="warn"
-  class="profile-button"
-  (click)="deleteConfirmation()"
->
-  <mat-icon>delete</mat-icon>
-</button>
-<button
-  *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
-  mat-mini-fab
-  color="info"
-  class="profile-button"
-  (click)="editInstitution()"
->
-  <mat-icon>edit</mat-icon>
-</button>
+
 <div class="institution-card">
+  <button
+    *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
+    mat-mini-fab
+    color="warn"
+    class="profile-button"
+    (click)="deleteConfirmation()"
+  >
+    <mat-icon>delete</mat-icon>
+  </button>
+  <button
+    *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
+    mat-mini-fab
+    color="info"
+    class="profile-button"
+    (click)="editInstitution()"
+  >
+    <mat-icon>edit</mat-icon>
+  </button>
   <h2>{{ institution?.name }}</h2>
   <p>{{ institution?.bio }}</p>
 </div>

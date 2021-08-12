@@ -2,10 +2,15 @@
   <mat-icon>keyboard_backspace</mat-icon>
 </button>
 
-<button mat-mini-fab color="info" class="profile-button" (click)="editMember()">
-  <mat-icon>edit</mat-icon>
-</button>
 <div class="member-card">
+  <button
+    mat-mini-fab
+    color="info"
+    class="profile-button"
+    (click)="editMember()"
+  >
+    <mat-icon>edit</mat-icon>
+  </button>
   <h2>{{ currentMember?.firstName }}</h2>
   <p>{{ currentMember?.bio }}</p>
   <p class="title-link" (click)="onClickInstitution()">

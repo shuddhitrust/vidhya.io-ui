@@ -3,27 +3,26 @@
 </button>
 
 <span *ngIf="!(isFetchingGroup$ | async)">
-  <button
-    *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
-    mat-mini-fab
-    color="warn"
-    class="profile-button"
-    (click)="deleteConfirmation()"
-  >
-    <mat-icon>delete</mat-icon>
-  </button>
-  <button
-    *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
-    mat-mini-fab
-    color="info"
-    [class.button-loading]="isFetchingGroup$ | async"
-    class="profile-button"
-    (click)="editGroup()"
-  >
-    <mat-icon>edit</mat-icon>
-  </button>
-
   <div class="group-card">
+    <button
+      *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
+      mat-mini-fab
+      color="warn"
+      class="profile-button"
+      (click)="deleteConfirmation()"
+    >
+      <mat-icon>delete</mat-icon>
+    </button>
+    <button
+      *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
+      mat-mini-fab
+      color="info"
+      [class.button-loading]="isFetchingGroup$ | async"
+      class="profile-button"
+      (click)="editGroup()"
+    >
+      <mat-icon>edit</mat-icon>
+    </button>
     <h2>{{ group?.name }}</h2>
     <p>{{ group?.description }}</p>
   </div>

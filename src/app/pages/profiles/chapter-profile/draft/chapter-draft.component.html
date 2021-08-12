@@ -4,30 +4,9 @@
 
 <span *ngIf="!(isFetchingChapter$ | async)">
   <button
-    *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
-    mat-mini-fab
-    type="button"
-    color="warn"
-    class="profile-button"
-    (click)="deleteConfirmation()"
-  >
-    <mat-icon>delete</mat-icon>
-  </button>
-  <button
-    *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
-    mat-mini-fab
-    type="button"
-    color="info"
-    [class.button-loading]="isFetchingChapter$ | async"
-    class="profile-button"
-    (click)="editChapter()"
-  >
-    <mat-icon>edit</mat-icon>
-  </button>
-  <button
     *ngIf="showPublishChapterButton()"
     mat-raised-button
-    color="info"
+    color="primary"
     [class.button-loading]="isFetchingChapter$ | async"
     class="profile-button"
     (click)="publishChapter()"
@@ -35,6 +14,27 @@
     Publish
   </button>
   <div class="chapter-card">
+    <button
+      *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
+      mat-mini-fab
+      type="button"
+      color="warn"
+      class="profile-button"
+      (click)="deleteConfirmation()"
+    >
+      <mat-icon>delete</mat-icon>
+    </button>
+    <button
+      *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
+      mat-mini-fab
+      type="button"
+      color="info"
+      [class.button-loading]="isFetchingChapter$ | async"
+      class="profile-button"
+      (click)="editChapter()"
+    >
+      <mat-icon>edit</mat-icon>
+    </button>
     <h2>{{ chapter?.title }}</h2>
     <p class="left">{{ chapter?.instructions }}</p>
     <small class="left" style="font-style: italic" *ngIf="chapter?.dueDate"

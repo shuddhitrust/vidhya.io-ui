@@ -3,16 +3,16 @@
 </button>
 
 <span *ngIf="!(isFetchingAnnouncement$ | async)">
-  <button
-    *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
-    mat-mini-fab
-    color="warn"
-    class="profile-button"
-    (click)="deleteConfirmation()"
-  >
-    <mat-icon>delete</mat-icon>
-  </button>
   <div class="announcement-card">
+    <button
+      *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
+      mat-mini-fab
+      color="warn"
+      class="profile-button"
+      (click)="deleteConfirmation()"
+    >
+      <mat-icon>delete</mat-icon>
+    </button>
     <h2>{{ announcement.title }}</h2>
     <p class="left">{{ announcement.message }}</p>
     <small class="left" style="font-style: italic"
