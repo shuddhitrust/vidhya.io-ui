@@ -1,3 +1,4 @@
+import { SearchParams } from '../../abstract/master-grid/table.model';
 import {
   FetchPolicy,
   Chapter,
@@ -15,6 +16,7 @@ export const emptyChapterFormRecord: Chapter = {
 };
 export interface ChapterStateModel {
   chapters: Chapter[];
+  paginatedChapters: any;
   lastPage: number;
   chaptersSubscribed: boolean;
   fetchPolicy: FetchPolicy;
@@ -29,6 +31,7 @@ export interface ChapterStateModel {
 
 export const defaultChapterState: ChapterStateModel = {
   chapters: [],
+  paginatedChapters: {},
   lastPage: null,
   chaptersSubscribed: false,
   fetchPolicy: null,

@@ -28,6 +28,7 @@ import {
   fetchParamsNewOrNot,
   subscriptionUpdater,
   updateFetchParams,
+  convertPaginatedListToNormalList,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
@@ -120,16 +121,18 @@ export class ChapterState {
   fetchNextChapters({ getState }: StateContext<ChapterStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastPage;
-    const newPageNumber =
-      state.fetchParamObjects[state.fetchParamObjects.length - 1].currentPage +
-      1;
+    const previousFetchParams =
+      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    const pageNumber = previousFetchParams.currentPage + 1;
     const newSearchParams: SearchParams = {
-      ...defaultSearchParams,
-      newPageNumber,
+      pageNumber,
+      pageSize: previousFetchParams.pageSize,
+      searchQuery: previousFetchParams.searchQuery,
+      columnFilters: previousFetchParams.columnFilters,
     };
     if (
       !lastPageNumber ||
-      (lastPageNumber != null && newPageNumber <= lastPageNumber)
+      (lastPageNumber != null && pageNumber <= lastPageNumber)
     ) {
       this.store.dispatch(
         new FetchChaptersAction({ searchParams: newSearchParams })
@@ -146,18 +149,17 @@ export class ChapterState {
     let { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, fetchParamObjects, chaptersSubscribed } = state;
-    const { newSearchQuery, newPageSize, newPageNumber, newColumnFilters } =
-      searchParams;
+    const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({
       fetchParamObjects,
-      newPageNumber,
-      newPageSize,
-      newSearchQuery,
-      newColumnFilters,
+      newPageNumber: pageNumber,
+      newPageSize: pageSize,
+      newSearchQuery: searchQuery,
+      newColumnFilters: columnFilters,
     });
     const variables = {
-      courseId: newColumnFilters.courseId,
-      searchField: newSearchQuery,
+      courseId: columnFilters.courseId,
+      searchField: searchQuery,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
@@ -183,8 +185,13 @@ export class ChapterState {
               response,
               newFetchParams,
             });
-            let chapters = state.chapters;
-            chapters = chapters.concat(response);
+            let paginatedChapters = state.paginatedChapters;
+            paginatedChapters = {
+              ...paginatedChapters,
+              [pageNumber]: response,
+            };
+            console.log({ paginatedChapters });
+            let chapters = convertPaginatedListToNormalList(paginatedChapters);
             let lastPage = null;
             if (response.length < newFetchParams.pageSize) {
               lastPage = newFetchParams.currentPage;

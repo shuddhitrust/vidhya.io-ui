@@ -19,7 +19,11 @@ import {
 } from './courseSection.actions';
 import { COURSE_SECTION_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
-import { CourseSection, MatSelectOption, FetchParams } from '../../common/models';
+import {
+  CourseSection,
+  MatSelectOption,
+  FetchParams,
+} from '../../common/models';
 import { COURSE_SECTION_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
@@ -60,7 +64,9 @@ export class CourseSectionState {
     return state.fetchParamObjects[state.fetchParamObjects.length - 1];
   }
   @Selector()
-  static listCourseSectionOptions(state: CourseSectionStateModel): MatSelectOption[] {
+  static listCourseSectionOptions(
+    state: CourseSectionStateModel
+  ): MatSelectOption[] {
     const options: MatSelectOption[] = state.courseSections.map((i) => {
       const option: MatSelectOption = {
         value: i.id,
@@ -88,12 +94,16 @@ export class CourseSectionState {
   }
 
   @Selector()
-  static getCourseSectionFormRecord(state: CourseSectionStateModel): CourseSection {
+  static getCourseSectionFormRecord(
+    state: CourseSectionStateModel
+  ): CourseSection {
     return state.courseSectionFormRecord;
   }
 
   @Action(ForceRefetchCourseSectionsAction)
-  forceRefetchCourseSections({ patchState }: StateContext<CourseSectionStateModel>) {
+  forceRefetchCourseSections({
+    patchState,
+  }: StateContext<CourseSectionStateModel>) {
     patchState({ fetchPolicy: 'network-only' });
     this.store.dispatch(
       new FetchCourseSectionsAction({ searchParams: defaultSearchParams })
@@ -104,16 +114,16 @@ export class CourseSectionState {
   fetchNextCourseSections({ getState }: StateContext<CourseSectionStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastPage;
-    const newPageNumber =
+    const pageNumber =
       state.fetchParamObjects[state.fetchParamObjects.length - 1].currentPage +
       1;
     const newSearchParams: SearchParams = {
       ...defaultSearchParams,
-      newPageNumber,
+      pageNumber,
     };
     if (
       !lastPageNumber ||
-      (lastPageNumber != null && newPageNumber <= lastPageNumber)
+      (lastPageNumber != null && pageNumber <= lastPageNumber)
     ) {
       this.store.dispatch(
         new FetchCourseSectionsAction({ searchParams: newSearchParams })
@@ -129,17 +139,16 @@ export class CourseSectionState {
     let { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, fetchParamObjects, courseSectionsSubscribed } = state;
-    const { newSearchQuery, newPageSize, newPageNumber, newColumnFilters } =
-      searchParams;
+    const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({
       fetchParamObjects,
-      newPageNumber,
-      newPageSize,
-      newSearchQuery,
-      newColumnFilters,
+      newPageNumber: pageNumber,
+      newPageSize: pageSize,
+      newSearchQuery: searchQuery,
+      newColumnFilters: columnFilters,
     });
     const variables = {
-      searchField: newSearchQuery,
+      searchField: searchQuery,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
@@ -190,7 +199,10 @@ export class CourseSectionState {
   }
 
   @Action(CourseSectionSubscriptionAction)
-  subscribeToCourseSections({ getState, patchState }: StateContext<CourseSectionStateModel>) {
+  subscribeToCourseSections({
+    getState,
+    patchState,
+  }: StateContext<CourseSectionStateModel>) {
     const state = getState();
     if (!state.courseSectionsSubscribed) {
       this.apollo
@@ -204,7 +216,8 @@ export class CourseSectionState {
             result,
           });
           const method = result?.data?.notifyCourseSection?.method;
-          const courseSection = result?.data?.notifyCourseSection?.courseSection;
+          const courseSection =
+            result?.data?.notifyCourseSection?.courseSection;
           const { items, fetchParamObjects } = subscriptionUpdater({
             items: state.courseSections,
             method,
@@ -281,7 +294,9 @@ export class CourseSectionState {
         })
         .subscribe(
           ({ data }: any) => {
-            const response = updateForm ? data.updateCourseSection : data.createCourseSection;
+            const response = updateForm
+              ? data.updateCourseSection
+              : data.createCourseSection;
             patchState({ formSubmitting: false });
             console.log('update courseSection ', { response });
             if (response.ok) {
@@ -381,7 +396,9 @@ export class CourseSectionState {
   }
 
   @Action(ResetCourseSectionFormAction)
-  resetCourseSectionForm({ patchState }: StateContext<CourseSectionStateModel>) {
+  resetCourseSectionForm({
+    patchState,
+  }: StateContext<CourseSectionStateModel>) {
     patchState({
       courseSectionFormRecord: emptyCourseSectionFormRecord,
       formSubmitting: false,

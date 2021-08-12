@@ -98,7 +98,7 @@ export class AwaitingModerationTableComponent implements OnInit {
   fetchMembers(searchParams: SearchParams) {
     this.store.dispatch(
       new FetchMembersAction({
-        searchParams: { ...searchParams, newColumnFilters: this.columnFilters },
+        searchParams: { ...searchParams, columnFilters: this.columnFilters },
       })
     );
   }
@@ -106,7 +106,7 @@ export class AwaitingModerationTableComponent implements OnInit {
   forceRefetchMembers(searchParams: SearchParams) {
     this.store.dispatch(
       new ForceRefetchMembersAction({
-        searchParams: { ...searchParams, newColumnFilters: this.columnFilters },
+        searchParams: { ...searchParams, columnFilters: this.columnFilters },
       })
     );
   }

@@ -50,7 +50,9 @@ export class ExerciseSubmissionState {
   ) {}
 
   @Selector()
-  static listExerciseSubmissions(state: ExerciseSubmissionStateModel): ExerciseSubmission[] {
+  static listExerciseSubmissions(
+    state: ExerciseSubmissionStateModel
+  ): ExerciseSubmission[] {
     return state.exerciseSubmissions;
   }
 
@@ -111,19 +113,21 @@ export class ExerciseSubmissionState {
   }
 
   @Action(FetchNextExerciseSubmissionsAction)
-  fetchNextExerciseSubmissions({ getState }: StateContext<ExerciseSubmissionStateModel>) {
+  fetchNextExerciseSubmissions({
+    getState,
+  }: StateContext<ExerciseSubmissionStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastPage;
-    const newPageNumber =
+    const pageNumber =
       state.fetchParamObjects[state.fetchParamObjects.length - 1].currentPage +
       1;
     const newSearchParams: SearchParams = {
       ...defaultSearchParams,
-      newPageNumber,
+      pageNumber,
     };
     if (
       !lastPageNumber ||
-      (lastPageNumber != null && newPageNumber <= lastPageNumber)
+      (lastPageNumber != null && pageNumber <= lastPageNumber)
     ) {
       this.store.dispatch(
         new FetchExerciseSubmissionsAction({ searchParams: newSearchParams })
@@ -139,18 +143,18 @@ export class ExerciseSubmissionState {
     console.log('Fetching exerciseSubmissions from exerciseSubmission state');
     let { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, fetchParamObjects, exerciseSubmissionsSubscribed } = state;
-    const { newSearchQuery, newPageSize, newPageNumber, newColumnFilters } =
-      searchParams;
+    const { fetchPolicy, fetchParamObjects, exerciseSubmissionsSubscribed } =
+      state;
+    const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({
       fetchParamObjects,
-      newPageNumber,
-      newPageSize,
-      newSearchQuery,
-      newColumnFilters,
+      newPageNumber: pageNumber,
+      newPageSize: pageSize,
+      newSearchQuery: searchQuery,
+      newColumnFilters: columnFilters,
     });
     const variables = {
-      searchField: newSearchQuery,
+      searchField: searchQuery,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
@@ -225,7 +229,8 @@ export class ExerciseSubmissionState {
             result,
           });
           const method = result?.data?.notifyExerciseSubmission?.method;
-          const exerciseSubmission = result?.data?.notifyExerciseSubmission?.exerciseSubmission;
+          const exerciseSubmission =
+            result?.data?.notifyExerciseSubmission?.exerciseSubmission;
           const { items, fetchParamObjects } = subscriptionUpdater({
             items: state.exerciseSubmissions,
             method,
@@ -257,7 +262,10 @@ export class ExerciseSubmissionState {
       .valueChanges.subscribe(
         ({ data }: any) => {
           const response = data.exerciseSubmission;
-          patchState({ exerciseSubmissionFormRecord: response, isFetching: false });
+          patchState({
+            exerciseSubmissionFormRecord: response,
+            isFetching: false,
+          });
         },
         (error) => {
           this.store.dispatch(
@@ -404,7 +412,9 @@ export class ExerciseSubmissionState {
   }
 
   @Action(ResetExerciseSubmissionFormAction)
-  resetExerciseSubmissionForm({ patchState }: StateContext<ExerciseSubmissionStateModel>) {
+  resetExerciseSubmissionForm({
+    patchState,
+  }: StateContext<ExerciseSubmissionStateModel>) {
     patchState({
       exerciseSubmissionFormRecord: emptyExerciseSubmissionFormRecord,
       formSubmitting: false,

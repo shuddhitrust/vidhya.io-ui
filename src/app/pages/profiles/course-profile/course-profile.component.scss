@@ -19,3 +19,8 @@ h2 {
   float: right;
   margin: 5px 10px;
 }
+
+.scroll-feed {
+  overflow: auto;
+  height: calc(100vh - 190px);
+}

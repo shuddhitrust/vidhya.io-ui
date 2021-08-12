@@ -15,6 +15,7 @@ import {
   week,
   year,
 } from './constants';
+import { SearchParams } from '../abstract/master-grid/table.model';
 
 export const getOptionLabel = (
   value: string,
@@ -113,12 +114,12 @@ export const updateFetchParams = ({
   newColumnFilters: any;
 }): FetchParams => {
   const fetchParams = fetchParamObjects[fetchParamObjects.length - 1];
-  let pageSize = defaultSearchParams.newPageSize;
-  let currentPage = defaultSearchParams.newPageNumber;
-  let searchQuery = defaultSearchParams.newSearchQuery;
+  let pageSize = defaultSearchParams.pageSize;
+  let currentPage = defaultSearchParams.pageNumber;
+  let searchQuery = defaultSearchParams.searchQuery;
   let offset = 0;
   let totalCount = 0;
-  let columnFilters = defaultSearchParams.newColumnFilters;
+  let columnFilters = defaultSearchParams.columnFilters;
   if (fetchParams) {
     currentPage = fetchParams.currentPage;
     totalCount = fetchParams.totalCount;
@@ -307,4 +308,13 @@ export const compareObjects = (o1, o2) => {
     }
   }
   return true;
+};
+
+export const convertPaginatedListToNormalList = (paginatedObject) => {
+  const keys = Object.keys(paginatedObject).sort();
+  let finalArray = [];
+  keys.forEach((key) => {
+    finalArray = finalArray.concat(paginatedObject[key]);
+  });
+  return finalArray;
 };

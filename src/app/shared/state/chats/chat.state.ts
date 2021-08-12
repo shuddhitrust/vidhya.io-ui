@@ -249,16 +249,16 @@ export class ChatState {
   fetchNextChats({ getState }: StateContext<ChatStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastChatPage;
-    const newPageNumber =
+    const pageNumber =
       state.fetchParamObjects[state.fetchParamObjects.length - 1].currentPage +
       1;
     const newSearchParams: SearchParams = {
       ...defaultSearchParams,
-      newPageNumber,
+      pageNumber,
     };
     if (
       !lastPageNumber ||
-      (lastPageNumber != null && newPageNumber <= lastPageNumber)
+      (lastPageNumber != null && pageNumber <= lastPageNumber)
     ) {
       this.store.dispatch(
         new FetchChatsAction({ searchParams: newSearchParams })
@@ -274,14 +274,13 @@ export class ChatState {
     const state = getState();
     const { fetchParamObjects } = state;
     const { searchParams } = payload;
-    const { newSearchQuery, newPageSize, newPageNumber, newColumnFilters } =
-      searchParams;
+    const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({
       fetchParamObjects,
-      newPageNumber,
-      newPageSize,
-      newSearchQuery,
-      newColumnFilters,
+      newPageNumber: pageNumber,
+      newPageSize: pageSize,
+      newSearchQuery: searchQuery,
+      newColumnFilters: columnFilters,
     });
     if (
       fetchParamsNewOrNot({
@@ -291,7 +290,7 @@ export class ChatState {
     ) {
       patchState({ isFetching: true });
       const variables = {
-        searchField: newSearchQuery,
+        searchField: searchQuery,
         limit: newFetchParams.pageSize,
         offset: newFetchParams.offset,
       };
@@ -624,16 +623,16 @@ export class ChatState {
   fetchNextChatMessages({ getState }: StateContext<ChatStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastChatMessagesPage;
-    const newPageNumber =
+    const pageNumber =
       state.chatMessagesFetchParamss[state.chatMessagesFetchParamss.length - 1]
         .currentPage + 1;
     const newSearchParams: SearchParams = {
       ...defaultSearchParams,
-      newPageNumber,
+      pageNumber,
     };
     if (
       !lastPageNumber ||
-      (lastPageNumber != null && newPageNumber <= lastPageNumber)
+      (lastPageNumber != null && pageNumber <= lastPageNumber)
     ) {
       this.store.dispatch(
         new FetchChatMessagesAction({ searchParams: newSearchParams })
@@ -650,14 +649,13 @@ export class ChatState {
     const { chatMessagesFetchParamss } = state;
     const chatId = state.chatFormRecord.id;
     const { searchParams } = payload;
-    const { newSearchQuery, newPageSize, newPageNumber, newColumnFilters } =
-      searchParams;
+    const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({
       fetchParamObjects: chatMessagesFetchParamss,
-      newPageNumber,
-      newPageSize,
-      newSearchQuery,
-      newColumnFilters,
+      newPageNumber: pageNumber,
+      newPageSize: pageSize,
+      newSearchQuery: searchQuery,
+      newColumnFilters: columnFilters,
     });
     console.log(
       'from fetchChatMessages => ',
@@ -675,7 +673,7 @@ export class ChatState {
       patchState({ isFetchingChatMessages: true });
       const variables = {
         chatId,
-        searchField: newSearchQuery,
+        searchField: searchQuery,
         limit: newFetchParams.pageSize,
         offset: newFetchParams.offset,
       };

@@ -103,16 +103,16 @@ export class ExerciseState {
   fetchNextExercises({ getState }: StateContext<ExerciseStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastPage;
-    const newPageNumber =
+    const pageNumber =
       state.fetchParamObjects[state.fetchParamObjects.length - 1].currentPage +
       1;
     const newSearchParams: SearchParams = {
       ...defaultSearchParams,
-      newPageNumber,
+      pageNumber,
     };
     if (
       !lastPageNumber ||
-      (lastPageNumber != null && newPageNumber <= lastPageNumber)
+      (lastPageNumber != null && pageNumber <= lastPageNumber)
     ) {
       this.store.dispatch(
         new FetchExercisesAction({ searchParams: newSearchParams })
@@ -129,14 +129,13 @@ export class ExerciseState {
     let { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, fetchParamObjects, exercisesSubscribed } = state;
-    const { newSearchQuery, newPageSize, newPageNumber, newColumnFilters } =
-      searchParams;
+    const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({
       fetchParamObjects,
-      newPageNumber,
-      newPageSize,
-      newSearchQuery,
-      newColumnFilters,
+      newPageNumber: pageNumber,
+      newPageSize: pageSize,
+      newSearchQuery: searchQuery,
+      newColumnFilters: columnFilters,
     });
     // // Resetting list of exercises if chapterId filter is different
     // if(fetchParamObjects.length > 0) {
@@ -151,8 +150,8 @@ export class ExerciseState {
 
     // }
     const variables = {
-      chapterId: newColumnFilters.chapterId,
-      searchField: newSearchQuery,
+      chapterId: columnFilters.chapterId,
+      searchField: searchQuery,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };

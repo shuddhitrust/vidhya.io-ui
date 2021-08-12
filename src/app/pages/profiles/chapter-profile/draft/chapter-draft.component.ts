@@ -196,7 +196,7 @@ export class ChapterDraftComponent implements OnInit {
         new FetchExerciseKeysAction({
           searchParams: {
             ...defaultSearchParams,
-            newColumnFilters: this.chapterFilters(),
+            columnFilters: this.chapterFilters(),
           },
         })
       );

@@ -15,6 +15,7 @@ export const emptyAnnouncementFormRecord: Announcement = {
 };
 export interface AnnouncementStateModel {
   announcements: Announcement[];
+  paginatedAnnouncements: any;
   lastPage: number;
   announcementsSubscribed: boolean;
   fetchPolicy: FetchPolicy;
@@ -29,6 +30,7 @@ export interface AnnouncementStateModel {
 
 export const defaultAnnouncementState: AnnouncementStateModel = {
   announcements: [],
+  paginatedAnnouncements: {},
   lastPage: null,
   announcementsSubscribed: false,
   fetchPolicy: null,

@@ -120,24 +120,22 @@ export class MemberState {
     const state = getState();
     const { searchParams } = payload;
     const { fetchPolicy, fetchParamObjects, membersSubscribed } = state;
-    const { newSearchQuery, newPageSize, newPageNumber, newColumnFilters } =
-      searchParams;
-    console.log('From fetch members state ', { searchParams });
+    const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({
       fetchParamObjects,
-      newPageNumber,
-      newPageSize,
-      newSearchQuery,
-      newColumnFilters,
+      newPageNumber: pageNumber,
+      newPageSize: pageSize,
+      newSearchQuery: searchQuery,
+      newColumnFilters: columnFilters,
     });
     patchState({ isFetching: true });
     console.log('new pagination object after the update method => ', {
       newFetchParams,
     });
     const variables = {
-      searchField: newSearchQuery,
-      membershipStatusNot: newColumnFilters.membershipStatusNot,
-      roleName: newColumnFilters.roleName,
+      searchField: searchQuery,
+      membershipStatusNot: columnFilters.membershipStatusNot,
+      roleName: columnFilters.roleName,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };

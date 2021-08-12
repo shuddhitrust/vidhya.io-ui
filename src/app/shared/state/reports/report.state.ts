@@ -19,11 +19,7 @@ import {
 } from './report.actions';
 import { REPORT_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
-import {
-  Report,
-  MatSelectOption,
-  FetchParams,
-} from '../../common/models';
+import { Report, MatSelectOption, FetchParams } from '../../common/models';
 import { REPORT_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
@@ -64,9 +60,7 @@ export class ReportState {
     return state.fetchParamObjects[state.fetchParamObjects.length - 1];
   }
   @Selector()
-  static listReportOptions(
-    state: ReportStateModel
-  ): MatSelectOption[] {
+  static listReportOptions(state: ReportStateModel): MatSelectOption[] {
     const options: MatSelectOption[] = state.reports.map((i) => {
       const option: MatSelectOption = {
         value: i.id,
@@ -94,16 +88,12 @@ export class ReportState {
   }
 
   @Selector()
-  static getReportFormRecord(
-    state: ReportStateModel
-  ): Report {
+  static getReportFormRecord(state: ReportStateModel): Report {
     return state.reportFormRecord;
   }
 
   @Action(ForceRefetchReportsAction)
-  forceRefetchReports({
-    patchState,
-  }: StateContext<ReportStateModel>) {
+  forceRefetchReports({ patchState }: StateContext<ReportStateModel>) {
     patchState({ fetchPolicy: 'network-only' });
     this.store.dispatch(
       new FetchReportsAction({ searchParams: defaultSearchParams })
@@ -114,16 +104,16 @@ export class ReportState {
   fetchNextReports({ getState }: StateContext<ReportStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastPage;
-    const newPageNumber =
+    const pageNumber =
       state.fetchParamObjects[state.fetchParamObjects.length - 1].currentPage +
       1;
     const newSearchParams: SearchParams = {
       ...defaultSearchParams,
-      newPageNumber,
+      pageNumber,
     };
     if (
       !lastPageNumber ||
-      (lastPageNumber != null && newPageNumber <= lastPageNumber)
+      (lastPageNumber != null && pageNumber <= lastPageNumber)
     ) {
       this.store.dispatch(
         new FetchReportsAction({ searchParams: newSearchParams })
@@ -140,17 +130,16 @@ export class ReportState {
     let { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, fetchParamObjects, reportsSubscribed } = state;
-    const { newSearchQuery, newPageSize, newPageNumber, newColumnFilters } =
-      searchParams;
+    const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({
       fetchParamObjects,
-      newPageNumber,
-      newPageSize,
-      newSearchQuery,
-      newColumnFilters,
+      newPageNumber: pageNumber,
+      newPageSize: pageSize,
+      newSearchQuery: searchQuery,
+      newColumnFilters: columnFilters,
     });
     const variables = {
-      searchField: newSearchQuery,
+      searchField: searchQuery,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
@@ -208,10 +197,7 @@ export class ReportState {
   }
 
   @Action(ReportSubscriptionAction)
-  subscribeToReports({
-    getState,
-    patchState,
-  }: StateContext<ReportStateModel>) {
+  subscribeToReports({ getState, patchState }: StateContext<ReportStateModel>) {
     const state = getState();
     if (!state.reportsSubscribed) {
       this.apollo
@@ -302,9 +288,7 @@ export class ReportState {
         })
         .subscribe(
           ({ data }: any) => {
-            const response = updateForm
-              ? data.updateReport
-              : data.createReport;
+            const response = updateForm ? data.updateReport : data.createReport;
             patchState({ formSubmitting: false });
             console.log('update report ', { response });
             if (response.ok) {

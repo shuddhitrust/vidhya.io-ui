@@ -171,7 +171,7 @@ export class ChapterPublishedComponent implements OnInit {
         new FetchExercisesAction({
           searchParams: {
             ...defaultSearchParams,
-            newColumnFilters: this.chapterFilters(),
+            columnFilters: this.chapterFilters(),
           },
         })
       );

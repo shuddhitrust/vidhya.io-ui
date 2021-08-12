@@ -4,12 +4,12 @@ import { pageSizeOptions } from './table.config';
 export const defaultPageSize = pageSizeOptions[0].value;
 
 export class SearchParams {
-  newPageNumber: number = 1;
-  newPageSize: number = defaultPageSize;
-  sortField: string = null;
-  sortOrder: string = null;
-  newSearchQuery: string = null;
-  newColumnFilters: any = null;
+  pageNumber: number = 1;
+  pageSize: number = defaultPageSize;
+  sortField?: string = null;
+  sortOrder?: string = null;
+  searchQuery: string = null;
+  columnFilters: any = null;
 }
 
 export interface ColWidth {

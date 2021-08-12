@@ -81,7 +81,7 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
       new FetchChaptersAction({
         searchParams: {
           ...defaultSearchParams,
-          newColumnFilters: this.chapterFilters(),
+          columnFilters: this.chapterFilters(),
         },
       })
     );
@@ -131,7 +131,7 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
   }
 
   onScroll() {
-    console.log('scrolling groups');
+    console.log('scrolling course');
     if (!this.isFetchingChapters) {
       this.store.dispatch(new FetchNextChaptersAction());
     }

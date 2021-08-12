@@ -51,7 +51,7 @@ export const startingFetchParams: FetchParams = {
   totalCount: 0,
   pageSize: defaultPageSize,
   offset: 0,
-  searchQuery: defaultSearchParams.newSearchQuery,
+  searchQuery: defaultSearchParams.searchQuery,
   columnFilters: null,
 };
 

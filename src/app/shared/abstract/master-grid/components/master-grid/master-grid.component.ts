@@ -138,7 +138,7 @@ export class MasterGridComponent implements OnInit, OnChanges {
     this.gridColumnApi = params.columnApi;
     this.searchParams = {
       ...this.searchParams,
-      newColumnFilters: this.columnFilters,
+      columnFilters: this.columnFilters,
     };
     console.log(
       'new searchParams after adding columnFilters => ',
@@ -187,15 +187,15 @@ export class MasterGridComponent implements OnInit, OnChanges {
     }
   };
   initiateGlobalSearch() {
-    this.searchParams.newPageNumber = 1;
-    this.searchParams.newSearchQuery = this.draftSearchQuery.length
+    this.searchParams.pageNumber = 1;
+    this.searchParams.searchQuery = this.draftSearchQuery.length
       ? this.draftSearchQuery
       : null;
     this.fetchRecords();
   }
   onPageChange(number: number) {
     console.log('on page change ', { number });
-    this.searchParams.newPageNumber = number;
+    this.searchParams.pageNumber = number;
     this.fetchRecords();
   }
   onSortChanged = (event) => {
@@ -264,7 +264,7 @@ export class MasterGridComponent implements OnInit, OnChanges {
     }
   }
   onPageSizeChange(newPageSize) {
-    this.searchParams.newPageSize = newPageSize;
+    this.searchParams.pageSize = newPageSize;
     this.fetchRecords();
   }
   onColumnResize = (event) => {
