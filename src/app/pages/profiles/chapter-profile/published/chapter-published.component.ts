@@ -175,17 +175,19 @@ export class ChapterPublishedComponent implements OnInit {
     );
     submission.exercise = exercise?.id;
     submission.chapter = this.chapter.id;
-    submission.course = exercise?.course?.id;
+    submission.course = this.chapter?.course?.id;
     submission.participant = this.currentMember?.id;
     console.log('submission');
     return submission;
   }
 
   exerciseSubmissionOf(exercise) {
-    const submission = this.exerciseSubmissions.find(
+    const index = this.exerciseSubmissions.findIndex(
       (e) => e.exercise == exercise.id
     );
-    return submission ? submission : emptyExerciseSubmissionFormRecord;
+    return index
+      ? this.exerciseSubmissions[index]
+      : emptyExerciseSubmissionFormRecord;
   }
 
   parseDate(date) {
@@ -290,23 +292,37 @@ export class ChapterPublishedComponent implements OnInit {
     return getOptionLabel(value, this.questionTypeOptions);
   }
 
-  updateExerciseSubmissionAnswer(event, question) {
-    console.log('from updateExerciseSubmissionAnswer', { question, event });
+  updateExerciseSubmissionAnswer(event, exercise) {
+    const newAnswer = event.target.value + event.key;
+    let newExerciseSubmissions = this.exerciseSubmissions.map((e) => {
+      if (e?.exercise == exercise.id) {
+        let newSubmission = Object.assign({}, e);
+        newSubmission.answer = newAnswer;
+        return newSubmission;
+      } else return e;
+    });
+    this.exerciseSubmissions = newExerciseSubmissions;
   }
 
-  updateExerciseSubmissionLink(event, question) {
-    console.log('from updateExerciseSubmissionLink', { question, event });
+  updateExerciseSubmissionLink(event, exercise) {
+    const newLink = event.target.value + event.key;
+    let newExerciseSubmissions = this.exerciseSubmissions.map((e) => {
+      if (e?.exercise == exercise.id) {
+        let newSubmission = Object.assign({}, e);
+        newSubmission.link = newLink;
+        return newSubmission;
+      } else return e;
+    });
+    this.exerciseSubmissions = newExerciseSubmissions;
   }
 
-  updateExerciseSubmissionOption(question, option) {
-    console.log({ option });
-    let exerciseSubmission = this.exerciseSubmissions.find(
-      (e) => e.exercise?.id == question.id
-    );
-    let newExerciseSubmission = Object.assign({}, exerciseSubmission);
-    newExerciseSubmission.option = option;
-    const newExerciseSubmissions = this.exerciseSubmissions.map((e) => {
-      return e.exercise?.id == question.id ? newExerciseSubmission : e;
+  updateExerciseSubmissionOption(option, exercise) {
+    let newExerciseSubmissions = this.exerciseSubmissions.map((e) => {
+      if (e?.exercise == exercise.id) {
+        let newSubmission = Object.assign({}, e);
+        newSubmission.option = option;
+        return newSubmission;
+      } else return e;
     });
     this.exerciseSubmissions = newExerciseSubmissions;
   }
@@ -393,7 +409,8 @@ export class ChapterPublishedComponent implements OnInit {
     );
   }
   updateFormBeforeSubmit() {
-    console.log('imagesQueuedForUpload', {
+    console.log('updateFormBeforeSubmit', {
+      exerciseSubmissions: this.exerciseSubmissions,
       imagesQueuedForUpload: this.imagesQueuedForUpload,
     });
     this.uploadNewImages();

@@ -129,7 +129,7 @@
         *ngFor="let option of question.options; let i = index"
       >
         <li
-          (click)="updateExerciseSubmissionOption(question, option)"
+          (click)="updateExerciseSubmissionOption(option, question)"
           [class]="
             option == response.option
               ? 'exercise-submission-option highlighted-option'
