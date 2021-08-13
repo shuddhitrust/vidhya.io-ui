@@ -147,37 +147,26 @@
     >
       <div class="col-lg-3 col-md-4 col-sm-12 floating-logo">
         <div
-          *ngIf="response.images?.length"
+          *ngIf="imagesQueuedForUpload[question.id]?.length"
           class="col-lg-12 col-md-12 col-sm-12"
         >
-          <span *ngFor="let image of response.images; let i = index">
-            <img
-              [src]="image"
-              alt="Exercise submission (already uploaded)"
-              class="logo-upload-preview"
-            />
-
-            <button
-              type="button"
-              mat-button
-              (click)="removeExistingImage(question, i)"
-            >
-              <mat-icon>close</mat-icon>
-            </button>
-          </span>
-        </div>
-        <div
-          *ngIf="imagesQueuedForUpload.length"
-          class="col-lg-12 col-md-12 col-sm-12"
-        >
-          <span *ngFor="let image of imagesQueuedForUpload; let i = index">
+          <span
+            *ngFor="
+              let image of imagesQueuedForUpload[question.id];
+              let i = index
+            "
+          >
             <img
               [src]="image.url"
               alt="Exercise submission"
               class="logo-upload-preview"
             />
 
-            <button type="button" mat-button (click)="removePreviewImage(i)">
+            <button
+              type="button"
+              mat-button
+              (click)="removePreviewImage(question, i)"
+            >
               <mat-icon>close</mat-icon>
             </button>
           </span>

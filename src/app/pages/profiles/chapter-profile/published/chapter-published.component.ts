@@ -126,7 +126,8 @@ export class ChapterPublishedComponent implements OnInit {
   invalidOptions: boolean = false;
   formErrorMessages: string = '';
   exerciseSubmissions: ExerciseSubmission[] = [];
-  imagesQueuedForUpload: previewImage[] = [];
+  imagesQueuedForUpload: any = {};
+  uploadedImages: any = {};
   formDirective: FormGroupDirective;
   constructor(
     public dialog: MatDialog,
@@ -327,51 +328,106 @@ export class ChapterPublishedComponent implements OnInit {
     this.exerciseSubmissions = newExerciseSubmissions;
   }
 
-  uploadImage(imageIndex) {
-    // if (this.imagesQueuedForUpload.length == 0) {
-    //   this.submitExerciseForm();
-    // } else {
-    //   const formData = new FormData();
-    //   formData.append('file', this.imagesQueuedForUpload[imageIndex].file);
-    //   this.uploadService.upload(formData).subscribe(
-    //     (res) => {
-    //       const url = `${environment.api_endpoint}${res.file}`;
-    //       console.log('uploading new file ', imageIndex, url);
-    //       const existingReferenceImages = form.get('referenceImages').value;
-    //       // We update the referenceImages field in the form with the new url
-    //       const newReferenceImages = existingReferenceImages.concat(url);
-    //       form.get('referenceImages').setValue(newReferenceImages);
-    //       // Checking if this is the final image to be uploaded..
-    //       if (imageIndex == this.imagesQueuedForUpload.length - 1) {
-    //         // if it is, then we update the form and submit it.
-    //         this.submitExerciseForm();
-    //       } else {
-    //         imageIndex++;
-    //         this.uploadImage(imageIndex);
-    //       }
-    //     },
-    //     (err) => {
-    //       console.log('Error while uploading image', { err });
-    //       this.store.dispatch(
-    //         new ShowNotificationAction({
-    //           message:
-    //             'Something went wrong while uploading the reference images!',
-    //           action: 'error',
-    //         })
-    //       );
-    //     }
-    //   );
-    // }
+  updateExerciseSubmissionImages(exerciseId, images) {
+    let newExerciseSubmissions = this.exerciseSubmissions.map((e) => {
+      if (e?.exercise == exerciseId) {
+        let newSubmission = Object.assign({}, e);
+        newSubmission.images = images;
+        return newSubmission;
+      } else return e;
+    });
+    this.exerciseSubmissions = newExerciseSubmissions;
+  }
+
+  removePreviewImage(exercise, i) {
+    let imagesQueuedForExercise = Object.assign(
+      [],
+      this.imagesQueuedForUpload[exercise.id]
+    );
+    imagesQueuedForExercise.splice(i, 1);
+    this.imagesQueuedForUpload[exercise.id] = imagesQueuedForExercise;
+  }
+
+  removeExistingImage(exercise, i) {
+    let newExerciseSubmissions = this.exerciseSubmissions.map((e) => {
+      if (e?.exercise == exercise.id) {
+        let newSubmission = Object.assign({}, e);
+        let newImages = Object.assign([], newSubmission.images);
+        newImages.splice(i, 1);
+        newSubmission = {
+          ...newSubmission,
+          images: newImages,
+        };
+        return newSubmission;
+      } else return e;
+    });
+    this.exerciseSubmissions = newExerciseSubmissions;
+  }
+  uploadImage(imageIndex, exerciseId) {
+    const formData = new FormData();
+    formData.append(
+      'file',
+      this.imagesQueuedForUpload[exerciseId][imageIndex].file
+    );
+    this.uploadService.upload(formData).subscribe(
+      (res) => {
+        const url = `${environment.api_endpoint}${res.file}`;
+        console.log('uploading new file ', {
+          imageIndex,
+          url,
+          uploadedImages: this.uploadedImages,
+        });
+
+        // We update the referenceImages field in the form with the new url
+        this.uploadedImages[exerciseId] =
+          this.uploadedImages[exerciseId].concat(url);
+        this.updateExerciseSubmissionImages(
+          exerciseId,
+          this.uploadedImages[exerciseId]
+        );
+        // Checking if this is the final image to be uploaded..
+        const allExerciseIds = Object.keys(this.imagesQueuedForUpload);
+        const lastExerciseId = allExerciseIds[allExerciseIds.length - 1];
+        const lastImageIndex =
+          this.imagesQueuedForUpload[exerciseId].length - 1;
+        if (exerciseId == lastExerciseId && imageIndex == lastImageIndex) {
+          // if it is, then we update the form and submit it.
+          console.log({ lastExerciseId, lastImageIndex });
+          this.submitExerciseSubmissionForm();
+        } else {
+          imageIndex++;
+          this.uploadImage(imageIndex, exerciseId);
+        }
+      },
+      (err) => {
+        console.log('Error while uploading image', { err });
+        this.store.dispatch(
+          new ShowNotificationAction({
+            message:
+              'Something went wrong while uploading the reference images!',
+            action: 'error',
+          })
+        );
+      }
+    );
   }
 
   uploadNewImages() {
     console.log('Starting to upload reference images', {
       imagesQueuedForUpload: this.imagesQueuedForUpload,
     });
-    this.uploadImage(0);
+    const exerciseIdsWithImages = Object.keys(this.imagesQueuedForUpload);
+    exerciseIdsWithImages.forEach((id) => {
+      this.uploadedImages[id] = [];
+    });
+    for (let i = 0; i < exerciseIdsWithImages.length; i++) {
+      if (this.imagesQueuedForUpload[exerciseIdsWithImages[i]].length) {
+        this.uploadImage(0, exerciseIdsWithImages[i]);
+      }
+    }
   }
 
-  addImageFileToSubmission(event, question) {
+  addImageFileToSubmission(event, exercise) {
     if (event.target.files.length > 0) {
       let previewImageObject: previewImage = { file: null, url: null };
       const file = event.target.files[0];
@@ -383,31 +439,20 @@ export class ChapterPublishedComponent implements OnInit {
         previewImageObject.url = url;
       };
       reader.readAsDataURL(file);
-
-      this.imagesQueuedForUpload.push(previewImageObject);
+      let imagesQueuedForExercise = Object.assign(
+        [],
+        this.imagesQueuedForUpload[exercise.id]
+      );
+      imagesQueuedForExercise = imagesQueuedForExercise.concat([
+        previewImageObject,
+      ]);
+      this.imagesQueuedForUpload[exercise.id] = imagesQueuedForExercise;
       console.log('updated imagesQueuedForUpload', {
         imagesQueuedForUpload: this.imagesQueuedForUpload,
       });
     }
   }
 
-  removePreviewImage(i) {
-    this.imagesQueuedForUpload.splice(i, 1);
-  }
-  removeExistingImage(question, i) {
-    let exerciseSubmission = this.exerciseSubmissions.find(
-      (e) => e.id == question.id
-    );
-    let newImages = Object.assign([], exerciseSubmission.images);
-    newImages.splice(i, 1);
-    exerciseSubmission = {
-      ...exerciseSubmission,
-      images: newImages,
-    };
-    this.exerciseSubmissions = this.exerciseSubmissions.map((e) =>
-      e.id == question.id ? exerciseSubmission : e
-    );
-  }
   updateFormBeforeSubmit() {
     console.log('updateFormBeforeSubmit', {
       exerciseSubmissions: this.exerciseSubmissions,
@@ -416,20 +461,14 @@ export class ChapterPublishedComponent implements OnInit {
     this.uploadNewImages();
   }
 
-  submitExerciseForm() {
-    if (!this.invalidOptions) {
-      this.store.dispatch(
-        new CreateUpdateExerciseSubmissionsAction({
-          exerciseSubmissions: this.exerciseSubmissions,
-        })
-      );
-    } else {
-      this.store.dispatch(
-        new ShowNotificationAction({
-          message: 'Something went wrong while submitting this form!',
-          action: 'error',
-        })
-      );
-    }
+  submitExerciseSubmissionForm() {
+    console.log('Submitting exerciseSubmissions', {
+      exerciseSubmissions: this.exerciseSubmissions,
+    });
+    // this.store.dispatch(
+    //   new CreateUpdateExerciseSubmissionsAction({
+    //     exerciseSubmissions: this.exerciseSubmissions,
+    //   })
+    // );
   }
 }
