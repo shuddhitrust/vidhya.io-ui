@@ -299,54 +299,54 @@ export class ExerciseSubmissionState {
     const state = getState();
     const { exerciseSubmissions } = payload;
     let { formSubmitting } = state;
-      formSubmitting = true;
-      patchState({ formSubmitting });
-      const variables = {
-            exerciseSubmissions,
-          }
-      this.apollo
-        .mutate({
-          mutation: EXERCISE_SUBMISSION_MUTATIONS.CREATE_EXERCISE_SUBMISSIONS,
-          variables,
-        })
-        .subscribe(
-          ({ data }: any) => {
-            const response = data.createExerciseSubmission;
-            patchState({ formSubmitting: false });
-            console.log('update exerciseSubmission ', { response });
-            if (response.ok) {
-              this.store.dispatch(
-                new ShowNotificationAction({
-                  message: `Your work was submitted successfully!`,
-                  action: 'success',
-                })
-              );
-              this.router.navigateByUrl(ExerciseSubmissionFormCloseURL);
-              patchState({
-                exerciseSubmissionFormRecord: emptyExerciseSubmissionFormRecord,
-                fetchPolicy: 'network-only',
-              });
-            } else {
-              this.store.dispatch(
-                new ShowNotificationAction({
-                  message: getErrorMessageFromGraphQLResponse(response?.errors),
-                  action: 'error',
-                })
-              );
-            }
-            console.log('From createUpdateExerciseSubmission', { response });
-          },
-          (error) => {
-            console.log('Some error happened ', error);
+    formSubmitting = true;
+    patchState({ formSubmitting });
+    const variables = {
+      exerciseSubmissions: exerciseSubmissions,
+    };
+    this.apollo
+      .mutate({
+        mutation: EXERCISE_SUBMISSION_MUTATIONS.CREATE_EXERCISE_SUBMISSIONS,
+        variables,
+      })
+      .subscribe(
+        ({ data }: any) => {
+          const response = data.createExerciseSubmissions;
+          patchState({ formSubmitting: false });
+          console.log('create exerciseSubmission ', { response });
+          if (response.ok) {
             this.store.dispatch(
               new ShowNotificationAction({
-                message: getErrorMessageFromGraphQLResponse(error),
+                message: `Your work was submitted successfully!`,
+                action: 'success',
+              })
+            );
+            this.router.navigateByUrl(ExerciseSubmissionFormCloseURL);
+            patchState({
+              exerciseSubmissionFormRecord: emptyExerciseSubmissionFormRecord,
+              fetchPolicy: 'network-only',
+            });
+          } else {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(response?.errors),
                 action: 'error',
               })
             );
-            patchState({ formSubmitting: false });
           }
-        );
+          console.log('From createUpdateExerciseSubmission', { response });
+        },
+        (error) => {
+          console.log('Some error happened ', error);
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ formSubmitting: false });
+        }
+      );
   }
 
   @Action(DeleteExerciseSubmissionAction)

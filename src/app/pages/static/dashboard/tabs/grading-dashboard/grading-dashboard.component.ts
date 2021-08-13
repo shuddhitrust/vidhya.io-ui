@@ -4,6 +4,7 @@ import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
+import { constructUserFullName } from 'src/app/shared/common/functions';
 import {
   ExerciseSubmission,
   resources,
@@ -51,7 +52,7 @@ export class GradingDashboardComponent implements OnInit {
     return this.auth.authorizeResource(this.resource, action);
   }
   constructUserName(user) {
-    return this.constructUserName(user)
+    return constructUserFullName(user);
   }
 
   ngOnInit(): void {}

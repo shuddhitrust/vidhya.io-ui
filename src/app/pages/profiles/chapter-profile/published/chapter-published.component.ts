@@ -412,18 +412,34 @@ export class ChapterPublishedComponent implements OnInit {
     );
   }
 
-  uploadNewImages() {
-    console.log('Starting to upload reference images', {
-      imagesQueuedForUpload: this.imagesQueuedForUpload,
-    });
+  imagesExist() {
+    let exist = false;
     const exerciseIdsWithImages = Object.keys(this.imagesQueuedForUpload);
-    exerciseIdsWithImages.forEach((id) => {
-      this.uploadedImages[id] = [];
-    });
-    for (let i = 0; i < exerciseIdsWithImages.length; i++) {
-      if (this.imagesQueuedForUpload[exerciseIdsWithImages[i]].length) {
-        this.uploadImage(0, exerciseIdsWithImages[i]);
+    if (exerciseIdsWithImages.length > 0) {
+      exist = true;
+    } else {
+      exerciseIdsWithImages.forEach((id) => {
+        if (this.imagesQueuedForUpload[id].length > 0) {
+          exist = true;
+        }
+      });
+    }
+    return exist;
+  }
+
+  uploadNewImages() {
+    if (this.imagesExist()) {
+      const exerciseIdsWithImages = Object.keys(this.imagesQueuedForUpload);
+      exerciseIdsWithImages.forEach((id) => {
+        this.uploadedImages[id] = [];
+      });
+      for (let i = 0; i < exerciseIdsWithImages.length; i++) {
+        if (this.imagesQueuedForUpload[exerciseIdsWithImages[i]].length) {
+          this.uploadImage(0, exerciseIdsWithImages[i]);
+        }
       }
+    } else {
+      this.submitExerciseSubmissionForm();
     }
   }
 
@@ -461,14 +477,61 @@ export class ChapterPublishedComponent implements OnInit {
     this.uploadNewImages();
   }
 
+  validateExerciseSubmissions() {
+    let submissionsValid = true;
+    console.log('All exercises', { exercises: this.exercises });
+    this.exercises.forEach((e) => {
+      if (e.required == true) {
+        const questionType = e.questionType;
+        const submission = this.exerciseSubmissions.find(
+          (s) => s.exercise == e.id
+        );
+        switch (questionType) {
+          case this.questionTypes.description:
+            if (!submission?.answer) {
+              submissionsValid = false;
+            }
+            break;
+          case this.questionTypes.option:
+            if (!submission?.option) {
+              submissionsValid = false;
+            }
+            break;
+          case this.questionTypes.image_upload:
+            if (!submission?.images?.length) {
+              submissionsValid = false;
+            }
+            break;
+          case this.questionTypes.link:
+            if (!submission?.link) {
+              submissionsValid = false;
+            }
+            break;
+        }
+      }
+    });
+    return submissionsValid;
+  }
+
   submitExerciseSubmissionForm() {
     console.log('Submitting exerciseSubmissions', {
       exerciseSubmissions: this.exerciseSubmissions,
     });
-    // this.store.dispatch(
-    //   new CreateUpdateExerciseSubmissionsAction({
-    //     exerciseSubmissions: this.exerciseSubmissions,
-    //   })
-    // );
+    const validationResult = this.validateExerciseSubmissions();
+    if (validationResult) {
+      this.store.dispatch(
+        new CreateUpdateExerciseSubmissionsAction({
+          exerciseSubmissions: this.exerciseSubmissions,
+        })
+      );
+    } else {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message:
+            'Please fill out all the required fields before attempting to submit!',
+          action: 'error',
+        })
+      );
+    }
   }
 }
