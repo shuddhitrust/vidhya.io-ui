@@ -106,7 +106,10 @@ export class ChapterPublishedComponent implements OnInit {
   chapter$: Observable<Chapter>;
   chapter: Chapter;
   @Select(ExerciseState.listExercises)
-  exercises$: Observable<Exercise[]>;
+  exercises$: Observable<{
+    exercises: Exercise[];
+    submissions: ExerciseSubmission[];
+  }>;
   exercises: Exercise[];
   @Select(ExerciseState.isFetching)
   isFetchingExercises$: Observable<boolean>;
@@ -125,6 +128,7 @@ export class ChapterPublishedComponent implements OnInit {
   exerciseFormOptions: string[] = startingExerciseFormOptions;
   invalidOptions: boolean = false;
   formErrorMessages: string = '';
+  chapterSubmitted: boolean = false;
   exerciseSubmissions: ExerciseSubmission[] = [];
   imagesQueuedForUpload: any = {};
   uploadedImages: any = {};
@@ -145,13 +149,22 @@ export class ChapterPublishedComponent implements OnInit {
       this.isFetchingExercises = val;
     });
     this.exercises$.subscribe((val) => {
-      this.exercises = val;
-      console.log('this.exercises', { exercises: this.exercises });
+      this.exercises = val.exercises;
       this.exerciseSubmissions = this.exercises.map(
         (e: Exercise): ExerciseSubmission => {
           return this.setupExerciseSubmission(e);
         }
       );
+      if (val.submissions[0]?.id) {
+        this.chapterSubmitted = true;
+        this.exerciseSubmissions = this.setupExistingSubmissions(
+          val.submissions
+        );
+      }
+      console.log('this.exercises from component', {
+        exercises: this.exercises,
+        submissions: this.exerciseSubmissions,
+      });
       console.log('exerciseSubmissions', {
         exerciseSubmissions: this.exerciseSubmissions,
       });
@@ -182,11 +195,45 @@ export class ChapterPublishedComponent implements OnInit {
     return submission;
   }
 
+  setupExistingSubmissions(
+    submissions: ExerciseSubmission[]
+  ): ExerciseSubmission[] {
+    console.log('parsing exercise submissions', { submissions });
+    const newSubmissions = submissions.map((s) => {
+      let submission: ExerciseSubmission = Object.assign(
+        {},
+        emptyExerciseSubmissionFormRecord
+      );
+      submission.id = s.id;
+      submission.exercise = s.exercise?.id;
+      submission.chapter = s.chapter?.id;
+      submission.course = s.course?.id;
+      submission.participant = s.participant?.id;
+      submission.answer = s.answer;
+      submission.option = s.option;
+      submission.images = s.images;
+      submission.link = s.link;
+      submission.points = s.points;
+      submission.status = s.status;
+      submission.remarks = s.remarks;
+      submission.createdAt = s.createdAt;
+      return submission;
+    });
+    return newSubmissions;
+  }
+
   exerciseSubmissionOf(exercise) {
+    console.log({ thisExerciseSubmissions: this.exerciseSubmissions });
     const index = this.exerciseSubmissions.findIndex(
       (e) => e.exercise == exercise.id
     );
-    return index
+    console.log('response => ', {
+      [exercise.id]: index
+        ? this.exerciseSubmissions[index]
+        : emptyExerciseSubmissionFormRecord,
+      exercise,
+    });
+    return index >= 0
       ? this.exerciseSubmissions[index]
       : emptyExerciseSubmissionFormRecord;
   }

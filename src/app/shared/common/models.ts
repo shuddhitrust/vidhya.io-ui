@@ -265,6 +265,8 @@ export type ExerciseSubmission = {
   link?: string;
   images?: string[];
   points?: number;
+  status?: string;
+  remarks?: string;
   createdAt?: string;
   updatedAt?: string;
 };

@@ -38,7 +38,7 @@
 </div>
 <span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
   <span *ngIf="!(isFetchingExercises$ | async); else loading">
-    <span *ngIf="(exercises$ | async).length > 0; else feedEmpty">
+    <span *ngIf="exercises.length > 0; else feedEmpty">
       <div
         class="scroll-feed"
         infiniteScroll
@@ -48,7 +48,7 @@
         [fromRoot]="true"
         (scrolled)="onScroll()"
       >
-        <div *ngFor="let exercise of exercises$ | async; let i = index">
+        <div *ngFor="let exercise of exercises; let i = index">
           <ng-container
             *ngTemplateOutlet="
               exerciseCard;
@@ -114,6 +114,8 @@
         <mat-label>Answer</mat-label>
         <input
           matInput
+          [disabled]="chapterSubmitted"
+          [value]="response.answer"
           (keypress)="updateExerciseSubmissionAnswer($event, question)"
           placeholder="Specify a possible valid answer"
         />
@@ -129,12 +131,17 @@
         *ngFor="let option of question.options; let i = index"
       >
         <li
-          (click)="updateExerciseSubmissionOption(option, question)"
+          (click)="
+            chapterSubmitted
+              ? null
+              : updateExerciseSubmissionOption(option, question)
+          "
           [class]="
-            option == response.option
+            option == response?.option
               ? 'exercise-submission-option highlighted-option'
               : 'exercise-submission-option'
           "
+          [ngStyle]="chapterSubmitted ? { cursor: 'default' } : null"
         >
           {{ option }}
         </li>
@@ -145,7 +152,30 @@
       class="form-element-block col-lg-12 col-md-12 col-sm-12"
       *ngIf="question.questionType == questionTypes.image_upload"
     >
-      <div class="col-lg-3 col-md-4 col-sm-12 floating-logo">
+      <div
+        *ngIf="chapterSubmitted"
+        class="col-lg-3 col-md-4 col-sm-12 floating-logo"
+      >
+        <div
+          *ngIf="response.images?.length"
+          class="col-lg-12 col-md-12 col-sm-12"
+        >
+          <span *ngFor="let image of response.images; let i = index">
+            <img
+              [src]="image"
+              alt="Exercise submission"
+              class="logo-upload-preview"
+              [ngStyle]="chapterSubmitted ? { cursor: 'default' } : null"
+            />
+          </span>
+        </div>
+        <br />
+        <br />
+      </div>
+      <div
+        *ngIf="!chapterSubmitted"
+        class="col-lg-3 col-md-4 col-sm-12 floating-logo"
+      >
         <div
           *ngIf="imagesQueuedForUpload[question.id]?.length"
           class="col-lg-12 col-md-12 col-sm-12"
@@ -191,10 +221,15 @@
         <mat-label>Link</mat-label>
         <input
           matInput
+          [disabled]="chapterSubmitted"
+          [value]="response.link"
           (keypress)="updateExerciseSubmissionLink($event, question)"
-          placeholder="Reference Link"
+          placeholder="Link"
         />
       </mat-form-field>
+    </span>
+    <span *ngIf="chapterSubmitted && response.remarks">
+      <p>Remarks - {{ response.remarks }}</p>
     </span>
   </span>
 </ng-template>

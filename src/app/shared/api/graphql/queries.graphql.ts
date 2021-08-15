@@ -390,12 +390,41 @@ export const EXERCISE_QUERIES = {
         limit: $limit
         offset: $offset
       ) {
-        id
-        prompt
-        questionType
-        required
-        options
-        points
+        exercises {
+          id
+          prompt
+          chapter {
+            id
+            title
+          }
+          questionType
+          required
+          options
+          points
+        }
+        submissions {
+          id
+          course {
+            id
+          }
+          chapter {
+            id
+          }
+          participant {
+            id
+          }
+          exercise {
+            id
+          }
+          option
+          answer
+          link
+          images
+          points
+          status
+          remarks
+          createdAt
+        }
       }
     }
   `,

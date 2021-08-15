@@ -18,7 +18,12 @@ import {
 } from './exercise.actions';
 import { EXERCISE_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
-import { Exercise, MatSelectOption, FetchParams } from '../../common/models';
+import {
+  Exercise,
+  MatSelectOption,
+  FetchParams,
+  ExerciseSubmission,
+} from '../../common/models';
 import { EXERCISE_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
@@ -32,6 +37,7 @@ import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
 import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
 import { SearchParams } from '../../abstract/master-grid/table.model';
+import { emptyExerciseSubmissionFormRecord } from '../exerciseSubmissions/exerciseSubmission.model';
 
 @State<ExerciseStateModel>({
   name: 'exerciseState',
@@ -46,8 +52,11 @@ export class ExerciseState {
   ) {}
 
   @Selector()
-  static listExercises(state: ExerciseStateModel): Exercise[] {
-    return state.exercises;
+  static listExercises(state: ExerciseStateModel): {
+    exercises: Exercise[];
+    submissions: ExerciseSubmission[];
+  } {
+    return { exercises: state.exercises, submissions: state.submissions };
   }
 
   @Selector()
@@ -183,11 +192,23 @@ export class ExerciseState {
             let paginatedExercises = state.paginatedExercises;
             paginatedExercises = {
               ...paginatedExercises,
-              [pageNumber]: response,
+              [pageNumber]: response?.exercises,
             };
             console.log({ paginatedExercises });
             let exercises =
               convertPaginatedListToNormalList(paginatedExercises);
+
+            let submissions = response.submissions;
+            if (submissions.length) {
+              submissions = exercises.map((e) => {
+                const submission = submissions.find(
+                  (s) => s.exercise?.id == e.id
+                );
+                if (submission) {
+                  return submission;
+                } else return emptyExerciseSubmissionFormRecord;
+              });
+            }
             let lastPage = null;
             if (response.length < newFetchParams.pageSize) {
               lastPage = newFetchParams.currentPage;
@@ -195,6 +216,7 @@ export class ExerciseState {
             patchState({
               lastPage,
               exercises,
+              submissions,
               paginatedExercises,
               fetchParamObjects: state.fetchParamObjects.concat([
                 newFetchParams,

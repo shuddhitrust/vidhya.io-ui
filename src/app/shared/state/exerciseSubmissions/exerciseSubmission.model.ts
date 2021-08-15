@@ -15,7 +15,11 @@ export const emptyExerciseSubmissionFormRecord: ExerciseSubmission = {
   option: null,
   answer: null,
   images: null,
+  link: null,
   points: null,
+  status: null,
+  remarks: null,
+  createdAt: null,
 };
 export interface ExerciseSubmissionStateModel {
   exerciseSubmissions: ExerciseSubmission[];
@@ -47,5 +51,4 @@ export const defaultExerciseSubmissionState: ExerciseSubmissionStateModel = {
   errorSubmitting: false,
 };
 
-export const ExerciseSubmissionFormCloseURL =
-  'dashboard?adminSection=Institutions&tab=ExerciseSubmissions';
+export const ExerciseSubmissionFormCloseURL = 'dashboard?tab=Grading';

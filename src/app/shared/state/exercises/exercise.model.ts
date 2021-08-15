@@ -4,6 +4,7 @@ import {
   FetchParams,
   startingFetchParams,
   ExerciseKey,
+  ExerciseSubmission,
 } from '../../common/models';
 
 export const emptyExerciseFormRecord: Exercise = {
@@ -30,6 +31,7 @@ export const emptyExerciseKeyFormRecord: ExerciseKey = {
 
 export interface ExerciseStateModel {
   exercises: Exercise[];
+  submissions: ExerciseSubmission[];
   paginatedExercises: any;
   lastPage: number;
   exercisesSubscribed: boolean;
@@ -45,6 +47,7 @@ export interface ExerciseStateModel {
 
 export const defaultExerciseState: ExerciseStateModel = {
   exercises: [],
+  submissions: [],
   paginatedExercises: {},
   lastPage: null,
   exercisesSubscribed: false,
