@@ -14,6 +14,18 @@ export class FetchNextExerciseSubmissionsAction {
   constructor() {}
 }
 
+export class FetchGradingGroupsAction {
+  static readonly type = '[EXERCISE_SUBMISSION_GROUPS] Fetch';
+
+  constructor(public payload: { searchParams: SearchParams }) {}
+}
+
+export class FetchNextGradingGroupsAction {
+  static readonly type = '[EXERCISE_SUBMISSIONS] Fetch Next';
+
+  constructor() {}
+}
+
 export class ExerciseSubmissionSubscriptionAction {
   static readonly type = '[EXERCISE_SUBMISSIONS] Subscribe';
 

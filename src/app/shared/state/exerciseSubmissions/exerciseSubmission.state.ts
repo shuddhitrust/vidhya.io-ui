@@ -4,6 +4,7 @@ import {
   emptyExerciseSubmissionFormRecord,
   ExerciseSubmissionFormCloseURL,
   ExerciseSubmissionStateModel,
+  GradingGroup,
 } from './exerciseSubmission.model';
 
 import { Injectable } from '@angular/core';
@@ -16,6 +17,8 @@ import {
   ForceRefetchExerciseSubmissionsAction,
   GetExerciseSubmissionAction,
   ResetExerciseSubmissionFormAction,
+  FetchNextGradingGroupsAction,
+  FetchGradingGroupsAction,
 } from './exerciseSubmission.actions';
 import { EXERCISE_SUBMISSION_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
@@ -49,6 +52,18 @@ export class ExerciseSubmissionState {
     private store: Store,
     private router: Router
   ) {}
+
+  @Selector()
+  static listGradingGroups(
+    state: ExerciseSubmissionStateModel
+  ): GradingGroup[] {
+    return state.gradingGroups;
+  }
+
+  @Selector()
+  static isFetchingGradingGroups(state: ExerciseSubmissionStateModel): boolean {
+    return state.isFetchingGradingGroups;
+  }
 
   @Selector()
   static listExerciseSubmissions(
@@ -111,6 +126,127 @@ export class ExerciseSubmissionState {
     this.store.dispatch(
       new FetchExerciseSubmissionsAction({ searchParams: defaultSearchParams })
     );
+  }
+
+  @Action(FetchNextGradingGroupsAction)
+  fetchNextExerciseSubmissionGroups({
+    getState,
+  }: StateContext<ExerciseSubmissionStateModel>) {
+    const state = getState();
+    const lastPageNumber = state.gradingGroupLastPage;
+    const previousFetchParams =
+      state.gradingGroupsfetchParamObjects[
+        state.gradingGroupsfetchParamObjects.length - 1
+      ];
+    const pageNumber = previousFetchParams.currentPage + 1;
+    const newSearchParams: SearchParams = {
+      pageNumber,
+      pageSize: previousFetchParams.pageSize,
+      searchQuery: previousFetchParams.searchQuery,
+      columnFilters: previousFetchParams.columnFilters,
+    };
+    if (
+      !lastPageNumber ||
+      (lastPageNumber != null && pageNumber <= lastPageNumber)
+    ) {
+      this.store.dispatch(
+        new FetchGradingGroupsAction({
+          searchParams: newSearchParams,
+        })
+      );
+    }
+  }
+
+  @Action(FetchGradingGroupsAction)
+  fetchExerciseSubmissionGroups(
+    { getState, patchState }: StateContext<ExerciseSubmissionStateModel>,
+    { payload }: FetchExerciseSubmissionsAction
+  ) {
+    console.log('Fetching exerciseSubmissions from exerciseSubmission state');
+    let { searchParams } = payload;
+    const state = getState();
+    const {
+      fetchPolicy,
+      exerciseSubmissionsSubscribed,
+      gradingGroupsfetchParamObjects,
+    } = state;
+    const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
+    let newFetchParams = updateFetchParams({
+      fetchParamObjects: gradingGroupsfetchParamObjects,
+      newPageNumber: pageNumber,
+      newPageSize: pageSize,
+      newSearchQuery: searchQuery,
+      newColumnFilters: columnFilters,
+    });
+    const variables = {
+      groupBy: columnFilters?.groupBy,
+      limit: newFetchParams.pageSize,
+      offset: newFetchParams.offset,
+    };
+    if (
+      fetchParamsNewOrNot({
+        fetchParamObjects: gradingGroupsfetchParamObjects,
+        newFetchParams,
+      })
+    ) {
+      patchState({ isFetching: true });
+      console.log('variables for exerciseSubmissions fetch ', { variables });
+      this.apollo
+        .watchQuery({
+          query: EXERCISE_SUBMISSION_QUERIES.GET_EXERCISE_SUBMISSION_GROUPS,
+          variables,
+          fetchPolicy,
+        })
+        .valueChanges.subscribe(
+          ({ data }: any) => {
+            console.log('resposne to get exerciseSubmissions query ', { data });
+            const response = data.exerciseSubmissionGroups;
+            const totalCount = response[0]?.totalCount
+              ? response[0]?.totalCount
+              : 0;
+            newFetchParams = { ...newFetchParams, totalCount };
+            console.log('from after getting exerciseSubmissions', {
+              totalCount,
+              response,
+              newFetchParams,
+            });
+            let paginatedGradingGroups = state.paginatedGradingGroups;
+            paginatedGradingGroups = {
+              ...paginatedGradingGroups,
+              [pageNumber]: response,
+            };
+            console.log({ paginatedGradingGroups });
+            let gradingGroups = convertPaginatedListToNormalList(
+              paginatedGradingGroups
+            );
+            let lastPage = null;
+            if (response.length < newFetchParams.pageSize) {
+              lastPage = newFetchParams.currentPage;
+            }
+            patchState({
+              lastPage,
+              gradingGroups,
+              paginatedGradingGroups,
+              fetchParamObjects: state.fetchParamObjects.concat([
+                newFetchParams,
+              ]),
+              isFetching: false,
+            });
+            if (!exerciseSubmissionsSubscribed) {
+              this.store.dispatch(new ExerciseSubmissionSubscriptionAction());
+            }
+          },
+          (error) => {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(error),
+                action: 'error',
+              })
+            );
+            patchState({ isFetching: false });
+          }
+        );
+    }
   }
 
   @Action(FetchNextExerciseSubmissionsAction)

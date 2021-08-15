@@ -497,6 +497,23 @@ export const EXERCISE_SUBMISSION_QUERIES = {
       }
     }
   `,
+  GET_EXERCISE_SUBMISSION_GROUPS: gql`
+    query exerciseSubmissionGroups(
+      $groupBy: String!
+      $limit: Int
+      $offset: Int
+    ) {
+      exerciseSubmissionGroups(
+        groupBy: $groupBy
+        limit: $limit
+        offset: $offset
+      ) {
+        title
+        subtitle
+        count
+      }
+    }
+  `,
 };
 
 export const EXERCISE_KEY_QUERIES = {
