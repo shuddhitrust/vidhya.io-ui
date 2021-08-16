@@ -510,6 +510,8 @@ export const EXERCISE_SUBMISSION_QUERIES = {
         limit: $limit
         offset: $offset
       ) {
+        id
+        type
         title
         subtitle
         count

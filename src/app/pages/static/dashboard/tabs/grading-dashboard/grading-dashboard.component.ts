@@ -104,6 +104,10 @@ export class GradingDashboardComponent implements OnInit {
       participantId: this.submissionsParticipantFilter,
       status: this.submissionStatusFilter,
     };
+    console.log('from openGroupedCard => columnFilters', {
+      card,
+      columnFilters: this.exerciseSubmissionColumnFilters,
+    });
     this.fetchExerciseSubmissions();
   }
 
@@ -138,6 +142,9 @@ export class GradingDashboardComponent implements OnInit {
   }
 
   fetchExerciseSubmissions() {
+    console.log('exercise submissions columnFilter from component => ', {
+      columnFilters: this.exerciseSubmissionColumnFilters,
+    });
     this.store.dispatch(
       new FetchExerciseSubmissionsAction({
         searchParams: {

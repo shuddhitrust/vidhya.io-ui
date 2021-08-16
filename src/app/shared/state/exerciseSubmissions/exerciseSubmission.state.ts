@@ -292,6 +292,9 @@ export class ExerciseSubmissionState {
       newSearchQuery: searchQuery,
       newColumnFilters: columnFilters,
     });
+    console.log('fetch exercise submissions columnFilters => ', {
+      columnFilters,
+    });
     const variables = {
       searchField: searchQuery,
       limit: newFetchParams.pageSize,
