@@ -44,6 +44,12 @@ h2 {
   border-right: inherit;
 }
 
+.card-count {
+  float: right;
+  border: solid 1px black;
+  border-radius: 99px;
+}
+
 @media screen and (max-width: 1000px) {
   #drawer-puller {
     visibility: visible;

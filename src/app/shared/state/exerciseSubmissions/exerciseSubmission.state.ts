@@ -296,6 +296,11 @@ export class ExerciseSubmissionState {
       searchField: searchQuery,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
+      exerciseId: columnFilters?.exerciseId,
+      chapterId: columnFilters?.chapterId,
+      courseId: columnFilters?.courseId,
+      participantId: columnFilters?.participantId,
+      status: columnFilters?.status,
     };
     if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
       patchState({ isFetching: true });

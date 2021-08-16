@@ -17,7 +17,7 @@
     </mat-selection-list> -->
     <mat-form-field class="drawer-item" appearance="outline">
       <mat-label>Group By</mat-label>
-      <mat-select [(ngModel)]="groupBy">
+      <mat-select [(ngModel)]="groupBy" (ngModelChange)="fetchGradingGroups()">
         <mat-option
           *ngFor="let groupBy of groupByOptions"
           [value]="groupBy.value"
@@ -29,8 +29,8 @@
   </mat-drawer>
   <span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
     <h2>Grading</h2>
-    <span *ngIf="!(isFetching$ | async); else loading">
-      <span *ngIf="(exerciseSubmissions$ | async).length > 0; else feedEmpty">
+    <span *ngIf="showGroupCards; else submissionsTemplate">
+      <span *ngIf="gradingGroups.length > 0; else feedEmpty">
         <div
           class="scroll-feed"
           infiniteScroll
@@ -40,17 +40,42 @@
           [fromRoot]="true"
           (scrolled)="onScroll()"
         >
-          <div *ngFor="let exerciseSubmission of exerciseSubmissions$ | async">
-            <span
-              class="feed-card"
-              (click)="openExerciseSubmission(exerciseSubmission)"
-            >
-              {{ constructUserName(exerciseSubmission.participant) }}
+          <div *ngFor="let card of gradingGroups">
+            <span class="feed-card" (click)="openGroupedCard(card)">
+              <p>{{ card.title }}</p>
+              <small>{{ card.subtitle }}</small>
+              <p class="card-count">{{ card.count }}</p>
             </span>
           </div>
         </div>
       </span>
     </span>
+    <ng-template #submissionsTemplate>
+      <span *ngIf="!(isFetching$ | async); else loading">
+        <span *ngIf="(exerciseSubmissions$ | async).length > 0; else feedEmpty">
+          <div
+            class="scroll-feed"
+            infiniteScroll
+            [infiniteScrollDistance]="2"
+            [infiniteScrollThrottle]="50"
+            infiniteScrollContainer=".scroll-feed"
+            [fromRoot]="true"
+            (scrolled)="onScroll()"
+          >
+            <div
+              *ngFor="let exerciseSubmission of exerciseSubmissions$ | async"
+            >
+              <span
+                class="feed-card"
+                (click)="openExerciseSubmission(exerciseSubmission)"
+              >
+                {{ constructUserName(exerciseSubmission.participant) }}
+              </span>
+            </div>
+          </div>
+        </span>
+      </span>
+    </ng-template>
 
     <ng-template #feedEmpty>
       <p class="center-title">There are no submissions to grade!</p>

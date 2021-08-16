@@ -462,6 +462,7 @@ export const EXERCISE_SUBMISSION_QUERIES = {
       $participantId: ID
       $chapterId: ID
       $courseId: ID
+      $status: String
       $searchField: String
       $limit: Int
       $offset: Int
@@ -471,6 +472,7 @@ export const EXERCISE_SUBMISSION_QUERIES = {
         participantId: $participantId
         chapterId: $chapterId
         courseId: $courseId
+        status: $status
         searchField: $searchField
         limit: $limit
         offset: $offset

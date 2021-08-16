@@ -7,15 +7,19 @@ import {
 import { emptyExerciseFormRecord } from '../exercises/exercise.model';
 
 export type GradingGroup = {
+  id: number;
+  type: string;
   title: string;
   subtitle: string;
   count: number;
 };
 
 export const emptyGradingGroup: GradingGroup = {
-  title: '',
-  subtitle: '',
-  count: 0,
+  id: null,
+  type: null,
+  title: null,
+  subtitle: null,
+  count: null,
 };
 export const emptyExerciseSubmissionFormRecord: ExerciseSubmission = {
   id: null,

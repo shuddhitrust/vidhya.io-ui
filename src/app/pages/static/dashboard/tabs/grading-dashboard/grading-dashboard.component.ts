@@ -19,6 +19,7 @@ import {
   FetchExerciseSubmissionsAction,
   FetchGradingGroupsAction,
   FetchNextExerciseSubmissionsAction,
+  FetchNextGradingGroupsAction,
 } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.actions';
 import { GradingGroup } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.model';
 import { ExerciseSubmissionState } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.state';
@@ -44,10 +45,11 @@ export class GradingDashboardComponent implements OnInit {
   groupByOptions: MatSelectOption[] = autoGenOptions(groupByTypes);
   groupBy: string = resources.EXERCISE_SUBMISSION;
   gradingGroupColumnFilters = { groupBy: this.groupBy };
-  // uniqueExerciseIds: number[]=[];
-  // uniqueChapterIds: number[]=[];
-  // uniqueCourseIds: number[]=[];
-  groupedCards: GradingGroup[] = [];
+  exerciseSubmissionColumnFilters = {};
+  showGroupCards: boolean = true;
+  submissionStatusFilter: string = null;
+  submissionsParticipantFilter: number = null;
+
   @Select(ExerciseSubmissionState.listGradingGroups)
   gradingGroups$: Observable<GradingGroup[]>;
   gradingGroups: GradingGroup[];
@@ -70,20 +72,55 @@ export class GradingDashboardComponent implements OnInit {
   ) {
     this.gradingGroups$.subscribe((val) => {
       this.gradingGroups = val;
+      console.log({
+        gradingGroups: this.gradingGroups,
+      });
     });
     this.isFetchingGradingGroup$.subscribe((val) => {
       this.isFetchingGradingGroup = val;
     });
     this.exerciseSubmissions$.subscribe((val) => {
       this.exerciseSubmissions = val;
-      // const allChapterIds = this.exerciseSubmissions.map(e => e.chapter?.id);
-      // this.uniqueChapterIds = [...new Set(allChapterIds)];
-      // const allCourseIds = this.exerciseSubmissions.map(e => e.course?.id);
-      // this.uniqueCourseIds = [...new Set(allCourseIds)];
-      // const allExerciseIds = this.exerciseSubmissions.map(e => e.exercise?.id);
-      // this.uniqueExerciseIds = [...new Set(allExerciseIds)];
     });
+    this.updateGradingGroupByFilter();
+
+    this.fetchGradingGroups();
+    this.isFetching$.subscribe((val) => {
+      this.isFetching = val;
+    });
+    console.log({
+      groupByOptions: this.groupByOptions,
+      gradingGroups: this.gradingGroups,
+    });
+  }
+  ngOnInit(): void {}
+
+  openGroupedCard(card) {
+    this.showGroupCards = false;
+    this.exerciseSubmissionColumnFilters = {
+      exerciseId: card.type == resources.EXERCISE_SUBMISSION ? card.id : null,
+      chapterId: card.type == resources.CHAPTER ? card.id : null,
+      courseId: card.type == resources.COURSE ? card.id : null,
+      participantId: this.submissionsParticipantFilter,
+      status: this.submissionStatusFilter,
+    };
+    this.fetchExerciseSubmissions();
+  }
+
+  authorizeResourceMethod(action) {
+    return this.auth.authorizeResource(this.resource, action);
+  }
+  constructUserName(user) {
+    return constructUserFullName(user);
+  }
+
+  updateGradingGroupByFilter() {
     this.gradingGroupColumnFilters = { groupBy: this.groupBy };
+  }
+
+  fetchGradingGroups() {
+    this.updateGradingGroupByFilter();
+    this.showGroupCards = true;
     this.store.dispatch(
       new FetchGradingGroupsAction({
         searchParams: {
@@ -92,42 +129,35 @@ export class GradingDashboardComponent implements OnInit {
         },
       })
     );
-    this.isFetching$.subscribe((val) => {
-      this.isFetching = val;
-    });
-    console.log({ groupByOptions: this.groupByOptions });
-  }
-  // organizeGroupCards() {
-  //   switch(this.groupBy){
-  //     case resources.EXERCISE_SUBMISSION:
-  //       this.groupedCards = this.uniqueExerciseIds.map(id => {
-  //         let card = Object.assign({}, emptyGradingGroup);
-  //         const sampleEntity = this.exerciseSubmissions.find(e => e.id == id )
-  //         card.title = sampleEntity.exercise?.prompt;
-  //         card.subtitle = "Question Type: " + sampleEntity.exercise?.questionType;
-  //         card.count = this.exerciseSubmissions.
-  //         return card;
-  //       })
-  //       break;
-  //     case resources.CHAPTER:
-  //       break;
-  //     case resources.COURSE:
-  //       break;
-  //   }
-  //   this.groupedCards =
-  // }
-  authorizeResourceMethod(action) {
-    return this.auth.authorizeResource(this.resource, action);
-  }
-  constructUserName(user) {
-    return constructUserFullName(user);
   }
 
-  ngOnInit(): void {}
-  onScroll() {
-    console.log('scrolling groups');
+  fetchNextGradingGroups() {
+    if (!this.isFetchingGradingGroup) {
+      this.store.dispatch(new FetchNextGradingGroupsAction());
+    }
+  }
+
+  fetchExerciseSubmissions() {
+    this.store.dispatch(
+      new FetchExerciseSubmissionsAction({
+        searchParams: {
+          ...defaultSearchParams,
+          columnFilters: this.exerciseSubmissionColumnFilters,
+        },
+      })
+    );
+  }
+  fetchNextExerciseSubmissions() {
     if (!this.isFetching) {
       this.store.dispatch(new FetchNextExerciseSubmissionsAction());
+    }
+  }
+  onScroll() {
+    console.log('scrolling groups');
+    if (this.showGroupCards) {
+      this.fetchNextGradingGroups();
+    } else {
+      this.fetchNextExerciseSubmissions();
     }
   }
   createExerciseSubmission() {
