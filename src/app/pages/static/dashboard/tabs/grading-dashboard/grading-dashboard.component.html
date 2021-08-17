@@ -30,15 +30,11 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
-    <mat-form-field
-      *ngIf="!showGroupCards"
-      class="drawer-item"
-      appearance="outline"
-    >
+    <mat-form-field class="drawer-item" appearance="outline">
       <mat-label>Status</mat-label>
       <mat-select
         [(ngModel)]="submissionStatusFilter"
-        (ngModelChange)="fetchExerciseSubmissions()"
+        (ngModelChange)="fetchGradingGroups()"
       >
         <mat-option
           *ngFor="let status of exerciseSubmissionStatusOptions"

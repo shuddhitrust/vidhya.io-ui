@@ -36,7 +36,11 @@ import {
   FetchNextExerciseSubmissionsAction,
   FetchNextGradingGroupsAction,
 } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.actions';
-import { GradingGroup } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.model';
+import {
+  emptyExerciseSubmissionFormRecord,
+  GradingGroup,
+} from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.model';
+import { ExerciseSubmissionService } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.service';
 import { ExerciseSubmissionState } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.state';
 
 const groupByTypes = {
@@ -63,7 +67,10 @@ export class GradingDashboardComponent implements OnInit {
   showGroupCards: boolean = true;
   submissionStatusFilter: string = ExerciseSubmissionStatusOptions.submitted;
   submissionsParticipantFilter: number = null;
-  gradingGroupColumnFilters = { groupBy: this.groupBy };
+  gradingGroupColumnFilters = {
+    groupBy: this.groupBy,
+    status: this.submissionStatusFilter,
+  };
   questionTypes: any = ExerciseQuestionTypeOptions;
   showSaveButton: boolean = false;
   modifiedExerciseSubmissionIds: number[] = [];
@@ -100,7 +107,8 @@ export class GradingDashboardComponent implements OnInit {
     private store: Store,
     private router: Router,
     private auth: AuthorizationService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private exerciseSubmissionService: ExerciseSubmissionService
   ) {
     this.gradingGroups$.subscribe((val) => {
       this.gradingGroups = val;
@@ -133,7 +141,10 @@ export class GradingDashboardComponent implements OnInit {
   }
 
   updateGradingGroupByFilter() {
-    this.gradingGroupColumnFilters = { groupBy: this.groupBy };
+    this.gradingGroupColumnFilters = {
+      groupBy: this.groupBy,
+      status: this.submissionStatusFilter,
+    };
   }
 
   updateExerciseSubmissionColumnFilters() {
@@ -283,6 +294,7 @@ export class GradingDashboardComponent implements OnInit {
     const points = event.target.value + event.key;
     this.updatePoints(exerciseSubmission, points);
   }
+
   submitExerciseSubmissionForm() {
     console.log('Submitting exerciseSubmissions', {
       exerciseSubmissions: this.exerciseSubmissions,
@@ -290,9 +302,13 @@ export class GradingDashboardComponent implements OnInit {
     const submissionsToSave = this.exerciseSubmissions.filter((s) =>
       this.modifiedExerciseSubmissionIds.includes(s.id)
     );
+    const sanitizedSubmissions =
+      this.exerciseSubmissionService.sanitizeExerciseSubmissions(
+        submissionsToSave
+      );
     this.store.dispatch(
       new CreateUpdateExerciseSubmissionsAction({
-        exerciseSubmissions: submissionsToSave,
+        exerciseSubmissions: sanitizedSubmissions,
       })
     );
   }

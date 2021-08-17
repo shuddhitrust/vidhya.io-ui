@@ -183,6 +183,7 @@ export class ExerciseSubmissionState {
     });
     const variables = {
       groupBy: columnFilters?.groupBy,
+      status: columnFilters?.status,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };

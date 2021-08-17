@@ -67,6 +67,7 @@ import { ShowNotificationAction } from 'src/app/shared/state/notifications/notif
 import { UploadService } from 'src/app/shared/api/upload.service';
 import { environment } from 'src/environments/environment';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
+import { ExerciseSubmissionService } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.service';
 
 const startingExerciseFormOptions = ['', ''];
 
@@ -140,7 +141,8 @@ export class ChapterPublishedComponent implements OnInit {
     private store: Store,
     private router: Router,
     private auth: AuthorizationService,
-    private uploadService: UploadService
+    private uploadService: UploadService,
+    private exerciseSubmissionService: ExerciseSubmissionService
   ) {
     this.currentMember$.subscribe((val) => {
       this.currentMember = val;
@@ -157,9 +159,10 @@ export class ChapterPublishedComponent implements OnInit {
       );
       if (val.submissions[0]?.id) {
         this.chapterSubmitted = true;
-        this.exerciseSubmissions = this.setupExistingSubmissions(
-          val.submissions
-        );
+        this.exerciseSubmissions =
+          this.exerciseSubmissionService.sanitizeExerciseSubmissions(
+            val.submissions
+          );
       }
       console.log('this.exercises from component', {
         exercises: this.exercises,
@@ -193,33 +196,6 @@ export class ChapterPublishedComponent implements OnInit {
     submission.participant = this.currentMember?.id;
     console.log('submission');
     return submission;
-  }
-
-  setupExistingSubmissions(
-    submissions: ExerciseSubmission[]
-  ): ExerciseSubmission[] {
-    console.log('parsing exercise submissions', { submissions });
-    const newSubmissions = submissions.map((s) => {
-      let submission: ExerciseSubmission = Object.assign(
-        {},
-        emptyExerciseSubmissionFormRecord
-      );
-      submission.id = s.id;
-      submission.exercise = s.exercise?.id;
-      submission.chapter = s.chapter?.id;
-      submission.course = s.course?.id;
-      submission.participant = s.participant?.id;
-      submission.answer = s.answer;
-      submission.option = s.option;
-      submission.images = s.images;
-      submission.link = s.link;
-      submission.points = s.points;
-      submission.status = s.status;
-      submission.remarks = s.remarks;
-      submission.createdAt = s.createdAt;
-      return submission;
-    });
-    return newSubmissions;
   }
 
   exerciseSubmissionOf(exercise) {

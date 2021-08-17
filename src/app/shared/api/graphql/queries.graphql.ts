@@ -493,7 +493,11 @@ export const EXERCISE_SUBMISSION_QUERIES = {
           prompt
           options
           points
+          course {
+            id
+          }
           chapter {
+            id
             dueDate
           }
         }
@@ -509,11 +513,13 @@ export const EXERCISE_SUBMISSION_QUERIES = {
   GET_EXERCISE_SUBMISSION_GROUPS: gql`
     query exerciseSubmissionGroups(
       $groupBy: String!
+      $status: String!
       $limit: Int
       $offset: Int
     ) {
       exerciseSubmissionGroups(
         groupBy: $groupBy
+        status: $status
         limit: $limit
         offset: $offset
       ) {
