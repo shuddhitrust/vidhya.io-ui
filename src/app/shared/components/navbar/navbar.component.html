@@ -18,14 +18,14 @@
 
 <ng-template #loggedInMenu>
   <ng-container *ngIf="isFullyAuthenticated; else pendingApproval">
-    <button
+    <!-- <button
       class="nav-button"
       aria-label="Chat button"
       mat-icon-button
       (click)="onChatClick()"
     >
       <mat-icon>chat</mat-icon>
-    </button>
+    </button> -->
     <button class="nav-button" mat-mini-fab aria-label="Avatar button">
       <img
         [src]="currentMember.avatar"

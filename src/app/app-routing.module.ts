@@ -144,13 +144,13 @@ const routes: Routes = [
     data: uiroutes.USER_ROLE_FORM_ROUTE.auth,
     pathMatch: 'full',
   },
-  {
-    path: uiroutes.CHAT_ROUTE.route,
-    component: ChatComponent,
-    canActivate: [AuthenticationGuard],
-    data: uiroutes.CHAT_ROUTE.auth,
-    pathMatch: 'full',
-  },
+  // {
+  //   path: uiroutes.CHAT_ROUTE.route,
+  //   component: ChatComponent,
+  //   canActivate: [AuthenticationGuard],
+  //   data: uiroutes.CHAT_ROUTE.auth,
+  //   pathMatch: 'full',
+  // },
   {
     path: `${uiroutes.ACTIVATE_ACCOUNT_ROUTE.route}/:token`,
     component: HomeComponent,
@@ -169,4 +169,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
