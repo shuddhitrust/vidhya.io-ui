@@ -29,7 +29,7 @@ export class ForceRefetchExerciseKeysAction {
 export class GetExerciseKeyAction {
   static readonly type = '[EXERCISE_KEY] Get';
 
-  constructor(public payload: idPayload) {}
+  constructor(public payload: { exerciseId: number }) {}
 }
 
 export class CreateUpdateExerciseKeyAction {

@@ -138,6 +138,9 @@ export class ExerciseSubmissionState {
       state.gradingGroupsfetchParamObjects[
         state.gradingGroupsfetchParamObjects.length - 1
       ];
+    console.log('from fetchNextExerciseSubmissionGroups', {
+      previousFetchParams,
+    });
     const pageNumber = previousFetchParams.currentPage + 1;
     const newSearchParams: SearchParams = {
       pageNumber,
@@ -227,9 +230,8 @@ export class ExerciseSubmissionState {
               lastPage,
               gradingGroups,
               paginatedGradingGroups,
-              fetchParamObjects: state.fetchParamObjects.concat([
-                newFetchParams,
-              ]),
+              gradingGroupsfetchParamObjects:
+                state.gradingGroupsfetchParamObjects.concat([newFetchParams]),
               isFetching: false,
             });
             if (!exerciseSubmissionsSubscribed) {
@@ -257,6 +259,9 @@ export class ExerciseSubmissionState {
     const lastPageNumber = state.lastPage;
     const previousFetchParams =
       state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    console.log('from FetchNextExerciseSubmissionsAction', {
+      previousFetchParams,
+    });
     const pageNumber = previousFetchParams.currentPage + 1;
     const newSearchParams: SearchParams = {
       pageNumber,

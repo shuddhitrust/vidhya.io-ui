@@ -139,7 +139,10 @@ import { CourseSectionState } from './shared/state/courseSections/courseSection.
 import { ExerciseState } from './shared/state/exercises/exercise.state';
 import { ExerciseSubmissionState } from './shared/state/exerciseSubmissions/exerciseSubmission.state';
 import { ReportState } from './shared/state/reports/report.state';
-import { GradingDashboardComponent } from './pages/static/dashboard/tabs/grading-dashboard/grading-dashboard.component';
+import {
+  ExercicseKeyDialog,
+  GradingDashboardComponent,
+} from './pages/static/dashboard/tabs/grading-dashboard/grading-dashboard.component';
 import {
   MomentDateAdapter,
   MAT_MOMENT_DATE_ADAPTER_OPTIONS,
@@ -230,6 +233,7 @@ import { ExerciseKeyState } from './shared/state/exerciseKeys/exerciseKey.state'
     ExercicseDeleteConfirmationDialog,
     ChapterDraftComponent,
     ChapterPublishedComponent,
+    ExercicseKeyDialog,
   ],
   imports: [
     BrowserModule,

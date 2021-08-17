@@ -489,6 +489,13 @@ export const EXERCISE_SUBMISSION_QUERIES = {
         }
         exercise {
           id
+          questionType
+          prompt
+          options
+          points
+          chapter {
+            dueDate
+          }
         }
         option
         answer
@@ -522,8 +529,8 @@ export const EXERCISE_SUBMISSION_QUERIES = {
 
 export const EXERCISE_KEY_QUERIES = {
   GET_EXERCISE_KEY: gql`
-    query exerciseKey($id: ID!) {
-      exerciseKey(id: $id) {
+    query exerciseKey($exerciseId: ID!) {
+      exerciseKey(exerciseId: $exerciseId) {
         id
         exercise {
           id

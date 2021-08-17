@@ -1,0 +1,93 @@
+<mat-dialog-content
+  *ngIf="!isFetchingExerciseKey; else loadingTemplate"
+  class="dialog-box"
+>
+  <p mat-dialog-title>{{exerciseKey.exercise?.prompt}}</p>
+  <span
+    class="form-element-block col-lg-12 col-md-12 col-sm-12"
+    *ngIf="exerciseKey.exercise?.questionType == questionTypes.descriptive_answer"
+  >
+    <ng-container *ngTemplateOutlet="validAnswersTemplate"></ng-container>
+  </span>
+
+  <span
+    class="form-element-block col-lg-12 col-md-12 col-sm-12"
+    *ngIf="exerciseKey.exercise?.questionType == questionTypes.options"
+  >
+    <ul
+      class="exercise-submission-options"
+      *ngFor="let option of exerciseKey.exercise?.options; let i = index"
+    >
+      <li
+        [class]="
+          option == exerciseKey.validOption
+            ? 'exercise-submission-option highlighted-option'
+            : 'exercise-submission-option'
+        "
+      >
+        {{ option }}
+      </li>
+    </ul>
+  </span>
+
+  <span
+    class="form-element-block col-lg-12 col-md-12 col-sm-12"
+    *ngIf="exerciseKey.exercise?.questionType == questionTypes.image_upload"
+  >
+    <div class="col-lg-3 col-md-4 col-sm-12 floating-logo">
+      <div
+        *ngIf="exerciseKey.referenceImages?.length"
+        class="col-lg-12 col-md-12 col-sm-12"
+      >
+        <span *ngFor="let image of exerciseKey.referenceImages; let i = index">
+          <img
+            [src]="image"
+            alt="Exercise key reference image"
+            class="logo-upload-preview"
+          />
+        </span>
+      </div>
+      <br />
+      <br />
+    </div>
+  </span>
+
+  <span
+    class="form-element-block col-lg-12 col-md-12 col-sm-12"
+    *ngIf="exerciseKey.exercise?.questionType == questionTypes.link"
+  >
+    <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Link</mat-label>
+      <input
+        matInput
+        disabled
+        [(ngModel)]="exerciseKey.referenceLink"
+        placeholder="Reference Link"
+      />
+    </mat-form-field>
+  </span>
+  <ng-template #validAnswersTemplate>
+    <p class="form-element-block">Possible valid answers</p>
+    <div
+      *ngFor="
+      let answer of exerciseKey?.validAnswers;
+      let i = index;
+      trackBy: trackByFn
+    "
+    >
+      <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
+        <mat-label>Answer {{ i + 1 }}</mat-label>
+        <input
+          matInput
+          disabled
+          [(ngModel)]="exerciseKey?.validAnswers[i]"
+          placeholder="Specify a possible valid answer"
+        />
+      </mat-form-field>
+    </div>
+    <br />
+  </ng-template>
+</mat-dialog-content>
+<ng-template #loadingTemplate>
+  <app-simple-loading-spinner></app-simple-loading-spinner>
+</ng-template>

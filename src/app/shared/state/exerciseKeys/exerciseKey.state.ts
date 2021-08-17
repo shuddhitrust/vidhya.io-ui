@@ -249,12 +249,12 @@ export class ExerciseKeyState {
     { patchState }: StateContext<ExerciseKeyStateModel>,
     { payload }: GetExerciseKeyAction
   ) {
-    const { id } = payload;
+    const { exerciseId } = payload;
     patchState({ isFetching: true });
     this.apollo
       .watchQuery({
         query: EXERCISE_KEY_QUERIES.GET_EXERCISE_KEY,
-        variables: { id },
+        variables: { exerciseId },
         fetchPolicy: 'network-only',
       })
       .valueChanges.subscribe(

@@ -7,6 +7,7 @@ h2 {
 }
 .drawer-item {
   margin: 0px 5px;
+  display: block;
 }
 .drawer-container {
   height: 100%;
@@ -46,10 +47,44 @@ h2 {
 
 .card-count {
   float: right;
-  border: solid 1px black;
-  border-radius: 99px;
 }
 
+.image-preview {
+  height: 100%;
+  width: 100%;
+  max-height: 200px;
+  max-width: 200px;
+  min-height: 100px;
+  min-width: 100px;
+  cursor: pointer;
+}
+
+.card-button {
+  float: right;
+  margin: auto 5px;
+}
+
+.submission-feed-card {
+  display: block;
+  width: 90%;
+  padding: 20px;
+  margin: 10px auto;
+  max-height: 600px;
+  overflow: auto;
+}
+
+.points-input-container {
+  width: 150px;
+}
+.points-suffix {
+  font-size: 1.2em;
+  margin-bottom: 5px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.graded-card {
+  border: 2px solid var(--shuddhi-color);
+}
 @media screen and (max-width: 1000px) {
   #drawer-puller {
     visibility: visible;

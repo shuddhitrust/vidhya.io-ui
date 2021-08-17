@@ -84,14 +84,18 @@ export const fetchParamsNewOrNot = ({
   // if (fetchParamObjects.length < 1) {
   //   return true;
   // }
-  for (let i = 0; i < fetchParamObjects.length; i++) {
-    const fetchParams = fetchParamObjects[i];
+
+  if (fetchParamObjects.length > 0) {
+    const lastFetchParams = fetchParamObjects[fetchParamObjects.length - 1];
     if (
-      fetchParams.currentPage == newFetchParams.currentPage &&
-      fetchParams.pageSize == newFetchParams.pageSize &&
-      fetchParams.offset == newFetchParams.offset &&
-      fetchParams.searchQuery == newFetchParams.searchQuery &&
-      compareObjects(fetchParams.columnFilters, newFetchParams.columnFilters)
+      lastFetchParams.currentPage == newFetchParams.currentPage &&
+      lastFetchParams.pageSize == newFetchParams.pageSize &&
+      lastFetchParams.offset == newFetchParams.offset &&
+      lastFetchParams.searchQuery == newFetchParams.searchQuery &&
+      compareObjects(
+        lastFetchParams.columnFilters,
+        newFetchParams.columnFilters
+      )
     ) {
       return false;
     }

@@ -120,6 +120,14 @@ export const ChapterStatusOptions = {
   published: 'PU',
 };
 
+export type ExerciseSubmissionStatus = 'DR' | 'CO' | 'GR' | 'RE';
+export const ExerciseSubmissionStatusOptions = {
+  draft: 'DR',
+  submitted: 'SU',
+  graded: 'GR',
+  returned: 'RE',
+};
+
 export type User = {
   id?: number;
   username?: string;
@@ -265,7 +273,7 @@ export type ExerciseSubmission = {
   link?: string;
   images?: string[];
   points?: number;
-  status?: string;
+  status?: ExerciseSubmissionStatus | string;
   remarks?: string;
   createdAt?: string;
   updatedAt?: string;

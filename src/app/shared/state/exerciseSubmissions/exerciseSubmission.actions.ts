@@ -21,7 +21,7 @@ export class FetchGradingGroupsAction {
 }
 
 export class FetchNextGradingGroupsAction {
-  static readonly type = '[EXERCISE_SUBMISSIONS] Fetch Next';
+  static readonly type = '[EXERCISE_SUBMISSION_GROUPS] Fetch Next';
 
   constructor() {}
 }
