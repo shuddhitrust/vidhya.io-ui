@@ -3,7 +3,6 @@ import {
   defaultChapterState,
   emptyChapterFormRecord,
   ChapterStateModel,
-  Assignment,
 } from './chapter.model';
 
 import { Injectable } from '@angular/core';
@@ -53,11 +52,6 @@ export class ChapterState {
   @Selector()
   static listChapters(state: ChapterStateModel): Chapter[] {
     return state.chapters;
-  }
-
-  @Selector()
-  static listAssignments(state: ChapterStateModel): Assignment[] {
-    return state.assignments;
   }
 
   @Selector()

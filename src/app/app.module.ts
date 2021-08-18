@@ -168,6 +168,7 @@ import {
   ExercicseDeleteConfirmationDialog,
 } from './pages/profiles/chapter-profile/chapter-profile.component';
 import { ExerciseKeyState } from './shared/state/exerciseKeys/exerciseKey.state';
+import { AssignmentState } from './shared/state/assignments/assignment.state';
 @NgModule({
   declarations: [
     AppComponent,
@@ -257,6 +258,7 @@ import { ExerciseKeyState } from './shared/state/exerciseKeys/exerciseKey.state'
           MemberState,
           GroupState,
           AnnouncementState,
+          AssignmentState,
           CourseState,
           CourseSectionState,
           ChapterState,

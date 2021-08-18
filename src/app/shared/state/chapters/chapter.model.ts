@@ -7,17 +7,6 @@ import {
   CourseStatusOptions,
 } from '../../common/models';
 
-export type Assignment = {
-  id: number;
-  exercisesCount: number;
-  submittedCount: number;
-  gradedCount: number;
-  title: string;
-  subtitle: string;
-  pointsScored: number;
-  totalPoints: number;
-};
-
 export const emptyChapterFormRecord: Chapter = {
   id: null,
   title: null,
@@ -29,9 +18,6 @@ export interface ChapterStateModel {
   chapters: Chapter[];
   paginatedChapters: any;
   lastPage: number;
-  assignments: Assignment[];
-  paginatedAssignments: any;
-  assignmentsLastPage: number;
   chaptersSubscribed: boolean;
   fetchPolicy: FetchPolicy;
   fetchParamObjects: FetchParams[];
@@ -47,9 +33,6 @@ export const defaultChapterState: ChapterStateModel = {
   chapters: [],
   paginatedChapters: {},
   lastPage: null,
-  assignments: [],
-  paginatedAssignments: {},
-  assignmentsLastPage: null,
   chaptersSubscribed: false,
   fetchPolicy: null,
   fetchParamObjects: [],

@@ -533,6 +533,26 @@ export const EXERCISE_SUBMISSION_QUERIES = {
   `,
 };
 
+export const ASSIGNMENT_QUERIES = {
+  GET_ASSIGNMENTS: gql`
+    query assignments($status: String, $limit: Int, $offset: Int) {
+      assignments(status: $status, limit: $limit, offset: $offset) {
+        id
+        title
+        course
+        section
+        status
+        dueDate
+        exerciseCount
+        submittedCount
+        gradedCount
+        pointsScored
+        totalPoints
+      }
+    }
+  `,
+};
+
 export const EXERCISE_KEY_QUERIES = {
   GET_EXERCISE_KEY: gql`
     query exerciseKey($exerciseId: ID!) {

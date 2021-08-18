@@ -120,9 +120,9 @@ export const ChapterStatusOptions = {
   published: 'PU',
 };
 
-export type ExerciseSubmissionStatus = 'DR' | 'CO' | 'GR' | 'RE';
+export type ExerciseSubmissionStatus = 'PE' | 'SU' | 'GR' | 'RE';
 export const ExerciseSubmissionStatusOptions = {
-  draft: 'DR',
+  pending: 'PE',
   submitted: 'SU',
   graded: 'GR',
   returned: 'RE',
@@ -368,6 +368,7 @@ export type UserPermissions = {
   INSTITUTION_ADMIN: ResourceActions;
   INSTITUTION: ResourceActions;
   ANNOUNCEMENT: ResourceActions;
+  ASSIGNMENT: ResourceActions;
   CHAPTER: ResourceActions;
   COURSE: ResourceActions;
   GROUP: ResourceActions;
@@ -387,6 +388,7 @@ export const defaultResourcePermissions: UserPermissions = {
   INSTITUTION_ADMIN: defaultActions,
   INSTITUTION: defaultActions,
   ANNOUNCEMENT: defaultActions,
+  ASSIGNMENT: defaultActions,
   CHAPTER: defaultActions,
   COURSE: defaultActions,
   GROUP: defaultActions,

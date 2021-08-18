@@ -28,7 +28,7 @@
       <mat-icon>filter_list</mat-icon>
     </button>
   </div>
-  <span *ngIf="assignmentCards.length > 0; else feedEmpty">
+  <span *ngIf="assignments.length > 0; else feedEmpty">
     <div
       class="scroll-feed"
       infiniteScroll
@@ -38,22 +38,29 @@
       [fromRoot]="true"
       (scrolled)="onScroll()"
     >
-      <div *ngFor="let card of assignmentCards">
-        <span class="assignment-feed-card">
+      <div *ngFor="let card of assignments">
+        <span class="assignment-feed-card"> </span>
+        <mat-card class="assignment-feed-card" (click)="openChapter(card)">
           <button class="card-count" mat-mini-fab color="primary">
             {{ card.pointsScored }} / {{ card.totalPoints }}
           </button>
-          <p>{{ card.title }}</p>
-          <small>{{ card.subtitle }}</small>
-        </span>
-        <mat-card class="assignment-feed-card" (click)="openChapter(card)">
           <mat-card-header>
             <mat-card-title>{{ card.title }}</mat-card-title>
-            <mat-card-subtitle
-              ><small>Due on {{ card.subtitle }}</small></mat-card-subtitle
+            <mat-card-subtitle>
+              <small
+                >{{ card.course }} > {{ card.section }}. Due on
+                {{ parseDate(card.dueDate) }}</small
+              ></mat-card-subtitle
             >
           </mat-card-header>
           <mat-card-content> </mat-card-content>
+          <mat-card-actions>
+            <button type="button" class="card-button" mat-icon-button>
+              <mat-icon [ngStyle]="{ color: statusIcon(card).iconColor }">{{
+                statusIcon(card).icon
+              }}</mat-icon>
+            </button>
+          </mat-card-actions>
         </mat-card>
       </div>
     </div>
