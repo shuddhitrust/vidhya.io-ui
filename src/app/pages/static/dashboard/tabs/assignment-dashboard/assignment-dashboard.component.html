@@ -1,32 +1,69 @@
 <div class="feed-header-block">
   <h2>Assignments</h2>
 </div>
-<span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
-  <span *ngIf="!(isFetching$ | async); else loading">
-    <span *ngIf="(chapters$ | async).length > 0; else feedEmpty">
-      <div
-        class="scroll-feed"
-        infiniteScroll
-        [infiniteScrollDistance]="2"
-        [infiniteScrollThrottle]="50"
-        infiniteScrollContainer=".scroll-feed"
-        [fromRoot]="true"
-        (scrolled)="onScroll()"
-      >
-        <div *ngFor="let chapter of chapters$ | async">
-          <span class="feed-card" (click)="openChapter(chapter)">
-            {{ chapter.title }}
-          </span>
-        </div>
+<div *ngIf="authorizeResourceMethod(resourceActions.LIST)">
+  <div class="floating-header-button-container">
+    <mat-menu #menu="matMenu">
+      <mat-form-field class="menu-item" appearance="outline">
+        <mat-label>Status</mat-label>
+        <mat-select
+          [(ngModel)]="submissionStatusFilter"
+          (ngModelChange)="fetchAssignments()"
+        >
+          <mat-option
+            *ngFor="let status of exerciseSubmissionStatusOptions"
+            [value]="status.value"
+          >
+            {{ status.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-menu>
+    <button
+      type="button"
+      mat-mini-fab
+      [matMenuTriggerFor]="menu"
+      aria-label="Filter the Grading"
+    >
+      <mat-icon>filter_list</mat-icon>
+    </button>
+  </div>
+  <span *ngIf="assignmentCards.length > 0; else feedEmpty">
+    <div
+      class="scroll-feed"
+      infiniteScroll
+      [infiniteScrollDistance]="2"
+      [infiniteScrollThrottle]="50"
+      infiniteScrollContainer=".scroll-feed"
+      [fromRoot]="true"
+      (scrolled)="onScroll()"
+    >
+      <div *ngFor="let card of assignmentCards">
+        <span class="assignment-feed-card">
+          <button class="card-count" mat-mini-fab color="primary">
+            {{ card.pointsScored }} / {{ card.totalPoints }}
+          </button>
+          <p>{{ card.title }}</p>
+          <small>{{ card.subtitle }}</small>
+        </span>
+        <mat-card class="assignment-feed-card" (click)="openChapter(card)">
+          <mat-card-header>
+            <mat-card-title>{{ card.title }}</mat-card-title>
+            <mat-card-subtitle
+              ><small>Due on {{ card.subtitle }}</small></mat-card-subtitle
+            >
+          </mat-card-header>
+          <mat-card-content> </mat-card-content>
+        </mat-card>
       </div>
-    </span>
+    </div>
   </span>
 
   <ng-template #feedEmpty>
-    <p class="center-title">There are no assignments due for you!</p>
+    <p class="center-title">There are no assignments matching these filters!</p>
   </ng-template>
 
   <ng-template #loading>
     <app-simple-loading-spinner></app-simple-loading-spinner>
   </ng-template>
-</span>
+</div>

@@ -1,8 +1,10 @@
 <div *ngIf="authorizeResourceMethod(resourceActions.LIST)">
-  <h2>Grading</h2>
+  <div class="feed-header-block">
+    <h2>Grading</h2>
+  </div>
   <div class="floating-header-button-container">
     <mat-menu #menu="matMenu">
-      <mat-form-field class="drawer-item" appearance="outline">
+      <mat-form-field class="menu-item" appearance="outline">
         <mat-label>Group By</mat-label>
         <mat-select
           [(ngModel)]="groupBy"
@@ -16,7 +18,7 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-form-field class="drawer-item" appearance="outline">
+      <mat-form-field class="menu-item" appearance="outline">
         <mat-label>Status</mat-label>
         <mat-select
           [(ngModel)]="submissionStatusFilter"

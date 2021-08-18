@@ -2,3 +2,26 @@
   overflow: auto;
   height: calc(100vh - 190px);
 }
+
+.menu-item {
+  margin: 5px 10px;
+  display: block;
+}
+
+.card-count {
+  float: right;
+}
+
+.card-button {
+  float: right;
+  margin: auto 5px;
+}
+
+.assignment-feed-card {
+  display: block;
+  width: 90%;
+  padding: 20px;
+  margin: 10px auto;
+  max-height: 600px;
+  overflow: auto;
+}
