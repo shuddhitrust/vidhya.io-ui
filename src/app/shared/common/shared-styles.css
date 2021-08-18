@@ -21,6 +21,16 @@
   margin-top: -45px;
 }
 
+.floating-header-button-container {
+  float: right;
+  display: inline;
+  margin-right: 20px;
+  margin-top: -45px;
+}
+.floating-header-button-container > button {
+  margin-right: 20px;
+}
+
 .floating-button-bottom {
   position: fixed;
   right: 50px;

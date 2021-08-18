@@ -1,64 +1,48 @@
-<mat-drawer-container class="drawer-container">
-  <mat-drawer #drawer mode="side" [(opened)]="opened" class="drawer-content">
-    <!-- <mat-selection-list [multiple]="false">
-      
-      <mat-list-option
-        [ngClass]="
-          selectedEntity === entity.value
-            ? 'selectedSection'
-            : 'unselectedSection'
-        "
-        *ngFor="let entity of entities"
-        [value]="entity.value"
-        (click)="onSelectEntity(entity.value)"
-      >
-        {{ entity.label }}
-      </mat-list-option>
-    </mat-selection-list> -->
-    <mat-form-field
-      *ngIf="showGroupCards"
-      class="drawer-item"
-      appearance="outline"
-    >
-      <mat-label>Group By</mat-label>
-      <mat-select [(ngModel)]="groupBy" (ngModelChange)="fetchGradingGroups()">
-        <mat-option
-          *ngFor="let groupBy of groupByOptions"
-          [value]="groupBy.value"
+<div *ngIf="authorizeResourceMethod(resourceActions.LIST)">
+  <h2>Grading</h2>
+  <div class="floating-header-button-container">
+    <mat-menu #menu="matMenu">
+      <mat-form-field class="drawer-item" appearance="outline">
+        <mat-label>Group By</mat-label>
+        <mat-select
+          [(ngModel)]="groupBy"
+          (ngModelChange)="fetchGradingGroups()"
         >
-          {{ groupBy.label }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field class="drawer-item" appearance="outline">
-      <mat-label>Status</mat-label>
-      <mat-select
-        [(ngModel)]="submissionStatusFilter"
-        (ngModelChange)="fetchGradingGroups()"
-      >
-        <mat-option
-          *ngFor="let status of exerciseSubmissionStatusOptions"
-          [value]="status.value"
+          <mat-option
+            *ngFor="let groupBy of groupByOptions"
+            [value]="groupBy.value"
+          >
+            {{ groupBy.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="drawer-item" appearance="outline">
+        <mat-label>Status</mat-label>
+        <mat-select
+          [(ngModel)]="submissionStatusFilter"
+          (ngModelChange)="fetchGradingGroups()"
         >
-          {{ status.label }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  </mat-drawer>
-  <div *ngIf="authorizeResourceMethod(resourceActions.LIST)">
+          <mat-option
+            *ngFor="let status of exerciseSubmissionStatusOptions"
+            [value]="status.value"
+          >
+            {{ status.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-menu>
     <button
-      mat-icon-button
-      *ngIf="!showGroupCards"
-      (click)="showGroupCards = true"
-      class="floating-back-button"
+      type="button"
+      mat-mini-fab
+      [matMenuTriggerFor]="menu"
+      aria-label="Filter the Grading"
     >
-      <mat-icon>keyboard_backspace</mat-icon>
+      <mat-icon>filter_list</mat-icon>
     </button>
-    <h2>Grading</h2>
+
     <button
       *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
       type="button"
-      class="floating-header-button-top"
       mat-raised-button
       color="primary"
       [class.button-loading]="isSubmittingForm$ | async"
@@ -67,8 +51,33 @@
     >
       {{ (isSubmittingForm$ | async) ? "Saving..." : "Save all" }}
     </button>
-    <span *ngIf="showGroupCards; else submissionsTemplate">
-      <span *ngIf="gradingGroups.length > 0; else feedEmpty">
+  </div>
+  <span *ngIf="showGroupCards; else submissionsTemplate">
+    <span *ngIf="gradingGroups.length > 0; else feedEmpty">
+      <div
+        class="scroll-feed"
+        infiniteScroll
+        [infiniteScrollDistance]="2"
+        [infiniteScrollThrottle]="50"
+        infiniteScrollContainer=".scroll-feed"
+        [fromRoot]="true"
+        (scrolled)="onScroll()"
+      >
+        <div *ngFor="let card of gradingGroups">
+          <span class="feed-card" (click)="openGroupedCard(card)">
+            <button class="card-count" mat-mini-fab color="primary">
+              {{ card.count }}
+            </button>
+            <p>{{ card.title }}</p>
+            <small>{{ card.subtitle }}</small>
+          </span>
+        </div>
+      </div>
+    </span>
+  </span>
+  <ng-template #submissionsTemplate>
+    <div *ngIf="!(isFetching$ | async); else loading">
+      <span *ngIf="exerciseSubmissions.length > 0; else feedEmpty">
         <div
           class="scroll-feed"
           infiniteScroll
@@ -78,201 +87,175 @@
           [fromRoot]="true"
           (scrolled)="onScroll()"
         >
-          <div *ngFor="let card of gradingGroups">
-            <span class="feed-card" (click)="openGroupedCard(card)">
-              <button class="card-count" mat-mini-fab color="primary">
-                {{ card.count }}
-              </button>
-              <p>{{ card.title }}</p>
-              <small>{{ card.subtitle }}</small>
-            </span>
+          <div *ngFor="let exerciseSubmission of exerciseSubmissions">
+            <mat-card
+              class="submission-feed-card"
+              [ngClass]="
+                exerciseSubmission.status ==
+                exerciseSubmissionStatusTypes.graded
+                  ? 'graded-card'
+                  : null
+              "
+            >
+              <mat-card-header>
+                <mat-card-title>{{
+                  exerciseSubmission?.exercise?.prompt
+                }}</mat-card-title>
+                <mat-card-subtitle
+                  ><small
+                    >Due on
+                    {{
+                      parseDateTime(
+                        exerciseSubmission.exercise?.chapter?.dueDate
+                      )
+                    }}</small
+                  ></mat-card-subtitle
+                >
+                <div *ngIf="exerciseSubmission.exercise?.points">
+                  <mat-form-field
+                    class="points-input-container"
+                    appearance="outline"
+                  >
+                    <input
+                      matInput
+                      type="number"
+                      (keypress)="changePoints($event, exerciseSubmission)"
+                      [ngModel]="exerciseSubmission.points"
+                    />
+                    <span matSuffix class="points-suffix"
+                      >/ {{ exerciseSubmission.exercise?.points }} points</span
+                    >
+                  </mat-form-field>
+                </div>
+              </mat-card-header>
+              <mat-card-content>
+                <span
+                  class="form-element-block col-lg-12 col-md-12 col-sm-12"
+                  *ngIf="
+                    exerciseSubmission.exercise?.questionType ==
+                    questionTypes.descriptive_answer
+                  "
+                >
+                  <mat-form-field
+                    class="col-lg-6 col-md-12 col-sm-12"
+                    appearance="outline"
+                  >
+                    <mat-label>Answer</mat-label>
+                    <input
+                      matInput
+                      disabled
+                      [value]="exerciseSubmission?.answer"
+                      placeholder="Specify a possible valid answer"
+                    />
+                  </mat-form-field>
+                </span>
+
+                <span
+                  class="form-element-block col-lg-12 col-md-12 col-sm-12"
+                  *ngIf="
+                    exerciseSubmission.exercise?.questionType ==
+                    questionTypes.options
+                  "
+                >
+                  {{ exerciseSubmission?.option }}
+                </span>
+
+                <span
+                  class="form-element-block col-lg-12 col-md-12 col-sm-12"
+                  *ngIf="
+                    exerciseSubmission.exercise.questionType ==
+                    questionTypes.image_upload
+                  "
+                >
+                  <div
+                    *ngIf="exerciseSubmission.images?.length"
+                    class="col-lg-12 col-md-12 col-sm-12"
+                  >
+                    <span
+                      *ngFor="
+                        let image of exerciseSubmission.images;
+                        let i = index
+                      "
+                    >
+                      <img
+                        [src]="image"
+                        alt="Exercise submission"
+                        class="image-preview"
+                        (click)="showExpandedImage(image)"
+                      />
+                    </span>
+                  </div>
+                  <br />
+                  <br />
+                </span>
+
+                <span
+                  class="form-element-block col-lg-12 col-md-12 col-sm-12"
+                  *ngIf="
+                    exerciseSubmission.exercise?.questionType ==
+                    questionTypes.link
+                  "
+                >
+                  <mat-form-field
+                    class="col-lg-6 col-md-12 col-sm-12"
+                    appearance="outline"
+                  >
+                    <mat-label>Link</mat-label>
+                    <input
+                      matInput
+                      disabled
+                      [value]="exerciseSubmission.link"
+                      placeholder="Link"
+                    />
+                  </mat-form-field>
+                </span>
+
+                <span *ngIf="exerciseSubmission.remarks">
+                  <p>Remarks - {{ exerciseSubmission.remarks }}</p>
+                </span>
+              </mat-card-content>
+              <mat-card-actions>
+                <button
+                  *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
+                  mat-mini-fab
+                  type="button"
+                  color="accent"
+                  [class.button-loading]="isFetchingExerciseKey$ | async"
+                  (click)="showAnswerKey(exerciseSubmission)"
+                >
+                  <mat-icon>vpn_key</mat-icon>
+                </button>
+                <button
+                  type="button"
+                  color="primary"
+                  class="card-button"
+                  mat-mini-fab
+                  (click)="markCorrect(exerciseSubmission)"
+                >
+                  <mat-icon>check</mat-icon>
+                </button>
+                <button
+                  type="button"
+                  color="warn"
+                  class="card-button"
+                  mat-mini-fab
+                  (click)="markIncorrect(exerciseSubmission)"
+                >
+                  <mat-icon>close</mat-icon>
+                </button>
+              </mat-card-actions>
+            </mat-card>
           </div>
         </div>
       </span>
-    </span>
-    <ng-template #submissionsTemplate>
-      <div *ngIf="!(isFetching$ | async); else loading">
-        <span *ngIf="exerciseSubmissions.length > 0; else feedEmpty">
-          <div
-            class="scroll-feed"
-            infiniteScroll
-            [infiniteScrollDistance]="2"
-            [infiniteScrollThrottle]="50"
-            infiniteScrollContainer=".scroll-feed"
-            [fromRoot]="true"
-            (scrolled)="onScroll()"
-          >
-            <div *ngFor="let exerciseSubmission of exerciseSubmissions">
-              <mat-card
-                class="submission-feed-card"
-                [ngClass]="
-                  exerciseSubmission.status ==
-                  exerciseSubmissionStatusTypes.graded
-                    ? 'graded-card'
-                    : null
-                "
-              >
-                <mat-card-header>
-                  <mat-card-title>{{
-                    exerciseSubmission?.exercise?.prompt
-                  }}</mat-card-title>
-                  <mat-card-subtitle
-                    ><small
-                      >Due on
-                      {{
-                        parseDateTime(
-                          exerciseSubmission.exercise?.chapter?.dueDate
-                        )
-                      }}</small
-                    ></mat-card-subtitle
-                  >
-                  <div *ngIf="exerciseSubmission.exercise?.points">
-                    <mat-form-field
-                      class="points-input-container"
-                      appearance="outline"
-                    >
-                      <input
-                        matInput
-                        type="number"
-                        (keypress)="changePoints($event, exerciseSubmission)"
-                        [ngModel]="exerciseSubmission.points"
-                      />
-                      <span matSuffix class="points-suffix"
-                        >/
-                        {{ exerciseSubmission.exercise?.points }} points</span
-                      >
-                    </mat-form-field>
-                  </div>
-                </mat-card-header>
-                <mat-card-content>
-                  <span
-                    class="form-element-block col-lg-12 col-md-12 col-sm-12"
-                    *ngIf="
-                      exerciseSubmission.exercise?.questionType ==
-                      questionTypes.descriptive_answer
-                    "
-                  >
-                    <mat-form-field
-                      class="col-lg-6 col-md-12 col-sm-12"
-                      appearance="outline"
-                    >
-                      <mat-label>Answer</mat-label>
-                      <input
-                        matInput
-                        disabled
-                        [value]="exerciseSubmission?.answer"
-                        placeholder="Specify a possible valid answer"
-                      />
-                    </mat-form-field>
-                  </span>
+    </div>
+  </ng-template>
 
-                  <span
-                    class="form-element-block col-lg-12 col-md-12 col-sm-12"
-                    *ngIf="
-                      exerciseSubmission.exercise?.questionType ==
-                      questionTypes.options
-                    "
-                  >
-                    {{ exerciseSubmission?.option }}
-                  </span>
+  <ng-template #feedEmpty>
+    <p class="center-title">There are no submissions to grade!</p>
+  </ng-template>
 
-                  <span
-                    class="form-element-block col-lg-12 col-md-12 col-sm-12"
-                    *ngIf="
-                      exerciseSubmission.exercise.questionType ==
-                      questionTypes.image_upload
-                    "
-                  >
-                    <div
-                      *ngIf="exerciseSubmission.images?.length"
-                      class="col-lg-12 col-md-12 col-sm-12"
-                    >
-                      <span
-                        *ngFor="
-                          let image of exerciseSubmission.images;
-                          let i = index
-                        "
-                      >
-                        <img
-                          [src]="image"
-                          alt="Exercise submission"
-                          class="image-preview"
-                          (click)="showExpandedImage(image)"
-                        />
-                      </span>
-                    </div>
-                    <br />
-                    <br />
-                  </span>
-
-                  <span
-                    class="form-element-block col-lg-12 col-md-12 col-sm-12"
-                    *ngIf="
-                      exerciseSubmission.exercise?.questionType ==
-                      questionTypes.link
-                    "
-                  >
-                    <mat-form-field
-                      class="col-lg-6 col-md-12 col-sm-12"
-                      appearance="outline"
-                    >
-                      <mat-label>Link</mat-label>
-                      <input
-                        matInput
-                        disabled
-                        [value]="exerciseSubmission.link"
-                        placeholder="Link"
-                      />
-                    </mat-form-field>
-                  </span>
-
-                  <span *ngIf="exerciseSubmission.remarks">
-                    <p>Remarks - {{ exerciseSubmission.remarks }}</p>
-                  </span>
-                </mat-card-content>
-                <mat-card-actions>
-                  <button
-                    *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
-                    mat-mini-fab
-                    type="button"
-                    color="accent"
-                    [class.button-loading]="isFetchingExerciseKey$ | async"
-                    (click)="showAnswerKey(exerciseSubmission)"
-                  >
-                    <mat-icon>vpn_key</mat-icon>
-                  </button>
-                  <button
-                    type="button"
-                    color="primary"
-                    class="card-button"
-                    mat-mini-fab
-                    (click)="markCorrect(exerciseSubmission)"
-                  >
-                    <mat-icon>check</mat-icon>
-                  </button>
-                  <button
-                    type="button"
-                    color="warn"
-                    class="card-button"
-                    mat-mini-fab
-                    (click)="markIncorrect(exerciseSubmission)"
-                  >
-                    <mat-icon>close</mat-icon>
-                  </button>
-                </mat-card-actions>
-              </mat-card>
-            </div>
-          </div>
-        </span>
-      </div>
-    </ng-template>
-
-    <ng-template #feedEmpty>
-      <p class="center-title">There are no submissions to grade!</p>
-    </ng-template>
-
-    <ng-template #loading>
-      <app-simple-loading-spinner></app-simple-loading-spinner>
-    </ng-template>
-  </div>
-</mat-drawer-container>
+  <ng-template #loading>
+    <app-simple-loading-spinner></app-simple-loading-spinner>
+  </ng-template>
+</div>

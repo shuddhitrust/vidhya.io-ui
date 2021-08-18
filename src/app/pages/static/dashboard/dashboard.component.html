@@ -25,7 +25,7 @@
     [label]="tabIndexList[2]"
   >
     <div class="mat-tab">
-      <app-chapter-dashboard></app-chapter-dashboard>
+      <app-assignment-dashboard></app-assignment-dashboard>
     </div>
   </mat-tab>
   <mat-tab
@@ -40,7 +40,10 @@
   >
     <div class="mat-tab"><app-group-dashboard></app-group-dashboard></div>
   </mat-tab>
-  <mat-tab [label]="tabIndexList[5]" *ngIf="authorizeResourceMethod(resources.GRADING)">
+  <mat-tab
+    [label]="tabIndexList[5]"
+    *ngIf="authorizeResourceMethod(resources.GRADING)"
+  >
     <div class="mat-tab">
       <app-grading-dashboard></app-grading-dashboard>
     </div>

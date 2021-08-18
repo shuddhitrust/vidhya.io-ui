@@ -30,7 +30,7 @@ import { NotificationState } from './shared/state/notifications/notification.sta
 import { LoadingState } from './shared/state/loading/loading.state';
 import { AdminDashboardComponent } from './pages/static/dashboard/tabs/admin-dashboard/admin-dashboard.component';
 import { AnnouncementDashboardComponent } from './pages/static/dashboard/tabs/announcement-dashboard/announcement-dashboard.component';
-import { ChapterDashboardComponent } from './pages/static/dashboard/tabs/chapter-dashboard/chapter-dashboard.component';
+import { AssignmentDashboardComponent } from './pages/static/dashboard/tabs/assignment-dashboard/assignment-dashboard.component';
 import { GroupDashboardComponent } from './pages/static/dashboard/tabs/group-dashboard/group-dashboard.component';
 import { CourseDashboardComponent } from './pages/static/dashboard/tabs/course-dashboard/course-dashboard.component';
 import { ReportDashboardComponent } from './pages/static/dashboard/tabs/report-dashboard/report-dashboard.component';
@@ -181,7 +181,7 @@ import { ExerciseKeyState } from './shared/state/exerciseKeys/exerciseKey.state'
     SupportComponent,
     AdminDashboardComponent,
     AnnouncementDashboardComponent,
-    ChapterDashboardComponent,
+    AssignmentDashboardComponent,
     GroupDashboardComponent,
     CourseDashboardComponent,
     ReportDashboardComponent,

@@ -17,14 +17,14 @@ import {
 import { ChapterState } from 'src/app/shared/state/chapters/chapter.state';
 
 @Component({
-  selector: 'app-chapter-dashboard',
-  templateUrl: './chapter-dashboard.component.html',
+  selector: 'app-assignment-dashboard',
+  templateUrl: './assignment-dashboard.component.html',
   styleUrls: [
-    './chapter-dashboard.component.scss',
+    './assignment-dashboard.component.scss',
     './../../../../../shared/common/shared-styles.css',
   ],
 })
-export class ChapterDashboardComponent implements OnInit {
+export class AssignmentDashboardComponent implements OnInit {
   resource: string = resources.ANNOUNCEMENT;
   resourceActions = RESOURCE_ACTIONS;
 

@@ -58,7 +58,6 @@ const groupByTypes = {
   ],
 })
 export class GradingDashboardComponent implements OnInit {
-  opened: boolean = true;
   resource: string = resources.GRADING;
   resourceActions = RESOURCE_ACTIONS;
   groupByOptions: MatSelectOption[] = autoGenOptions(groupByTypes);
