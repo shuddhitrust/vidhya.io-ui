@@ -86,7 +86,7 @@ export class AssignmentDashboardComponent implements OnInit {
     switch (card.status) {
       case ExerciseSubmissionStatusOptions.pending:
         icon = 'new_releases';
-        iconColor = 'var(--blue)';
+        iconColor = 'var(--orange)';
         break;
       case ExerciseSubmissionStatusOptions.submitted:
         icon = 'done';
