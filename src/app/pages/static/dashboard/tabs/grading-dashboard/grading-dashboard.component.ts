@@ -1,4 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
 import {
   MatDialog,
   MatDialogRef,
@@ -107,7 +108,8 @@ export class GradingDashboardComponent implements OnInit {
     private router: Router,
     private auth: AuthorizationService,
     public dialog: MatDialog,
-    private exerciseSubmissionService: ExerciseSubmissionService
+    private exerciseSubmissionService: ExerciseSubmissionService,
+    private location: Location
   ) {
     this.gradingGroups$.subscribe((val) => {
       this.gradingGroups = val;
@@ -135,6 +137,9 @@ export class GradingDashboardComponent implements OnInit {
   }
   ngOnInit(): void {}
 
+  trackByFn(index: any, item: any) {
+    return index;
+  }
   parseDateTime(date) {
     return parseDateTime(date);
   }
@@ -169,7 +174,9 @@ export class GradingDashboardComponent implements OnInit {
     });
     this.fetchExerciseSubmissions();
   }
-
+  goBack() {
+    this.location.back();
+  }
   authorizeResourceMethod(action) {
     return this.auth.authorizeResource(this.resource, action);
   }
@@ -290,8 +297,26 @@ export class GradingDashboardComponent implements OnInit {
     console.log('submission after update', { submission });
   }
   changePoints(event, exerciseSubmission) {
+    event.preventDefault();
     const points = event.target.value + event.key;
     this.updatePoints(exerciseSubmission, points);
+  }
+
+  updateRemarks(event, exerciseSubmission) {
+    event.preventDefault();
+    const remarks = event.target.value + event.key;
+    this.gradingUpdate(exerciseSubmission);
+    let submission = this.exerciseSubmissions.find((s: ExerciseSubmission) => {
+      return s.id == exerciseSubmission.id;
+    });
+
+    submission = Object.assign({}, submission);
+    submission.remarks = remarks;
+    this.exerciseSubmissions = this.exerciseSubmissions.map((s) => {
+      if (s.id == submission.id) {
+        return submission;
+      } else return s;
+    });
   }
 
   submitExerciseSubmissionForm() {

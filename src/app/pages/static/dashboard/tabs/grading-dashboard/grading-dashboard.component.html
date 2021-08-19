@@ -1,4 +1,12 @@
 <div *ngIf="authorizeResourceMethod(resourceActions.LIST)">
+  <button
+    mat-icon-button
+    *ngIf="!showGroupCards"
+    (click)="showGroupCards = true"
+    class="floating-back-button"
+  >
+    <mat-icon>keyboard_backspace</mat-icon>
+  </button>
   <div class="feed-header-block">
     <h2>Grading</h2>
   </div>
@@ -89,7 +97,12 @@
           [fromRoot]="true"
           (scrolled)="onScroll()"
         >
-          <div *ngFor="let exerciseSubmission of exerciseSubmissions">
+          <div
+            *ngFor="
+              let exerciseSubmission of exerciseSubmissions;
+              trackBy: trackByFn
+            "
+          >
             <mat-card
               class="submission-feed-card"
               [ngClass]="
@@ -122,7 +135,7 @@
                       matInput
                       type="number"
                       (keypress)="changePoints($event, exerciseSubmission)"
-                      [ngModel]="exerciseSubmission.points"
+                      [value]="exerciseSubmission.points"
                     />
                     <span matSuffix class="points-suffix"
                       >/ {{ exerciseSubmission.exercise?.points }} points</span
@@ -131,29 +144,25 @@
                 </div>
               </mat-card-header>
               <mat-card-content>
-                <span
-                  class="form-element-block col-lg-12 col-md-12 col-sm-12"
+                <mat-form-field
                   *ngIf="
                     exerciseSubmission.exercise?.questionType ==
                     questionTypes.descriptive_answer
                   "
+                  class="col-lg-12 col-md-12 col-sm-12"
+                  appearance="outline"
                 >
-                  <mat-form-field
-                    class="col-lg-6 col-md-12 col-sm-12"
-                    appearance="outline"
-                  >
-                    <mat-label>Answer</mat-label>
-                    <input
-                      matInput
-                      disabled
-                      [value]="exerciseSubmission?.answer"
-                      placeholder="Specify a possible valid answer"
-                    />
-                  </mat-form-field>
-                </span>
+                  <mat-label>Answer</mat-label>
+                  <input
+                    matInput
+                    disabled
+                    [value]="exerciseSubmission?.answer"
+                    placeholder="Specify a possible valid answer"
+                  />
+                </mat-form-field>
 
                 <span
-                  class="form-element-block col-lg-12 col-md-12 col-sm-12"
+                  class="col-lg-12 col-md-12 col-sm-12"
                   *ngIf="
                     exerciseSubmission.exercise?.questionType ==
                     questionTypes.options
@@ -163,7 +172,7 @@
                 </span>
 
                 <span
-                  class="form-element-block col-lg-12 col-md-12 col-sm-12"
+                  class="col-lg-12 col-md-12 col-sm-12"
                   *ngIf="
                     exerciseSubmission.exercise.questionType ==
                     questionTypes.image_upload
@@ -191,30 +200,35 @@
                   <br />
                 </span>
 
-                <span
-                  class="form-element-block col-lg-12 col-md-12 col-sm-12"
+                <mat-form-field
                   *ngIf="
                     exerciseSubmission.exercise?.questionType ==
                     questionTypes.link
                   "
+                  class="col-lg-12 col-md-12 col-sm-12"
+                  appearance="outline"
                 >
-                  <mat-form-field
-                    class="col-lg-6 col-md-12 col-sm-12"
-                    appearance="outline"
-                  >
-                    <mat-label>Link</mat-label>
-                    <input
-                      matInput
-                      disabled
-                      [value]="exerciseSubmission.link"
-                      placeholder="Link"
-                    />
-                  </mat-form-field>
-                </span>
+                  <mat-label>Link</mat-label>
+                  <input
+                    matInput
+                    disabled
+                    [value]="exerciseSubmission.link"
+                    placeholder="Link"
+                  />
+                </mat-form-field>
 
-                <span *ngIf="exerciseSubmission.remarks">
-                  <p>Remarks - {{ exerciseSubmission.remarks }}</p>
-                </span>
+                <mat-form-field
+                  class="col-lg-12 col-md-12 col-sm-12"
+                  appearance="outline"
+                >
+                  <mat-label>Remarks</mat-label>
+                  <input
+                    matInput
+                    (keypress)="updateRemarks($event, exerciseSubmission)"
+                    [ngModel]="exerciseSubmission.remarks"
+                    placeholder="Optional Remarks"
+                  />
+                </mat-form-field>
               </mat-card-content>
               <mat-card-actions>
                 <button
