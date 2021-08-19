@@ -66,7 +66,7 @@ export class OptionsState {
     const variables = {
       institutionId: payload.memberInstitutionId,
     };
-    console.log('variables for members fetch ', { variables });
+    console.log('variables for members fetch by institution', { variables });
     this.apollo
       .watchQuery({
         query: USER_QUERIES.GET_USERS,

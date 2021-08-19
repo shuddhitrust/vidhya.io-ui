@@ -22,7 +22,8 @@ import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { InstitutionState } from 'src/app/shared/state/institutions/institution.state';
 import { FetchInstitutionsAction } from 'src/app/shared/state/institutions/institution.actions';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
-import * as moment from 'moment';
+import { OptionsState } from 'src/app/shared/state/options/options.state';
+import { FetchMemberOptionsByInstitution } from 'src/app/shared/state/options/options.actions';
 @Component({
   selector: 'app-add-edit-course',
   templateUrl: './add-edit-course.component.html',
@@ -32,6 +33,10 @@ import * as moment from 'moment';
   ],
 })
 export class AddEditCourseComponent implements OnInit {
+  selectedParticipantColumns = [
+    { field: 'label', headerName: 'Existing Participants' },
+  ];
+  participantRows: MatSelectOption[] = [];
   formSubmitting: boolean = false;
   params: object = {};
   currentDate = new Date();
@@ -50,46 +55,71 @@ export class AddEditCourseComponent implements OnInit {
   @Select(AuthState.getCurrentUserId)
   currentUserId$: Observable<number>;
   currentUserId: number;
+  @Select(OptionsState.listMembersByInstitution)
+  memberOptions$: Observable<MatSelectOption[]>;
+  memberOptions: MatSelectOption[];
+  @Select(OptionsState.getIsFetchingMembersByInstitution)
+  isFetchingMembers$: Observable<boolean>;
+  isFetchingMembers: boolean;
   courseFormRecord: Course = emptyCourseFormRecord;
   courseForm: FormGroup;
-
+  @Select(AuthState.getCurrentMemberInstitutionId)
+  memberInstitutionId$: Observable<string>;
+  memberInstitutionId: string;
   constructor(
     private location: Location,
     private store: Store,
     private route: ActivatedRoute,
     private fb: FormBuilder
   ) {
+    this.memberInstitutionId$.subscribe((val) => {
+      this.memberInstitutionId = val;
+      this.store.dispatch(
+        new FetchMemberOptionsByInstitution({
+          memberInstitutionId: this.memberInstitutionId,
+        })
+      );
+    });
+    this.memberOptions$.subscribe((options) => {
+      console.log('memberOptions', { memberOptions: this.memberOptions });
+      this.memberOptions = options;
+    });
+    this.store.dispatch(
+      new FetchMemberOptionsByInstitution({
+        memberInstitutionId: this.memberInstitutionId,
+      })
+    );
     this.store.dispatch(
       new FetchInstitutionsAction({ searchParams: defaultSearchParams })
     );
     this.store.dispatch(
-      new FetchCoursesAction({searchParams: defaultSearchParams})
+      new FetchCoursesAction({ searchParams: defaultSearchParams })
     );
-    this.currentUserId$.subscribe(val => {
-      console.log('from current user id in constructor => ', val)
+    this.currentUserId$.subscribe((val) => {
+      console.log('from current user id in constructor => ', val);
       this.currentUserId = val;
     });
     this.courseForm = this.setupCourseFormGroup();
-    this.courseOptions$.subscribe(val => {
-      this.courseOptions = val
-    })
-    
+    this.courseOptions$.subscribe((val) => {
+      this.courseOptions = val;
+    });
+
     this.courseFormRecord$.subscribe((val) => {
       this.courseFormRecord = val;
       this.courseForm = this.setupCourseFormGroup(this.courseFormRecord);
       // Filtering out the current coursee from the options
-      this.courseOptions = this.courseOptions.filter(o => {
+      this.courseOptions = this.courseOptions.filter((o) => {
         return o.value !== this.courseFormRecord?.id;
-      })
+      });
     });
-    
   }
 
   setupCourseFormGroup = (
     courseFormRecord: Course = emptyCourseFormRecord
   ): FormGroup => {
     console.log('the current User id ', this.currentUserId);
-    return this.fb.group({
+    const participantIds = courseFormRecord?.participants?.map((p) => p.id);
+    const formGroup = this.fb.group({
       id: [courseFormRecord?.id],
       instructor: [
         courseFormRecord?.instructor?.id
@@ -104,22 +134,27 @@ export class AddEditCourseComponent implements OnInit {
         courseFormRecord.institutions?.map((i) => i.id)
           ? courseFormRecord.institutions?.map((i) => i.id)
           : [],
-
       ],
       mandatoryPrerequisites: [
         courseFormRecord.mandatoryPrerequisites?.map((i) => i.id)
           ? courseFormRecord.mandatoryPrerequisites?.map((i) => i.id)
-          : []
+          : [],
       ],
       recommendedPrerequisites: [
         courseFormRecord.recommendedPrerequisites?.map((i) => i.id)
           ? courseFormRecord.recommendedPrerequisites?.map((i) => i.id)
-          : []
+          : [],
       ],
       startDate: [courseFormRecord?.startDate],
       endDate: [courseFormRecord?.endDate],
       creditHours: [courseFormRecord?.creditHours],
+      participants: [participantIds],
     });
+    this.participantRows = this.memberOptions.filter((m) =>
+      participantIds.includes(m.value)
+    );
+
+    return formGroup;
   };
 
   ngOnInit(): void {

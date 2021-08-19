@@ -46,7 +46,7 @@ import { AuthState } from 'src/app/shared/state/auth/auth.state';
 })
 export class AddEditGroupComponent implements OnInit {
   selectedMemberColumns = [{ field: 'label', headerName: 'Group Members' }];
-  memberRows = [];
+  memberRows: MatSelectOption[] = [];
   formSubmitting: boolean = false;
   params: object = {};
   @Select(GroupState.getGroupFormRecord)
@@ -118,16 +118,21 @@ export class AddEditGroupComponent implements OnInit {
   ): FormGroup => {
     this.logoFile = null;
     this.previewPath = null;
+    const memberIds = groupFormRecord?.members.map((m) => m.id);
+    const adminIds = groupFormRecord?.admins.map((m) => m.id);
     const formGroup = this.fb.group({
       id: [groupFormRecord?.id],
       avatar: [groupFormRecord?.avatar],
       name: [groupFormRecord?.name, Validators.required],
       institution: [groupFormRecord?.institution?.id, Validators.required],
-      admins: [groupFormRecord?.admins.map((m) => m.id)],
-      members: [groupFormRecord?.members.map((m) => m.id)],
+      admins: [adminIds],
+      members: [memberIds],
       groupType: [groupFormRecord?.groupType, Validators.required],
       description: [groupFormRecord?.description, Validators.required],
     });
+    this.memberRows = this.memberOptions.filter((o) =>
+      memberIds.includes(o.value)
+    );
     this.previewPath = formGroup.get('avatar').value;
     return formGroup;
   };
