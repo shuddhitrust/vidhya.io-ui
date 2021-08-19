@@ -634,7 +634,7 @@ export const REPORT_QUERIES = {
           name
         }
         completed
-        score
+        percentage
       }
     }
   `,
@@ -670,7 +670,7 @@ export const REPORT_QUERIES = {
           name
         }
         completed
-        score
+        percentage
       }
     }
   `,

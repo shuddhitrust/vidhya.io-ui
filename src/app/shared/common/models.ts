@@ -285,7 +285,7 @@ export type Report = {
   course: any;
   institution: any;
   completed: number;
-  score: number;
+  percentage: number;
   createdAt?: string;
   updatedAt?: string;
 };

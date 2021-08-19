@@ -11,7 +11,7 @@ export const emptyReportFormRecord: Report = {
   course: null,
   institution: null,
   completed: null,
-  score: null,
+  percentage: null,
 };
 export interface ReportStateModel {
   reports: Report[];

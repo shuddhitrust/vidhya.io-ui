@@ -378,16 +378,19 @@ export const EXERCISE_MUTATIONS = {
 };
 
 export const EXERCISE_SUBMISSION_MUTATIONS = {
-  CREATE_EXERCISE_SUBMISSIONS: gql`
-    mutation createExerciseSubmissions(
+  CREATE_UPDATE_EXERCISE_SUBMISSIONS: gql`
+    mutation createUpdateExerciseSubmissions(
       $exerciseSubmissions: [ExerciseSubmissionInput]!
     ) {
-      createExerciseSubmissions(exerciseSubmissions: $exerciseSubmissions) {
+      createUpdateExerciseSubmissions(
+        exerciseSubmissions: $exerciseSubmissions
+      ) {
         ok
         exerciseSubmissions {
           id
           status
           points
+          percentage
           remarks
         }
       }

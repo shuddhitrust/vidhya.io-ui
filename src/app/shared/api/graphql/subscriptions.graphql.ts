@@ -229,7 +229,7 @@ export const SUBSCRIPTIONS = {
             name
           }
           completed
-          score
+          percentage
         }
         method
       }

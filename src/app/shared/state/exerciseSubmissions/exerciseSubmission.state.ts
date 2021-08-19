@@ -457,12 +457,13 @@ export class ExerciseSubmissionState {
     };
     this.apollo
       .mutate({
-        mutation: EXERCISE_SUBMISSION_MUTATIONS.CREATE_EXERCISE_SUBMISSIONS,
+        mutation:
+          EXERCISE_SUBMISSION_MUTATIONS.CREATE_UPDATE_EXERCISE_SUBMISSIONS,
         variables,
       })
       .subscribe(
         ({ data }: any) => {
-          const response = data.createExerciseSubmissions;
+          const response = data.createUpdateExerciseSubmissions;
           patchState({ formSubmitting: false });
           console.log('create exerciseSubmission ', { response });
           if (response.ok) {
