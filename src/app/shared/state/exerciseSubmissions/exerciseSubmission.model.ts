@@ -32,6 +32,7 @@ export const emptyExerciseSubmissionFormRecord: ExerciseSubmission = {
   images: null,
   link: null,
   points: null,
+  percentage: null,
   status: null,
   remarks: null,
   createdAt: null,

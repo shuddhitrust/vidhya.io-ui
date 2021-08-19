@@ -452,7 +452,9 @@ export const EXERCISE_SUBMISSION_QUERIES = {
         link
         images
         points
+        percentage
         status
+        remarks
       }
     }
   `,
@@ -506,6 +508,7 @@ export const EXERCISE_SUBMISSION_QUERIES = {
         link
         images
         points
+        percentage
         status
         remarks
       }

@@ -273,6 +273,7 @@ export type ExerciseSubmission = {
   link?: string;
   images?: string[];
   points?: number;
+  percentage?: number;
   status?: ExerciseSubmissionStatus | string;
   remarks?: string;
   createdAt?: string;
