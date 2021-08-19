@@ -2,7 +2,7 @@
   <button
     mat-icon-button
     *ngIf="!showGroupCards"
-    (click)="showGroupCards = true"
+    (click)="goToGroupScreen()"
     class="floating-back-button"
   >
     <mat-icon>keyboard_backspace</mat-icon>
@@ -57,7 +57,7 @@
       color="primary"
       [class.button-loading]="isSubmittingForm$ | async"
       (click)="submitExerciseSubmissionForm()"
-      [disabled]="!showSaveButton"
+      [disabled]="!showSaveButton()"
     >
       {{ (isSubmittingForm$ | async) ? "Saving..." : "Save all" }}
     </button>
@@ -106,9 +106,8 @@
             <mat-card
               class="submission-feed-card"
               [ngClass]="
-                exerciseSubmission.status ==
-                exerciseSubmissionStatusTypes.graded
-                  ? 'graded-card'
+                modifiedExerciseSubmissionIds.includes(exerciseSubmission.id)
+                  ? 'unsaved-card'
                   : null
               "
             >

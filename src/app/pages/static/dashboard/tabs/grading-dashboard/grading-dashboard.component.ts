@@ -72,7 +72,6 @@ export class GradingDashboardComponent implements OnInit {
     status: this.submissionStatusFilter,
   };
   questionTypes: any = ExerciseQuestionTypeOptions;
-  showSaveButton: boolean = false;
   modifiedExerciseSubmissionIds: number[] = [];
   exerciseSubmissionStatusTypes = ExerciseSubmissionStatusOptions;
   exerciseSubmissionStatusOptions: MatSelectOption[] = autoGenOptions(
@@ -108,8 +107,7 @@ export class GradingDashboardComponent implements OnInit {
     private router: Router,
     private auth: AuthorizationService,
     public dialog: MatDialog,
-    private exerciseSubmissionService: ExerciseSubmissionService,
-    private location: Location
+    private exerciseSubmissionService: ExerciseSubmissionService
   ) {
     this.gradingGroups$.subscribe((val) => {
       this.gradingGroups = val;
@@ -121,6 +119,10 @@ export class GradingDashboardComponent implements OnInit {
       this.isFetchingGradingGroup = val;
     });
     this.exerciseSubmissions$.subscribe((val) => {
+      this.resetUnsavedSubmissions();
+      console.log('new exerciseSubmissions from state', {
+        exerciseSubmissions: this.exerciseSubmissions,
+      });
       this.exerciseSubmissions = val;
     });
     this.updateGradingGroupByFilter();
@@ -174,8 +176,17 @@ export class GradingDashboardComponent implements OnInit {
     });
     this.fetchExerciseSubmissions();
   }
-  goBack() {
-    this.location.back();
+  preventLossOfUnsavedWork() {
+    window.alert(
+      'You have unsaved submission! Click on save all to save them before moving from this screen.'
+    );
+  }
+  goToGroupScreen() {
+    if (this.modifiedExerciseSubmissionIds.length) {
+      this.preventLossOfUnsavedWork();
+    } else {
+      this.showGroupCards = true;
+    }
   }
   authorizeResourceMethod(action) {
     return this.auth.authorizeResource(this.resource, action);
@@ -262,7 +273,6 @@ export class GradingDashboardComponent implements OnInit {
   }
 
   gradingUpdate(exerciseSubmission: ExerciseSubmission) {
-    this.showSaveButton = true;
     this.modifiedExerciseSubmissionIds.push(exerciseSubmission.id);
   }
 
@@ -317,6 +327,14 @@ export class GradingDashboardComponent implements OnInit {
         return submission;
       } else return s;
     });
+  }
+
+  showSaveButton() {
+    return this.modifiedExerciseSubmissionIds.length > 0;
+  }
+
+  resetUnsavedSubmissions() {
+    this.modifiedExerciseSubmissionIds = [];
   }
 
   submitExerciseSubmissionForm() {

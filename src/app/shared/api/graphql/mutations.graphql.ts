@@ -384,6 +384,12 @@ export const EXERCISE_SUBMISSION_MUTATIONS = {
     ) {
       createExerciseSubmissions(exerciseSubmissions: $exerciseSubmissions) {
         ok
+        exerciseSubmissions {
+          id
+          status
+          points
+          remarks
+        }
       }
     }
   `,

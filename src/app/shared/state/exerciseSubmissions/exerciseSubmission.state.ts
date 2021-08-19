@@ -26,6 +26,7 @@ import {
   ExerciseSubmission,
   MatSelectOption,
   FetchParams,
+  CREATE,
 } from '../../common/models';
 import { EXERCISE_SUBMISSION_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
@@ -471,8 +472,38 @@ export class ExerciseSubmissionState {
                 action: 'success',
               })
             );
+            const modifiedExerciseSubmissions = response.exerciseSubmissions;
+            console.log('modifiedExericseSubmissions', {
+              modifiedExerciseSubmissions,
+            });
+            // Replacing the existing submissions in state with the modified submissions in the response
             this.router.navigateByUrl(ExerciseSubmissionFormCloseURL);
+            let exerciseSubmissions = state.exerciseSubmissions.map((e) => {
+              const modifiedSubmission = modifiedExerciseSubmissions.find(
+                (m) => m.id == e.id
+              );
+              return modifiedSubmission ? { ...e, ...modifiedSubmission } : e;
+            });
+            // Getting the last used fetch params so that we can check if the returned submissions are applicable to the filters
+            const previousFetchParams =
+              state.fetchParamObjects[state.fetchParamObjects.length - 1];
+            console.log('from FetchNextExerciseSubmissionsAction', {
+              previousFetchParams,
+            });
+            console.log('before filtering ', {
+              previousFetchParams,
+              exerciseSubmissions,
+            });
+            // Filtering out submissions that are no longer valid for the current set of filters
+            exerciseSubmissions = exerciseSubmissions.filter((e) => {
+              const statusValid = previousFetchParams.columnFilters?.status
+                ? previousFetchParams.columnFilters?.status == e.status
+                : true;
+              return statusValid;
+            });
+            console.log('after filtering ', { exerciseSubmissions });
             patchState({
+              exerciseSubmissions,
               exerciseSubmissionFormRecord: emptyExerciseSubmissionFormRecord,
               fetchPolicy: 'network-only',
             });

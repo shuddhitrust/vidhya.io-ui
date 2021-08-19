@@ -507,6 +507,7 @@ export const EXERCISE_SUBMISSION_QUERIES = {
         images
         points
         status
+        remarks
       }
     }
   `,
