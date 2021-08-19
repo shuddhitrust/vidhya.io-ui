@@ -33,6 +33,8 @@ import { ShowNotificationAction } from 'src/app/shared/state/notifications/notif
 import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
 import { environment } from 'src/environments/environment';
 import { UploadService } from 'src/app/shared/api/upload.service';
+import { FetchMemberOptionsByInstitution } from 'src/app/shared/state/options/options.actions';
+import { AuthState } from 'src/app/shared/state/auth/auth.state';
 
 @Component({
   selector: 'app-add-edit-group',
@@ -66,6 +68,8 @@ export class AddEditGroupComponent implements OnInit {
   isFetchingMembers: boolean;
   groupTypeOptions: MatSelectOption[] = groupTypeOptions;
   institutionOptions;
+  @Select(AuthState.getCurrentMemberInstitutionId)
+  memberInstitutionId$: Observable<string>;
   memberInstitutionId: string;
 
   constructor(
@@ -76,17 +80,25 @@ export class AddEditGroupComponent implements OnInit {
     private fb: FormBuilder,
     private uploadService: UploadService
   ) {
+    this.memberInstitutionId$.subscribe((val) => {
+      this.memberInstitutionId = val;
+    });
     this.institutionOptions$.subscribe((options) => {
       this.institutionOptions = options;
     });
     this.memberOptions$.subscribe((options) => {
+      console.log('memberOptions', { memberOptions: this.memberOptions });
       this.memberOptions = options;
     });
 
     this.isFetchingMembers$.subscribe((val) => {
       this.isFetchingMembers = val;
     });
-
+    this.store.dispatch(
+      new FetchMemberOptionsByInstitution({
+        memberInstitutionId: this.memberInstitutionId,
+      })
+    );
     this.store.dispatch(
       new FetchInstitutionsAction({ searchParams: defaultSearchParams })
     );
@@ -95,7 +107,10 @@ export class AddEditGroupComponent implements OnInit {
       this.groupFormRecord = val;
       this.groupForm = this.setupGroupFormGroup(this.groupFormRecord);
     });
-    console.log('Group type options ', { groupTypeOptions });
+    console.log('Group type options ', {
+      groupTypeOptions,
+      memberOptions: this.memberOptions,
+    });
   }
 
   setupGroupFormGroup = (
@@ -108,6 +123,8 @@ export class AddEditGroupComponent implements OnInit {
       avatar: [groupFormRecord?.avatar],
       name: [groupFormRecord?.name, Validators.required],
       institution: [groupFormRecord?.institution?.id, Validators.required],
+      admins: [groupFormRecord?.admins.map((m) => m.id)],
+      members: [groupFormRecord?.members.map((m) => m.id)],
       groupType: [groupFormRecord?.groupType, Validators.required],
       description: [groupFormRecord?.description, Validators.required],
     });

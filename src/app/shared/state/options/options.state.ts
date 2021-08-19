@@ -1,4 +1,4 @@
-import { State, Action, Selector, StateContext } from '@ngxs/store';
+import { State, Action, Selector, StateContext, Store } from '@ngxs/store';
 import { defaultOptionsState, OptionsStateModel } from './options.model';
 import {
   FetchGroupOptionsByInstitution,
@@ -6,8 +6,14 @@ import {
 } from './options.actions';
 import { Injectable } from '@angular/core';
 import { MatSelectOption } from '../../common/models';
-import { getOptionLabel } from '../../common/functions';
+import {
+  getErrorMessageFromGraphQLResponse,
+  getOptionLabel,
+} from '../../common/functions';
 import { groupTypeOptions } from '../groups/group.model';
+import { USER_QUERIES } from '../../api/graphql/queries.graphql';
+import { Apollo } from 'apollo-angular';
+import { ShowNotificationAction } from '../notifications/notification.actions';
 
 @State<OptionsStateModel>({
   name: 'optionsState',
@@ -15,7 +21,7 @@ import { groupTypeOptions } from '../groups/group.model';
 })
 @Injectable()
 export class OptionsState {
-  constructor() {}
+  constructor(private apollo: Apollo, private store: Store) {}
 
   @Selector()
   static listMembersByInstitution(state: OptionsStateModel): MatSelectOption[] {
@@ -56,43 +62,33 @@ export class OptionsState {
     { getState, patchState }: StateContext<OptionsStateModel>,
     { payload }: FetchMemberOptionsByInstitution
   ) {
-    const state = getState();
-    let {
-      fetchPolicyForMembers,
-      isFetchingMembersByInstitution,
-      membersByInstitution,
-    } = state;
-    const { memberInstitutionId } = payload;
-    isFetchingMembersByInstitution = true;
-    patchState({ isFetchingMembersByInstitution });
+    patchState({ isFetchingMembersByInstitution: true });
     const variables = {
-      id: memberInstitutionId,
+      institutionId: payload.memberInstitutionId,
     };
-    console.log('Fetching members by institution ', variables);
-    if (memberInstitutionId) {
-      // client
-      //   .query({
-      //     query: customQueries.GetInstitutionMembers,
-      //     variables,
-      //     fetchPolicy: fetchPolicyForMembers,
-      //   })
-      //   .then((res: any) => {
-      //     console.log('Fetch members by institution Id response => ', res);
-      //     isFetchingMembersByInstitution = false;
-      //     membersByInstitution = res?.data?.getInstitution?.members?.items;
-      //     fetchPolicyForMembers = null;
-      //     patchState({
-      //       membersByInstitution,
-      //       isFetchingMembersByInstitution,
-      //       fetchPolicyForMembers,
-      //     });
-      //   })
-      //   .catch((err) => {
-      //     isFetchingMembersByInstitution = false;
-      //     membersByInstitution = [];
-      //     patchState({ membersByInstitution, isFetchingMembersByInstitution });
-      //   });
-    }
+    console.log('variables for members fetch ', { variables });
+    this.apollo
+      .watchQuery({
+        query: USER_QUERIES.GET_USERS,
+        variables,
+      })
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          patchState({ isFetchingMembersByInstitution: false });
+          const response = data.users;
+          patchState({
+            membersByInstitution: response,
+          });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+        }
+      );
   }
 
   @Action(FetchGroupOptionsByInstitution)

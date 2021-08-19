@@ -76,6 +76,7 @@ export const SUBSCRIPTIONS = {
           id
           name
           description
+          createdAt
         }
         method
       }

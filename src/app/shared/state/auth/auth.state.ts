@@ -156,6 +156,10 @@ export class AuthState {
   }
   @Selector()
   static getCurrentMemberInstitutionId(state: AuthStateModel): number {
+    console.log(
+      'current member instition id ',
+      state.currentMember?.institution?.id
+    );
     return state.currentMember?.institution?.id;
   }
   @Selector()
