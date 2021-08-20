@@ -8,8 +8,8 @@
 //   websocket_graphql_endpoint: `${websocket_api_endpoint}/graphql/`,
 // };
 
-const api_endpoint = 'http://localhost:8000';
-const websocket_api_endpoint = 'ws://localhost:8000';
+const api_endpoint = 'https://vidhya-io-staging.herokuapp.com';
+const websocket_api_endpoint = 'ws://vidhya-io-staging.herokuapp.com';
 
 export const environment = {
   production: false,
