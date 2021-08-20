@@ -9,7 +9,7 @@
 // };
 
 const api_endpoint = 'https://vidhya-io-staging.herokuapp.com';
-const websocket_api_endpoint = 'ws://vidhya-io-staging.herokuapp.com';
+const websocket_api_endpoint = 'wss://vidhya-io-staging.herokuapp.com';
 
 export const environment = {
   production: false,
