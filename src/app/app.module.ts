@@ -169,6 +169,7 @@ import {
 } from './pages/profiles/chapter-profile/chapter-profile.component';
 import { ExerciseKeyState } from './shared/state/exerciseKeys/exerciseKey.state';
 import { AssignmentState } from './shared/state/assignments/assignment.state';
+import { ScullyLibModule } from '@scullyio/ng-lib';
 @NgModule({
   declarations: [
     AppComponent,
@@ -278,6 +279,7 @@ import { AssignmentState } from './shared/state/assignments/assignment.state';
     ],
     TokenUpdater,
     InfiniteScrollModule,
+    ScullyLibModule,
   ],
   providers: [
     AuthenticationGuard,
