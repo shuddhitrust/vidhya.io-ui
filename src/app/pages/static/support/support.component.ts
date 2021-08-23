@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import { constructUserFullName } from 'src/app/shared/common/functions';
 import { CurrentMember } from 'src/app/shared/common/models';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-support',
@@ -12,7 +11,7 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./support.component.scss'],
 })
 export class SupportComponent implements OnInit {
-  supportEmail: string = environment.support_email;
+  supportEmail: string = ''; // environment.support_email;
   username: string = '';
   institution: string = '';
   role: string = '';
