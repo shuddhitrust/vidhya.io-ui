@@ -85,6 +85,12 @@ export const memberColumns: any[] = [
     },
   },
   {
+    field: 'institution',
+    cellRenderer: (params) => {
+      return params?.data?.institution?.name;
+    },
+  },
+  {
     field: 'membershipStatus',
     cellRenderer: (params) => {
       return getOptionLabel(params.value, membershipStatusOptions);
