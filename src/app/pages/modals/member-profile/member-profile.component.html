@@ -12,12 +12,12 @@
   </mat-card>
   <mat-dialog-actions class="card-actions">
     <button
-      mat-raised-button
+      mat-mini-fab
       color="primary"
       *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
       (click)="editMember()"
     >
-      Edit
+      <mat-icon>edit</mat-icon>
     </button>
     <button
       mat-mini-fab
