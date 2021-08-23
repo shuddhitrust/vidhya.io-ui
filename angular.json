@@ -37,6 +37,27 @@
             "scripts": []
           },
           "configurations": {
+            "staging": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "4mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "5kb",
+                  "maximumError": "6kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.staging.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
             "production": {
               "budgets": [
                 {
@@ -72,6 +93,9 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
+            "staging": {
+              "browserTarget": "vidhya-ui:build:staging"
+            },
             "production": {
               "browserTarget": "vidhya-ui:build:production"
             },
