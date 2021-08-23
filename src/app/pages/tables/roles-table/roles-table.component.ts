@@ -47,6 +47,9 @@ export class RolesTableComponent implements OnInit {
       cellRenderer: 'userRoleRenderer',
     },
     {
+      field: 'priority',
+    },
+    {
       field: 'description',
     },
   ];

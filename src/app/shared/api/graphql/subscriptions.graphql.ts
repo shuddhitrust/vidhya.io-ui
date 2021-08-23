@@ -24,11 +24,16 @@ export const SUBSCRIPTIONS = {
           lastName
           title
           bio
+          avatar
           membershipStatus
+          role {
+            name
+          }
           institution {
             id
             name
           }
+          lastActive
         }
         method
       }
@@ -39,6 +44,7 @@ export const SUBSCRIPTIONS = {
       notifyUserRole {
         userRole {
           name
+          priority
           description
           permissions
         }
