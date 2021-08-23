@@ -1,22 +1,16 @@
-.announcement-card {
+h2 {
   text-align: center;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: 20px;
+  align-items: stretch;
+  margin: 10px;
   padding: 10px;
-  margin: auto 10px 10px 10px;
-  display: block;
-  border-radius: 5px;
 }
-
-.announcement-icon {
-  vertical-align: middle;
-  float: left;
-  color: var(--shuddhi-color);
-}
-
-.close-announcement-icon {
-  vertical-align: middle;
-  float: right;
-  cursor: pointer;
-  opacity: 60%;
-  color: red;
-  font-size: 1em;
-}
+// .card {
+//   border: 1px solid #ccc;
+//   box-shadow: 2px 2px 6px 0px rgba(0, 0, 0, 0.3);
+// }

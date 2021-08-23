@@ -1,45 +1,28 @@
-<!-- <ng-template #homePage> -->
-<div style="text-align: center"><h1>Hero Block & Student Profiles</h1></div>
-<!-- </ng-template> -->
+<div *ngIf="learners.length; else emptyLearnersListTemplate">
+  <div class="cards">
+    <div *ngFor="let learner of learners">
+      <mat-card class="card">
+        <mat-card-header>
+          <img
+            mat-card-avatar
+            [src]="learner.avatar"
+            [alt]="learner.firstName"
+          />
+          <mat-card-title>{{ constructFullName(learner) }}</mat-card-title>
+          <mat-card-subtitle>{{ generateSubtitle(learner) }}</mat-card-subtitle>
+        </mat-card-header>
 
-<!-- <span *ngIf="pendingApproval && showAnnouncements">
-  <span *ngTemplateOutlet="pendingApprovalTemplate"></span>
-</span>
-<span *ngIf="suspended && showAnnouncements">
-  <span *ngTemplateOutlet="suspendedTemplate"></span>
-</span>
-<span *ngTemplateOutlet="homePage"></span>
-
-<ng-template #pendingApprovalTemplate>
-  <mat-card class="announcement-card">
-    <mat-card-content>
-      <mat-icon class="close-announcement-icon" (click)="closeAnnouncements()"
-        >cancel</mat-icon
-      >
-      <mat-icon class="announcement-icon">info</mat-icon>
-      <div>
-        <small>
-          Your account is pending approval by your institution's moderators.
-          Please wait.
-        </small>
-        <small>
-          If you have waited long enough, please contact the administrators of
-          your institution to have your account approved.
-        </small>
-      </div>
-    </mat-card-content>
-  </mat-card>
+        <mat-card-content>
+          {{ learner.bio }}
+        </mat-card-content>
+        <!-- <mat-card-actions>
+    <button mat-button>LIKE</button>
+    <button mat-button>SHARE</button>
+  </mat-card-actions> -->
+      </mat-card>
+    </div>
+  </div>
+</div>
+<ng-template #emptyLearnersListTemplate>
+  <h2>No students to display!</h2>
 </ng-template>
-
-<ng-template #suspendedTemplate>
-  <mat-card class="announcement-card">
-    <mat-icon class="close-announcement-icon" (click)="closeAnnouncements()"
-      >cancel</mat-icon
-    >
-    <mat-icon class="announcement-icon">info</mat-icon>
-    <small>
-      Your account has been suspended. Please contact the administrators of your
-      institution to have your account reinstated.
-    </small>
-  </mat-card>
-</ng-template> -->

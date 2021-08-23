@@ -2,11 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { MembershipStatusOptions } from 'src/app/shared/common/models';
+import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
+import {
+  defaultSearchParams,
+  USER_ROLES_NAMES,
+} from 'src/app/shared/common/constants';
+import { constructUserFullName } from 'src/app/shared/common/functions';
+import { MembershipStatusOptions, User } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { VerifyAccountAction } from 'src/app/shared/state/auth/auth.actions';
 import { AuthStateModel } from 'src/app/shared/state/auth/auth.model';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
+import { FetchMembersAction } from 'src/app/shared/state/members/member.actions';
+import { MemberState } from 'src/app/shared/state/members/member.state';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 
 @Component({
@@ -30,7 +38,27 @@ export class HomeComponent implements OnInit {
   isLoggedIn: boolean = false;
   firstTimeSetup: boolean = false;
   showUnverifiedNotification: boolean = false;
+  @Select(MemberState.listMembers)
+  learners$: Observable<User[]>;
+  @Select(MemberState.isFetching)
+  isFetching$: Observable<boolean>;
+  learners: any[] = [];
+  isFetching: boolean = false;
+  columnFilters = {
+    roleName: USER_ROLES_NAMES.LEARNER,
+  };
   constructor(private store: Store, private router: Router) {
+    this.fetchMembers();
+    this.learners$.subscribe((val) => {
+      this.learners = val;
+      // Keeping only the approved members
+      this.learners = this.learners.filter(
+        (m) => m.membershipStatus == MembershipStatusOptions.APPROVED
+      );
+    });
+    this.isFetching$.subscribe((val) => {
+      this.isFetching = val;
+    });
     this.isLoggedIn$.subscribe((val) => {
       this.isLoggedIn = val;
     });
@@ -62,6 +90,29 @@ export class HomeComponent implements OnInit {
       pendingApproval: this.pendingApproval,
       suspended: this.suspended,
     });
+  }
+
+  constructFullName(user) {
+    return constructUserFullName(user);
+  }
+
+  generateSubtitle(user) {
+    return user.title
+      ? user.title + ', '
+      : '' + user.institution?.name
+      ? user.institution?.name
+      : '';
+  }
+
+  fetchMembers() {
+    this.store.dispatch(
+      new FetchMembersAction({
+        searchParams: {
+          ...defaultSearchParams,
+          columnFilters: this.columnFilters,
+        },
+      })
+    );
   }
 
   processMembershipStatusOptions() {
