@@ -59,7 +59,7 @@ export class UserModerationProfileComponent implements OnInit {
     console.log('profieData from usermoderationprofile => ', {
       profileData: this.profileData,
     });
-    this.moderationForm = this.setupModerationFormGroup();
+    this.moderationForm = this.setupModerationFormGroup(this.profileData);
   }
 
   ngOnInit() {
@@ -74,9 +74,9 @@ export class UserModerationProfileComponent implements OnInit {
     });
   }
 
-  setupModerationFormGroup = (): FormGroup => {
+  setupModerationFormGroup = (user): FormGroup => {
     const formGroup = this.fb.group({
-      role: [],
+      role: [user?.role?.name],
       remarks: [],
     });
     return formGroup;

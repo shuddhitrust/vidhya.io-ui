@@ -50,7 +50,8 @@
       <p>
         If <b>{{ profileData?.firstName }}</b> is not a member at
         <b>{{ profileData?.institution?.name }}</b
-        >, please add appropriate remarks before clicking on deny:-
+        >, or if you wish to suspend the user, please add appropriate remarks
+        before clicking on suspend:-
       </p>
       <mat-form-field class="col-lg-8 col-md-8 col-sm-8" appearance="outline">
         <mat-label>Remarks</mat-label>
@@ -66,7 +67,7 @@
         *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
         (click)="denialConfirmation()"
       >
-        Deny
+        Suspend
       </button>
     </form>
   </mat-card>

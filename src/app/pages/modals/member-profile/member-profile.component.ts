@@ -15,6 +15,7 @@ import {
 } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { DeleteMemberAction } from 'src/app/shared/state/members/member.actions';
+import { UserModerationProfileComponent } from '../moderate-user/user-moderation.component';
 
 @Component({
   selector: 'app-member-profile',
@@ -51,15 +52,23 @@ export class MemberProfileComponent {
     });
   }
 
+  // editMember() {
+  //   this.closeDialog();
+  //   const id = this.profileData.id;
+  //   this.router.navigate([uiroutes.MEMBER_FORM_ROUTE.route], {
+  //     relativeTo: this.route,
+  //     queryParams: { id },
+  //     queryParamsHandling: 'merge',
+  //     skipLocationChange: false,
+  //   });
+  // }
+
   editMember() {
-    this.closeDialog();
-    const id = this.profileData.id;
-    this.router.navigate([uiroutes.MEMBER_FORM_ROUTE.route], {
-      relativeTo: this.route,
-      queryParams: { id },
-      queryParamsHandling: 'merge',
-      skipLocationChange: false,
+    const dialogRef = this.dialog.open(UserModerationProfileComponent, {
+      data: this.profileData,
     });
+
+    dialogRef.afterClosed().subscribe((result) => {});
   }
 
   deleteConfirmation() {
