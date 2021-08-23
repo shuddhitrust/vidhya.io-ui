@@ -46,13 +46,13 @@ const routes: Routes = [
     data: uiroutes.ACCOUNT_ROUTE.auth,
     pathMatch: 'full',
   },
-  {
-    path: uiroutes.SUPPORT_ROUTE.route,
-    component: SupportComponent,
-    canActivate: [AuthenticationGuard],
-    data: uiroutes.SUPPORT_ROUTE.auth,
-    pathMatch: 'full',
-  },
+  // {
+  //   path: uiroutes.SUPPORT_ROUTE.route,
+  //   component: SupportComponent,
+  //   canActivate: [AuthenticationGuard],
+  //   data: uiroutes.SUPPORT_ROUTE.auth,
+  //   pathMatch: 'full',
+  // },
   {
     path: uiroutes.INSTITUTION_FORM_ROUTE.route,
     component: AddEditInstitutionComponent,
