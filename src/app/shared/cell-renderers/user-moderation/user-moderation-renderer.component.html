@@ -1,3 +1,8 @@
-<button mat-raised-button color="primary" (click)="invokeParentMethod()">
+<button
+  mat-raised-button
+  color="primary"
+  [disabled]="disableModeration()"
+  (click)="invokeParentMethod()"
+>
   Moderate
 </button>

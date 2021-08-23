@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ICellRendererParams } from 'ag-grid-community';
 import { MemberProfileComponent } from 'src/app/pages/modals/member-profile/member-profile.component';
+import { MembershipStatusOptions } from '../../common/models';
 
 @Component({
   selector: 'app-moderation-renderer',
@@ -18,6 +19,10 @@ export class UserModerationRendererComponent {
     this.params = params;
     this.rowData = params.data;
     this.cellValue = this.getValueToDisplay(params);
+  }
+
+  disableModeration() {
+    return this.rowData.membershipStatus != MembershipStatusOptions.PENDING;
   }
 
   showProfile() {
