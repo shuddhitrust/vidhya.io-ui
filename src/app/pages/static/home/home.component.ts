@@ -1945,7 +1945,7 @@ export class HomeComponent implements OnInit {
     this.fetchMembers();
     this.learners$.subscribe((val) => {
       this.learners = val;
-      this.learners = tempUsers;
+      // this.learners = tempUsers;
     });
     this.isFetching$.subscribe((val) => {
       this.isFetching = val;
