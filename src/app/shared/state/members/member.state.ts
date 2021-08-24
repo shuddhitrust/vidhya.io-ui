@@ -19,6 +19,7 @@ import {
   CreateUpdateMemberAction,
   DeleteMemberAction,
   FetchMembersAction,
+  FetchPublicMembersAction,
   ForceRefetchMembersAction,
   GetMemberAction,
   MemberSubscriptionAction,
@@ -180,6 +181,73 @@ export class MemberState {
       );
   }
 
+  @Action(FetchPublicMembersAction)
+  fetchPublicMembers(
+    { getState, patchState }: StateContext<MemberStateModel>,
+    { payload }: FetchMembersAction
+  ) {
+    const state = getState();
+    const { searchParams } = payload;
+    const { fetchPolicy, fetchParamObjects, membersSubscribed } = state;
+    const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
+    let newFetchParams = updateFetchParams({
+      fetchParamObjects,
+      newPageNumber: pageNumber,
+      newPageSize: pageSize,
+      newSearchQuery: searchQuery,
+      newColumnFilters: columnFilters,
+    });
+    patchState({ isFetching: true });
+    console.log('new pagination object after the update method => ', {
+      newFetchParams,
+    });
+    const variables = {
+      searchField: searchQuery,
+      membershipStatusNot: columnFilters.membershipStatusNot,
+      membershipStatusIs: columnFilters.membershipStatusIs,
+      roleName: columnFilters.roleName,
+      limit: newFetchParams.pageSize,
+      offset: newFetchParams.offset,
+    };
+    console.log('variables for members fetch ', { variables });
+    this.apollo
+      .watchQuery({
+        query: USER_QUERIES.GET_PUBLIC_USERS,
+        variables,
+        fetchPolicy,
+      })
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          const response = data.users;
+          const totalCount = response[0]?.totalCount
+            ? response[0]?.totalCount
+            : 0;
+          newFetchParams = { ...newFetchParams, totalCount };
+          console.log('from after getting members', {
+            totalCount,
+            response,
+            newFetchParams,
+          });
+          patchState({
+            members: response,
+            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
+            isFetching: false,
+          });
+          if (!membersSubscribed) {
+            this.store.dispatch(new MemberSubscriptionAction());
+          }
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetching: false });
+        }
+      );
+  }
   @Action(MemberSubscriptionAction)
   subscribeToMembers({ getState, patchState }: StateContext<MemberStateModel>) {
     const state = getState();

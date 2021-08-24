@@ -8,6 +8,12 @@ export class FetchMembersAction {
   constructor(public payload: { searchParams: SearchParams }) {}
 }
 
+export class FetchPublicMembersAction {
+  static readonly type = '[MEMBERS] Public Fetch';
+
+  constructor(public payload: { searchParams: SearchParams }) {}
+}
+
 export class MemberSubscriptionAction {
   static readonly type = '[MEMBER] Subscribe';
 

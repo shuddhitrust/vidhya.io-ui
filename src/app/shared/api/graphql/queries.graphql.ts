@@ -90,6 +90,32 @@ export const USER_QUERIES = {
       }
     }
   `,
+  GET_PUBLIC_USERS: gql`
+    query publicUsers(
+      $searchField: String
+      $membershipStatusNot: [String]
+      $membershipStatusIs: [String]
+      $roleName: String
+      $limit: Int
+      $offset: Int
+    ) {
+      publicUsers(
+        searchField: $searchField
+        membershipStatusNot: $membershipStatusNot
+        membershipStatusIs: $membershipStatusIs
+        roleName: $roleName
+        limit: $limit
+        offset: $offset
+      ) {
+        id
+        name
+        title
+        bio
+        avatar
+        institution
+      }
+    }
+  `,
 };
 
 export const USER_ROLE_QUERIES = {

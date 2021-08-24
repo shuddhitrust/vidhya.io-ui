@@ -12,7 +12,7 @@ import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { VerifyAccountAction } from 'src/app/shared/state/auth/auth.actions';
 import { AuthStateModel } from 'src/app/shared/state/auth/auth.model';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
-import { FetchMembersAction } from 'src/app/shared/state/members/member.actions';
+import { FetchPublicMembersAction } from 'src/app/shared/state/members/member.actions';
 import { MemberState } from 'src/app/shared/state/members/member.state';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 
@@ -45,15 +45,12 @@ export class HomeComponent implements OnInit {
   isFetching: boolean = false;
   columnFilters = {
     roleName: USER_ROLES_NAMES.LEARNER,
+    membershipStatusIs: [MembershipStatusOptions.APPROVED],
   };
   constructor(private store: Store, private router: Router) {
     this.fetchMembers();
     this.learners$.subscribe((val) => {
       this.learners = val;
-      // Keeping only the approved members
-      this.learners = this.learners.filter(
-        (m) => m.membershipStatus == MembershipStatusOptions.APPROVED
-      );
     });
     this.isFetching$.subscribe((val) => {
       this.isFetching = val;
@@ -101,7 +98,7 @@ export class HomeComponent implements OnInit {
 
   fetchMembers() {
     this.store.dispatch(
-      new FetchMembersAction({
+      new FetchPublicMembersAction({
         searchParams: {
           ...defaultSearchParams,
           columnFilters: this.columnFilters,
