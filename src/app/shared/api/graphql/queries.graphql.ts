@@ -6,6 +6,7 @@ export const AUTH_QUERIES = {
       me {
         username
         firstName
+        lastName
         name
         avatar
         invitecode
