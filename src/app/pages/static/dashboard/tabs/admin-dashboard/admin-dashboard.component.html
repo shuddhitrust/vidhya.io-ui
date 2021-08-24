@@ -1,45 +1,60 @@
-<button mat-icon-button (click)="drawer.toggle()" id="drawer-puller">
-  <mat-icon>{{
-    opened === true ? "navigate_before" : "navigate_next"
-  }}</mat-icon>
-</button>
-<mat-drawer-container class="drawer-container">
-  <mat-drawer #drawer mode="side" [(opened)]="opened" class="drawer-content">
-    <mat-selection-list [multiple]="false">
-      <mat-list-option
-        [ngClass]="
-          selectedEntity === entity.value
-            ? 'selectedSection'
-            : 'unselectedSection'
-        "
-        *ngFor="let entity of entities"
-        [value]="entity.value"
-        (click)="onSelectEntity(entity.value)"
-      >
-        {{ entity.label }}
-      </mat-list-option>
-    </mat-selection-list>
-  </mat-drawer>
-
-  <app-awaiting-moderation-table
-    *ngIf="selectedEntity == moderation"
-  ></app-awaiting-moderation-table>
-
-  <app-roles-table *ngIf="selectedEntity == userRoles"></app-roles-table>
-
-  <app-institutions-table
-    *ngIf="selectedEntity == institutions"
-  ></app-institutions-table>
-
-  <app-members-table *ngIf="selectedEntity == members"></app-members-table>
-
-  <app-institution-admins-table
-    *ngIf="selectedEntity == institutionAdmins"
-  ></app-institution-admins-table>
-
-  <app-class-admins-table
-    *ngIf="selectedEntity == classAdmins"
-  ></app-class-admins-table>
-
-  <app-learners-table *ngIf="selectedEntity == learners"></app-learners-table>
-</mat-drawer-container>
+<mat-tab-group
+  mat-align-tabs="center"
+  color="accent"
+  [(selectedIndex)]="activeTabIndex"
+  (selectedTabChange)="onTabChange($event)"
+  class="admin-tabs"
+>
+  <mat-tab
+    *ngIf="authorizeResourceMethod(resources.MODERATION)"
+    [label]="tabIndexList[0]"
+  >
+    <app-awaiting-moderation-table></app-awaiting-moderation-table>
+  </mat-tab>
+  <mat-tab
+    *ngIf="authorizeResourceMethod(resources.USER_ROLE)"
+    [label]="tabIndexList[1]"
+    ><div class="mat-tab">
+      <app-roles-table></app-roles-table>
+    </div>
+  </mat-tab>
+  <mat-tab
+    [label]="tabIndexList[2]"
+    *ngIf="authorizeResourceMethod(resources.INSTITUTION)"
+  >
+    <div class="mat-tab">
+      <app-institutions-table></app-institutions-table>
+    </div>
+  </mat-tab>
+  <mat-tab
+    [label]="tabIndexList[3]"
+    *ngIf="authorizeResourceMethod(resources.MEMBER)"
+    ><div class="mat-tab">
+      <app-members-table></app-members-table>
+    </div>
+  </mat-tab>
+  <mat-tab
+    [label]="tabIndexList[4]"
+    *ngIf="authorizeResourceMethod(resources.INSTITUTION_ADMIN)"
+  >
+    <div class="mat-tab">
+      <app-institution-admins-table></app-institution-admins-table>
+    </div>
+  </mat-tab>
+  <mat-tab
+    [label]="tabIndexList[5]"
+    *ngIf="authorizeResourceMethod(resources.CLASS_ADMIN)"
+  >
+    <div class="mat-tab">
+      <app-class-admins-table></app-class-admins-table>
+    </div>
+  </mat-tab>
+  <mat-tab
+    [label]="tabIndexList[6]"
+    *ngIf="authorizeResourceMethod(resources.LEARNER)"
+  >
+    <div class="mat-tab">
+      <app-learners-table></app-learners-table>
+    </div>
+  </mat-tab>
+</mat-tab-group>
