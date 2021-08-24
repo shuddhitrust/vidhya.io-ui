@@ -94,7 +94,13 @@ export const SUBSCRIPTIONS = {
         course {
           id
           title
+          blurb
+          instructor {
+            id
+            name
+          }
           description
+          status
         }
         method
       }

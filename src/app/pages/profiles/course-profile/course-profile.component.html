@@ -3,42 +3,44 @@
 </button>
 
 <span *ngIf="!(isFetchingCourse$ | async)">
-  <button
-    *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
-    mat-mini-fab
-    color="warn"
-    class="profile-button"
-    (click)="deleteConfirmation()"
-  >
-    <mat-icon>delete</mat-icon>
-  </button>
-  <button
-    *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
-    mat-mini-fab
-    color="info"
-    [class.button-loading]="isFetchingCourse$ | async"
-    class="profile-button"
-    (click)="editCourse()"
-  >
-    <mat-icon>edit</mat-icon>
-  </button>
-  <button
-    *ngIf="
-      authorizeResourceMethod(resourceActions.UPDATE) &&
-      course.status == courseStatusOptions.draft
-    "
-    mat-raised-button
-    color="info"
-    [class.button-loading]="isFetchingCourse$ | async"
-    class="profile-button"
-    (click)="publishCourse()"
-  >
-    Publish
-  </button>
-  <div class="course-card">
+  <mat-card class="feed-card">
     <h2>{{ course?.title }}</h2>
-    <small>{{ course?.blurb }}</small>
-  </div>
+    <p>{{ course?.blurb }}</p>
+    <mat-card-actions>
+      <button
+        *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
+        mat-mini-fab
+        color="info"
+        [class.button-loading]="isFetchingCourse$ | async"
+        class="left-button"
+        (click)="editCourse()"
+      >
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button
+        *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
+        mat-mini-fab
+        color="warn"
+        class="left-button"
+        (click)="deleteConfirmation()"
+      >
+        <mat-icon>delete</mat-icon>
+      </button>
+      <button
+        *ngIf="
+          authorizeResourceMethod(resourceActions.UPDATE) &&
+          course.status == courseStatusOptions.draft
+        "
+        mat-raised-button
+        color="info"
+        [class.button-loading]="isFetchingCourse$ | async"
+        class="right-button"
+        (click)="publishCourse()"
+      >
+        Publish
+      </button>
+    </mat-card-actions>
+  </mat-card>
 </span>
 
 <div class="feed-header-block">
@@ -66,9 +68,9 @@
         (scrolled)="onScroll()"
       >
         <div *ngFor="let chapter of chapters$ | async">
-          <span class="feed-card" (click)="openChapter(chapter)">
+          <mat-card class="feed-card" (click)="openChapter(chapter)">
             {{ chapter.title }}
-          </span>
+          </mat-card>
         </div>
       </div>
     </span>

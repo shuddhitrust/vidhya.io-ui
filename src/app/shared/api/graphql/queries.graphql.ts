@@ -277,6 +277,7 @@ export const COURSE_QUERIES = {
       courses(searchField: $searchField, limit: $limit, offset: $offset) {
         id
         title
+        blurb
         instructor {
           id
           name

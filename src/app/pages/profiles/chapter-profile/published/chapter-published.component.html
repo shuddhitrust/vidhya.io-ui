@@ -3,7 +3,7 @@
 </button>
 
 <span *ngIf="!(isFetchingChapter$ | async)">
-  <div class="chapter-card">
+  <mat-card class="feed-card">
     <button
       *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
       mat-mini-fab
@@ -30,7 +30,7 @@
     <small class="left" style="font-style: italic" *ngIf="chapter?.dueDate"
       >Due on {{ parseDate(chapter?.dueDate) }}
     </small>
-  </div>
+  </mat-card>
 </span>
 
 <div class="feed-header-block">

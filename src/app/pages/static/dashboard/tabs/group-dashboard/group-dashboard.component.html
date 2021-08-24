@@ -23,13 +23,16 @@
         (scrolled)="onScroll()"
       >
         <div *ngFor="let group of groups$ | async">
-          <span class="feed-card" (click)="openGroup(group)">
+          <mat-card class="feed-card" (click)="openGroup(group)">
             <h2>{{ group.name }}</h2>
             <p>{{ clip(group.description) }}</p>
-            <small style="font-style: italic"
-              >Created on {{ parseDate(group.createdAt) }}</small
+
+            <mat-card-actions>
+              <small style="font-style: italic"
+                >Created on {{ parseDate(group.createdAt) }}</small
+              ></mat-card-actions
             >
-          </span>
+          </mat-card>
         </div>
       </div>
     </span>

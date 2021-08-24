@@ -23,15 +23,20 @@
         (scrolled)="onScroll()"
       >
         <div *ngFor="let announcement of announcements$ | async">
-          <span class="feed-card" (click)="openAnnouncement(announcement)">
+          <mat-card class="feed-card" (click)="openAnnouncement(announcement)">
             <h2>{{ announcement.title }}</h2>
-            <p>{{ clip(announcement.message) }}</p>
-            <small style="font-style: italic"
-              >Posted by {{ announcement?.author?.firstName }}
-              {{ announcement?.author?.lastName }} at
-              {{ parseDate(announcement.createdAt) }}</small
-            >
-          </span>
+            <p>
+              {{ clip(announcement.message) }}
+            </p>
+
+            <mat-card-actions>
+              <small style="font-style: italic"
+                >Posted by {{ announcement?.author?.name }}
+                at
+                {{ parseDate(announcement.createdAt) }}</small
+              >
+            </mat-card-actions>
+          </mat-card>
         </div>
       </div>
     </span>

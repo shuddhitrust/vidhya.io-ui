@@ -9,6 +9,7 @@ export type Assignment = {
   dueDate: string;
   exercisesCount: number;
   submittedCount: number;
+  percentage: number;
   gradedCount: number;
   pointsScored: number;
   totalPoints: number;

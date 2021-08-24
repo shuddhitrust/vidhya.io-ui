@@ -218,7 +218,7 @@ export class MemberState {
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
-          const response = data.users;
+          const response = data.publicUsers;
           const totalCount = response[0]?.totalCount
             ? response[0]?.totalCount
             : 0;
