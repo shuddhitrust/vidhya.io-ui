@@ -1,7 +1,11 @@
 .example-spacer {
   flex: 1 1 auto;
 }
-
+#beta-label {
+  font-size: 0.5em;
+  vertical-align: super;
+  color: var(--red);
+}
 #navbar {
   border-bottom: 1px solid #0099ff;
   height: var(--navbar-height);

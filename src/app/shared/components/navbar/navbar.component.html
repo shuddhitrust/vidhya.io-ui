@@ -1,8 +1,12 @@
 <p>
   <mat-toolbar color="white" id="navbar">
     <span
-      ><a [routerLink]="['']"><img id="logo" src="assets/images/logo.svg" /></a
-    ></span>
+      ><a [routerLink]="['']"
+        ><img id="logo" src="assets/images/logo.svg" /><sup id="beta-label"
+          >beta</sup
+        ></a
+      ></span
+    >
     <span class="example-spacer"></span>
     <ng-container *ngIf="!isLoggedIn; else loggedInMenu">
       <span *ngTemplateOutlet="loggedOutMenu"></span
