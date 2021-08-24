@@ -46,7 +46,7 @@ export class AwaitingModerationTableComponent implements OnInit {
     resizable: true,
   };
   columnFilters = {
-    membershipStatusNot: MembershipStatusOptions.APPROVED,
+    membershipStatusNot: [MembershipStatusOptions.APPROVED],
   };
   columns = [
     {

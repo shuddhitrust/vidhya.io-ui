@@ -58,7 +58,8 @@ export const USER_QUERIES = {
   GET_USERS: gql`
     query users(
       $searchField: String
-      $membershipStatusNot: String
+      $membershipStatusNot: [String]
+      $membershipStatusIs: [String]
       $roleName: String
       $limit: Int
       $offset: Int
@@ -66,6 +67,7 @@ export const USER_QUERIES = {
       users(
         searchField: $searchField
         membershipStatusNot: $membershipStatusNot
+        membershipStatusIs: $membershipStatusIs
         roleName: $roleName
         limit: $limit
         offset: $offset

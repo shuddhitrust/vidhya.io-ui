@@ -135,6 +135,7 @@ export class MemberState {
     const variables = {
       searchField: searchQuery,
       membershipStatusNot: columnFilters.membershipStatusNot,
+      membershipStatusIs: columnFilters.membershipStatusIs,
       roleName: columnFilters.roleName,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
