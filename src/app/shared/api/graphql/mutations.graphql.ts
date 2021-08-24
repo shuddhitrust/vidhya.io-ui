@@ -650,6 +650,7 @@ export const AUTH_MUTATIONS = {
         user {
           username
           firstName
+          lastName
           name
           avatar
           invitecode
