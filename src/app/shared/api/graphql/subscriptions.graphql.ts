@@ -22,6 +22,7 @@ export const SUBSCRIPTIONS = {
           id
           firstName
           lastName
+          name
           title
           bio
           avatar
