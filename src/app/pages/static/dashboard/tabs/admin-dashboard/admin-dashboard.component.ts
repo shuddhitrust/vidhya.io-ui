@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { resources } from 'src/app/shared/common/models';
 
 export const MODERATION_LABEL = 'Moderation';
@@ -12,17 +11,7 @@ export const INSTITUTION_ADMINS_LABEL = 'Institution Admins';
 export const CLASS_ADMINS_LABEL = 'Class Admins';
 export const LEARNERS_LABEL = 'Learners';
 
-const tabIndexList = {
-  0: MODERATION_LABEL,
-  1: USER_ROLES_LABEL,
-  2: INSTITUTIONS_LABEL,
-  3: MEMBERS_LABEL,
-  4: INSTITUTION_ADMINS_LABEL,
-  5: CLASS_ADMINS_LABEL,
-  6: LEARNERS_LABEL,
-};
-
-const sectionParamKey = 'adminTab';
+const sectionParamKey = 'adminSection';
 @Component({
   selector: 'app-admin-dashboard',
   templateUrl: './admin-dashboard.component.html',
@@ -32,55 +21,55 @@ export class AdminDashboardComponent implements OnInit {
   @Input() params: object = {};
   opened: boolean = true;
   @Input() entities: any[] = [];
-  activeTabIndex = 0;
-  tabIndexList = tabIndexList;
-  resources = resources;
+
+  moderation: string = resources.MODERATION;
+  userRoles: string = resources.USER_ROLE;
+  institutions: string = resources.INSTITUTION;
+  members: string = resources.MEMBER;
+  institutionAdmins: string = resources.INSTITUTION_ADMIN;
+  classAdmins: string = resources.CLASS_ADMIN;
+  learners: string = resources.LEARNER;
+  selectedEntity;
+
   constructor(
     public dialog: MatDialog,
     private route: ActivatedRoute,
-    private router: Router,
-    private auth: AuthorizationService
-  ) {}
+    private router: Router
+  ) {
+    this.selectedEntity = this.entities[0]?.value;
+  }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       this.params = params;
       const paramSection = params[sectionParamKey];
       if (paramSection) {
-        const tabIndexes = Object.keys(tabIndexList);
-        const tab = tabIndexes.find(
-          (index) => this.tabIndexList[index] == paramSection
-        );
-        this.activeTabIndex = parseInt(tab, 10);
+        this.selectedEntity = paramSection;
       } else {
         // If there are no tabname params, inject the available ones here.
         // Do this after authorization is implemented
       }
     });
   }
-
-  authorizeResourceMethod(resource) {
-    return this.auth.authorizeResource(resource, '*');
+  ngOnChanges(changes) {
+    if (changes.entities) {
+      this.selectedEntity = this.selectedEntity
+        ? this.selectedEntity
+        : this.entities[0]?.value;
+    }
   }
 
-  onTabChange($event) {
-    const tabIndex = $event['index'];
+  onSelectEntity(entity) {
+    this.selectedEntity = entity;
+    this.onSelectionChange();
+  }
+
+  onSelectionChange() {
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { [sectionParamKey]: this.tabIndexList[tabIndex] },
+      queryParams: { [sectionParamKey]: this.selectedEntity },
       queryParamsHandling: 'merge',
       skipLocationChange: false,
     });
   }
 }
-
-const getIndexFromTabName = (tabName: string): string => {
-  const tabIndexKeys = Object.keys(tabIndexList);
-  let indexByParams = parseInt(
-    tabIndexKeys.find((key) => {
-      return tabIndexList[key] == tabName;
-    })
-  );
-
-  return indexByParams.toString();
-};
