@@ -25,6 +25,7 @@ import { ChatComponent } from './pages/static/chat/chat.component';
 import { PasswordResetComponent } from './pages/forms/password-reset/password-reset.component';
 import { CourseProfileComponent } from './pages/profiles/course-profile/course-profile.component';
 import { ChapterProfileComponent } from './pages/profiles/chapter-profile/chapter-profile.component';
+import { PrivacyComponent } from './pages/static/privacy/privacy.component';
 // import { InstitutionProfileComponent } from './pages/modals/institution-profile/institution-profile.component';
 
 const routes: Routes = [
@@ -44,6 +45,13 @@ const routes: Routes = [
     component: AccountComponent,
     canActivate: [AuthenticationGuard],
     data: uiroutes.ACCOUNT_ROUTE.auth,
+    pathMatch: 'full',
+  },
+  {
+    path: uiroutes.PRIVACY_ROUTE.route,
+    component: PrivacyComponent,
+    canActivate: [AuthenticationGuard],
+    data: uiroutes.PRIVACY_ROUTE.auth,
     pathMatch: 'full',
   },
   // {

@@ -21,6 +21,7 @@ export const uiroutes = {
   PROFILE_ROUTE: { route: 'profile', auth: { resource: null, actions: [] } },
   ACCOUNT_ROUTE: { route: 'account', auth: { resource: null, actions: [] } },
   SUPPORT_ROUTE: { route: 'support', auth: { resource: null, actions: [] } },
+  PRIVACY_ROUTE: { route: 'privacy', auth: { resource: null, actions: [] } },
   INSTITUTION_PROFILE_ROUTE: {
     route: 'institution',
     auth: { resource: resources.INSTITUTION, actions: [RESOURCE_ACTIONS.GET] },

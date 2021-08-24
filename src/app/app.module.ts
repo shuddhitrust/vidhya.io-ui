@@ -139,6 +139,7 @@ import { CourseSectionState } from './shared/state/courseSections/courseSection.
 import { ExerciseState } from './shared/state/exercises/exercise.state';
 import { ExerciseSubmissionState } from './shared/state/exerciseSubmissions/exerciseSubmission.state';
 import { ReportState } from './shared/state/reports/report.state';
+import { PrivacyComponent } from './pages/static/privacy/privacy.component';
 import {
   ExercicseKeyDialog,
   GradingDashboardComponent,
@@ -236,6 +237,7 @@ import { ScullyLibModule } from '@scullyio/ng-lib';
     ChapterDraftComponent,
     ChapterPublishedComponent,
     ExercicseKeyDialog,
+    PrivacyComponent,
   ],
   imports: [
     BrowserModule,
