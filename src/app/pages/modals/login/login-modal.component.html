@@ -186,7 +186,15 @@
             formControlName="username"
             required
             placeholder="Username"
-          />
+          /><mat-hint
+            *ngIf="
+              !(
+                registerForm.get('username').hasError('required') &&
+                formDirective.submitted
+              )
+            "
+            >You will not be able to change the username later.</mat-hint
+          >
           <small
             class="validation-error"
             *ngIf="
