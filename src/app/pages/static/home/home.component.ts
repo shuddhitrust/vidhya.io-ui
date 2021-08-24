@@ -1916,7 +1916,7 @@ import { ShowNotificationAction } from 'src/app/shared/state/notifications/notif
 export class HomeComponent implements OnInit {
   url: string;
   currentYear = new Date().getFullYear();
-  uiroutes = uiroutes;
+  privacyRoute = uiroutes.PRIVACY_ROUTE.route;
   @Select(AuthState.getIsLoggedIn)
   isLoggedIn$: Observable<boolean>;
   @Select(AuthState.getCurrentMemberStatus)
