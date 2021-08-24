@@ -22,7 +22,7 @@ const tabIndexList = {
   6: LEARNERS_LABEL,
 };
 
-const sectionParamKey = 'adminSection';
+const sectionParamKey = 'adminTab';
 @Component({
   selector: 'app-admin-dashboard',
   templateUrl: './admin-dashboard.component.html',
@@ -67,7 +67,7 @@ export class AdminDashboardComponent implements OnInit {
     const tabIndex = $event['index'];
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { tab: this.tabIndexList[tabIndex] },
+      queryParams: { [sectionParamKey]: this.tabIndexList[tabIndex] },
       queryParamsHandling: 'merge',
       skipLocationChange: false,
     });
