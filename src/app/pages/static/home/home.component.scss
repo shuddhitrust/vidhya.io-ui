@@ -14,3 +14,22 @@ h2 {
 //   border: 1px solid #ccc;
 //   box-shadow: 2px 2px 6px 0px rgba(0, 0, 0, 0.3);
 // }
+.footer {
+  background: white;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  color: rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+.footer a {
+  color: var(--shuddhi-color);
+  margin-right: 5px;
+}
+
+.right-link {
+  float: right;
+  display: absolute;
+}
