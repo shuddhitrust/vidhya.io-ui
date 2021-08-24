@@ -39,7 +39,7 @@ export const USER_MUTATIONS = {
         ok
         user {
           id
-          firstName
+          name
         }
       }
     }
@@ -462,8 +462,7 @@ export const CHAT_MUTATIONS = {
         ok
         users {
           id
-          firstName
-          lastName
+          name
           avatar
           lastActive
         }
@@ -504,15 +503,13 @@ export const CHAT_MUTATIONS = {
           chatType
           individualMemberOne {
             id
-            firstName
-            lastName
+            name
             avatar
             lastActive
           }
           individualMemberTwo {
             id
-            firstName
-            lastName
+            name
             avatar
             lastActive
           }
@@ -536,8 +533,7 @@ export const CHAT_MESSAGE_MUTATIONS = {
               name
               members {
                 id
-                firstName
-                lastName
+                name
               }
             }
             chatmessageSet {
@@ -545,15 +541,13 @@ export const CHAT_MESSAGE_MUTATIONS = {
               message
               author {
                 id
-                firstName
-                lastName
+                name
                 avatar
               }
               createdAt
               seenBy {
                 id
-                firstName
-                lastName
+                name
               }
               createdAt
               seenBy {
@@ -574,7 +568,7 @@ export const CHAT_MESSAGE_MUTATIONS = {
           message
           author {
             id
-            firstName
+            name
           }
         }
       }
@@ -589,7 +583,7 @@ export const CHAT_MESSAGE_MUTATIONS = {
           message
           author {
             id
-            firstName
+            name
           }
         }
       }
@@ -656,7 +650,7 @@ export const AUTH_MUTATIONS = {
         user {
           username
           firstName
-          lastName
+          name
           avatar
           invitecode
           email

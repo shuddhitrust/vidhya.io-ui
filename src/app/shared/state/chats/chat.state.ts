@@ -48,7 +48,6 @@ import {
 } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
-  constructUserFullName,
   getErrorMessageFromGraphQLResponse,
   fetchParamsNewOrNot,
   parseDateTime,
@@ -62,6 +61,7 @@ import { Observable } from 'rxjs';
 import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
 import { state } from '@angular/animations';
 import { SearchParams } from '../../abstract/master-grid/table.model';
+import { memberColumns } from '../members/member.model';
 
 @State<ChatStateModel>({
   name: 'chatState',
@@ -188,7 +188,7 @@ export class ChatState {
           results = results.concat(
             response.users.map((u) => {
               return {
-                title: constructUserFullName(u),
+                title: u.name,
                 subtitle: parseDateTime(u.lastActive),
                 avatar: u.avatar,
                 userId: u.id,
@@ -326,7 +326,7 @@ export class ChatState {
               console.log('member => ', member);
               const preppedChat = {
                 id: chat.id,
-                name: constructUserFullName(member),
+                name: member.name,
                 subtitle: parseDateTime(member.lastActive),
                 avatar: member.avatar,
                 chatmessageSet: [],

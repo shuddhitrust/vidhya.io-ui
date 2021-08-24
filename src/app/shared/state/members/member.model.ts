@@ -28,6 +28,7 @@ export const emptyMemberFormRecord: User = {
   id: null,
   firstName: null,
   lastName: null,
+  name: null,
   email: null,
   avatar: null,
   title: null,
@@ -70,11 +71,7 @@ export const membershipStatusOptions: MatSelectOption[] = autoGenOptions(
 
 export const memberColumns: any[] = [
   {
-    field: 'firstName',
-    cellRenderer: 'memberRenderer',
-  },
-  {
-    field: 'lastName',
+    field: 'name',
     cellRenderer: 'memberRenderer',
   },
   {

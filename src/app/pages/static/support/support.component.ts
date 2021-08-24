@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { constructUserFullName } from 'src/app/shared/common/functions';
 import { CurrentMember } from 'src/app/shared/common/models';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
 
@@ -25,7 +24,7 @@ export class SupportComponent implements OnInit {
       this.username = this.currentMember.username;
       this.institution = this.currentMember?.institution?.name;
       this.role = this.currentMember?.role?.name;
-      this.name = constructUserFullName(this.currentMember);
+      this.name = this.currentMember?.name;
     });
   }
 

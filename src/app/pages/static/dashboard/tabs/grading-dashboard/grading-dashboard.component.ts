@@ -10,11 +10,7 @@ import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
-import {
-  autoGenOptions,
-  constructUserFullName,
-  parseDateTime,
-} from 'src/app/shared/common/functions';
+import { autoGenOptions, parseDateTime } from 'src/app/shared/common/functions';
 import {
   ExerciseKey,
   ExerciseQuestionTypeOptions,
@@ -190,9 +186,6 @@ export class GradingDashboardComponent implements OnInit {
   }
   authorizeResourceMethod(action) {
     return this.auth.authorizeResource(this.resource, action);
-  }
-  constructUserName(user) {
-    return constructUserFullName(user);
   }
 
   fetchGradingGroups() {

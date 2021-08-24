@@ -7,7 +7,6 @@ import {
   defaultSearchParams,
   USER_ROLES_NAMES,
 } from 'src/app/shared/common/constants';
-import { constructUserFullName } from 'src/app/shared/common/functions';
 import { MembershipStatusOptions, User } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { VerifyAccountAction } from 'src/app/shared/state/auth/auth.actions';
@@ -90,10 +89,6 @@ export class HomeComponent implements OnInit {
       pendingApproval: this.pendingApproval,
       suspended: this.suspended,
     });
-  }
-
-  constructFullName(user) {
-    return constructUserFullName(user);
   }
 
   generateSubtitle(user) {

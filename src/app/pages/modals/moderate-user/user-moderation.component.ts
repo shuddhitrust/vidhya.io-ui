@@ -9,7 +9,6 @@ import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
-import { constructUserFullName } from 'src/app/shared/common/functions';
 import {
   resources,
   RESOURCE_ACTIONS,
@@ -84,10 +83,6 @@ export class UserModerationProfileComponent implements OnInit {
 
   closeDialog(): void {
     this.dialogRef.close();
-  }
-
-  constructFullName() {
-    return constructUserFullName(this.data);
   }
 
   approvalConfirmation() {
@@ -170,9 +165,6 @@ export class UserApprovalConfirmationDialog {
     public dialogRef: MatDialogRef<UserApprovalConfirmationDialog>,
     @Inject(MAT_DIALOG_DATA) public data: User
   ) {}
-  constructFullName(data) {
-    return constructUserFullName(data);
-  }
 }
 
 @Component({
@@ -184,7 +176,4 @@ export class UserDenialConfirmationDialog {
     public dialogRef: MatDialogRef<UserApprovalConfirmationDialog>,
     @Inject(MAT_DIALOG_DATA) public data: User
   ) {}
-  constructFullName(data) {
-    return constructUserFullName(data);
-  }
 }

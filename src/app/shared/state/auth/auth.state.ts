@@ -417,6 +417,7 @@ export class AuthState {
       username: user?.username,
       firstName: user?.firstName,
       lastName: user?.lastName,
+      name: user?.name,
       email: user?.email,
       avatar: user?.avatar,
       invitecode: user?.invitecode,

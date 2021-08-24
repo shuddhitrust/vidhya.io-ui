@@ -4,10 +4,7 @@ import {
   defaultLogos,
   defaultSearchParams,
 } from 'src/app/shared/common/constants';
-import {
-  constructUserFullName,
-  parseDateTime,
-} from 'src/app/shared/common/functions';
+import { parseDateTime } from 'src/app/shared/common/functions';
 import {
   ClearChatMembers,
   CreateChatMessageAction,

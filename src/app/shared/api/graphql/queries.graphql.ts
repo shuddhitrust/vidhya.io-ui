@@ -6,7 +6,7 @@ export const AUTH_QUERIES = {
       me {
         username
         firstName
-        lastName
+        name
         avatar
         invitecode
         email
@@ -39,6 +39,7 @@ export const USER_QUERIES = {
         username
         firstName
         lastName
+        name
         avatar
         invitecode
         email
@@ -70,8 +71,7 @@ export const USER_QUERIES = {
         offset: $offset
       ) {
         id
-        firstName
-        lastName
+        name
         title
         bio
         avatar
@@ -157,13 +157,11 @@ export const GROUP_QUERIES = {
         groupType
         admins {
           id
-          firstName
-          lastName
+          name
         }
         members {
           id
-          firstName
-          lastName
+          name
         }
         createdAt
       }
@@ -189,8 +187,7 @@ export const ANNOUNCEMENT_QUERIES = {
         title
         author {
           id
-          firstName
-          lastName
+          name
         }
         message
         institution {
@@ -211,8 +208,7 @@ export const ANNOUNCEMENT_QUERIES = {
         title
         author {
           id
-          firstName
-          lastName
+          name
         }
         message
         createdAt
@@ -231,8 +227,7 @@ export const COURSE_QUERIES = {
         description
         instructor {
           id
-          firstName
-          lastName
+          name
         }
         institutions {
           id
@@ -240,7 +235,7 @@ export const COURSE_QUERIES = {
         }
         participants {
           id
-          firstName
+          name
         }
         startDate
         endDate
@@ -256,8 +251,7 @@ export const COURSE_QUERIES = {
         title
         instructor {
           id
-          firstName
-          lastName
+          name
         }
         description
         status
@@ -437,8 +431,7 @@ export const EXERCISE_SUBMISSION_QUERIES = {
         id
         participant {
           id
-          firstName
-          lastName
+          name
           institution {
             id
             name
@@ -482,8 +475,7 @@ export const EXERCISE_SUBMISSION_QUERIES = {
         id
         participant {
           id
-          firstName
-          lastName
+          name
           institution {
             id
             name
@@ -625,8 +617,7 @@ export const REPORT_QUERIES = {
         id
         participant {
           id
-          firstName
-          lastName
+          name
         }
         course {
           id
@@ -661,8 +652,7 @@ export const REPORT_QUERIES = {
         id
         participant {
           id
-          firstName
-          lastName
+          name
         }
         course {
           id
@@ -687,23 +677,20 @@ export const CHAT_QUERIES = {
         chatType
         individualMemberOne {
           id
-          firstName
-          lastName
+          name
           avatar
           lastActive
         }
         individualMemberTwo {
           id
-          firstName
-          lastName
+          name
           avatar
           lastActive
         }
         group {
           members {
             id
-            firstName
-            lastName
+            name
           }
         }
         createdAt
@@ -718,15 +705,13 @@ export const CHAT_QUERIES = {
           chatType
           individualMemberOne {
             id
-            firstName
-            lastName
+            name
             avatar
             lastActive
           }
           individualMemberTwo {
             id
-            firstName
-            lastName
+            name
             avatar
             lastActive
           }
@@ -765,8 +750,7 @@ export const CHAT_QUERIES = {
         }
         author {
           id
-          firstName
-          lastName
+          name
           avatar
         }
         createdAt
@@ -778,8 +762,7 @@ export const CHAT_QUERIES = {
       chatSearch(query: $query) {
         users {
           id
-          firstName
-          lastName
+          name
           avatar
           lastActive
         }

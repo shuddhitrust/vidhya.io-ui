@@ -258,10 +258,6 @@ export const getErrorMessageFromGraphQLResponse = (errors): string => {
     : 'Something went wrong! Action could not be completed successfully.';
 };
 
-export const constructUserFullName = (user: User): string => {
-  return user?.firstName + ' ' + user?.lastName;
-};
-
 export const constructPermissions = (permissions: UserPermissions) => {
   if (!permissions) {
     return defaultResourcePermissions;
