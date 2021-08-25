@@ -74,6 +74,8 @@ export const USER_QUERIES = {
         offset: $offset
       ) {
         id
+        firstName
+        lastName
         name
         title
         bio

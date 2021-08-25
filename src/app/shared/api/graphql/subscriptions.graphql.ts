@@ -22,6 +22,7 @@ export const SUBSCRIPTIONS = {
           id
           firstName
           lastName
+          name
           title
           bio
           avatar
@@ -47,6 +48,7 @@ export const SUBSCRIPTIONS = {
           priority
           description
           permissions
+          createdAt
         }
         method
       }
@@ -60,8 +62,7 @@ export const SUBSCRIPTIONS = {
           title
           author {
             id
-            firstName
-            lastName
+            name
             avatar
           }
           message
