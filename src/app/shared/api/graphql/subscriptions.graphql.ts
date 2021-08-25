@@ -70,6 +70,7 @@ export const SUBSCRIPTIONS = {
             firstName
             lastName
           }
+          createdAt
         }
         method
       }
