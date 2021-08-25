@@ -411,7 +411,7 @@ export class ExerciseState {
 
   @Action(DeleteExerciseAction)
   deleteExercise(
-    {}: StateContext<ExerciseStateModel>,
+    { getState, patchState }: StateContext<ExerciseStateModel>,
     { payload }: DeleteExerciseAction
   ) {
     let { id } = payload;
@@ -425,6 +425,20 @@ export class ExerciseState {
           const response = data.deleteExercise;
           console.log('from delete exercise ', { data });
           if (response.ok) {
+            const method = SUBSCRIPTION_METHODS.DELETE_METHOD;
+            const exercise = response.exercise;
+            const state = getState();
+            const { newPaginatedItems, newItemsList } =
+              paginatedSubscriptionUpdater({
+                paginatedItems: state.paginatedExercises,
+                method,
+                modifiedItem: exercise,
+              });
+            patchState({
+              paginatedExercises: newPaginatedItems,
+              exercises: newItemsList,
+              exerciseFormRecord: emptyExerciseFormRecord,
+            });
             this.store.dispatch(
               new ShowNotificationAction({
                 message: 'Exercise deleted successfully!',

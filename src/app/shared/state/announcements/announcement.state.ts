@@ -260,6 +260,7 @@ export class AnnouncementState {
   ) {
     const { id } = payload;
     patchState({ isFetching: true });
+    console.log('Get announcement action is called ', { id });
     this.apollo
       .watchQuery({
         query: ANNOUNCEMENT_QUERIES.GET_ANNOUNCEMENT,
@@ -382,7 +383,7 @@ export class AnnouncementState {
 
   @Action(DeleteAnnouncementAction)
   deleteAnnouncement(
-    {}: StateContext<AnnouncementStateModel>,
+    { getState, patchState }: StateContext<AnnouncementStateModel>,
     { payload }: DeleteAnnouncementAction
   ) {
     let { id } = payload;
@@ -397,15 +398,24 @@ export class AnnouncementState {
           console.log('from delete announcement ', { data });
           if (response.ok) {
             this.router.navigateByUrl(AnnouncementFormCloseURL);
+            const method = SUBSCRIPTION_METHODS.DELETE_METHOD;
+            const announcement = response.announcement;
+            const state = getState();
+            const { newPaginatedItems, newItemsList } =
+              paginatedSubscriptionUpdater({
+                paginatedItems: state.paginatedAnnouncements,
+                method,
+                modifiedItem: announcement,
+              });
+            patchState({
+              paginatedAnnouncements: newPaginatedItems,
+              announcements: newItemsList,
+              announcementFormRecord: emptyAnnouncementFormRecord,
+            });
             this.store.dispatch(
               new ShowNotificationAction({
                 message: 'Announcement deleted successfully!',
                 action: 'success',
-              })
-            );
-            this.store.dispatch(
-              new ForceRefetchAnnouncementsAction({
-                searchParams: defaultSearchParams,
               })
             );
           } else {

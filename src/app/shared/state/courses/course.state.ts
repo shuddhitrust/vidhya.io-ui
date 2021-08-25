@@ -371,7 +371,7 @@ export class CourseState {
 
   @Action(DeleteCourseAction)
   deleteCourse(
-    {}: StateContext<CourseStateModel>,
+    { getState, patchState }: StateContext<CourseStateModel>,
     { payload }: DeleteCourseAction
   ) {
     let { id } = payload;
@@ -386,6 +386,20 @@ export class CourseState {
           console.log('from delete course ', { data });
           if (response.ok) {
             this.router.navigateByUrl(CourseFormCloseURL);
+            const method = SUBSCRIPTION_METHODS.DELETE_METHOD;
+            const course = response.course;
+            const state = getState();
+            const { newPaginatedItems, newItemsList } =
+              paginatedSubscriptionUpdater({
+                paginatedItems: state.paginatedCourses,
+                method,
+                modifiedItem: course,
+              });
+            patchState({
+              paginatedCourses: newPaginatedItems,
+              courses: newItemsList,
+              courseFormRecord: emptyCourseFormRecord,
+            });
             this.store.dispatch(
               new ShowNotificationAction({
                 message: 'Course deleted successfully!',

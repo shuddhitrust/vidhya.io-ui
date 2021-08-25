@@ -106,25 +106,34 @@ export const paginatedSubscriptionUpdater = ({
   if (modifiedItem && method) {
     if (method == SUBSCRIPTION_METHODS.CREATE_METHOD) {
       newPaginatedItems = Object.assign({}, paginatedItems);
-      const newFirstPage = [modifiedItem].concat(newPaginatedItems[0]);
-      newPaginatedItems[0] = newFirstPage;
+      console.log('frst page ', { newPaginatedItems });
+      const firstPageItems = newPaginatedItems[1];
+      const itemAlreadyExists = firstPageItems.find(
+        (item) => item[pk] == modifiedItem[pk]
+      );
+      if (!itemAlreadyExists) {
+        const newFirstPage = [modifiedItem, ...firstPageItems];
+        newPaginatedItems[1] = newFirstPage;
+      }
     } else if (method == SUBSCRIPTION_METHODS.UPDATE_METHOD) {
       const pages = Object.keys(paginatedItems);
       for (let i = 0; i < pages.length; i++) {
-        const pageList = paginatedItems[i].map((item) => {
+        const page = pages[i];
+        const pageList = paginatedItems[page].map((item) => {
           return item[pk] == modifiedItem[pk]
             ? { ...item, ...modifiedItem }
             : item;
         });
-        newPaginatedItems[i] = pageList;
+        newPaginatedItems[page] = pageList;
       }
     } else if (method == SUBSCRIPTION_METHODS.DELETE_METHOD) {
       const pages = Object.keys(paginatedItems);
       for (let i = 0; i < pages.length; i++) {
-        const pageList = paginatedItems[i].filter((item) => {
+        const page = pages[i];
+        const pageList = paginatedItems[page].filter((item) => {
           return item[pk] != modifiedItem[pk];
         });
-        newPaginatedItems[i] = pageList;
+        newPaginatedItems[page] = pageList;
       }
     }
   }

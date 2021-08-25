@@ -181,6 +181,7 @@ export const GROUP_QUERIES = {
       group(id: $id) {
         id
         name
+        avatar
         description
         institution {
           id

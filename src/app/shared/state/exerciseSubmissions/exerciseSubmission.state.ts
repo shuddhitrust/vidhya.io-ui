@@ -539,7 +539,7 @@ export class ExerciseSubmissionState {
 
   @Action(DeleteExerciseSubmissionAction)
   deleteExerciseSubmission(
-    {}: StateContext<ExerciseSubmissionStateModel>,
+    { getState, patchState }: StateContext<ExerciseSubmissionStateModel>,
     { payload }: DeleteExerciseSubmissionAction
   ) {
     let { id } = payload;
@@ -554,6 +554,20 @@ export class ExerciseSubmissionState {
           console.log('from delete exerciseSubmission ', { data });
           if (response.ok) {
             this.router.navigateByUrl(ExerciseSubmissionFormCloseURL);
+            const method = SUBSCRIPTION_METHODS.DELETE_METHOD;
+            const group = response.group;
+            const state = getState();
+            const { newPaginatedItems, newItemsList } =
+              paginatedSubscriptionUpdater({
+                paginatedItems: state.paginatedExerciseSubmissions,
+                method,
+                modifiedItem: group,
+              });
+            patchState({
+              paginatedExerciseSubmissions: newPaginatedItems,
+              exerciseSubmissions: newItemsList,
+              exerciseSubmissionFormRecord: emptyExerciseSubmissionFormRecord,
+            });
             this.store.dispatch(
               new ShowNotificationAction({
                 message: 'ExerciseSubmission deleted successfully!',

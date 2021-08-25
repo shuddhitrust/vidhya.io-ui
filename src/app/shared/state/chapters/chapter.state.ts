@@ -41,6 +41,7 @@ import { defaultSearchParams } from '../../common/constants';
 import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
 import { SearchParams } from '../../abstract/master-grid/table.model';
 import { Location } from '@angular/common';
+import { CourseFormCloseURL } from '../courses/course.model';
 
 @State<ChapterStateModel>({
   name: 'chapterState',
@@ -436,7 +437,7 @@ export class ChapterState {
 
   @Action(DeleteChapterAction)
   deleteChapter(
-    {}: StateContext<ChapterStateModel>,
+    { getState, patchState }: StateContext<ChapterStateModel>,
     { payload }: DeleteChapterAction
   ) {
     let { id } = payload;
@@ -450,6 +451,20 @@ export class ChapterState {
           const response = data.deleteChapter;
           console.log('from delete chapter ', { data });
           if (response.ok) {
+            const method = SUBSCRIPTION_METHODS.DELETE_METHOD;
+            const chapter = response.chapter;
+            const state = getState();
+            const { newPaginatedItems, newItemsList } =
+              paginatedSubscriptionUpdater({
+                paginatedItems: state.paginatedChapters,
+                method,
+                modifiedItem: chapter,
+              });
+            patchState({
+              paginatedChapters: newPaginatedItems,
+              chapters: newItemsList,
+              chapterFormRecord: emptyChapterFormRecord,
+            });
             this.store.dispatch(
               new ShowNotificationAction({
                 message: 'Chapter deleted successfully!',

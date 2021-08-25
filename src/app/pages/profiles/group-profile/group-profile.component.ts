@@ -61,6 +61,7 @@ export class GroupProfileComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       const groupId = params['id'];
+      console.log('Getting group from group profile', { id: groupId });
       this.store.dispatch(new GetGroupAction({ id: groupId }));
     });
   }

@@ -232,7 +232,6 @@ export class GroupState {
               method,
               modifiedItem: group,
               fetchParamObjects: state.fetchParamObjects,
-              pk: 'id',
             });
           patchState({
             groups: newItemsList,
@@ -250,6 +249,7 @@ export class GroupState {
     { payload }: GetGroupAction
   ) {
     const { id } = payload;
+    console.log('from group state with id', { id });
     patchState({ isFetching: true });
     this.apollo
       .watchQuery({
@@ -318,7 +318,6 @@ export class GroupState {
                   paginatedItems: state.paginatedGroups,
                   method,
                   modifiedItem: group,
-                  pk: 'id',
                 });
 
               form.reset();
@@ -373,7 +372,7 @@ export class GroupState {
 
   @Action(DeleteGroupAction)
   deleteGroup(
-    {}: StateContext<GroupStateModel>,
+    { getState, patchState }: StateContext<GroupStateModel>,
     { payload }: DeleteGroupAction
   ) {
     let { id } = payload;
@@ -388,15 +387,24 @@ export class GroupState {
           console.log('from delete group ', { data });
           if (response.ok) {
             this.router.navigateByUrl(GroupFormCloseURL);
+            const method = SUBSCRIPTION_METHODS.DELETE_METHOD;
+            const group = response.group;
+            const state = getState();
+            const { newPaginatedItems, newItemsList } =
+              paginatedSubscriptionUpdater({
+                paginatedItems: state.paginatedGroups,
+                method,
+                modifiedItem: group,
+              });
+            patchState({
+              paginatedGroups: newPaginatedItems,
+              groups: newItemsList,
+              groupFormRecord: emptyGroupFormRecord,
+            });
             this.store.dispatch(
               new ShowNotificationAction({
                 message: 'Group deleted successfully!',
                 action: 'success',
-              })
-            );
-            this.store.dispatch(
-              new ForceRefetchGroupsAction({
-                searchParams: defaultSearchParams,
               })
             );
           } else {

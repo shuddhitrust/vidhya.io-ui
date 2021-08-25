@@ -39,6 +39,8 @@ import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
 import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
 import { SearchParams } from '../../abstract/master-grid/table.model';
+import { emptyCourseFormRecord } from '../courses/course.model';
+import { emptyExerciseSubmissionFormRecord } from '../exerciseSubmissions/exerciseSubmission.model';
 
 @State<CourseSectionStateModel>({
   name: 'courseSectionState',
@@ -384,7 +386,7 @@ export class CourseSectionState {
 
   @Action(DeleteCourseSectionAction)
   deleteCourseSection(
-    {}: StateContext<CourseSectionStateModel>,
+    { getState, patchState }: StateContext<CourseSectionStateModel>,
     { payload }: DeleteCourseSectionAction
   ) {
     let { id } = payload;
@@ -399,6 +401,20 @@ export class CourseSectionState {
           console.log('from delete courseSection ', { data });
           if (response.ok) {
             this.router.navigateByUrl(CourseSectionFormCloseURL);
+            const method = SUBSCRIPTION_METHODS.DELETE_METHOD;
+            const courseSection = response.courseSection;
+            const state = getState();
+            const { newPaginatedItems, newItemsList } =
+              paginatedSubscriptionUpdater({
+                paginatedItems: state.paginatedCourseSections,
+                method,
+                modifiedItem: courseSection,
+              });
+            patchState({
+              paginatedCourseSections: newPaginatedItems,
+              courseSections: newItemsList,
+              courseSectionFormRecord: emptyCourseSectionFormRecord,
+            });
             this.store.dispatch(
               new ShowNotificationAction({
                 message: 'CourseSection deleted successfully!',
