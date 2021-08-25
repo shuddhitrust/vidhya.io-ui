@@ -19,7 +19,12 @@ import {
 } from './group.actions';
 import { GROUP_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
-import { Group, MatSelectOption, FetchParams } from '../../common/models';
+import {
+  Group,
+  MatSelectOption,
+  FetchParams,
+  SUBSCRIPTION_METHODS,
+} from '../../common/models';
 import { GROUP_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
@@ -28,6 +33,7 @@ import {
   subscriptionUpdater,
   updateFetchParams,
   convertPaginatedListToNormalList,
+  paginatedSubscriptionUpdater,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
@@ -220,15 +226,18 @@ export class GroupState {
           });
           const method = result?.data?.notifyGroup?.method;
           const group = result?.data?.notifyGroup?.group;
-          const { items, fetchParamObjects } = subscriptionUpdater({
-            items: state.groups,
-            method,
-            subscriptionItem: group,
-            fetchParamObjects: state.fetchParamObjects,
-          });
+          const { newPaginatedItems, newItemsList, newFetchParams } =
+            paginatedSubscriptionUpdater({
+              paginatedItems: state.paginatedGroups,
+              method,
+              modifiedItem: group,
+              fetchParamObjects: state.fetchParamObjects,
+              pk: 'id',
+            });
           patchState({
-            groups: items,
-            fetchParamObjects,
+            groups: newItemsList,
+            paginatedGroups: newPaginatedItems,
+            fetchParamObjects: newFetchParams,
             groupsSubscribed: true,
           });
         });
@@ -300,6 +309,28 @@ export class GroupState {
             patchState({ formSubmitting: false });
             console.log('update group ', { response });
             if (response.ok) {
+              const method = updateForm
+                ? SUBSCRIPTION_METHODS.UPDATE_METHOD
+                : SUBSCRIPTION_METHODS.CREATE_METHOD;
+              const group = response.group;
+              const { newPaginatedItems, newItemsList } =
+                paginatedSubscriptionUpdater({
+                  paginatedItems: state.paginatedGroups,
+                  method,
+                  modifiedItem: group,
+                  pk: 'id',
+                });
+
+              form.reset();
+              formDirective.resetForm();
+              this.router.navigateByUrl(GroupFormCloseURL);
+              patchState({
+                paginatedGroups: newPaginatedItems,
+                groups: newItemsList,
+
+                groupFormRecord: emptyGroupFormRecord,
+                fetchPolicy: 'network-only',
+              });
               this.store.dispatch(
                 new ShowNotificationAction({
                   message: `Group ${
@@ -308,13 +339,6 @@ export class GroupState {
                   action: 'success',
                 })
               );
-              form.reset();
-              formDirective.resetForm();
-              this.router.navigateByUrl(GroupFormCloseURL);
-              patchState({
-                groupFormRecord: emptyGroupFormRecord,
-                fetchPolicy: 'network-only',
-              });
             } else {
               this.store.dispatch(
                 new ShowNotificationAction({

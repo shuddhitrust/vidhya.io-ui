@@ -20,7 +20,12 @@ import {
 } from './chapter.actions';
 import { CHAPTER_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
-import { Chapter, MatSelectOption, FetchParams } from '../../common/models';
+import {
+  Chapter,
+  MatSelectOption,
+  FetchParams,
+  SUBSCRIPTION_METHODS,
+} from '../../common/models';
 import { CHAPTER_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
@@ -29,6 +34,7 @@ import {
   subscriptionUpdater,
   updateFetchParams,
   convertPaginatedListToNormalList,
+  paginatedSubscriptionUpdater,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
@@ -241,15 +247,17 @@ export class ChapterState {
           });
           const method = result?.data?.notifyChapter?.method;
           const chapter = result?.data?.notifyChapter?.chapter;
-          const { items, fetchParamObjects } = subscriptionUpdater({
-            items: state.chapters,
-            method,
-            subscriptionItem: chapter,
-            fetchParamObjects: state.fetchParamObjects,
-          });
+          const { newPaginatedItems, newItemsList, newFetchParams } =
+            paginatedSubscriptionUpdater({
+              paginatedItems: state.paginatedChapters,
+              method,
+              modifiedItem: chapter,
+              fetchParamObjects: state.fetchParamObjects,
+            });
           patchState({
-            chapters: items,
-            fetchParamObjects,
+            chapters: newItemsList,
+            paginatedChapters: newPaginatedItems,
+            fetchParamObjects: newFetchParams,
             chaptersSubscribed: true,
           });
         });
@@ -323,6 +331,27 @@ export class ChapterState {
             patchState({ formSubmitting: false });
             console.log('update chapter ', { response });
             if (response.ok) {
+              const method = updateForm
+                ? SUBSCRIPTION_METHODS.UPDATE_METHOD
+                : SUBSCRIPTION_METHODS.CREATE_METHOD;
+              const chapter = response.chapter;
+              const { newPaginatedItems, newItemsList } =
+                paginatedSubscriptionUpdater({
+                  paginatedItems: state.paginatedChapters,
+                  method,
+                  modifiedItem: chapter,
+                });
+
+              form.reset();
+              formDirective.resetForm();
+              // this.router.navigateByUrl(ChapterFormCloseURL);
+              this.location.back();
+              patchState({
+                paginatedChapters: newPaginatedItems,
+                chapters: newItemsList,
+                chapterFormRecord: emptyChapterFormRecord,
+                fetchPolicy: 'network-only',
+              });
               this.store.dispatch(
                 new ShowNotificationAction({
                   message: `Chapter ${
@@ -331,14 +360,6 @@ export class ChapterState {
                   action: 'success',
                 })
               );
-              form.reset();
-              formDirective.resetForm();
-              // this.router.navigateByUrl(ChapterFormCloseURL);
-              this.location.back();
-              patchState({
-                chapterFormRecord: emptyChapterFormRecord,
-                fetchPolicy: 'network-only',
-              });
             } else {
               this.store.dispatch(
                 new ShowNotificationAction({

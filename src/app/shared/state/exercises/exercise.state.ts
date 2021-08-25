@@ -23,6 +23,7 @@ import {
   MatSelectOption,
   FetchParams,
   ExerciseSubmission,
+  SUBSCRIPTION_METHODS,
 } from '../../common/models';
 import { EXERCISE_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
@@ -32,6 +33,7 @@ import {
   subscriptionUpdater,
   updateFetchParams,
   convertPaginatedListToNormalList,
+  paginatedSubscriptionUpdater,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
@@ -259,15 +261,17 @@ export class ExerciseState {
           });
           const method = result?.data?.notifyExercise?.method;
           const exercise = result?.data?.notifyExercise?.exercise;
-          const { items, fetchParamObjects } = subscriptionUpdater({
-            items: state.exercises,
-            method,
-            subscriptionItem: exercise,
-            fetchParamObjects: state.fetchParamObjects,
-          });
+          const { newPaginatedItems, newItemsList, newFetchParams } =
+            paginatedSubscriptionUpdater({
+              paginatedItems: state.paginatedExercises,
+              method,
+              modifiedItem: exercise,
+              fetchParamObjects: state.fetchParamObjects,
+            });
           patchState({
-            exercises: items,
-            fetchParamObjects,
+            exercises: newItemsList,
+            paginatedExercises: newPaginatedItems,
+            fetchParamObjects: newFetchParams,
             exercisesSubscribed: true,
           });
         });
@@ -342,6 +346,26 @@ export class ExerciseState {
             patchState({ formSubmitting: false });
             console.log('update exercise ', { response });
             if (response.ok) {
+              const method = updateForm
+                ? SUBSCRIPTION_METHODS.UPDATE_METHOD
+                : SUBSCRIPTION_METHODS.CREATE_METHOD;
+              const exercise = response.exercise;
+              const { newPaginatedItems, newItemsList } =
+                paginatedSubscriptionUpdater({
+                  paginatedItems: state.paginatedExercises,
+                  method,
+                  modifiedItem: exercise,
+                });
+
+              form.reset();
+              formDirective.resetForm();
+              patchState({
+                paginatedExercises: newPaginatedItems,
+                exercises: newItemsList,
+                errorSubmitting: false,
+                exerciseFormRecord: emptyExerciseFormRecord,
+                fetchPolicy: 'network-only',
+              });
               this.store.dispatch(
                 new ShowNotificationAction({
                   message: `Exercise ${
@@ -350,13 +374,6 @@ export class ExerciseState {
                   action: 'success',
                 })
               );
-              form.reset();
-              formDirective.resetForm();
-              patchState({
-                errorSubmitting: false,
-                exerciseFormRecord: emptyExerciseFormRecord,
-                fetchPolicy: 'network-only',
-              });
             } else {
               patchState({
                 errorSubmitting: true,

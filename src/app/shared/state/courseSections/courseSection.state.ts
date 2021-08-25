@@ -23,6 +23,7 @@ import {
   CourseSection,
   MatSelectOption,
   FetchParams,
+  SUBSCRIPTION_METHODS,
 } from '../../common/models';
 import { COURSE_SECTION_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
@@ -32,6 +33,7 @@ import {
   subscriptionUpdater,
   updateFetchParams,
   convertPaginatedListToNormalList,
+  paginatedSubscriptionUpdater,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
@@ -236,15 +238,17 @@ export class CourseSectionState {
           const method = result?.data?.notifyCourseSection?.method;
           const courseSection =
             result?.data?.notifyCourseSection?.courseSection;
-          const { items, fetchParamObjects } = subscriptionUpdater({
-            items: state.courseSections,
-            method,
-            subscriptionItem: courseSection,
-            fetchParamObjects: state.fetchParamObjects,
-          });
+          const { newPaginatedItems, newItemsList, newFetchParams } =
+            paginatedSubscriptionUpdater({
+              paginatedItems: state.paginatedCourseSections,
+              method,
+              modifiedItem: courseSection,
+              fetchParamObjects: state.fetchParamObjects,
+            });
           patchState({
-            courseSections: items,
-            fetchParamObjects,
+            courseSections: newItemsList,
+            paginatedCourseSections: newPaginatedItems,
+            fetchParamObjects: newFetchParams,
             courseSectionsSubscribed: true,
           });
         });
@@ -318,6 +322,26 @@ export class CourseSectionState {
             patchState({ formSubmitting: false });
             console.log('update courseSection ', { response });
             if (response.ok) {
+              const method = updateForm
+                ? SUBSCRIPTION_METHODS.UPDATE_METHOD
+                : SUBSCRIPTION_METHODS.CREATE_METHOD;
+              const courseSection = response.courseSection;
+              const { newPaginatedItems, newItemsList } =
+                paginatedSubscriptionUpdater({
+                  paginatedItems: state.paginatedCourseSections,
+                  method,
+                  modifiedItem: courseSection,
+                });
+
+              form.reset();
+              formDirective.resetForm();
+              this.router.navigateByUrl(CourseSectionFormCloseURL);
+              patchState({
+                paginatedCourseSections: newPaginatedItems,
+                courseSections: newItemsList,
+                courseSectionFormRecord: emptyCourseSectionFormRecord,
+                fetchPolicy: 'network-only',
+              });
               this.store.dispatch(
                 new ShowNotificationAction({
                   message: `CourseSection ${
@@ -326,13 +350,6 @@ export class CourseSectionState {
                   action: 'success',
                 })
               );
-              form.reset();
-              formDirective.resetForm();
-              this.router.navigateByUrl(CourseSectionFormCloseURL);
-              patchState({
-                courseSectionFormRecord: emptyCourseSectionFormRecord,
-                fetchPolicy: 'network-only',
-              });
             } else {
               this.store.dispatch(
                 new ShowNotificationAction({

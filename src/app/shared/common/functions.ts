@@ -16,6 +16,7 @@ import {
   year,
 } from './constants';
 import { SearchParams } from '../abstract/master-grid/table.model';
+import { METHODS } from 'http';
 
 export const getOptionLabel = (
   value: string,
@@ -27,22 +28,34 @@ export const getOptionLabel = (
   } else return undefined;
 };
 
+export const convertPaginatedListToNormalList = (paginatedObject) => {
+  const keys = Object.keys(paginatedObject).sort();
+  let finalArray = [];
+  keys.forEach((key) => {
+    finalArray = finalArray.concat(paginatedObject[key]);
+  });
+  return finalArray;
+};
+
 export const subscriptionUpdater = ({
   items,
   method,
   subscriptionItem,
   fetchParamObjects,
+  pk = 'id',
 }: {
   items: any[];
   method: string;
   subscriptionItem: any;
   fetchParamObjects: FetchParams[];
+  pk?: string;
 }) => {
   console.log('From SubscriptionUpdater method =>', {
     items,
     method,
     subscriptionItem,
     fetchParamObjects,
+    pk,
   });
   let fetchParams = fetchParamObjects[fetchParamObjects.length - 1];
   if (subscriptionItem && method) {
@@ -54,10 +67,10 @@ export const subscriptionUpdater = ({
       items = [subscriptionItem, ...items];
     } else if (method == SUBSCRIPTION_METHODS.UPDATE_METHOD) {
       items = items.map((i) =>
-        i.id == subscriptionItem.id ? subscriptionItem : i
+        i[pk] == subscriptionItem[pk] ? subscriptionItem : i
       );
     } else if (method == SUBSCRIPTION_METHODS.DELETE_METHOD) {
-      items = items.filter((i) => i.id != subscriptionItem.id);
+      items = items.filter((i) => i[pk] != subscriptionItem[pk]);
       fetchParams = {
         ...fetchParams,
         totalCount: fetchParams.totalCount - 1,
@@ -67,6 +80,61 @@ export const subscriptionUpdater = ({
   const newFetchParamss = fetchParamObjects.concat([fetchParams]);
   console.log('After updating items =>', { items, fetchParams });
   return { items, fetchParamObjects: newFetchParamss };
+};
+
+export const paginatedSubscriptionUpdater = ({
+  paginatedItems,
+  method,
+  modifiedItem,
+  fetchParamObjects = null,
+  pk = 'id',
+}: {
+  paginatedItems: any;
+  method: string;
+  modifiedItem: any;
+  fetchParamObjects?: FetchParams[];
+  pk?: string;
+}) => {
+  console.log('From SubscriptionUpdater method =>', {
+    paginatedItems,
+    method,
+    modifiedItem,
+    fetchParamObjects,
+  });
+  let newPaginatedItems = {};
+  let newFetchParams = [];
+  if (modifiedItem && method) {
+    if (method == SUBSCRIPTION_METHODS.CREATE_METHOD) {
+      newPaginatedItems = Object.assign({}, paginatedItems);
+      const newFirstPage = [modifiedItem].concat(newPaginatedItems[0]);
+      newPaginatedItems[0] = newFirstPage;
+    } else if (method == SUBSCRIPTION_METHODS.UPDATE_METHOD) {
+      const pages = Object.keys(paginatedItems);
+      for (let i = 0; i < pages.length; i++) {
+        const pageList = paginatedItems[i].map((item) => {
+          return item[pk] == modifiedItem[pk]
+            ? { ...item, ...modifiedItem }
+            : item;
+        });
+        newPaginatedItems[i] = pageList;
+      }
+    } else if (method == SUBSCRIPTION_METHODS.DELETE_METHOD) {
+      const pages = Object.keys(paginatedItems);
+      for (let i = 0; i < pages.length; i++) {
+        const pageList = paginatedItems[i].filter((item) => {
+          return item[pk] != modifiedItem[pk];
+        });
+        newPaginatedItems[i] = pageList;
+      }
+    }
+  }
+  const newItemsList = convertPaginatedListToNormalList(newPaginatedItems);
+  if (fetchParamObjects) {
+    let fetchParams = fetchParamObjects[fetchParamObjects.length - 1];
+
+    newFetchParams = fetchParamObjects.concat([fetchParams]);
+  }
+  return { newPaginatedItems, newItemsList, newFetchParams };
 };
 
 export const fetchParamsNewOrNot = ({
@@ -308,13 +376,4 @@ export const compareObjects = (o1, o2) => {
     }
   }
   return true;
-};
-
-export const convertPaginatedListToNormalList = (paginatedObject) => {
-  const keys = Object.keys(paginatedObject).sort();
-  let finalArray = [];
-  keys.forEach((key) => {
-    finalArray = finalArray.concat(paginatedObject[key]);
-  });
-  return finalArray;
 };
