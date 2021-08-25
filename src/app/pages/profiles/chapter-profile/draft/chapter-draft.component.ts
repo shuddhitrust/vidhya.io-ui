@@ -196,6 +196,7 @@ export class ChapterDraftComponent implements OnInit {
 
   fetchExerciseKeys() {
     if (this.chapterFilters()) {
+      console.log('calling fetchExerciseKeys from chapter-draft profile');
       this.store.dispatch(
         new FetchExerciseKeysAction({
           searchParams: {

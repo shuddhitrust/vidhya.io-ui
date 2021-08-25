@@ -29,9 +29,9 @@ export class ExerciseSubmissionService {
       submission.points = s.points;
       submission.status = s.status;
       submission.remarks = s.remarks;
-      submission.createdAt = s.createdAt;
       return submission;
     });
+    console.log('after sanitizing ', { newSubmissions });
     return newSubmissions;
   };
 }

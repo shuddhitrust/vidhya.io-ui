@@ -11,10 +11,14 @@ import {
   RESOURCE_ACTIONS,
 } from 'src/app/shared/common/models';
 import { ResetExerciseFormAction } from 'src/app/shared/state/exercises/exercise.actions';
-import { ResetChapterFormAction } from 'src/app/shared/state/chapters/chapter.actions';
+import {
+  GetChapterAction,
+  ResetChapterFormAction,
+} from 'src/app/shared/state/chapters/chapter.actions';
 import { ResetExerciseSubmissionFormAction } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.actions';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 
 type previewImage = {
   url: string;
@@ -36,9 +40,19 @@ export class ChapterProfileComponent implements OnDestroy {
   @Select(ChapterState.getChapterFormRecord)
   chapter$: Observable<Chapter>;
   chapter: Chapter;
-  constructor(private store: Store, private auth: AuthorizationService) {
+  constructor(
+    private store: Store,
+    private route: ActivatedRoute,
+    private auth: AuthorizationService
+  ) {
     this.chapter$.subscribe((val) => {
       this.chapter = val;
+    });
+  }
+  ngOnInit() {
+    this.route.queryParams.subscribe((params) => {
+      const chapterId = params['id'];
+      this.store.dispatch(new GetChapterAction({ id: chapterId }));
     });
   }
   showDraft() {
@@ -47,7 +61,10 @@ export class ChapterProfileComponent implements OnDestroy {
     //   'this.chapter.status == this.chapterStatusOptions.draft;',
     //   this.chapter.status == this.chapterStatusOptions.draft
     // );
-    return this.chapter.status == this.chapterStatusOptions.draft;
+    return (
+      this.chapter.status == this.chapterStatusOptions.draft &&
+      this.authorizeResourceMethod(this.resourceActions.CREATE)
+    );
   }
   authorizeResourceMethod(action) {
     return this.auth.authorizeResource(this.resource, action);

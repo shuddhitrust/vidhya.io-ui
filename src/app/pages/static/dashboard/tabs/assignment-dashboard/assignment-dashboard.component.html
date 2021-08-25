@@ -40,14 +40,26 @@
     >
       <div *ngFor="let card of assignments">
         <mat-card class="feed-card" (click)="openChapter(card)">
-          <button
+          <!-- <button
             *ngIf="card.percentage"
             class="card-count"
             mat-mini-fab
             color="primary"
           >
-            {{ card.percentage }} %
-          </button>
+            {{ card.percentage }}%
+          </button> -->
+          <svg viewBox="0 0 36 36" class="card-percentage">
+            <path
+              class="circle"
+              stroke-dasharray="card.percentage, 100"
+              d="M18 2.0845
+      a 15.9155 15.9155 0 0 1 0 31.831
+      a 15.9155 15.9155 0 0 1 0 -31.831"
+            />
+            <text x="18" y="20.35" class="percentage">
+              {{ card.percentage }}%
+            </text>
+          </svg>
           <h2>{{ card.title }}</h2>
           <p>{{ card.course }} > {{ card.section }}</p>
           <p>

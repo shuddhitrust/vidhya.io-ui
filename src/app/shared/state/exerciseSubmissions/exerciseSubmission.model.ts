@@ -35,7 +35,6 @@ export const emptyExerciseSubmissionFormRecord: ExerciseSubmission = {
   percentage: null,
   status: null,
   remarks: null,
-  createdAt: null,
 };
 export interface ExerciseSubmissionStateModel {
   exerciseSubmissions: ExerciseSubmission[];

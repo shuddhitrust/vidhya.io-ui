@@ -129,7 +129,6 @@ export class ChapterPublishedComponent implements OnInit {
   exerciseFormOptions: string[] = startingExerciseFormOptions;
   invalidOptions: boolean = false;
   formErrorMessages: string = '';
-  chapterSubmitted: boolean = false;
   exerciseSubmissions: ExerciseSubmission[] = [];
   imagesQueuedForUpload: any = {};
   uploadedImages: any = {};
@@ -154,16 +153,18 @@ export class ChapterPublishedComponent implements OnInit {
       this.exercises = val.exercises;
       this.exerciseSubmissions = this.exercises.map(
         (e: Exercise): ExerciseSubmission => {
-          return this.setupExerciseSubmission(e);
+          const submission = val.submissions.find((sub) => {
+            return sub.exercise?.id == e.id;
+          });
+          if (submission) {
+            return this.exerciseSubmissionService.sanitizeExerciseSubmissions([
+              submission,
+            ])[0];
+          } else {
+            return this.setupExerciseSubmission(e);
+          }
         }
       );
-      if (val.submissions[0]?.id) {
-        this.chapterSubmitted = true;
-        this.exerciseSubmissions =
-          this.exerciseSubmissionService.sanitizeExerciseSubmissions(
-            val.submissions
-          );
-      }
       console.log('this.exercises from component', {
         exercises: this.exercises,
         submissions: this.exerciseSubmissions,
@@ -246,6 +247,18 @@ export class ChapterPublishedComponent implements OnInit {
     );
   }
 
+  exerciseSubmitted(exercise) {
+    const submission = this.exerciseSubmissions.find(
+      (sub) => sub.exercise == exercise.id
+    );
+    console.log('from exerciseSubmitted ', {
+      exercise,
+      submission,
+      submissions: this.exerciseSubmissions,
+    });
+    return submission?.id ? true : false;
+  }
+
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       const chapterId = params['id'];
@@ -317,6 +330,7 @@ export class ChapterPublishedComponent implements OnInit {
   }
 
   updateExerciseSubmissionAnswer(event, exercise) {
+    event.preventDefault();
     const newAnswer = event.target.value + event.key;
     let newExerciseSubmissions = this.exerciseSubmissions.map((e) => {
       if (e?.exercise == exercise.id) {
@@ -329,6 +343,7 @@ export class ChapterPublishedComponent implements OnInit {
   }
 
   updateExerciseSubmissionLink(event, exercise) {
+    event.preventDefault();
     const newLink = event.target.value + event.key;
     let newExerciseSubmissions = this.exerciseSubmissions.map((e) => {
       if (e?.exercise == exercise.id) {
@@ -537,14 +552,17 @@ export class ChapterPublishedComponent implements OnInit {
   }
 
   submitExerciseSubmissionForm() {
+    const newSubmissions = this.exerciseSubmissions.filter((s) => {
+      return s.id == null;
+    });
     console.log('Submitting exerciseSubmissions', {
-      exerciseSubmissions: this.exerciseSubmissions,
+      newSubmissions,
     });
     const validationResult = this.validateExerciseSubmissions();
     if (validationResult) {
       this.store.dispatch(
         new CreateUpdateExerciseSubmissionsAction({
-          exerciseSubmissions: this.exerciseSubmissions,
+          exerciseSubmissions: newSubmissions,
         })
       );
     } else {

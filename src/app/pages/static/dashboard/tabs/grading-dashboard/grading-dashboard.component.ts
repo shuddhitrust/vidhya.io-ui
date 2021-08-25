@@ -21,10 +21,7 @@ import {
   RESOURCE_ACTIONS,
 } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
-import {
-  FetchExerciseKeysAction,
-  GetExerciseKeyAction,
-} from 'src/app/shared/state/exerciseKeys/exerciseKey.actions';
+import { GetExerciseKeyAction } from 'src/app/shared/state/exerciseKeys/exerciseKey.actions';
 import { ExerciseKeyState } from 'src/app/shared/state/exerciseKeys/exerciseKey.state';
 import {
   CreateUpdateExerciseSubmissionsAction,

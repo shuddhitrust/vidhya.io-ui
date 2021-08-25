@@ -576,6 +576,7 @@ export const ASSIGNMENT_QUERIES = {
         submittedCount
         gradedCount
         pointsScored
+        percentage
         totalPoints
       }
     }

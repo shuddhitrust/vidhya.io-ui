@@ -114,7 +114,7 @@
         <mat-label>Answer</mat-label>
         <input
           matInput
-          [disabled]="chapterSubmitted"
+          [disabled]="exerciseSubmitted(question)"
           [value]="response.answer"
           (keypress)="updateExerciseSubmissionAnswer($event, question)"
           placeholder="Specify a possible valid answer"
@@ -132,7 +132,7 @@
       >
         <li
           (click)="
-            chapterSubmitted
+            exerciseSubmitted(question)
               ? null
               : updateExerciseSubmissionOption(option, question)
           "
@@ -141,7 +141,7 @@
               ? 'exercise-submission-option highlighted-option'
               : 'exercise-submission-option'
           "
-          [ngStyle]="chapterSubmitted ? { cursor: 'default' } : null"
+          [ngStyle]="exerciseSubmitted(question) ? { cursor: 'default' } : null"
         >
           {{ option }}
         </li>
@@ -153,7 +153,7 @@
       *ngIf="question.questionType == questionTypes.image_upload"
     >
       <div
-        *ngIf="chapterSubmitted"
+        *ngIf="exerciseSubmitted(question)"
         class="col-lg-3 col-md-4 col-sm-12 floating-logo"
       >
         <div
@@ -165,7 +165,9 @@
               [src]="image"
               alt="Exercise submission"
               class="logo-upload-preview"
-              [ngStyle]="chapterSubmitted ? { cursor: 'default' } : null"
+              [ngStyle]="
+                exerciseSubmitted(question) ? { cursor: 'default' } : null
+              "
             />
           </span>
         </div>
@@ -173,7 +175,7 @@
         <br />
       </div>
       <div
-        *ngIf="!chapterSubmitted"
+        *ngIf="!exerciseSubmitted(question)"
         class="col-lg-3 col-md-4 col-sm-12 floating-logo"
       >
         <div
@@ -221,14 +223,14 @@
         <mat-label>Link</mat-label>
         <input
           matInput
-          [disabled]="chapterSubmitted"
+          [disabled]="exerciseSubmitted(question)"
           [value]="response.link"
           (keypress)="updateExerciseSubmissionLink($event, question)"
           placeholder="Link"
         />
       </mat-form-field>
     </span>
-    <span *ngIf="chapterSubmitted && response.remarks">
+    <span *ngIf="exerciseSubmitted(question) && response.remarks">
       <p>Remarks - {{ response.remarks }}</p>
     </span>
   </span>
