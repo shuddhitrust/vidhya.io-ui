@@ -50,10 +50,10 @@ export class AwaitingModerationTableComponent implements OnInit {
   };
   columns = [
     {
-      field: 'firstName',
+      field: 'username',
     },
     {
-      field: 'lastName',
+      field: 'name',
     },
     { field: 'title' },
     {
