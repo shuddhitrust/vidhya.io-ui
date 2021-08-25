@@ -74,6 +74,7 @@ export const USER_QUERIES = {
         offset: $offset
       ) {
         id
+        username
         firstName
         lastName
         name
