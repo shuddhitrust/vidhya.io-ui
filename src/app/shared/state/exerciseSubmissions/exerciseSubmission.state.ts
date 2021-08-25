@@ -27,6 +27,7 @@ import {
   MatSelectOption,
   FetchParams,
   CREATE,
+  SUBSCRIPTION_METHODS,
 } from '../../common/models';
 import { EXERCISE_SUBMISSION_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
@@ -36,6 +37,7 @@ import {
   subscriptionUpdater,
   updateFetchParams,
   convertPaginatedListToNormalList,
+  paginatedSubscriptionUpdater,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
@@ -394,15 +396,18 @@ export class ExerciseSubmissionState {
           const method = result?.data?.notifyExerciseSubmission?.method;
           const exerciseSubmission =
             result?.data?.notifyExerciseSubmission?.exerciseSubmission;
-          const { items, fetchParamObjects } = subscriptionUpdater({
-            items: state.exerciseSubmissions,
-            method,
-            subscriptionItem: exerciseSubmission,
-            fetchParamObjects: state.fetchParamObjects,
-          });
+          // Replacing the existing submissions in state with the modified submissions in the response
+          const { newPaginatedItems, newItemsList, newFetchParams } =
+            paginatedSubscriptionUpdater({
+              paginatedItems: state.paginatedExerciseSubmissions,
+              method,
+              modifiedItem: exerciseSubmission,
+              fetchParamObjects: state.fetchParamObjects,
+            });
           patchState({
-            exerciseSubmissions: items,
-            fetchParamObjects,
+            exerciseSubmissions: newItemsList,
+            paginatedExerciseSubmissions: newPaginatedItems,
+            fetchParamObjects: newFetchParams,
             exerciseSubmissionsSubscribed: true,
           });
         });
@@ -455,6 +460,7 @@ export class ExerciseSubmissionState {
     const variables = {
       exerciseSubmissions: exerciseSubmissions,
     };
+    const updateForm = exerciseSubmissions[0].id;
     this.apollo
       .mutate({
         mutation:
@@ -467,18 +473,12 @@ export class ExerciseSubmissionState {
           patchState({ formSubmitting: false });
           console.log('create exerciseSubmission ', { response });
           if (response.ok) {
-            this.store.dispatch(
-              new ShowNotificationAction({
-                message: `Your work was submitted successfully!`,
-                action: 'success',
-              })
-            );
+            this.router.navigateByUrl(ExerciseSubmissionFormCloseURL);
             const modifiedExerciseSubmissions = response.exerciseSubmissions;
             console.log('modifiedExericseSubmissions', {
               modifiedExerciseSubmissions,
             });
             // Replacing the existing submissions in state with the modified submissions in the response
-            this.router.navigateByUrl(ExerciseSubmissionFormCloseURL);
             let exerciseSubmissions = state.exerciseSubmissions.map((e) => {
               const modifiedSubmission = modifiedExerciseSubmissions.find(
                 (m) => m.id == e.id
@@ -508,6 +508,12 @@ export class ExerciseSubmissionState {
               exerciseSubmissionFormRecord: emptyExerciseSubmissionFormRecord,
               fetchPolicy: 'network-only',
             });
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: `Your work was submitted successfully!`,
+                action: 'success',
+              })
+            );
           } else {
             this.store.dispatch(
               new ShowNotificationAction({
@@ -533,7 +539,7 @@ export class ExerciseSubmissionState {
 
   @Action(DeleteExerciseSubmissionAction)
   deleteExerciseSubmission(
-    {}: StateContext<ExerciseSubmissionStateModel>,
+    { getState, patchState }: StateContext<ExerciseSubmissionStateModel>,
     { payload }: DeleteExerciseSubmissionAction
   ) {
     let { id } = payload;
@@ -548,6 +554,20 @@ export class ExerciseSubmissionState {
           console.log('from delete exerciseSubmission ', { data });
           if (response.ok) {
             this.router.navigateByUrl(ExerciseSubmissionFormCloseURL);
+            const method = SUBSCRIPTION_METHODS.DELETE_METHOD;
+            const group = response.group;
+            const state = getState();
+            const { newPaginatedItems, newItemsList } =
+              paginatedSubscriptionUpdater({
+                paginatedItems: state.paginatedExerciseSubmissions,
+                method,
+                modifiedItem: group,
+              });
+            patchState({
+              paginatedExerciseSubmissions: newPaginatedItems,
+              exerciseSubmissions: newItemsList,
+              exerciseSubmissionFormRecord: emptyExerciseSubmissionFormRecord,
+            });
             this.store.dispatch(
               new ShowNotificationAction({
                 message: 'ExerciseSubmission deleted successfully!',

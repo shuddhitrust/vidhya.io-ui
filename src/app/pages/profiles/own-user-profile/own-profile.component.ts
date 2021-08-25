@@ -15,7 +15,10 @@ import { AuthorizationService } from 'src/app/shared/api/authorization/authoriza
 @Component({
   selector: 'app-own-profile',
   templateUrl: './own-profile.component.html',
-  styleUrls: ['./own-profile.component.scss'],
+  styleUrls: [
+    './own-profile.component.scss',
+    './../../../shared/common/shared-styles.css',
+  ],
 })
 export class OwnProfileComponent implements OnInit, OnDestroy {
   resource = resources.OWN_PROFILE;

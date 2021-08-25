@@ -24,7 +24,10 @@ import { AuthorizationService } from 'src/app/shared/api/authorization/authoriza
 @Component({
   selector: 'app-institution-profile',
   templateUrl: './institution-profile.component.html',
-  styleUrls: ['./institution-profile.component.scss'],
+  styleUrls: [
+    './institution-profile.component.scss',
+    './../../../shared/common/shared-styles.css',
+  ],
 })
 export class InstitutionProfileComponent implements OnInit {
   resource = resources.INSTITUTION;

@@ -214,6 +214,7 @@ export class UserRoleState {
             method,
             subscriptionItem: userRole,
             fetchParamObjects: state.fetchParamObjects,
+            pk: 'name',
           });
           patchState({
             roles: items,

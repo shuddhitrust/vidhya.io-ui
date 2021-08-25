@@ -25,7 +25,10 @@ import { AuthorizationService } from 'src/app/shared/api/authorization/authoriza
 @Component({
   selector: 'app-group-profile',
   templateUrl: './group-profile.component.html',
-  styleUrls: ['./group-profile.component.scss'],
+  styleUrls: [
+    './group-profile.component.scss',
+    './../../../shared/common/shared-styles.css',
+  ],
 })
 export class GroupProfileComponent implements OnInit, OnDestroy {
   resource = resources.GROUP;
@@ -58,6 +61,7 @@ export class GroupProfileComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       const groupId = params['id'];
+      console.log('Getting group from group profile', { id: groupId });
       this.store.dispatch(new GetGroupAction({ id: groupId }));
     });
   }

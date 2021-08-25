@@ -27,6 +27,7 @@ import {
   subscriptionUpdater,
   updateFetchParams,
   convertPaginatedListToNormalList,
+  paginatedSubscriptionUpdater,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
@@ -229,15 +230,17 @@ export class ExerciseKeyState {
           });
           const method = result?.data?.notifyExerciseKey?.method;
           const exerciseKey = result?.data?.notifyExerciseKey?.exerciseKey;
-          const { items, fetchParamObjects } = subscriptionUpdater({
-            items: state.exerciseKeys,
-            method,
-            subscriptionItem: exerciseKey,
-            fetchParamObjects: state.fetchParamObjects,
-          });
+          const { newPaginatedItems, newItemsList, newFetchParams } =
+            paginatedSubscriptionUpdater({
+              paginatedItems: state.paginatedExerciseKeys,
+              method,
+              modifiedItem: exerciseKey,
+              fetchParamObjects: state.fetchParamObjects,
+            });
           patchState({
-            exerciseKeys: items,
-            fetchParamObjects,
+            exerciseKeys: newItemsList,
+            paginatedExerciseKeys: newPaginatedItems,
+            fetchParamObjects: newFetchParams,
             exerciseKeysSubscribed: true,
           });
         });

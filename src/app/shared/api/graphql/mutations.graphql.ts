@@ -75,6 +75,9 @@ export const USER_ROLE_MUTATIONS = {
         ok
         userRole {
           name
+          priority
+          description
+          createdAt
         }
       }
     }
@@ -85,6 +88,9 @@ export const USER_ROLE_MUTATIONS = {
         ok
         userRole {
           name
+          priority
+          description
+          createdAt
         }
       }
     }
@@ -109,6 +115,9 @@ export const INSTITUTION_MUTATIONS = {
         institution {
           id
           name
+          location
+          city
+          bio
         }
       }
     }
@@ -120,6 +129,9 @@ export const INSTITUTION_MUTATIONS = {
         institution {
           id
           name
+          location
+          city
+          bio
         }
       }
     }
@@ -145,6 +157,8 @@ export const GROUP_MUTATIONS = {
         group {
           id
           name
+          description
+          createdAt
         }
       }
     }
@@ -156,6 +170,8 @@ export const GROUP_MUTATIONS = {
         group {
           id
           name
+          description
+          createdAt
         }
       }
     }
@@ -181,6 +197,12 @@ export const ANNOUNCEMENT_MUTATIONS = {
         announcement {
           id
           title
+          author {
+            id
+            name
+          }
+          message
+          createdAt
         }
       }
     }
@@ -192,6 +214,12 @@ export const ANNOUNCEMENT_MUTATIONS = {
         announcement {
           id
           title
+          author {
+            id
+            name
+          }
+          message
+          createdAt
         }
       }
     }
@@ -217,6 +245,13 @@ export const COURSE_MUTATIONS = {
         course {
           id
           title
+          blurb
+          instructor {
+            id
+            name
+          }
+          description
+          status
         }
       }
     }
@@ -228,6 +263,13 @@ export const COURSE_MUTATIONS = {
         course {
           id
           title
+          blurb
+          instructor {
+            id
+            name
+          }
+          description
+          status
         }
       }
     }
@@ -265,6 +307,11 @@ export const COURSE_SECTION_MUTATIONS = {
         courseSection {
           id
           title
+          index
+          course {
+            id
+            title
+          }
         }
       }
     }
@@ -276,6 +323,11 @@ export const COURSE_SECTION_MUTATIONS = {
         courseSection {
           id
           title
+          index
+          course {
+            id
+            title
+          }
         }
       }
     }
@@ -301,6 +353,19 @@ export const CHAPTER_MUTATIONS = {
         chapter {
           id
           title
+          instructions
+          course {
+            id
+            title
+            status
+          }
+          section {
+            id
+            title
+          }
+          dueDate
+          points
+          status
         }
       }
     }
@@ -312,6 +377,19 @@ export const CHAPTER_MUTATIONS = {
         chapter {
           id
           title
+          instructions
+          course {
+            id
+            title
+            status
+          }
+          section {
+            id
+            title
+          }
+          dueDate
+          points
+          status
         }
       }
     }
@@ -349,6 +427,14 @@ export const EXERCISE_MUTATIONS = {
         exercise {
           id
           prompt
+          chapter {
+            id
+            title
+          }
+          questionType
+          required
+          options
+          points
         }
       }
     }
@@ -360,6 +446,14 @@ export const EXERCISE_MUTATIONS = {
         exercise {
           id
           prompt
+          chapter {
+            id
+            title
+          }
+          questionType
+          required
+          options
+          points
         }
       }
     }
@@ -405,6 +499,10 @@ export const EXERCISE_SUBMISSION_MUTATIONS = {
         ok
         exerciseSubmission {
           id
+          status
+          points
+          percentage
+          remarks
         }
       }
     }

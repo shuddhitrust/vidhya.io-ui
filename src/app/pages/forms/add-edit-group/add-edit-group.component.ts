@@ -160,6 +160,7 @@ export class AddEditGroupComponent implements OnInit {
     this.route.queryParams.subscribe((params) => {
       this.params = params;
       const id = params['id'];
+      console.log('Getting group from add-edit-group', { id });
       if (id) {
         this.store.dispatch(new GetGroupAction({ id }));
       }

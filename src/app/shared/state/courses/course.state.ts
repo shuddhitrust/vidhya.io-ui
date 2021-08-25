@@ -20,7 +20,12 @@ import {
 } from './course.actions';
 import { COURSE_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
-import { Course, MatSelectOption, FetchParams } from '../../common/models';
+import {
+  Course,
+  MatSelectOption,
+  FetchParams,
+  SUBSCRIPTION_METHODS,
+} from '../../common/models';
 import { COURSE_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
@@ -29,6 +34,7 @@ import {
   subscriptionUpdater,
   updateFetchParams,
   convertPaginatedListToNormalList,
+  paginatedSubscriptionUpdater,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
@@ -221,15 +227,17 @@ export class CourseState {
           });
           const method = result?.data?.notifyCourse?.method;
           const course = result?.data?.notifyCourse?.course;
-          const { items, fetchParamObjects } = subscriptionUpdater({
-            items: state.courses,
-            method,
-            subscriptionItem: course,
-            fetchParamObjects: state.fetchParamObjects,
-          });
+          const { newPaginatedItems, newItemsList, newFetchParams } =
+            paginatedSubscriptionUpdater({
+              paginatedItems: state.paginatedCourses,
+              method,
+              modifiedItem: course,
+              fetchParamObjects: state.fetchParamObjects,
+            });
           patchState({
-            courses: items,
-            fetchParamObjects,
+            courses: newItemsList,
+            paginatedCourses: newPaginatedItems,
+            fetchParamObjects: newFetchParams,
             coursesSubscribed: true,
           });
         });
@@ -301,6 +309,26 @@ export class CourseState {
             patchState({ formSubmitting: false });
             console.log('update course ', { response });
             if (response.ok) {
+              const method = updateForm
+                ? SUBSCRIPTION_METHODS.UPDATE_METHOD
+                : SUBSCRIPTION_METHODS.CREATE_METHOD;
+              const course = response.course;
+              const { newPaginatedItems, newItemsList } =
+                paginatedSubscriptionUpdater({
+                  paginatedItems: state.paginatedCourses,
+                  method,
+                  modifiedItem: course,
+                });
+
+              form.reset();
+              formDirective.resetForm();
+              this.router.navigateByUrl(CourseFormCloseURL);
+              patchState({
+                paginatedCourses: newPaginatedItems,
+                courses: newItemsList,
+                courseFormRecord: emptyCourseFormRecord,
+                fetchPolicy: 'network-only',
+              });
               this.store.dispatch(
                 new ShowNotificationAction({
                   message: `Course ${
@@ -309,13 +337,6 @@ export class CourseState {
                   action: 'success',
                 })
               );
-              form.reset();
-              formDirective.resetForm();
-              this.router.navigateByUrl(CourseFormCloseURL);
-              patchState({
-                courseFormRecord: emptyCourseFormRecord,
-                fetchPolicy: 'network-only',
-              });
             } else {
               this.store.dispatch(
                 new ShowNotificationAction({
@@ -350,7 +371,7 @@ export class CourseState {
 
   @Action(DeleteCourseAction)
   deleteCourse(
-    {}: StateContext<CourseStateModel>,
+    { getState, patchState }: StateContext<CourseStateModel>,
     { payload }: DeleteCourseAction
   ) {
     let { id } = payload;
@@ -365,6 +386,20 @@ export class CourseState {
           console.log('from delete course ', { data });
           if (response.ok) {
             this.router.navigateByUrl(CourseFormCloseURL);
+            const method = SUBSCRIPTION_METHODS.DELETE_METHOD;
+            const course = response.course;
+            const state = getState();
+            const { newPaginatedItems, newItemsList } =
+              paginatedSubscriptionUpdater({
+                paginatedItems: state.paginatedCourses,
+                method,
+                modifiedItem: course,
+              });
+            patchState({
+              paginatedCourses: newPaginatedItems,
+              courses: newItemsList,
+              courseFormRecord: emptyCourseFormRecord,
+            });
             this.store.dispatch(
               new ShowNotificationAction({
                 message: 'Course deleted successfully!',

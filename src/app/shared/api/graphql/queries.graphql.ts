@@ -74,6 +74,8 @@ export const USER_QUERIES = {
         offset: $offset
       ) {
         id
+        firstName
+        lastName
         name
         title
         bio
@@ -179,6 +181,7 @@ export const GROUP_QUERIES = {
       group(id: $id) {
         id
         name
+        avatar
         description
         institution {
           id
