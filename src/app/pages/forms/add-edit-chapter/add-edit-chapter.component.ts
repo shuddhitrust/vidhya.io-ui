@@ -54,6 +54,7 @@ export class AddEditChapterComponent implements OnInit {
   currentUserId: number;
   chapterFormRecord: Chapter = emptyChapterFormRecord;
   chapterForm: FormGroup;
+  instructions;
   @Select(CourseState.listCourseOptions)
   courseOptions$: Observable<MatSelectOption[]>;
   @Select(ChapterState.listChapterOptions)
@@ -87,6 +88,7 @@ export class AddEditChapterComponent implements OnInit {
     chapterFormRecord: Chapter = emptyChapterFormRecord
   ): FormGroup => {
     console.log('the current User id ', this.currentUserId);
+    this.instructions = chapterFormRecord.instructions;
     return this.fb.group({
       id: [chapterFormRecord?.id],
       title: [chapterFormRecord?.title, Validators.required],
@@ -117,7 +119,11 @@ export class AddEditChapterComponent implements OnInit {
   }
 
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {
-    console.log('chapter submit form value => ', form.value);
+    form.get('instructions').setValue(this.instructions);
+    console.log('chapter submit form value => ', {
+      form: form.value,
+      instructions: this.instructions,
+    });
     this.store.dispatch(
       new CreateUpdateChapterAction({
         form,

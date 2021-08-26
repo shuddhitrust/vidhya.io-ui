@@ -337,11 +337,11 @@ type ResourceActions = {
 };
 
 const defaultActions: ResourceActions = {
-  LIST: false,
-  GET: false,
-  CREATE: false,
-  UPDATE: false,
-  DELETE: false,
+  LIST: true,
+  GET: true,
+  CREATE: true,
+  UPDATE: true,
+  DELETE: true,
 };
 
 export const resources = {

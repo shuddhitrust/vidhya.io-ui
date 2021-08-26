@@ -2,24 +2,11 @@ h2 {
   text-align: center;
 }
 
-.chapter-card {
-  border: 1px solid grey;
-  border-radius: 5px;
-  text-align: center;
-  display: block;
-  margin: 2px auto;
-  padding: 10px;
-  width: 80%;
-}
-
-.chapter-card,
-.left {
-  text-align: left;
-}
-
-.chapter-card > small {
-  margin-top: 0px;
-  padding-top: 0px;
+.markdown-container {
+  max-height: 300px;
+  overflow: auto;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  padding: 20px;
 }
 
 .container {

@@ -170,6 +170,7 @@ export const INSTITUTION_QUERIES = {
         location
         city
         bio
+        invitecode
         totalCount
       }
     }

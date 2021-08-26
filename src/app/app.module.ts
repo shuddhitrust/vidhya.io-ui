@@ -171,6 +171,9 @@ import {
 import { ExerciseKeyState } from './shared/state/exerciseKeys/exerciseKey.state';
 import { AssignmentState } from './shared/state/assignments/assignment.state';
 import { ScullyLibModule } from '@scullyio/ng-lib';
+import { LMarkdownEditorModule } from 'ngx-markdown-editor';
+import { MarkdownModule } from 'ngx-markdown';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -249,6 +252,8 @@ import { ScullyLibModule } from '@scullyio/ng-lib';
     BrowserAnimationsModule,
     Styling,
     BrowserAnimationsModule,
+    LMarkdownEditorModule,
+    MarkdownModule.forRoot(),
     AgGridModule.withComponents([]),
     HotToastModule.forRoot(),
     [
