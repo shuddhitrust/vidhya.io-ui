@@ -147,6 +147,9 @@ export class ExerciseKeyState {
     });
     const variables = {
       searchField: searchQuery,
+      exerciseId: columnFilters.exerciseId,
+      chapterId: columnFilters.chapterId,
+      courseId: columnFilters.courseId,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
