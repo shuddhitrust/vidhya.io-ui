@@ -10,7 +10,7 @@ import {
   resources,
   RESOURCE_ACTIONS,
 } from 'src/app/shared/common/models';
-import { ResetExerciseFormAction } from 'src/app/shared/state/exercises/exercise.actions';
+import { ResetExerciseStateAction } from 'src/app/shared/state/exercises/exercise.actions';
 import {
   GetChapterAction,
   ResetChapterFormAction,
@@ -70,7 +70,7 @@ export class ChapterProfileComponent implements OnDestroy {
     return this.auth.authorizeResource(this.resource, action);
   }
   ngOnDestroy(): void {
-    this.store.dispatch(new ResetExerciseFormAction());
+    this.store.dispatch(new ResetExerciseStateAction());
     this.store.dispatch(new ResetChapterFormAction());
     this.store.dispatch(new ResetExerciseSubmissionFormAction());
   }

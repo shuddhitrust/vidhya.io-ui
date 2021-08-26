@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
@@ -55,7 +55,10 @@ import { ShowNotificationAction } from 'src/app/shared/state/notifications/notif
 import { ExerciseSubmissionState } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.state';
 import { emptyExerciseSubmissionFormRecord } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.model';
 import { ExerciseKeyState } from 'src/app/shared/state/exerciseKeys/exerciseKey.state';
-import { FetchExerciseKeysAction } from 'src/app/shared/state/exerciseKeys/exerciseKey.actions';
+import {
+  FetchExerciseKeysAction,
+  ResetExerciseKeyFormAction,
+} from 'src/app/shared/state/exerciseKeys/exerciseKey.actions';
 import { UploadService } from 'src/app/shared/api/upload.service';
 import { environment } from 'src/environments/environment';
 import { ObserversModule } from '@angular/cdk/observers';
@@ -90,7 +93,7 @@ const questionTypeDescriptions = {
     './../../../../shared/common/shared-styles.css',
   ],
 })
-export class ChapterDraftComponent implements OnInit {
+export class ChapterDraftComponent implements OnInit, OnDestroy {
   resource = resources.CHAPTER;
   resourceActions = RESOURCE_ACTIONS;
   courseStatusOptions = CourseStatusOptions;
@@ -479,6 +482,10 @@ export class ChapterDraftComponent implements OnInit {
       ...this.exerciseKey,
       referenceImages: newReferenceImages,
     };
+  }
+
+  ngOnDestroy() {
+    this.store.dispatch(new ResetExerciseKeyFormAction());
   }
 
   updateFormBeforeSubmit(form, formDirective) {

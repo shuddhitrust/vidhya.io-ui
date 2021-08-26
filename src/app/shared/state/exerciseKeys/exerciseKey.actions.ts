@@ -49,6 +49,12 @@ export class ResetExerciseKeyFormAction {
   constructor() {}
 }
 
+export class ResetExerciseKeyStateAction {
+  static readonly type = '[EXERCISE_KEY] Reset State';
+
+  constructor() {}
+}
+
 export class DeleteExerciseKeyAction {
   static readonly type = '[EXERCISE_KEY] Delete';
 

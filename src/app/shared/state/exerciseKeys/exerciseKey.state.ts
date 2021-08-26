@@ -16,6 +16,7 @@ import {
   ForceRefetchExerciseKeysAction,
   GetExerciseKeyAction,
   ResetExerciseKeyFormAction,
+  ResetExerciseKeyStateAction,
 } from './exerciseKey.actions';
 import { EXERCISE_KEY_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
@@ -286,5 +287,10 @@ export class ExerciseKeyState {
       exerciseKeyFormRecord: emptyExerciseKeyFormRecord,
       formSubmitting: false,
     });
+  }
+
+  @Action(ResetExerciseKeyStateAction)
+  resetExerciseKeyState({ patchState }: StateContext<ExerciseKeyStateModel>) {
+    patchState(defaultExerciseKeyState);
   }
 }

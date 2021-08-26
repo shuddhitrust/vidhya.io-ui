@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
@@ -37,7 +37,7 @@ import {
   DeleteExerciseAction,
   FetchExercisesAction,
   FetchNextExercisesAction,
-  ResetExerciseFormAction,
+  ResetExerciseStateAction,
 } from 'src/app/shared/state/exercises/exercise.actions';
 import {
   autoGenOptions,
@@ -95,7 +95,7 @@ type previewImage = {
     './../../../../shared/common/shared-styles.css',
   ],
 })
-export class ChapterPublishedComponent implements OnInit {
+export class ChapterPublishedComponent implements OnInit, OnDestroy {
   resource = resources.CHAPTER;
   resourceActions = RESOURCE_ACTIONS;
   courseStatusOptions = CourseStatusOptions;
@@ -549,6 +549,10 @@ export class ChapterPublishedComponent implements OnInit {
       }
     });
     return submissionsValid;
+  }
+
+  ngOnDestroy() {
+    this.store.dispatch(new ResetExerciseStateAction());
   }
 
   submitExerciseSubmissionForm() {

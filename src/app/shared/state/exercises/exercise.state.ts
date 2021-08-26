@@ -14,7 +14,7 @@ import {
   FetchNextExercisesAction,
   ForceRefetchExercisesAction,
   GetExerciseAction,
-  ResetExerciseFormAction,
+  ResetExerciseStateAction,
 } from './exercise.actions';
 import { EXERCISE_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
@@ -470,7 +470,7 @@ export class ExerciseState {
       );
   }
 
-  @Action(ResetExerciseFormAction)
+  @Action(ResetExerciseStateAction)
   resetExerciseForm({ patchState }: StateContext<ExerciseStateModel>) {
     patchState(defaultExerciseState);
   }

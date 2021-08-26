@@ -43,8 +43,8 @@ export class CreateUpdateExerciseAction {
   ) {}
 }
 
-export class ResetExerciseFormAction {
-  static readonly type = '[EXERCISE] Reset Form';
+export class ResetExerciseStateAction {
+  static readonly type = '[EXERCISE] Reset State';
 
   constructor() {}
 }
