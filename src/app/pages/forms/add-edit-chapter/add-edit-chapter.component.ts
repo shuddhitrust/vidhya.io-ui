@@ -92,6 +92,7 @@ export class AddEditChapterComponent implements OnInit {
     return this.fb.group({
       id: [chapterFormRecord?.id],
       title: [chapterFormRecord?.title, Validators.required],
+      index: [chapterFormRecord?.index],
       instructions: [chapterFormRecord?.instructions, Validators.required],
       course: [chapterFormRecord?.course?.id, Validators.required],
       prerequisites: [
