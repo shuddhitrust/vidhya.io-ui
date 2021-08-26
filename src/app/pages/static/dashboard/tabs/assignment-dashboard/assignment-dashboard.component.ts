@@ -38,6 +38,7 @@ export class AssignmentDashboardComponent implements OnInit {
     groupBy: this.groupByFilter,
     status: this.submissionStatusFilter,
   };
+  exerciseSubmissionStatusTypes = ExerciseSubmissionStatusOptions;
   exerciseSubmissionStatusOptions: MatSelectOption[] = autoGenOptions({
     all: null,
     ...ExerciseSubmissionStatusOptions,
