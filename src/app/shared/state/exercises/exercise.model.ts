@@ -10,6 +10,7 @@ import {
 export const emptyExerciseFormRecord: Exercise = {
   id: null,
   prompt: null,
+  index: null,
   chapter: null,
   course: null,
   questionType: null,

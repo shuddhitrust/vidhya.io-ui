@@ -1,6 +1,6 @@
 import { FormGroup, FormGroupDirective } from '@angular/forms';
 import { SearchParams } from '../../abstract/master-grid/table.model';
-import { idPayload } from '../../common/models';
+import { idPayload, IndexListType } from '../../common/models';
 
 export class FetchChaptersAction {
   static readonly type = '[CHAPTERS] Fetch';
@@ -64,4 +64,10 @@ export class PublishChapterAction {
   static readonly type = '[CHAPTER] Publish';
 
   constructor(public payload: idPayload) {}
+}
+
+export class ReorderChaptersAction {
+  static readonly type = '[CHAPTERS] Reorder';
+
+  constructor(public payload: { indexList: IndexListType[] }) {}
 }

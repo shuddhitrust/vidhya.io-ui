@@ -389,3 +389,10 @@ export const compareObjects = (o1, o2) => {
   }
   return true;
 };
+
+export const sortByIndex = (list: any[]) => {
+  let newList = Object.assign([], list);
+  return newList.sort(function (a, b) {
+    return a.index - b.index;
+  });
+};

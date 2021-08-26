@@ -11,6 +11,7 @@ import { uiroutes } from '../../common/ui-routes';
 export const emptyCourseFormRecord: Course = {
   id: null,
   title: null,
+  index: null,
   blurb: null,
   description: null,
   instructor: null,

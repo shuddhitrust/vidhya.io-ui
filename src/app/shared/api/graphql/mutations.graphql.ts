@@ -343,6 +343,13 @@ export const COURSE_SECTION_MUTATIONS = {
       }
     }
   `,
+  REORDER_COURSE_SECTIONS: gql`
+    mutation reorderCourseSections($indexList: [IndexListInputType]!) {
+      reorderCourseSections(indexList: $indexList) {
+        ok
+      }
+    }
+  `,
 };
 
 export const CHAPTER_MUTATIONS = {
@@ -417,6 +424,13 @@ export const CHAPTER_MUTATIONS = {
       }
     }
   `,
+  REORDER_CHAPTERS: gql`
+    mutation reorderChapters($indexList: [IndexListInputType]!) {
+      reorderChapters(indexList: $indexList) {
+        ok
+      }
+    }
+  `,
 };
 
 export const EXERCISE_MUTATIONS = {
@@ -466,6 +480,13 @@ export const EXERCISE_MUTATIONS = {
           id
           prompt
         }
+      }
+    }
+  `,
+  REORDER_EXERCISES: gql`
+    mutation reorderExercises($indexList: [IndexListInputType]!) {
+      reorderExercises(indexList: $indexList) {
+        ok
       }
     }
   `,

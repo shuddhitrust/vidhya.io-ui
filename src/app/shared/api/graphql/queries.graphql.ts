@@ -371,6 +371,7 @@ export const CHAPTER_QUERIES = {
       ) {
         id
         title
+        index
         instructions
         course {
           id
@@ -422,6 +423,7 @@ export const EXERCISE_QUERIES = {
         exercises {
           id
           prompt
+          index
           chapter {
             id
             title
@@ -626,9 +628,11 @@ export const EXERCISE_KEY_QUERIES = {
         offset: $offset
       ) {
         id
+        index
         exercise {
           id
           prompt
+          index
           questionType
           required
           chapter {

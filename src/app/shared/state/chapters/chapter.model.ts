@@ -10,6 +10,7 @@ import {
 export const emptyChapterFormRecord: Chapter = {
   id: null,
   title: null,
+  index: null,
   instructions: null,
   course: null,
   status: 'DR',

@@ -15,6 +15,7 @@ import {
   ForceRefetchChaptersAction,
   GetChapterAction,
   PublishChapterAction,
+  ReorderChaptersAction,
   ResetChapterFormAction,
   SetCourseInChapterForm,
 } from './chapter.actions';
@@ -502,5 +503,31 @@ export class ChapterState {
       chapterFormRecord: emptyChapterFormRecord,
       formSubmitting: false,
     });
+  }
+  @Action(ReorderChaptersAction)
+  reorderChapters(
+    {}: StateContext<ChapterStateModel>,
+    { payload }: ReorderChaptersAction
+  ) {
+    const { indexList } = payload;
+    this.apollo
+      .mutate({
+        mutation: CHAPTER_MUTATIONS.REORDER_CHAPTERS,
+        variables: { indexList },
+      })
+      .subscribe(
+        ({ data }: any) => {
+          const response = data.reorderChapters;
+          console.log('Reordering of chapters ', { response });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+        }
+      );
   }
 }

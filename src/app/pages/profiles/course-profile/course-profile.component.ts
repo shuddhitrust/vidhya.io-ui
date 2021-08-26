@@ -28,9 +28,12 @@ import { ChapterState } from 'src/app/shared/state/chapters/chapter.state';
 import {
   FetchChaptersAction,
   FetchNextChaptersAction,
+  ReorderChaptersAction,
   SetCourseInChapterForm,
 } from 'src/app/shared/state/chapters/chapter.actions';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
+import { DragDropComponent } from 'src/app/shared/components/drag-drop/drag-drop.component';
+import { sortByIndex } from 'src/app/shared/common/functions';
 
 @Component({
   selector: 'app-course-profile',
@@ -48,6 +51,7 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
   course: Course;
   @Select(ChapterState.listChapters)
   chapters$: Observable<Chapter[]>;
+  chapters: Chapter[];
   @Select(ChapterState.isFetching)
   isFetchingChapters$: Observable<boolean>;
   isFetchingChapters: boolean;
@@ -65,6 +69,9 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
     // this.fetchChapters()
     this.isFetchingChapters$.subscribe((val) => {
       this.isFetchingChapters = val;
+    });
+    this.chapters$.subscribe((val) => {
+      this.chapters = sortByIndex(val);
     });
     this.course$.subscribe((val) => {
       this.course = val;
@@ -135,6 +142,34 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
     if (!this.isFetchingChapters) {
       this.store.dispatch(new FetchNextChaptersAction());
     }
+  }
+
+  reorderChapters() {
+    const chaptersList = this.chapters.map((c) => {
+      return { index: c.id, label: c.title };
+    });
+    console.log('initial index list ', { chaptersList });
+    const dialogRef = this.dialog.open(DragDropComponent, {
+      data: chaptersList,
+    });
+
+    dialogRef.afterClosed().subscribe((newIndexArray) => {
+      console.log('after reordering', { newIndexArray });
+      let i = 1;
+      const reorderedList = newIndexArray.map((index) => {
+        let chapter = this.chapters.find((c) => c.id == index);
+        chapter = { ...chapter, index: i };
+        i++;
+        return chapter;
+      });
+      console.log('old order of chapters ', { chapters: this.chapters });
+      this.chapters = Object.assign([], reorderedList);
+      console.log('new order of chapters ', { chapters: this.chapters });
+      const indexList = this.chapters.map((c) => {
+        return { id: c.id, index: c.index };
+      });
+      this.store.dispatch(new ReorderChaptersAction({ indexList }));
+    });
   }
   createChapter() {
     this.store.dispatch(

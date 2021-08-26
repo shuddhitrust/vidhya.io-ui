@@ -43,6 +43,7 @@ import {
   autoGenOptions,
   getOptionLabel,
   parseDateTime,
+  sortByIndex,
 } from 'src/app/shared/common/functions';
 import {
   emptyExerciseFormRecord,
@@ -150,7 +151,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
       this.isFetchingExercises = val;
     });
     this.exercises$.subscribe((val) => {
-      this.exercises = val.exercises;
+      this.exercises = sortByIndex(val.exercises);
       this.exerciseSubmissions = this.exercises.map(
         (e: Exercise): ExerciseSubmission => {
           const submission = val.submissions.find((sub) => {

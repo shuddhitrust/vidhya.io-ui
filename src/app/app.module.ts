@@ -173,6 +173,7 @@ import { AssignmentState } from './shared/state/assignments/assignment.state';
 import { ScullyLibModule } from '@scullyio/ng-lib';
 import { LMarkdownEditorModule } from 'ngx-markdown-editor';
 import { MarkdownModule } from 'ngx-markdown';
+import { DragDropComponent } from './shared/components/drag-drop/drag-drop.component';
 
 @NgModule({
   declarations: [
@@ -241,6 +242,7 @@ import { MarkdownModule } from 'ngx-markdown';
     ChapterPublishedComponent,
     ExercicseKeyDialog,
     PrivacyComponent,
+    DragDropComponent,
   ],
   imports: [
     BrowserModule,

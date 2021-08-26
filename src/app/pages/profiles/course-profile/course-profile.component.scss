@@ -22,9 +22,15 @@ h2 {
 .right-button {
   float: right;
   margin: 5px 10px;
+  margin-right: 5%;
 }
 
 .scroll-feed {
   overflow: auto;
   height: calc(100vh - 190px);
+}
+
+.float-left {
+  float: left;
+  margin-left: 5%;
 }

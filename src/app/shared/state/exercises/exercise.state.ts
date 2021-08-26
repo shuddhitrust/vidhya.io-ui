@@ -15,6 +15,7 @@ import {
   ForceRefetchExercisesAction,
   GetExerciseAction,
   ResetExerciseStateAction,
+  ReorderExercisesAction,
 } from './exercise.actions';
 import { EXERCISE_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
@@ -473,5 +474,32 @@ export class ExerciseState {
   @Action(ResetExerciseStateAction)
   resetExerciseForm({ patchState }: StateContext<ExerciseStateModel>) {
     patchState(defaultExerciseState);
+  }
+
+  @Action(ReorderExercisesAction)
+  reorderChapters(
+    {}: StateContext<ExerciseStateModel>,
+    { payload }: ReorderExercisesAction
+  ) {
+    const { indexList } = payload;
+    this.apollo
+      .mutate({
+        mutation: EXERCISE_MUTATIONS.REORDER_EXERCISES,
+        variables: { indexList },
+      })
+      .subscribe(
+        ({ data }: any) => {
+          const response = data.reorderExercses;
+          console.log('Reordering of chapters ', { response });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+        }
+      );
   }
 }

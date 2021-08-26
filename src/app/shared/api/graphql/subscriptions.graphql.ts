@@ -113,6 +113,7 @@ export const SUBSCRIPTIONS = {
       notifyCourseSection {
         courseSection {
           id
+          index
           title
           index
           course {
@@ -130,6 +131,7 @@ export const SUBSCRIPTIONS = {
         chapter {
           id
           title
+          index
           instructions
           course {
             id
@@ -152,6 +154,7 @@ export const SUBSCRIPTIONS = {
         exercise {
           id
           prompt
+          index
           questionType
           required
           options

@@ -202,6 +202,7 @@ export type Institution = {
 export type Course = {
   id: number;
   title: string;
+  index: number;
   blurb: string;
   description: string;
   instructor: any;
@@ -229,6 +230,7 @@ export type CourseSection = {
 export type Chapter = {
   id: number;
   title: string;
+  index: number;
   instructions: string;
   course: any;
   section?: any;
@@ -243,6 +245,7 @@ export type Chapter = {
 export type Exercise = {
   id: number;
   prompt: string;
+  index: number;
   chapter: any;
   course: any;
   questionType: ExerciseQuestionType;
@@ -318,6 +321,11 @@ export type ChatSearchResult = {
   avatar: string;
   chatId: number;
   userId: number;
+};
+
+export type IndexListType = {
+  id: number;
+  index: number;
 };
 
 export const RESOURCE_ACTIONS = {

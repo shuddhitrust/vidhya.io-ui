@@ -46,6 +46,13 @@
 <div class="feed-header-block">
   <h2>Chapters</h2>
   <button
+    mat-mini-fab
+    (click)="reorderChapters()"
+    class="floating-header-button-top float-left"
+  >
+    <mat-icon>reorder</mat-icon>
+  </button>
+  <button
     *ngIf="authorizeResourceMethod(resourceActions.CREATE)"
     (click)="createChapter()"
     class="floating-header-button-top"
@@ -57,7 +64,7 @@
 </div>
 <span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
   <span *ngIf="!(isFetchingChapters$ | async); else loading">
-    <span *ngIf="(chapters$ | async).length > 0; else feedEmpty">
+    <span *ngIf="chapters.length > 0; else feedEmpty">
       <div
         class="scroll-feed"
         infiniteScroll
@@ -67,7 +74,7 @@
         [fromRoot]="true"
         (scrolled)="onScroll()"
       >
-        <div *ngFor="let chapter of chapters$ | async">
+        <div *ngFor="let chapter of chapters">
           <mat-card class="feed-card" (click)="openChapter(chapter)">
             {{ chapter.title }}
           </mat-card>

@@ -1,6 +1,6 @@
 import { FormGroup, FormGroupDirective } from '@angular/forms';
 import { SearchParams } from '../../abstract/master-grid/table.model';
-import { idPayload } from '../../common/models';
+import { idPayload, IndexListType } from '../../common/models';
 
 export class FetchExercisesAction {
   static readonly type = '[EXERCISES] Fetch';
@@ -53,4 +53,10 @@ export class DeleteExerciseAction {
   static readonly type = '[EXERCISE] Delete';
 
   constructor(public payload: idPayload) {}
+}
+
+export class ReorderExercisesAction {
+  static readonly type = '[EXERCISES] Reorder';
+
+  constructor(public payload: { indexList: IndexListType[] }) {}
 }
