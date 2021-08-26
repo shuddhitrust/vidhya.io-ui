@@ -108,9 +108,12 @@ export const paginatedSubscriptionUpdater = ({
       newPaginatedItems = Object.assign({}, paginatedItems);
       console.log('frst page ', { newPaginatedItems });
       const firstPageItems = newPaginatedItems[1];
-      const itemAlreadyExists = firstPageItems.find(
-        (item) => item[pk] == modifiedItem[pk]
-      );
+      let itemAlreadyExists = null;
+      if (firstPageItems) {
+        itemAlreadyExists = firstPageItems.find(
+          (item) => item[pk] == modifiedItem[pk]
+        );
+      }
       if (!itemAlreadyExists) {
         const newFirstPage = [modifiedItem, ...firstPageItems];
         newPaginatedItems[1] = newFirstPage;
