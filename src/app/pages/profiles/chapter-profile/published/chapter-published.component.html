@@ -78,6 +78,9 @@
   {{ (formSubmitting$ | async) === true ? "Submitting..." : "Submit" }}
 </button>
 <br />
+<br />
+<br />
+<br />
 
 <ng-template #feedEmpty>
   <p class="center-title">There are no exercises in this chapter</p>
@@ -93,7 +96,7 @@
   let-response="response"
   let-index="index"
 >
-  <span class="exercise-form-card">
+  <mat-card class="feed-card">
     <button
       *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
       mat-mini-fab
@@ -105,11 +108,11 @@
     >
       <mat-icon>delete</mat-icon>
     </button>
-    <p class="form-element-block col-lg-12 col-md-12 col-sm-12">
+    <p class="form-element-block col-lg-10 col-md-10 col-sm-10">
       {{ question.prompt }}
     </p>
     <span
-      class="form-element-block col-lg-12 col-md-12 col-sm-12"
+      class="form-element-block col-lg-10 col-md-10 col-sm-10"
       *ngIf="question.questionType == questionTypes.descriptive_answer"
     >
       <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
@@ -125,7 +128,7 @@
     </span>
 
     <span
-      class="form-element-block col-lg-12 col-md-12 col-sm-12"
+      class="form-element-block col-lg-10 col-md-10 col-sm-10"
       *ngIf="question.questionType == questionTypes.options"
     >
       <ul
@@ -151,7 +154,7 @@
     </span>
 
     <span
-      class="form-element-block col-lg-12 col-md-12 col-sm-12"
+      class="form-element-block col-lg-10 col-md-10 col-sm-10"
       *ngIf="question.questionType == questionTypes.image_upload"
     >
       <div
@@ -160,7 +163,7 @@
       >
         <div
           *ngIf="response.images?.length"
-          class="col-lg-12 col-md-12 col-sm-12"
+          class="col-lg-10 col-md-10 col-sm-10"
         >
           <span *ngFor="let image of response.images; let i = index">
             <img
@@ -182,7 +185,7 @@
       >
         <div
           *ngIf="imagesQueuedForUpload[question.id]?.length"
-          class="col-lg-12 col-md-12 col-sm-12"
+          class="col-lg-10 col-md-10 col-sm-10"
         >
           <span
             *ngFor="
@@ -218,7 +221,7 @@
     </span>
 
     <span
-      class="form-element-block col-lg-12 col-md-12 col-sm-12"
+      class="form-element-block col-lg-10 col-md-10 col-sm-10"
       *ngIf="question.questionType == questionTypes.link"
     >
       <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
@@ -235,5 +238,5 @@
     <span *ngIf="exerciseSubmitted(question) && response.remarks">
       <p>Remarks - {{ response.remarks }}</p>
     </span>
-  </span>
+  </mat-card>
 </ng-template>
