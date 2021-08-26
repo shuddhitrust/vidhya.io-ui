@@ -21,7 +21,7 @@ import { AuthState } from '../../state/auth/auth.state';
 })
 export class NavbarComponent implements OnInit {
   dashboardRoute: string = uiroutes.DASHBOARD_ROUTE.route;
-  profileRoute: string = uiroutes.MEMBER_PROFILE_ROUTE.route;
+  profileRoute: string = uiroutes.OWN_PROFILE_ROUTE.route;
   accountRoute: string = uiroutes.ACCOUNT_ROUTE.route;
   supportRoute: string = uiroutes.SUPPORT_ROUTE.route;
   @Select(AuthState)
@@ -45,7 +45,7 @@ export class NavbarComponent implements OnInit {
   }
 
   onAvatarClick() {
-    this.router.navigateByUrl(uiroutes.MEMBER_PROFILE_ROUTE.route);
+    this.router.navigateByUrl(uiroutes.OWN_PROFILE_ROUTE.route);
   }
 
   onChatClick() {

@@ -132,10 +132,10 @@ const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path: uiroutes.MEMBER_PROFILE_ROUTE.route,
+    path: uiroutes.OWN_PROFILE_ROUTE.route,
     component: OwnProfileComponent,
     canActivate: [AuthenticationGuard],
-    data: uiroutes.MEMBER_PROFILE_ROUTE.auth,
+    data: uiroutes.OWN_PROFILE_ROUTE.auth,
     pathMatch: 'full',
   },
   {
