@@ -2,6 +2,13 @@ h2 {
   text-align: center;
 }
 
+.markdown-container {
+  max-height: 300px;
+  overflow: auto;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  padding: 20px;
+}
+
 .chapter-card {
   border: 1px solid grey;
   border-radius: 5px;

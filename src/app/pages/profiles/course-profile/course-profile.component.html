@@ -46,6 +46,7 @@
 <div class="feed-header-block">
   <h2>Chapters</h2>
   <button
+    *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
     mat-mini-fab
     (click)="reorderChapters()"
     class="floating-header-button-top float-left"

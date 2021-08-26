@@ -26,7 +26,9 @@
       <mat-icon>edit</mat-icon>
     </button>
     <h2>{{ chapter?.title }}</h2>
-    <p class="left">{{ chapter?.instructions }}</p>
+    <div class="markdown-container">
+      <markdown [data]="chapter?.instructions"></markdown>
+    </div>
     <small class="left" style="font-style: italic" *ngIf="chapter?.dueDate"
       >Due on {{ parseDate(chapter?.dueDate) }}
     </small>

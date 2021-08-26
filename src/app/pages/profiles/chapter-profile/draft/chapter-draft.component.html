@@ -51,6 +51,7 @@
   <h2>Exercises</h2>
   <button
     mat-mini-fab
+    *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
     (click)="reorderExercises()"
     class="floating-header-button-top float-left"
   >
