@@ -37,11 +37,11 @@ h2 {
 
 .profile-button {
   float: right;
-  margin: 5px 10px;
+  margin-right: 10px;
 }
 
 .left-button {
-  margin: 5px 10px;
+  margin-right: 10px;
 }
 
 .exercise-submission-options {
@@ -68,4 +68,9 @@ h2 {
   min-height: 100px;
   min-width: 100px;
   cursor: pointer;
+}
+
+.float-left {
+  float: left;
+  margin-left: 5%;
 }

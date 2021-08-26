@@ -628,7 +628,6 @@ export const EXERCISE_KEY_QUERIES = {
         offset: $offset
       ) {
         id
-        index
         exercise {
           id
           prompt

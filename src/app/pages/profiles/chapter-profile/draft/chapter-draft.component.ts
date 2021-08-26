@@ -35,11 +35,13 @@ import {
   DeleteExerciseAction,
   FetchExercisesAction,
   FetchNextExercisesAction,
+  ReorderExercisesAction,
 } from 'src/app/shared/state/exercises/exercise.actions';
 import {
   autoGenOptions,
   getOptionLabel,
   parseDateTime,
+  sortByIndex,
 } from 'src/app/shared/common/functions';
 import {
   emptyExerciseFormRecord,
@@ -67,6 +69,7 @@ import {
   ChapterDeleteConfirmationDialog,
   ExercicseDeleteConfirmationDialog,
 } from '../chapter-profile.component';
+import { DragDropComponent } from 'src/app/shared/components/drag-drop/drag-drop.component';
 const startingExerciseFormOptions = ['', ''];
 
 type previewImage = {
@@ -103,7 +106,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   chapter: Chapter;
   @Select(ExerciseKeyState.listExerciseKeys)
   exerciseKeys$: Observable<ExerciseKey[]>;
-  exerciseKeys: ExerciseKey[];
+  exerciseKeys: ExerciseKey[] = [];
   @Select(ExerciseKeyState.isFetching)
   isFetchingExerciseKeys$: Observable<boolean>;
   isFetchingExerciseKeys: boolean;
@@ -176,6 +179,11 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     return this.fb.group({
       id: [exerciseKeyRecord?.exercise?.id],
       prompt: [exerciseKeyRecord?.exercise?.prompt, Validators.required],
+      index: [
+        exerciseKeyRecord?.exercise?.index
+          ? exerciseKeyRecord?.exercise?.index
+          : this.exerciseKeys?.length + 1,
+      ],
       course: [this.chapter?.course?.id, Validators.required],
       chapter: [this.chapter?.id, Validators.required],
       questionType: [exerciseKeyRecord?.exercise?.questionType],
@@ -303,6 +311,38 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     if (!this.isFetchingExerciseKeys) {
       this.store.dispatch(new FetchNextExercisesAction());
     }
+  }
+  reorderExercises() {
+    const exercisesList = this.exerciseKeys.map((key) => {
+      return { index: key.exercise.id, label: key.exercise.prompt };
+    });
+    console.log('initial index list ', { exercisesList });
+    const dialogRef = this.dialog.open(DragDropComponent, {
+      data: exercisesList,
+    });
+
+    dialogRef.afterClosed().subscribe((newIndexArray) => {
+      console.log('after reordering', { newIndexArray });
+      let i = 1;
+      const reorderedList = newIndexArray.map((index) => {
+        let exerciseKey = this.exerciseKeys.find(
+          (key) => key.exercise.id == index
+        );
+        exerciseKey = {
+          ...exerciseKey,
+          exercise: { ...exerciseKey.exercise, index: i },
+        };
+        i++;
+        return exerciseKey;
+      });
+      console.log('old order of exercises ', { exercises: this.exerciseKeys });
+      this.exerciseKeys = Object.assign([], reorderedList);
+      console.log('new order of exercises ', { exercises: this.exerciseKeys });
+      const indexList = this.exerciseKeys.map((key) => {
+        return { id: key.id, index: key.exercise.index };
+      });
+      this.store.dispatch(new ReorderExercisesAction({ indexList }));
+    });
   }
   resetExerciseForm() {
     this.exerciseForm = this.setupExerciseForm();
