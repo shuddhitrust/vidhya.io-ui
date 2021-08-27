@@ -143,7 +143,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
       this.isFetchingExerciseKeys = val;
     });
     this.exerciseKeys$.subscribe((val) => {
-      this.exerciseKeys = val;
+      this.exerciseKeys = sortByIndex(val, 'exercise.index');
     });
     this.chapter$.subscribe((val) => {
       this.chapter = val;
