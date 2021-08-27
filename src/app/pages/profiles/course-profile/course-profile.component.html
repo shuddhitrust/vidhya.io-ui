@@ -76,8 +76,17 @@
         (scrolled)="onScroll()"
       >
         <div *ngFor="let chapter of chapters">
-          <mat-card class="feed-card" (click)="openChapter(chapter)">
+          <mat-card
+            [ngClass]="
+              chapter.locked ? 'feed-card locked-content' : 'feed-card'
+            "
+            (click)="openChapter(chapter)"
+          >
             {{ chapter.title }}
+            <div *ngIf="chapter.locked" class="prerequisites">
+              <mat-icon class="info-icon">info</mat-icon>
+              {{ chapterPrerequisites(chapter) }}
+            </div>
           </mat-card>
         </div>
       </div>

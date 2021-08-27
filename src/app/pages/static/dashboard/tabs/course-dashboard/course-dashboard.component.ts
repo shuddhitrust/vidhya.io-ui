@@ -15,6 +15,7 @@ import {
   FetchNextCoursesAction,
 } from 'src/app/shared/state/courses/course.actions';
 import { CourseState } from 'src/app/shared/state/courses/course.state';
+import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 
 @Component({
   selector: 'app-course-dashboard',
@@ -61,10 +62,30 @@ export class CourseDashboardComponent implements OnInit {
   createCourse() {
     this.router.navigateByUrl(uiroutes.COURSE_FORM_ROUTE.route);
   }
+  coursePrerequisites(course: Course) {
+    let prerequisites = '';
+    course?.mandatoryPrerequisites?.forEach((c) => {
+      if (prerequisites.length) {
+        prerequisites += ', "' + c.title + '"';
+      } else {
+        prerequisites += c.title;
+      }
+    });
+    return `To participate in this course, you must have completed ${prerequisites}`;
+  }
 
   openCourse(course) {
-    this.router.navigate([uiroutes.COURSE_PROFILE_ROUTE.route], {
-      queryParams: { id: course.id },
-    });
+    if (!course.locked) {
+      this.router.navigate([uiroutes.COURSE_PROFILE_ROUTE.route], {
+        queryParams: { id: course.id },
+      });
+    } else {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message: 'This course is locked for your at the moment',
+          action: 'error',
+        })
+      );
+    }
   }
 }

@@ -43,6 +43,7 @@ import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
 import { SearchParams } from '../../abstract/master-grid/table.model';
 import { Location } from '@angular/common';
 import { CourseFormCloseURL } from '../courses/course.model';
+import { uiroutes } from '../../common/ui-routes';
 
 @State<ChapterStateModel>({
   name: 'chapterState',
@@ -291,6 +292,7 @@ export class ChapterState {
               action: 'error',
             })
           );
+          this.router.navigate([uiroutes.DASHBOARD_ROUTE.route]);
           patchState({ isFetching: false });
         }
       );

@@ -23,10 +23,19 @@
         (scrolled)="onScroll()"
       >
         <div *ngFor="let course of courses$ | async">
-          <mat-card class="feed-card" (click)="openCourse(course)">
-            <h2>{{ course.title }}</h2>
-
+          <mat-card
+            [ngClass]="course.locked ? 'feed-card locked-content' : 'feed-card'"
+            (click)="openCourse(course)"
+          >
+            <h2 style="display: inline">
+              {{ course.title }}
+            </h2>
+            <span *ngIf="course.locked" class="prerequisites">
+              <mat-icon class="info-icon">info</mat-icon>
+              {{ coursePrerequisites(course) }}
+            </span>
             <p>{{ course.blurb }}</p>
+
             <mat-card-actions
               ><small
                 >This course is instructed by

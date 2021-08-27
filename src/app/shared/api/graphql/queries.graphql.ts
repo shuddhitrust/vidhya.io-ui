@@ -275,6 +275,11 @@ export const COURSE_QUERIES = {
         endDate
         creditHours
         status
+        locked
+        mandatoryPrerequisites {
+          id
+          title
+        }
       }
     }
   `,
@@ -290,6 +295,11 @@ export const COURSE_QUERIES = {
         }
         description
         status
+        locked
+        mandatoryPrerequisites {
+          id
+          title
+        }
       }
     }
   `,
@@ -385,6 +395,11 @@ export const CHAPTER_QUERIES = {
         dueDate
         points
         status
+        locked
+        prerequisites {
+          id
+          title
+        }
       }
     }
   `,

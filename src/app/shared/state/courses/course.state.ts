@@ -41,6 +41,7 @@ import { defaultSearchParams } from '../../common/constants';
 import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
 import { SearchParams } from '../../abstract/master-grid/table.model';
 import { StateContextFactory } from '@ngxs/store/src/internal/state-context-factory';
+import { uiroutes } from '../../common/ui-routes';
 
 @State<CourseStateModel>({
   name: 'courseState',
@@ -269,6 +270,7 @@ export class CourseState {
               action: 'error',
             })
           );
+          this.router.navigate([uiroutes.DASHBOARD_ROUTE.route]);
           patchState({ isFetching: false });
         }
       );

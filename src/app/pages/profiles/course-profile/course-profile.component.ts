@@ -34,6 +34,7 @@ import {
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { DragDropComponent } from 'src/app/shared/components/drag-drop/drag-drop.component';
 import { sortByIndex } from 'src/app/shared/common/functions';
+import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 
 @Component({
   selector: 'app-course-profile',
@@ -178,10 +179,31 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl(uiroutes.CHAPTER_FORM_ROUTE.route);
   }
 
-  openChapter(chapter) {
-    this.router.navigate([uiroutes.CHAPTER_PROFILE_ROUTE.route], {
-      queryParams: { id: chapter.id },
+  chapterPrerequisites(chapter) {
+    let prerequisites = '';
+    chapter?.prerequisites?.forEach((c) => {
+      if (prerequisites.length) {
+        prerequisites += ', "' + c.title + '"';
+      } else {
+        prerequisites += c.title;
+      }
     });
+    return `To open this chapter, you must have completed ${prerequisites}`;
+  }
+
+  openChapter(chapter) {
+    if (!chapter.locked) {
+      this.router.navigate([uiroutes.CHAPTER_PROFILE_ROUTE.route], {
+        queryParams: { id: chapter.id },
+      });
+    } else {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message: 'This course is locked for your at the moment',
+          action: 'error',
+        })
+      );
+    }
   }
 
   publishCourse() {

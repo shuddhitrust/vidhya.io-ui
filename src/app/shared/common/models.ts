@@ -214,6 +214,7 @@ export type Course = {
   endDate?: string;
   creditHours?: number;
   status: CourseStatus;
+  locked?: boolean;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -238,6 +239,7 @@ export type Chapter = {
   dueDate?: string;
   points?: number;
   status: ChapterStatus;
+  locked?: boolean;
   createdAt?: string;
   updatedAt?: string;
 };

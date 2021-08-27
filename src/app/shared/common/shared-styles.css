@@ -126,3 +126,26 @@
   border-top-color: var(--shuddhi-color);
   animation: spinner 0.8s linear infinite;
 }
+
+.locked-content {
+  /* filter: blur(8px);
+  -webkit-filter: blur(2px); */
+  background-color: rgba(0, 0, 0, 0.5); /* Black background with opacity */
+  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+  cursor: not-allowed;
+}
+
+.prerequisites {
+  background: #fff;
+  padding: 5px;
+  border-radius: 5px;
+  display: inline-block;
+  height: 2.1em;
+}
+
+.info-icon {
+  color: var(--blue);
+  float: left;
+  padding: 0px;
+  margin: -2px 5px 5px 0px;
+}
