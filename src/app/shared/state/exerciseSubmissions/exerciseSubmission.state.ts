@@ -196,7 +196,7 @@ export class ExerciseSubmissionState {
         newFetchParams,
       })
     ) {
-      patchState({ isFetching: true });
+      patchState({ isFetching: true, paginatedGradingGroups: [] });
       console.log('variables for exerciseSubmissions fetch ', { variables });
       this.apollo
         .watchQuery({
