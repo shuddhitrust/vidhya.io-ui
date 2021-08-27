@@ -10,7 +10,11 @@ import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
-import { autoGenOptions, parseDateTime } from 'src/app/shared/common/functions';
+import {
+  autoGenOptions,
+  parseDateTime,
+  sortByIndex,
+} from 'src/app/shared/common/functions';
 import {
   ExerciseKey,
   ExerciseQuestionTypeOptions,
@@ -113,10 +117,13 @@ export class GradingDashboardComponent implements OnInit {
     });
     this.exerciseSubmissions$.subscribe((val) => {
       this.resetUnsavedSubmissions();
-      console.log('new exerciseSubmissions from state', {
+      console.log('before sorting', {
+        exerciseSubmissions: val,
+      });
+      this.exerciseSubmissions = sortByIndex(val, 'exercise.index');
+      console.log('after sorting', {
         exerciseSubmissions: this.exerciseSubmissions,
       });
-      this.exerciseSubmissions = val;
     });
     this.updateGradingGroupByFilter();
 
@@ -129,6 +136,18 @@ export class GradingDashboardComponent implements OnInit {
       groupByOptions: this.groupByOptions,
       gradingGroups: this.gradingGroups,
     });
+  }
+
+  submissionSubtitle(submission) {
+    return `${submission?.exercise?.course?.title}${
+      submission?.chapter?.section.title
+        ? ' > ' + submission?.chapter?.section.title
+        : ''
+    }${
+      submission.exercise?.chapter?.dueDate
+        ? `, due on ${parseDateTime(submission.exercise?.chapter?.dueDate)}`
+        : ''
+    }`;
   }
   ngOnInit(): void {}
 

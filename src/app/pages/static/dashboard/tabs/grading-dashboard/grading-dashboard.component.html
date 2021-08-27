@@ -119,32 +119,17 @@
                 <mat-card-title>{{
                   exerciseSubmission?.exercise?.prompt
                 }}</mat-card-title>
-                <mat-card-subtitle
-                  ><small
-                    >Due on
-                    {{
-                      parseDateTime(
-                        exerciseSubmission.exercise?.chapter?.dueDate
-                      )
-                    }}</small
-                  ></mat-card-subtitle
-                >
-                <div *ngIf="exerciseSubmission.exercise?.points">
-                  <mat-form-field
-                    class="points-input-container"
-                    appearance="outline"
-                  >
-                    <input
-                      matInput
-                      type="number"
-                      (keypress)="changePoints($event, exerciseSubmission)"
-                      [value]="exerciseSubmission.points"
-                    />
-                    <span matSuffix class="points-suffix"
-                      >/ {{ exerciseSubmission.exercise?.points }} points</span
+
+                <mat-card-subtitle>
+                  <small>{{ submissionSubtitle(exerciseSubmission) }}</small>
+                  <p>
+                    <small
+                      >Submitted on
+                      {{ parseDateTime(exerciseSubmission.createdAt) }}</small
                     >
-                  </mat-form-field>
-                </div>
+                    by {{ exerciseSubmission?.participant?.name }}
+                  </p></mat-card-subtitle
+                >
               </mat-card-header>
               <mat-card-content>
                 <mat-form-field
@@ -246,15 +231,17 @@
                   <mat-icon>vpn_key</mat-icon>
                 </button>
                 <button
+                  *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
+                  mat-mini-fab
                   type="button"
                   color="primary"
                   class="card-button"
-                  mat-mini-fab
                   (click)="markCorrect(exerciseSubmission)"
                 >
                   <mat-icon>check</mat-icon>
                 </button>
                 <button
+                  *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
                   type="button"
                   color="warn"
                   class="card-button"
@@ -263,6 +250,25 @@
                 >
                   <mat-icon>close</mat-icon>
                 </button>
+                <div
+                  class="card-button"
+                  *ngIf="exerciseSubmission.exercise?.points"
+                >
+                  <mat-form-field
+                    class="points-input-container"
+                    appearance="outline"
+                  >
+                    <input
+                      matInput
+                      type="number"
+                      (keypress)="changePoints($event, exerciseSubmission)"
+                      [value]="exerciseSubmission.points"
+                    />
+                    <span matSuffix class="points-suffix"
+                      >/ {{ exerciseSubmission.exercise?.points }} points</span
+                    >
+                  </mat-form-field>
+                </div>
               </mat-card-actions>
             </mat-card>
           </div>

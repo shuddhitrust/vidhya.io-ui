@@ -520,16 +520,21 @@ export const EXERCISE_SUBMISSION_QUERIES = {
         }
         exercise {
           id
+          index
           questionType
           prompt
           options
           points
           course {
             id
+            title
           }
           chapter {
             id
             dueDate
+            section {
+              title
+            }
           }
         }
         option
@@ -540,6 +545,7 @@ export const EXERCISE_SUBMISSION_QUERIES = {
         percentage
         status
         remarks
+        createdAt
       }
     }
   `,
