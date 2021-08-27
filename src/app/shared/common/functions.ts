@@ -391,9 +391,28 @@ export const compareObjects = (o1, o2) => {
   return true;
 };
 
-export const sortByIndex = (list: any[]) => {
+export const sortByIndex = (list: any[], indexPath: string = 'index') => {
   let newList = Object.assign([], list);
   return newList.sort(function (a, b) {
-    return a.index - b.index;
+    const objectA = deepFind(a, indexPath);
+    const objectB = deepFind(b, indexPath);
+    console.log({ list, indexPath });
+    console.log('a[indexPath] ', objectA, 'b[indexPath]', objectB);
+    return objectA - objectB;
   });
+};
+
+export const deepFind = (obj, path) => {
+  var paths = path.split('.'),
+    current = obj,
+    i;
+
+  for (i = 0; i < paths.length; ++i) {
+    if (current[paths[i]] == undefined) {
+      return undefined;
+    } else {
+      current = current[paths[i]];
+    }
+  }
+  return current;
 };
