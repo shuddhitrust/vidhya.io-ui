@@ -37,6 +37,7 @@ import {
   DeleteExerciseAction,
   FetchExercisesAction,
   FetchNextExercisesAction,
+  ReorderExercisesAction,
   ResetExerciseStateAction,
 } from 'src/app/shared/state/exercises/exercise.actions';
 import {
@@ -69,6 +70,7 @@ import { UploadService } from 'src/app/shared/api/upload.service';
 import { environment } from 'src/environments/environment';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { ExerciseSubmissionService } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.service';
+import { DragDropComponent } from 'src/app/shared/components/drag-drop/drag-drop.component';
 
 const startingExerciseFormOptions = ['', ''];
 
@@ -320,6 +322,34 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     if (!this.isFetchingExercises) {
       this.store.dispatch(new FetchNextExercisesAction());
     }
+  }
+
+  reorderExercises() {
+    const exercisesList = this.exercises.map((e) => {
+      return { index: e.id, label: e.prompt };
+    });
+    console.log('initial index list ', { exercisesList });
+    const dialogRef = this.dialog.open(DragDropComponent, {
+      data: exercisesList,
+    });
+
+    dialogRef.afterClosed().subscribe((newIndexArray) => {
+      console.log('after reordering', { newIndexArray });
+      let i = 1;
+      const reorderedList = newIndexArray.map((index) => {
+        let exercise = this.exercises.find((e) => e.id == index);
+        exercise = { ...exercise, index: i };
+        i++;
+        return exercise;
+      });
+      console.log('old order of exercises ', { exercises: this.exercises });
+      this.exercises = Object.assign([], reorderedList);
+      console.log('new order of exercises ', { exercises: this.exercises });
+      const indexList = this.exercises.map((e) => {
+        return { id: e.id, index: e.index };
+      });
+      this.store.dispatch(new ReorderExercisesAction({ indexList }));
+    });
   }
 
   trackByFn(index: any, item: any) {

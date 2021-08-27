@@ -37,6 +37,14 @@
 
 <div class="feed-header-block">
   <h2>Exercises</h2>
+  <button
+    mat-mini-fab
+    *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
+    (click)="reorderExercises()"
+    class="floating-header-button-top float-left"
+  >
+    <mat-icon>reorder</mat-icon>
+  </button>
 </div>
 <span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
   <span *ngIf="!(isFetchingExercises$ | async); else loading">
