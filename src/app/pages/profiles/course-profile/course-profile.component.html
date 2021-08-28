@@ -44,28 +44,76 @@
 </span>
 
 <div class="feed-header-block">
-  <h2>Chapters</h2>
+  <h2>Sections</h2>
   <button
     *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
     mat-mini-fab
-    (click)="reorderChapters()"
+    color="primary"
+    (click)="reorderSections()"
     class="floating-header-button-top float-left"
   >
     <mat-icon>reorder</mat-icon>
   </button>
+
   <button
-    *ngIf="authorizeResourceMethod(resourceActions.CREATE)"
-    (click)="createChapter()"
-    class="floating-header-button-top profile-button right-button"
-    mat-raised-button
-    color="primary"
+    mat-icon-button
+    [matMenuTriggerFor]="menu"
+    class="floating-header-button-top right-button"
   >
-    Create Chapter
+    <mat-icon>add_circle</mat-icon>
   </button>
+  <mat-menu #menu="matMenu" xPosition="before">
+    <button
+      mat-menu-item
+      *ngIf="authorizeResourceMethod(resourceActions.CREATE)"
+      (click)="createEditSection()"
+    >
+      Section
+    </button>
+    <button
+      mat-menu-item
+      *ngIf="authorizeResourceMethod(resourceActions.CREATE)"
+      (click)="createChapter()"
+    >
+      Chapter
+    </button>
+  </mat-menu>
 </div>
+
+<span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
+  <span *ngIf="!(isFetchingCourseSections$ | async); else loading">
+    <span *ngIf="courseSections.length > 0; else sectionFeedEmpty">
+      <div
+        class="scroll-feed"
+        infiniteScroll
+        [infiniteScrollDistance]="2"
+        [infiniteScrollThrottle]="50"
+        infiniteScrollContainer=".scroll-feed"
+        [fromRoot]="true"
+        (scrolled)="onScroll()"
+      >
+        <div *ngFor="let section of courseSections">
+          <span class="section-card">
+            <button
+              *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
+              mat-mini-fab
+              (click)="reorderChapters(section)"
+            >
+              <mat-icon>reorder</mat-icon>
+            </button>
+            <h2 class="section-title" (click)="createEditSection(section)">
+              {{ section.title }}
+            </h2>
+          </span>
+        </div>
+      </div>
+    </span>
+  </span>
+</span>
+<h2>Chapters</h2>
 <span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
   <span *ngIf="!(isFetchingChapters$ | async); else loading">
-    <span *ngIf="chapters.length > 0; else feedEmpty">
+    <span *ngIf="chapters.length > 0; else chapterFeedEmpty">
       <div
         class="scroll-feed"
         infiniteScroll
@@ -92,12 +140,13 @@
       </div>
     </span>
   </span>
-
-  <ng-template #feedEmpty>
-    <p class="center-title">There are no chapters in this course</p>
-  </ng-template>
 </span>
-
 <ng-template #loading>
   <app-simple-loading-spinner></app-simple-loading-spinner>
+</ng-template>
+<ng-template #chapterFeedEmpty>
+  <p class="center-title">There are no chapters in this course</p>
+</ng-template>
+<ng-template #sectionFeedEmpty>
+  <p class="center-title">There are no sections in this course</p>
 </ng-template>

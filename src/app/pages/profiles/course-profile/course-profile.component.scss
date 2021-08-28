@@ -33,3 +33,21 @@ h2 {
   float: left;
   margin-left: 5%;
 }
+
+.section-card {
+  display: block;
+  width: 90%;
+  height: 3.5em;
+  padding: 5px;
+  border-radius: 5px;
+  background: var(--shuddhi-color);
+  margin: 5px auto;
+}
+
+.section-title {
+  color: white;
+  margin-left: 10px;
+  cursor: pointer;
+  display: inline;
+  text-align: left;
+}

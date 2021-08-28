@@ -5,6 +5,7 @@ import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import {
   DeleteCourseAction,
+  FetchCoursesAction,
   GetCourseAction,
   PublishCourseAction,
   ResetCourseFormAction,
@@ -19,6 +20,7 @@ import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   Chapter,
   Course,
+  CourseSection,
   CourseStatusOptions,
   resources,
   RESOURCE_ACTIONS,
@@ -35,6 +37,13 @@ import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { DragDropComponent } from 'src/app/shared/components/drag-drop/drag-drop.component';
 import { sortByIndex } from 'src/app/shared/common/functions';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
+import { CourseSectionModalComponent } from '../../modals/course-section-modal/course-section-modal.component';
+import { emptyCourseSectionFormRecord } from 'src/app/shared/state/courseSections/courseSection.model';
+import { CourseSectionState } from 'src/app/shared/state/courseSections/courseSection.state';
+import {
+  FetchCourseSectionsAction,
+  ReorderCourseSectionsAction,
+} from 'src/app/shared/state/courseSections/courseSection.actions';
 
 @Component({
   selector: 'app-course-profile',
@@ -56,9 +65,16 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
   @Select(ChapterState.isFetching)
   isFetchingChapters$: Observable<boolean>;
   isFetchingChapters: boolean;
+  @Select(CourseSectionState.listCourseSections)
+  courseSections$: Observable<CourseSection[]>;
+  courseSections: CourseSection[];
+  @Select(ChapterState.isFetching)
+  isFetchingCourseSections$: Observable<boolean>;
+  isFetchingCourseSections: boolean;
   @Select(CourseState.isFetching)
   isFetchingCourse$: Observable<boolean>;
   courseStatusOptions = CourseStatusOptions;
+
   constructor(
     public dialog: MatDialog,
     private location: Location,
@@ -68,6 +84,9 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
     private auth: AuthorizationService
   ) {
     // this.fetchChapters()
+    this.courseSections$.subscribe((val) => {
+      this.courseSections = sortByIndex(val);
+    });
     this.isFetchingChapters$.subscribe((val) => {
       this.isFetchingChapters = val;
     });
@@ -104,7 +123,12 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       const courseId = params['id'];
-      this.store.dispatch(new GetCourseAction({ id: courseId }));
+      if (courseId) {
+        this.store.dispatch(new GetCourseAction({ id: courseId }));
+        this.store.dispatch(
+          new FetchCourseSectionsAction({ courseId: courseId })
+        );
+      }
     });
   }
 
@@ -144,8 +168,40 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
       this.store.dispatch(new FetchNextChaptersAction());
     }
   }
+  reorderSections() {
+    const sectionsList = this.courseSections.map((c) => {
+      return { index: c.id, label: c.title };
+    });
+    console.log('initial index list ', { sectionsList });
+    const dialogRef = this.dialog.open(DragDropComponent, {
+      data: sectionsList,
+    });
 
-  reorderChapters() {
+    dialogRef.afterClosed().subscribe((newIndexArray) => {
+      console.log('after reordering', { newIndexArray });
+      let i = 1;
+      const reorderedList = newIndexArray.map((index) => {
+        let chapter = this.chapters.find((c) => c.id == index);
+        chapter = { ...chapter, index: i };
+        i++;
+        return chapter;
+      });
+      console.log('old order of chapters ', { chapters: this.chapters });
+      this.chapters = Object.assign([], reorderedList);
+      console.log('new order of chapters ', { chapters: this.chapters });
+      const indexList = this.chapters.map((c) => {
+        return { id: c.id, index: c.index };
+      });
+      this.store.dispatch(new ReorderCourseSectionsAction({ indexList }));
+    });
+  }
+  reorderChapters(section = null) {
+    let chapters = this.chapters;
+    if (section) {
+      chapters = chapters.filter((c) => {
+        return c.section?.id == section.id;
+      });
+    }
     const chaptersList = this.chapters.map((c) => {
       return { index: c.id, label: c.title };
     });
@@ -177,6 +233,18 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
       new SetCourseInChapterForm({ courseId: this.course?.id })
     );
     this.router.navigateByUrl(uiroutes.CHAPTER_FORM_ROUTE.route);
+  }
+  createEditSection(courseSection = emptyCourseSectionFormRecord) {
+    const dialogRef = this.dialog.open(CourseSectionModalComponent, {
+      data: {
+        course: this.course,
+        courseSection: courseSection,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('close dialog result for create course section => ', result);
+    });
   }
 
   chapterPrerequisites(chapter) {

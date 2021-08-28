@@ -41,6 +41,13 @@
   height: 50px;
 }
 
+.float-left {
+  float: left;
+}
+.float-right {
+  float: right;
+}
+
 .center-title {
   text-align: center;
 }

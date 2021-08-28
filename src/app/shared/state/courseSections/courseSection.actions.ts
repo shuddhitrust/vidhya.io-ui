@@ -1,29 +1,17 @@
 import { FormGroup, FormGroupDirective } from '@angular/forms';
 import { SearchParams } from '../../abstract/master-grid/table.model';
-import { idPayload } from '../../common/models';
+import { idPayload, IndexListType } from '../../common/models';
 
 export class FetchCourseSectionsAction {
   static readonly type = '[COURSE SECTIONS] Fetch';
 
-  constructor(public payload: { searchParams: SearchParams }) {}
-}
-
-export class FetchNextCourseSectionsAction {
-  static readonly type = '[COURSE SECTIONS] Fetch Next';
-
-  constructor() {}
+  constructor(public payload: { courseId: number }) {}
 }
 
 export class CourseSectionSubscriptionAction {
   static readonly type = '[COURSE SECTIONS] Subscribe';
 
   constructor() {}
-}
-
-export class ForceRefetchCourseSectionsAction {
-  static readonly type = '[COURSE SECTIONS] Fetch from network';
-
-  constructor(public payload: { searchParams: SearchParams }) {}
 }
 
 export class GetCourseSectionAction {
@@ -53,4 +41,9 @@ export class DeleteCourseSectionAction {
   static readonly type = '[COURSE SECTION] Delete';
 
   constructor(public payload: idPayload) {}
+}
+export class ReorderCourseSectionsAction {
+  static readonly type = '[CHAPTERS] Reorder';
+
+  constructor(public payload: { indexList: IndexListType[] }) {}
 }

@@ -1,0 +1,61 @@
+<div mat-dialog-content class="dialog-box">
+  <mat-card-header>
+    <mat-card-title>Course Section</mat-card-title>
+  </mat-card-header>
+  <mat-card>
+    <mat-card-content>
+      <form
+        [formGroup]="sectionForm"
+        novalidate
+        (submit)="submitForm(sectionForm, formDirective)"
+        #formDirective="ngForm"
+      >
+        <mat-form-field
+          class="col-lg-8 col-md-8 col-sm-12"
+          appearance="outline"
+        >
+          <mat-label>Title</mat-label>
+          <input
+            matInput
+            formControlName="title"
+            required
+            placeholder="Title of the section"
+          />
+        </mat-form-field>
+
+        <mat-form-field
+          class="col-lg-4 col-md-4 col-sm-12"
+          appearance="outline"
+        >
+          <mat-label>Index</mat-label>
+          <input
+            matInput
+            type="number"
+            formControlName="index"
+            placeholder="Which order it must appear in the course"
+          />
+        </mat-form-field>
+        <button
+          type="submit"
+          mat-raised-button
+          color="primary"
+          class="submit-button"
+          [disabled]="(formSubmitting$ | async) === true"
+        >
+          {{ (formSubmitting$ | async) === true ? "Saving..." : "Save" }}
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+  <mat-dialog-actions>
+    <button
+      mat-mini-fab
+      color="warn"
+      *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
+      class="float-left"
+      (click)="deleteConfirmation()"
+    >
+      <mat-icon>delete</mat-icon>
+    </button>
+  </mat-dialog-actions>
+</div>

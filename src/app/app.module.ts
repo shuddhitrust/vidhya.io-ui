@@ -174,6 +174,10 @@ import { ScullyLibModule } from '@scullyio/ng-lib';
 import { LMarkdownEditorModule } from 'ngx-markdown-editor';
 import { MarkdownModule } from 'ngx-markdown';
 import { DragDropComponent } from './shared/components/drag-drop/drag-drop.component';
+import {
+  CourseSectionModalComponent,
+  CouseSectionDeleteConfirmationDialog,
+} from './pages/modals/course-section-modal/course-section-modal.component';
 
 @NgModule({
   declarations: [
@@ -243,6 +247,8 @@ import { DragDropComponent } from './shared/components/drag-drop/drag-drop.compo
     ExercicseKeyDialog,
     PrivacyComponent,
     DragDropComponent,
+    CourseSectionModalComponent,
+    CouseSectionDeleteConfirmationDialog,
   ],
   imports: [
     BrowserModule,

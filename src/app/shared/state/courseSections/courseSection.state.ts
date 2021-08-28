@@ -12,9 +12,8 @@ import {
   CreateUpdateCourseSectionAction,
   DeleteCourseSectionAction,
   FetchCourseSectionsAction,
-  FetchNextCourseSectionsAction,
-  ForceRefetchCourseSectionsAction,
   GetCourseSectionAction,
+  ReorderCourseSectionsAction,
   ResetCourseSectionFormAction,
 } from './courseSection.actions';
 import { COURSE_SECTION_QUERIES } from '../../api/graphql/queries.graphql';
@@ -34,6 +33,7 @@ import {
   updateFetchParams,
   convertPaginatedListToNormalList,
   paginatedSubscriptionUpdater,
+  sortByIndex,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
@@ -105,119 +105,48 @@ export class CourseSectionState {
     return state.courseSectionFormRecord;
   }
 
-  @Action(ForceRefetchCourseSectionsAction)
-  forceRefetchCourseSections({
-    patchState,
-  }: StateContext<CourseSectionStateModel>) {
-    patchState({ fetchPolicy: 'network-only' });
-    this.store.dispatch(
-      new FetchCourseSectionsAction({ searchParams: defaultSearchParams })
-    );
-  }
-
-  @Action(FetchNextCourseSectionsAction)
-  fetchNextCourseSections({ getState }: StateContext<CourseSectionStateModel>) {
-    const state = getState();
-    const lastPageNumber = state.lastPage;
-    const previousFetchParams =
-      state.fetchParamObjects[state.fetchParamObjects.length - 1];
-    const pageNumber = previousFetchParams.currentPage + 1;
-    const newSearchParams: SearchParams = {
-      pageNumber,
-      pageSize: previousFetchParams.pageSize,
-      searchQuery: previousFetchParams.searchQuery,
-      columnFilters: previousFetchParams.columnFilters,
-    };
-    if (
-      !lastPageNumber ||
-      (lastPageNumber != null && pageNumber <= lastPageNumber)
-    ) {
-      this.store.dispatch(
-        new FetchCourseSectionsAction({ searchParams: newSearchParams })
-      );
-    }
-  }
   @Action(FetchCourseSectionsAction)
   fetchCourseSections(
     { getState, patchState }: StateContext<CourseSectionStateModel>,
     { payload }: FetchCourseSectionsAction
   ) {
     console.log('Fetching courseSections from courseSection state');
-    let { searchParams } = payload;
+    let { courseId } = payload;
     const state = getState();
     const { fetchPolicy, fetchParamObjects, courseSectionsSubscribed } = state;
-    const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
-    let newFetchParams = updateFetchParams({
-      fetchParamObjects,
-      newPageNumber: pageNumber,
-      newPageSize: pageSize,
-      newSearchQuery: searchQuery,
-      newColumnFilters: columnFilters,
-    });
     const variables = {
-      searchField: searchQuery,
-      limit: newFetchParams.pageSize,
-      offset: newFetchParams.offset,
+      courseId,
     };
-    if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
-      patchState({ isFetching: true });
-      console.log('variables for courseSections fetch ', { variables });
-      this.apollo
-        .watchQuery({
-          query: COURSE_SECTION_QUERIES.GET_COURSE_SECTIONS,
-          variables,
-          fetchPolicy,
-        })
-        .valueChanges.subscribe(
-          ({ data }: any) => {
-            console.log('resposne to get courseSections query ', { data });
-            const response = data.courseSections;
-            const totalCount = response[0]?.totalCount
-              ? response[0]?.totalCount
-              : 0;
-            newFetchParams = { ...newFetchParams, totalCount };
-            console.log('from after getting courseSections', {
-              totalCount,
-              response,
-              newFetchParams,
-            });
-            let paginatedCourseSections = state.paginatedCourseSections;
-            paginatedCourseSections = {
-              ...paginatedCourseSections,
-              [pageNumber]: response,
-            };
-            console.log({ paginatedCourseSections });
-            let courseSections = convertPaginatedListToNormalList(
-              paginatedCourseSections
-            );
-            let lastPage = null;
-            if (response.length < newFetchParams.pageSize) {
-              lastPage = newFetchParams.currentPage;
-            }
-            patchState({
-              courseSections,
-              paginatedCourseSections,
-              lastPage,
-              fetchParamObjects: state.fetchParamObjects.concat([
-                newFetchParams,
-              ]),
-              isFetching: false,
-            });
-            if (!courseSectionsSubscribed) {
-              this.store.dispatch(new CourseSectionSubscriptionAction());
-            }
-          },
-          (error) => {
-            this.store.dispatch(
-              new ShowNotificationAction({
-                message: getErrorMessageFromGraphQLResponse(error),
-                action: 'error',
-              })
-            );
-            patchState({ isFetching: false });
+    patchState({ isFetching: true });
+    console.log('variables for courseSections fetch ', { variables });
+    this.apollo
+      .watchQuery({
+        query: COURSE_SECTION_QUERIES.GET_COURSE_SECTIONS,
+        variables,
+        fetchPolicy,
+      })
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          console.log('resposne to get courseSections query ', { data });
+          const response = data.courseSections;
+          patchState({
+            courseSections: response,
+            isFetching: false,
+          });
+          if (!courseSectionsSubscribed) {
+            this.store.dispatch(new CourseSectionSubscriptionAction());
           }
-        );
-    }
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetching: false });
+        }
+      );
   }
 
   @Action(CourseSectionSubscriptionAction)
@@ -240,15 +169,18 @@ export class CourseSectionState {
           const method = result?.data?.notifyCourseSection?.method;
           const courseSection =
             result?.data?.notifyCourseSection?.courseSection;
-          const { newPaginatedItems, newItemsList } =
-            paginatedSubscriptionUpdater({
-              paginatedItems: state.paginatedCourseSections,
-              method,
-              modifiedItem: courseSection,
-            });
+          if (method == SUBSCRIPTION_METHODS.CREATE_METHOD) {
+          }
+          const { items, fetchParamObjects } = subscriptionUpdater({
+            items: state.courseSections,
+            method,
+            subscriptionItem: courseSection,
+            fetchParamObjects: state.fetchParamObjects,
+          });
+          const newItemsList = sortByIndex(items);
           patchState({
             courseSections: newItemsList,
-            paginatedCourseSections: newPaginatedItems,
+            fetchParamObjects,
             courseSectionsSubscribed: true,
           });
         });
@@ -419,11 +351,6 @@ export class CourseSectionState {
                 action: 'success',
               })
             );
-            this.store.dispatch(
-              new ForceRefetchCourseSectionsAction({
-                searchParams: defaultSearchParams,
-              })
-            );
           } else {
             this.store.dispatch(
               new ShowNotificationAction({
@@ -452,5 +379,32 @@ export class CourseSectionState {
       courseSectionFormRecord: emptyCourseSectionFormRecord,
       formSubmitting: false,
     });
+  }
+
+  @Action(ReorderCourseSectionsAction)
+  reorderChapters(
+    {}: StateContext<CourseSectionStateModel>,
+    { payload }: ReorderCourseSectionsAction
+  ) {
+    const { indexList } = payload;
+    this.apollo
+      .mutate({
+        mutation: COURSE_SECTION_MUTATIONS.REORDER_COURSE_SECTIONS,
+        variables: { indexList },
+      })
+      .subscribe(
+        ({ data }: any) => {
+          const response = data.reorderChapters;
+          console.log('Reordering of course sections ', { response });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+        }
+      );
   }
 }
