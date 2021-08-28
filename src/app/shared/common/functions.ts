@@ -185,6 +185,36 @@ export const fetchParamsNewOrNot = ({
   return result;
 };
 
+export const columnFiltersChanged = ({
+  fetchParamObjects,
+  newFetchParams,
+}: {
+  fetchParamObjects: FetchParams[];
+  newFetchParams: FetchParams;
+}): boolean => {
+  console.log('from fetchParamsNewOrNot', {
+    fetchParamObjects,
+    newFetchParams,
+  });
+  let result = true;
+  // if (fetchParamObjects.length < 1) {
+  //   return true;
+  // }
+
+  if (fetchParamObjects.length > 0) {
+    const lastFetchParams = fetchParamObjects[fetchParamObjects.length - 1];
+    if (
+      compareObjects(
+        lastFetchParams.columnFilters,
+        newFetchParams.columnFilters
+      )
+    ) {
+      return false;
+    }
+  }
+  return result;
+};
+
 export const updateFetchParams = ({
   fetchParamObjects,
   newPageNumber,

@@ -38,6 +38,7 @@ import {
   updateFetchParams,
   convertPaginatedListToNormalList,
   paginatedSubscriptionUpdater,
+  columnFiltersChanged,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
@@ -170,7 +171,7 @@ export class ExerciseSubmissionState {
   ) {
     console.log('Fetching exerciseSubmissions from exerciseSubmission state');
     let { searchParams } = payload;
-    const state = getState();
+    let state = getState();
     const {
       fetchPolicy,
       exerciseSubmissionsSubscribed,
@@ -196,7 +197,7 @@ export class ExerciseSubmissionState {
         newFetchParams,
       })
     ) {
-      patchState({ isFetching: true, paginatedGradingGroups: [] });
+      patchState({ isFetching: true });
       console.log('variables for exerciseSubmissions fetch ', { variables });
       this.apollo
         .watchQuery({
@@ -217,6 +218,16 @@ export class ExerciseSubmissionState {
               response,
               newFetchParams,
             });
+            if (
+              columnFiltersChanged({
+                fetchParamObjects: gradingGroupsfetchParamObjects,
+                newFetchParams,
+              })
+            ) {
+              // Resetting the state to clear existing groups.
+              patchState({ paginatedGradingGroups: [] });
+              state = getState();
+            }
             let paginatedGradingGroups = state.paginatedGradingGroups;
             paginatedGradingGroups = {
               ...paginatedGradingGroups,
