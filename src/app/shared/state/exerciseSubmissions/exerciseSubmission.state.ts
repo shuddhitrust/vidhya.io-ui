@@ -224,9 +224,22 @@ export class ExerciseSubmissionState {
                 newFetchParams,
               })
             ) {
+              console.log('filter params have changed ', {
+                old: gradingGroupsfetchParamObjects[
+                  gradingGroupsfetchParamObjects?.length - 1
+                ]?.columnFilters,
+                new: newFetchParams.columnFilters,
+              });
               // Resetting the state to clear existing groups.
               patchState({ paginatedGradingGroups: [] });
               state = getState();
+            } else {
+              console.log('filter params have NOT changed ', {
+                old: gradingGroupsfetchParamObjects[
+                  gradingGroupsfetchParamObjects?.length - 1
+                ]?.columnFilters,
+                new: newFetchParams.columnFilters,
+              });
             }
             let paginatedGradingGroups = state.paginatedGradingGroups;
             paginatedGradingGroups = {
