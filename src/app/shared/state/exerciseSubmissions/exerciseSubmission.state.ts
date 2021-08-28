@@ -421,17 +421,15 @@ export class ExerciseSubmissionState {
           const exerciseSubmission =
             result?.data?.notifyExerciseSubmission?.exerciseSubmission;
           // Replacing the existing submissions in state with the modified submissions in the response
-          const { newPaginatedItems, newItemsList, newFetchParams } =
+          const { newPaginatedItems, newItemsList } =
             paginatedSubscriptionUpdater({
               paginatedItems: state.paginatedExerciseSubmissions,
               method,
               modifiedItem: exerciseSubmission,
-              fetchParamObjects: state.fetchParamObjects,
             });
           patchState({
             exerciseSubmissions: newItemsList,
             paginatedExerciseSubmissions: newPaginatedItems,
-            fetchParamObjects: newFetchParams,
             exerciseSubmissionsSubscribed: true,
           });
         });

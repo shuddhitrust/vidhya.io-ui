@@ -86,7 +86,6 @@ export const paginatedSubscriptionUpdater = ({
   paginatedItems,
   method,
   modifiedItem,
-  fetchParamObjects = null,
   pk = 'id',
 }: {
   paginatedItems: any;
@@ -99,10 +98,8 @@ export const paginatedSubscriptionUpdater = ({
     paginatedItems,
     method,
     modifiedItem,
-    fetchParamObjects,
   });
   let newPaginatedItems = {};
-  let newFetchParams = [];
   if (modifiedItem && method) {
     if (method == SUBSCRIPTION_METHODS.CREATE_METHOD) {
       newPaginatedItems = Object.assign({}, paginatedItems);
@@ -142,12 +139,8 @@ export const paginatedSubscriptionUpdater = ({
     }
   }
   const newItemsList = convertPaginatedListToNormalList(newPaginatedItems);
-  if (fetchParamObjects) {
-    let fetchParams = fetchParamObjects[fetchParamObjects.length - 1];
 
-    newFetchParams = fetchParamObjects.concat([fetchParams]);
-  }
-  return { newPaginatedItems, newItemsList, newFetchParams };
+  return { newPaginatedItems, newItemsList };
 };
 
 export const fetchParamsNewOrNot = ({

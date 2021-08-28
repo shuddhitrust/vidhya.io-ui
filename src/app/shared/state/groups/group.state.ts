@@ -226,17 +226,15 @@ export class GroupState {
           });
           const method = result?.data?.notifyGroup?.method;
           const group = result?.data?.notifyGroup?.group;
-          const { newPaginatedItems, newItemsList, newFetchParams } =
+          const { newPaginatedItems, newItemsList } =
             paginatedSubscriptionUpdater({
               paginatedItems: state.paginatedGroups,
               method,
               modifiedItem: group,
-              fetchParamObjects: state.fetchParamObjects,
             });
           patchState({
             groups: newItemsList,
             paginatedGroups: newPaginatedItems,
-            fetchParamObjects: newFetchParams,
             groupsSubscribed: true,
           });
         });

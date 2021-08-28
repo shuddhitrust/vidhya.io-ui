@@ -240,17 +240,15 @@ export class CourseSectionState {
           const method = result?.data?.notifyCourseSection?.method;
           const courseSection =
             result?.data?.notifyCourseSection?.courseSection;
-          const { newPaginatedItems, newItemsList, newFetchParams } =
+          const { newPaginatedItems, newItemsList } =
             paginatedSubscriptionUpdater({
               paginatedItems: state.paginatedCourseSections,
               method,
               modifiedItem: courseSection,
-              fetchParamObjects: state.fetchParamObjects,
             });
           patchState({
             courseSections: newItemsList,
             paginatedCourseSections: newPaginatedItems,
-            fetchParamObjects: newFetchParams,
             courseSectionsSubscribed: true,
           });
         });

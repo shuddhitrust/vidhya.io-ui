@@ -250,17 +250,15 @@ export class ChapterState {
           });
           const method = result?.data?.notifyChapter?.method;
           const chapter = result?.data?.notifyChapter?.chapter;
-          const { newPaginatedItems, newItemsList, newFetchParams } =
+          const { newPaginatedItems, newItemsList } =
             paginatedSubscriptionUpdater({
               paginatedItems: state.paginatedChapters,
               method,
               modifiedItem: chapter,
-              fetchParamObjects: state.fetchParamObjects,
             });
           patchState({
             chapters: newItemsList,
             paginatedChapters: newPaginatedItems,
-            fetchParamObjects: newFetchParams,
             chaptersSubscribed: true,
           });
         });

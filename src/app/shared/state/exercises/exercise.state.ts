@@ -262,17 +262,15 @@ export class ExerciseState {
           });
           const method = result?.data?.notifyExercise?.method;
           const exercise = result?.data?.notifyExercise?.exercise;
-          const { newPaginatedItems, newItemsList, newFetchParams } =
+          const { newPaginatedItems, newItemsList } =
             paginatedSubscriptionUpdater({
               paginatedItems: state.paginatedExercises,
               method,
               modifiedItem: exercise,
-              fetchParamObjects: state.fetchParamObjects,
             });
           patchState({
             exercises: newItemsList,
             paginatedExercises: newPaginatedItems,
-            fetchParamObjects: newFetchParams,
             exercisesSubscribed: true,
           });
         });

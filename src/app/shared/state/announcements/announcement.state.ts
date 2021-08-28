@@ -242,7 +242,6 @@ export class AnnouncementState {
               paginatedItems: state.paginatedAnnouncements,
               method,
               modifiedItem: announcement,
-              fetchParamObjects: state.fetchParamObjects,
             });
           patchState({
             announcements: newItemsList,

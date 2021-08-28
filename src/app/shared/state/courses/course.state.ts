@@ -228,17 +228,15 @@ export class CourseState {
           });
           const method = result?.data?.notifyCourse?.method;
           const course = result?.data?.notifyCourse?.course;
-          const { newPaginatedItems, newItemsList, newFetchParams } =
+          const { newPaginatedItems, newItemsList } =
             paginatedSubscriptionUpdater({
               paginatedItems: state.paginatedCourses,
               method,
               modifiedItem: course,
-              fetchParamObjects: state.fetchParamObjects,
             });
           patchState({
             courses: newItemsList,
             paginatedCourses: newPaginatedItems,
-            fetchParamObjects: newFetchParams,
             coursesSubscribed: true,
           });
         });
