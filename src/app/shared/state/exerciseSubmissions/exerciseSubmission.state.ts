@@ -262,9 +262,9 @@ export class ExerciseSubmissionState {
                 state.gradingGroupsfetchParamObjects.concat([newFetchParams]),
               isFetching: false,
             });
-            if (!exerciseSubmissionsSubscribed) {
-              this.store.dispatch(new ExerciseSubmissionSubscriptionAction());
-            }
+            // if (!exerciseSubmissionsSubscribed) {
+            //   this.store.dispatch(new ExerciseSubmissionSubscriptionAction());
+            // }
           },
           (error) => {
             this.store.dispatch(
