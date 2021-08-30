@@ -44,7 +44,7 @@
 </span>
 
 <div class="feed-header-block">
-  <h2>Sections</h2>
+  <h2>Contents</h2>
   <button
     *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
     mat-mini-fab
@@ -102,16 +102,25 @@
               <mat-icon>reorder</mat-icon>
             </button>
             <h2 class="section-title" (click)="createEditSection(section)">
-              {{ section.title }}
+              {{ section.index + " " + section.title }}
             </h2>
           </span>
+          <ng-container
+            *ngTemplateOutlet="
+              chaptersListTemplate;
+              context: { chapters: sectionChapters(section) }
+            "
+          ></ng-container>
         </div>
       </div>
     </span>
   </span>
 </span>
-<h2>Chapters</h2>
-<span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
+<span
+  *ngIf="
+    authorizeResourceMethod(resourceActions.LIST) && sectionChapters().length
+  "
+>
   <span *ngIf="!(isFetchingChapters$ | async); else loading">
     <span *ngIf="chapters.length > 0; else chapterFeedEmpty">
       <div
@@ -123,24 +132,39 @@
         [fromRoot]="true"
         (scrolled)="onScroll()"
       >
-        <div *ngFor="let chapter of chapters">
-          <mat-card
-            [ngClass]="
-              chapter.locked ? 'feed-card locked-content' : 'feed-card'
-            "
-            (click)="openChapter(chapter)"
-          >
-            {{ chapter.title }}
-            <div *ngIf="chapter.locked" class="prerequisites">
-              <mat-icon class="info-icon">info</mat-icon>
-              {{ chapterPrerequisites(chapter) }}
-            </div>
-          </mat-card>
-        </div>
+        <ng-container
+          *ngTemplateOutlet="
+            chaptersListTemplate;
+            context: { chapters: sectionChapters() }
+          "
+        ></ng-container>
       </div>
     </span>
   </span>
 </span>
+
+<ng-template let-chapters="chapters" #chaptersListTemplate>
+  <div
+    *ngFor="let chapter of chapters"
+    [ngClass]="chapter.section?.id ? 'section-chapter' : ''"
+  >
+    <mat-card
+      [ngClass]="chapter.locked ? 'feed-card locked-content' : 'feed-card'"
+      (click)="openChapter(chapter)"
+    >
+      {{ chapterTitle(chapter) }}
+
+      <div *ngIf="chapter.locked" class="prerequisites">
+        <mat-icon class="info-icon">info</mat-icon>
+        {{ chapterPrerequisites(chapter) }}
+      </div>
+      <br />
+      <small class="chapter-due-date" *ngIf="chapter.dueDate"
+        >Due on {{ parseDate(chapter.dueDate) }}</small
+      >
+    </mat-card>
+  </div>
+</ng-template>
 <ng-template #loading>
   <app-simple-loading-spinner></app-simple-loading-spinner>
 </ng-template>

@@ -35,7 +35,7 @@ import {
 } from 'src/app/shared/state/chapters/chapter.actions';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { DragDropComponent } from 'src/app/shared/components/drag-drop/drag-drop.component';
-import { sortByIndex } from 'src/app/shared/common/functions';
+import { parseDateTime, sortByIndex } from 'src/app/shared/common/functions';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { CourseSectionModalComponent } from '../../modals/course-section-modal/course-section-modal.component';
 import { emptyCourseSectionFormRecord } from 'src/app/shared/state/courseSections/courseSection.model';
@@ -74,6 +74,7 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
   @Select(CourseState.isFetching)
   isFetchingCourse$: Observable<boolean>;
   courseStatusOptions = CourseStatusOptions;
+  courseId = null;
 
   constructor(
     public dialog: MatDialog,
@@ -95,12 +96,11 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
     });
     this.course$.subscribe((val) => {
       this.course = val;
-      this.fetchChapters();
     });
   }
 
   chapterFilters() {
-    return { courseId: this.course?.id };
+    return { courseId: this.courseId };
   }
 
   fetchChapters() {
@@ -122,12 +122,13 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
-      const courseId = params['id'];
-      if (courseId) {
-        this.store.dispatch(new GetCourseAction({ id: courseId }));
+      this.courseId = params['id'];
+      if (this.courseId) {
+        this.store.dispatch(new GetCourseAction({ id: this.courseId }));
         this.store.dispatch(
-          new FetchCourseSectionsAction({ courseId: courseId })
+          new FetchCourseSectionsAction({ courseId: this.courseId })
         );
+        this.fetchChapters();
       }
     });
   }
@@ -181,15 +182,15 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
       console.log('after reordering', { newIndexArray });
       let i = 1;
       const reorderedList = newIndexArray.map((index) => {
-        let chapter = this.chapters.find((c) => c.id == index);
-        chapter = { ...chapter, index: i };
+        let section = this.courseSections.find((c) => c.id == index);
+        section = { ...section, index: i };
         i++;
-        return chapter;
+        return section;
       });
-      console.log('old order of chapters ', { chapters: this.chapters });
-      this.chapters = Object.assign([], reorderedList);
-      console.log('new order of chapters ', { chapters: this.chapters });
-      const indexList = this.chapters.map((c) => {
+      console.log('old order of sections ', { sections: this.courseSections });
+      this.courseSections = Object.assign([], reorderedList);
+      console.log('new order of sections ', { sections: this.courseSections });
+      const indexList = this.courseSections.map((c) => {
         return { id: c.id, index: c.index };
       });
       this.store.dispatch(new ReorderCourseSectionsAction({ indexList }));
@@ -228,11 +229,17 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
       this.store.dispatch(new ReorderChaptersAction({ indexList }));
     });
   }
+  parseDate(date) {
+    return parseDateTime(date);
+  }
+
   createChapter() {
-    this.store.dispatch(
-      new SetCourseInChapterForm({ courseId: this.course?.id })
-    );
-    this.router.navigateByUrl(uiroutes.CHAPTER_FORM_ROUTE.route);
+    // this.store.dispatch(
+    //   new SetCourseInChapterForm({ courseId: this.course?.id })
+    // );
+    this.router.navigate([uiroutes.CHAPTER_FORM_ROUTE.route], {
+      queryParams: { courseId: this.course.id },
+    });
   }
   createEditSection(courseSection = emptyCourseSectionFormRecord) {
     const dialogRef = this.dialog.open(CourseSectionModalComponent, {
@@ -247,6 +254,16 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
     });
   }
 
+  sectionChapters(section = { id: null }) {
+    return this.chapters.filter((c) => {
+      return c.section?.id == section.id;
+    });
+  }
+  chapterTitle(chapter) {
+    return `${chapter.section?.index ? chapter.section?.index + '.' : ''}${
+      chapter.index ? chapter.index : ''
+    } ${chapter.title}`;
+  }
   chapterPrerequisites(chapter) {
     let prerequisites = '';
     chapter?.prerequisites?.forEach((c) => {
@@ -262,7 +279,7 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
   openChapter(chapter) {
     if (!chapter.locked) {
       this.router.navigate([uiroutes.CHAPTER_PROFILE_ROUTE.route], {
-        queryParams: { id: chapter.id },
+        queryParams: { id: chapter.id, courseId: this.course.id },
       });
     } else {
       this.store.dispatch(

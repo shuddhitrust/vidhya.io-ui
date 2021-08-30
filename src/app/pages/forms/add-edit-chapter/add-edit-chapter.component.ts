@@ -27,6 +27,11 @@ import { GroupState } from 'src/app/shared/state/groups/group.state';
 import { FetchCoursesAction } from 'src/app/shared/state/courses/course.actions';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { CourseState } from 'src/app/shared/state/courses/course.state';
+import { CourseSectionState } from 'src/app/shared/state/courseSections/courseSection.state';
+import {
+  FetchCourseSectionsAction,
+  GetCourseSectionAction,
+} from 'src/app/shared/state/courseSections/courseSection.actions';
 @Component({
   selector: 'app-add-edit-chapter',
   templateUrl: './add-edit-chapter.component.html',
@@ -59,7 +64,9 @@ export class AddEditChapterComponent implements OnInit {
   courseOptions$: Observable<MatSelectOption[]>;
   @Select(ChapterState.listChapterOptions)
   chapterOptions$: Observable<MatSelectOption[]>;
-
+  @Select(CourseSectionState.listCourseSectionOptions)
+  courseSectionOptions$: Observable<MatSelectOption[]>;
+  courseId = null;
   constructor(
     private location: Location,
     private store: Store,
@@ -70,17 +77,14 @@ export class AddEditChapterComponent implements OnInit {
       new FetchCoursesAction({ searchParams: defaultSearchParams })
     );
     this.chapterForm = this.setupChapterFormGroup();
-    this.courseOptions$.subscribe((val) =>
-      console.log('ChapterFormRecord course options = >', val)
-    );
+    this.courseOptions$.subscribe((val) => {
+      console.log('ChapterFormRecord course options = >', val);
+      this.chapterForm.get('course').setValue(this.courseId);
+    });
     this.chapterFormRecord$.subscribe((val) => {
       this.chapterFormRecord = val;
       console.log('ChapterFormRecord => ', val);
       this.chapterForm = this.setupChapterFormGroup(this.chapterFormRecord);
-    });
-
-    this.currentUserId$.subscribe((val) => {
-      this.currentUserId = val;
     });
   }
 
@@ -94,14 +98,20 @@ export class AddEditChapterComponent implements OnInit {
       title: [chapterFormRecord?.title, Validators.required],
       index: [chapterFormRecord?.index],
       instructions: [chapterFormRecord?.instructions, Validators.required],
-      course: [chapterFormRecord?.course?.id, Validators.required],
+      course: [
+        chapterFormRecord?.course?.id
+          ? chapterFormRecord?.course.id
+          : this.courseId,
+        Validators.required,
+      ],
+      section: [chapterFormRecord?.section?.id],
       prerequisites: [
         chapterFormRecord.prerequisites?.length
           ? chapterFormRecord.prerequisites?.map((i) => i.id)
           : [],
       ],
       dueDate: [chapterFormRecord?.dueDate],
-      points: [chapterFormRecord?.points],
+      // points: [chapterFormRecord?.points],
       status: [chapterFormRecord?.status],
     });
   };
@@ -109,8 +119,15 @@ export class AddEditChapterComponent implements OnInit {
     this.route.queryParams.subscribe((params) => {
       this.params = params;
       const id = params['id'];
+      this.courseId = params['courseId'];
+      console.log('From ngOnInit of add-edit-chapter', { id });
       if (id) {
         this.store.dispatch(new GetChapterAction({ id }));
+      }
+      if (this.courseId) {
+        this.store.dispatch(
+          new FetchCourseSectionsAction({ courseId: this.courseId })
+        );
       }
     });
   }

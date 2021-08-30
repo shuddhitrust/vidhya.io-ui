@@ -350,6 +350,7 @@ export const CHAPTER_QUERIES = {
       chapter(id: $id) {
         id
         title
+        index
         instructions
         course {
           id
@@ -391,6 +392,7 @@ export const CHAPTER_QUERIES = {
         section {
           id
           title
+          index
         }
         dueDate
         points

@@ -52,7 +52,9 @@ export class ChapterProfileComponent implements OnDestroy {
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
       const chapterId = params['id'];
-      this.store.dispatch(new GetChapterAction({ id: chapterId }));
+      if (chapterId) {
+        this.store.dispatch(new GetChapterAction({ id: chapterId }));
+      }
     });
   }
   showDraft() {

@@ -360,6 +360,7 @@ export const CHAPTER_MUTATIONS = {
         chapter {
           id
           title
+          index
           instructions
           course {
             id
@@ -369,6 +370,7 @@ export const CHAPTER_MUTATIONS = {
           section {
             id
             title
+            index
           }
           dueDate
           points
@@ -384,6 +386,7 @@ export const CHAPTER_MUTATIONS = {
         chapter {
           id
           title
+          index
           instructions
           course {
             id
@@ -393,6 +396,7 @@ export const CHAPTER_MUTATIONS = {
           section {
             id
             title
+            index
           }
           dueDate
           points

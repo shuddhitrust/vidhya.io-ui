@@ -140,6 +140,7 @@ export const SUBSCRIPTIONS = {
           section {
             id
             title
+            index
           }
           dueDate
           points

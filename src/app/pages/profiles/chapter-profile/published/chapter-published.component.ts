@@ -189,6 +189,12 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     });
   }
 
+  chapterSubtitle(chapter) {
+    return `${chapter.course?.title} ${
+      chapter.section?.title ? ' > ' + chapter.section?.title + '. ' : '. '
+    } ${chapter.dueDate ? `Due on ${this.parseDate(chapter?.dueDate)}` : ''}`;
+  }
+
   setupExerciseSubmission(exercise: Exercise): ExerciseSubmission {
     let submission: ExerciseSubmission = Object.assign(
       {},

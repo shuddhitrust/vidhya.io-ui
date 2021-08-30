@@ -201,6 +201,12 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     return parseDateTime(date);
   }
 
+  chapterSubtitle(chapter) {
+    return `${chapter.course?.title} ${
+      chapter.section?.title ? ' > ' + chapter.section?.title + '. ' : '. '
+    } ${chapter.dueDate ? `Due on ${this.parseDate(chapter?.dueDate)}` : ''}`;
+  }
+
   chapterFilters() {
     return this.chapter?.id ? { chapterId: this.chapter?.id } : false;
   }
@@ -236,7 +242,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
 
   editChapter() {
     this.router.navigate([uiroutes.CHAPTER_FORM_ROUTE.route], {
-      queryParams: { id: this.chapter?.id },
+      queryParams: { id: this.chapter.id, courseId: this.chapter?.course?.id },
       queryParamsHandling: 'merge',
       skipLocationChange: false,
     });
