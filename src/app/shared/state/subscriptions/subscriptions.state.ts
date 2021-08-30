@@ -51,7 +51,7 @@ export class SubscriptionsState {
     };
     const state = getState();
     const { subscriptionsInitiated } = state;
-    if (subscriptionsInitiated) {
+    if (!subscriptionsInitiated && this.isFullyAuthenticated) {
       if (authorizeResourceListMethod(resources.ANNOUNCEMENT)) {
         this.store.dispatch(new AnnouncementSubscriptionAction());
       }
