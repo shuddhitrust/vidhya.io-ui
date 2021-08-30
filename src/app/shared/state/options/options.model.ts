@@ -1,11 +1,11 @@
-import { FetchPolicy, User } from '../../common/models';
+import { FetchPolicy, Group, User } from '../../common/models';
 
 export interface OptionsStateModel {
   membersByInstitution: User[];
   memberInstitutionId: string;
   isFetchingMembersByInstitution: boolean;
   fetchPolicyForMembers: FetchPolicy;
-  groupsByInstitution: User[];
+  groupsByInstitution: Group[];
   groupInstitutionId: string;
   isFetchingGroupsByInstitution: boolean;
   fetchPolicyForGroups: FetchPolicy;
