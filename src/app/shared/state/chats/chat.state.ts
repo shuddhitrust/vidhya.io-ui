@@ -361,9 +361,6 @@ export class ChatState {
               ]),
               isFetching: false,
             });
-            if (!state.chatMessagesSubscribed) {
-              this.store.dispatch(new ChatMessageSubscriptionAction());
-            }
           },
           (error) => {
             this.store.dispatch(

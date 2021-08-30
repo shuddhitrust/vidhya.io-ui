@@ -201,9 +201,6 @@ export class AnnouncementState {
               ]),
               isFetching: false,
             });
-            if (!announcementsSubscribed) {
-              this.store.dispatch(new AnnouncementSubscriptionAction());
-            }
           },
           (error) => {
             this.store.dispatch(

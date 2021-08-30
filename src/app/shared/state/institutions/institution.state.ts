@@ -153,9 +153,6 @@ export class InstitutionState {
             fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
             isFetching: false,
           });
-          if (!institutionsSubscribed) {
-            this.store.dispatch(new InstitutionSubscriptionAction());
-          }
         },
         (error) => {
           this.store.dispatch(

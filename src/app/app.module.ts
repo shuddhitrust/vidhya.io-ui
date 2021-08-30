@@ -178,6 +178,7 @@ import {
   CourseSectionModalComponent,
   CouseSectionDeleteConfirmationDialog,
 } from './pages/modals/course-section-modal/course-section-modal.component';
+import { SubscriptionsState } from './shared/state/subscriptions/subscriptions.state';
 
 @NgModule({
   declarations: [
@@ -285,6 +286,7 @@ import {
           OptionsState,
           UserRoleState,
           ChatState,
+          SubscriptionsState,
         ],
         {
           developmentMode: !environment.production,

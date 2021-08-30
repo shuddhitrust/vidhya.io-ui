@@ -10,11 +10,13 @@ import { AuthStateModel, defaultAuthState } from './auth.model';
 import {
   CurrentMember,
   MembershipStatusOptions,
+  resources,
+  RESOURCE_ACTIONS,
   User,
   UserPermissions,
 } from '../../common/models';
 
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import {
   RegisterAction,
   LoginAction,
@@ -98,6 +100,7 @@ export class AuthState {
       }
     });
   }
+
   /**
    * Creates a timeout method to call for refreshToken just a minute before
    * @param expiresAt
@@ -153,6 +156,10 @@ export class AuthState {
   @Selector()
   static getCurrentMemberStatus(state: AuthStateModel): string {
     return state.currentMember.membershipStatus;
+  }
+  @Selector()
+  static getIsFullyAuthenticated(state: AuthStateModel): boolean {
+    return state.isFullyAuthenticated;
   }
   @Selector()
   static getCurrentMemberInstitutionId(state: AuthStateModel): number {
@@ -406,7 +413,7 @@ export class AuthState {
   ) {
     const { user } = payload;
     console.log('running UpdateCurrentUserInState', { user });
-    const state = getState();
+    let state = getState();
     const { isLoggedIn, currentMember } = state;
     const userPermissions = user?.role?.permissions?.toString()
       ? JSON.parse(user?.role?.permissions?.toString())
@@ -454,6 +461,10 @@ export class AuthState {
         permissions,
         firstTimeSetup,
       });
+      state = getState();
+      if (!state.subscriptionsInitiated) {
+        // this.store.dispatch(new InitiateSubscriptionsAction());
+      }
     }
   }
 
@@ -1231,7 +1242,7 @@ export class AuthState {
   }
 
   @Action(OpenLoginFormAction)
-  openLogiinForm({ patchState }: StateContext<OpenLoginFormAction>) {
+  openLogiinForm({ patchState }: StateContext<AuthStateModel>) {
     patchState({ closeLoginForm: false });
   }
 }

@@ -226,9 +226,6 @@ export class ExerciseState {
               ]),
               isFetching: false,
             });
-            if (!exercisesSubscribed) {
-              this.store.dispatch(new ExerciseSubscriptionAction());
-            }
           },
           (error) => {
             this.store.dispatch(

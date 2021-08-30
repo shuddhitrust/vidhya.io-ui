@@ -383,9 +383,6 @@ export class ExerciseSubmissionState {
               ]),
               isFetching: false,
             });
-            if (!exerciseSubmissionsSubscribed) {
-              this.store.dispatch(new ExerciseSubmissionSubscriptionAction());
-            }
           },
           (error) => {
             this.store.dispatch(

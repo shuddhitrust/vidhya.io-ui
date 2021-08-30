@@ -193,9 +193,6 @@ export class GroupState {
               ]),
               isFetching: false,
             });
-            if (!groupsSubscribed) {
-              this.store.dispatch(new GroupSubscriptionAction());
-            }
           },
           (error) => {
             this.store.dispatch(

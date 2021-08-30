@@ -133,9 +133,6 @@ export class CourseSectionState {
             courseSections: response,
             isFetching: false,
           });
-          if (!courseSectionsSubscribed) {
-            this.store.dispatch(new CourseSectionSubscriptionAction());
-          }
         },
         (error) => {
           this.store.dispatch(

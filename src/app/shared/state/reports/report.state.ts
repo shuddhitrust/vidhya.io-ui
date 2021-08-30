@@ -179,9 +179,6 @@ export class ReportState {
               ]),
               isFetching: false,
             });
-            if (!reportsSubscribed) {
-              this.store.dispatch(new ReportSubscriptionAction());
-            }
           },
           (error) => {
             this.store.dispatch(

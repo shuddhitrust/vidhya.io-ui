@@ -18,6 +18,7 @@ export interface AuthStateModel {
   permissions: UserPermissions;
   firstTimeSetup: boolean;
   activationEmailSent: Date;
+  subscriptionsInitiated: boolean;
 }
 
 export const defaultAuthState: AuthStateModel = {
@@ -34,4 +35,5 @@ export const defaultAuthState: AuthStateModel = {
   permissions: defaultResourcePermissions,
   firstTimeSetup: false,
   activationEmailSent: null,
+  subscriptionsInitiated: false,
 };

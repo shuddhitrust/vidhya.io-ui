@@ -214,9 +214,6 @@ export class ChapterState {
               ]),
               isFetching: false,
             });
-            if (!chaptersSubscribed) {
-              this.store.dispatch(new ChapterSubscriptionAction());
-            }
           },
           (error) => {
             this.store.dispatch(

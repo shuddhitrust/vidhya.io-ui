@@ -195,9 +195,6 @@ export class CourseState {
               ]),
               isFetching: false,
             });
-            if (!coursesSubscribed) {
-              this.store.dispatch(new CourseSubscriptionAction());
-            }
           },
           (error) => {
             this.store.dispatch(

@@ -198,9 +198,6 @@ export class ExerciseKeyState {
               ]),
               isFetching: false,
             });
-            if (!exerciseKeysSubscribed) {
-              this.store.dispatch(new ExerciseKeySubscriptionAction());
-            }
           },
           (error) => {
             this.store.dispatch(
