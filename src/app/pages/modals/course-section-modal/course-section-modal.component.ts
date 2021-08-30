@@ -99,6 +99,7 @@ export class CourseSectionModalComponent {
   // }
 
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {
+    this.sectionForm.get('course').setValue(this.course.id);
     this.store.dispatch(
       new CreateUpdateCourseSectionAction({
         form,

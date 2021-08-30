@@ -104,9 +104,9 @@ export const paginatedSubscriptionUpdater = ({
     if (method == SUBSCRIPTION_METHODS.CREATE_METHOD) {
       newPaginatedItems = Object.assign({}, paginatedItems);
       console.log('frst page ', { newPaginatedItems });
-      const firstPageItems = newPaginatedItems[1];
+      const firstPageItems = newPaginatedItems[1] ? newPaginatedItems[1] : [];
       let itemAlreadyExists = null;
-      if (firstPageItems) {
+      if (firstPageItems.length) {
         itemAlreadyExists = firstPageItems.find(
           (item) => item[pk] == modifiedItem[pk]
         );
@@ -419,8 +419,6 @@ export const sortByIndex = (list: any[], indexPath: string = 'index') => {
   return newList.sort(function (a, b) {
     const objectA = deepFind(a, indexPath);
     const objectB = deepFind(b, indexPath);
-    console.log({ list, indexPath });
-    console.log('a[indexPath] ', objectA, 'b[indexPath]', objectB);
     return objectA - objectB;
   });
 };

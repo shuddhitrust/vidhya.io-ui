@@ -41,6 +41,7 @@ import { defaultSearchParams } from '../../common/constants';
 import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
 import { SearchParams } from '../../abstract/master-grid/table.model';
 import { emptyExerciseSubmissionFormRecord } from '../exerciseSubmissions/exerciseSubmission.model';
+import { ChapterDraftComponent } from 'src/app/pages/profiles/chapter-profile/draft/chapter-draft.component';
 
 @State<ExerciseStateModel>({
   name: 'exerciseState',
@@ -355,6 +356,7 @@ export class ExerciseState {
 
               form.reset();
               formDirective.resetForm();
+
               patchState({
                 paginatedExercises: newPaginatedItems,
                 exercises: newItemsList,
@@ -439,11 +441,6 @@ export class ExerciseState {
               new ShowNotificationAction({
                 message: 'Exercise deleted successfully!',
                 action: 'success',
-              })
-            );
-            this.store.dispatch(
-              new ForceRefetchExercisesAction({
-                searchParams: defaultSearchParams,
               })
             );
           } else {

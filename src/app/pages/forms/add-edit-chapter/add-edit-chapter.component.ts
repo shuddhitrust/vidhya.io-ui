@@ -126,7 +126,12 @@ export class AddEditChapterComponent implements OnInit {
       }
       if (this.courseId) {
         this.store.dispatch(
-          new FetchCourseSectionsAction({ courseId: this.courseId })
+          new FetchCourseSectionsAction({
+            searchParams: {
+              ...defaultSearchParams,
+              columnFilters: { courseId: this.courseId },
+            },
+          })
         );
       }
     });

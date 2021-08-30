@@ -75,7 +75,7 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
   isFetchingCourse$: Observable<boolean>;
   courseStatusOptions = CourseStatusOptions;
   courseId = null;
-
+  courseSectionColumnFilters;
   constructor(
     public dialog: MatDialog,
     private location: Location,
@@ -99,7 +99,7 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
     });
   }
 
-  chapterFilters() {
+  courseIdColumnFilter() {
     return { courseId: this.courseId };
   }
 
@@ -108,7 +108,7 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
       new FetchChaptersAction({
         searchParams: {
           ...defaultSearchParams,
-          columnFilters: this.chapterFilters(),
+          columnFilters: this.courseIdColumnFilter(),
         },
       })
     );
@@ -126,7 +126,12 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
       if (this.courseId) {
         this.store.dispatch(new GetCourseAction({ id: this.courseId }));
         this.store.dispatch(
-          new FetchCourseSectionsAction({ courseId: this.courseId })
+          new FetchCourseSectionsAction({
+            searchParams: {
+              ...defaultSearchParams,
+              columnFilters: this.courseIdColumnFilter(),
+            },
+          })
         );
         this.fetchChapters();
       }
@@ -184,7 +189,7 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
       const reorderedList = newIndexArray.map((index) => {
         let section = this.courseSections.find((c) => c.id == index);
         section = { ...section, index: i };
-        i++;
+        ++i;
         return section;
       });
       console.log('old order of sections ', { sections: this.courseSections });
@@ -197,13 +202,13 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
     });
   }
   reorderChapters(section = null) {
-    let chapters = this.chapters;
+    let newChapters = Object.assign([], this.chapters);
     if (section) {
-      chapters = chapters.filter((c) => {
+      newChapters = newChapters.filter((c) => {
         return c.section?.id == section.id;
       });
     }
-    const chaptersList = this.chapters.map((c) => {
+    const chaptersList = newChapters.map((c) => {
       return { index: c.id, label: c.title };
     });
     console.log('initial index list ', { chaptersList });
@@ -217,12 +222,15 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
       const reorderedList = newIndexArray.map((index) => {
         let chapter = this.chapters.find((c) => c.id == index);
         chapter = { ...chapter, index: i };
-        i++;
+        ++i;
         return chapter;
       });
       console.log('old order of chapters ', { chapters: this.chapters });
-      this.chapters = Object.assign([], reorderedList);
-      console.log('new order of chapters ', { chapters: this.chapters });
+      this.chapters = this.chapters.map((c) => {
+        console.log('new order of chapters ', { chapters: this.chapters });
+        const newChapter = reorderedList.find((nc) => nc.id == c.id);
+        return newChapter ? newChapter : c;
+      });
       const indexList = this.chapters.map((c) => {
         return { id: c.id, index: c.index };
       });

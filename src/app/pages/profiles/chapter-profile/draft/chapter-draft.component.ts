@@ -144,6 +144,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     });
     this.exerciseKeys$.subscribe((val) => {
       this.exerciseKeys = sortByIndex(val, 'exercise.index');
+      this.resetExerciseForm();
     });
     this.chapter$.subscribe((val) => {
       this.chapter = val;
@@ -204,7 +205,9 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   chapterSubtitle(chapter) {
     return `${chapter.course?.title} ${
       chapter.section?.title ? ' > ' + chapter.section?.title + '. ' : '. '
-    } ${chapter.dueDate ? `Due on ${this.parseDate(chapter?.dueDate)}` : ''}`;
+    } ${
+      chapter.dueDate ? `Due on ${this.parseDate(chapter?.dueDate)}. ` : ' '
+    }${chapter.points} Points`;
   }
 
   chapterFilters() {
@@ -293,15 +296,15 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     });
     this.showExerciseForm = true;
   }
-  deleteExerciseConfirmation(exercise) {
+  deleteExerciseConfirmation(key) {
     const dialogRef = this.dialog.open(ExercicseDeleteConfirmationDialog, {
-      data: exercise,
+      data: key.exercise,
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       console.log('close dialog result for exercise => ', result);
       if (result == true) {
-        this.deleteExercise(exercise);
+        this.deleteExercise(key);
       }
     });
   }
@@ -345,7 +348,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
       this.exerciseKeys = Object.assign([], reorderedList);
       console.log('new order of exercises ', { exercises: this.exerciseKeys });
       const indexList = this.exerciseKeys.map((key) => {
-        return { id: key.id, index: key.exercise.index };
+        return { id: key.exercise?.id, index: key.exercise.index };
       });
       this.store.dispatch(new ReorderExercisesAction({ indexList }));
     });

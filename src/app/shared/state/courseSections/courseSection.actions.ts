@@ -5,7 +5,7 @@ import { idPayload, IndexListType } from '../../common/models';
 export class FetchCourseSectionsAction {
   static readonly type = '[COURSE SECTIONS] Fetch';
 
-  constructor(public payload: { courseId: number }) {}
+  constructor(public payload: { searchParams: SearchParams }) {}
 }
 
 export class CourseSectionSubscriptionAction {

@@ -111,11 +111,19 @@ export class CourseSectionState {
     { payload }: FetchCourseSectionsAction
   ) {
     console.log('Fetching courseSections from courseSection state');
-    let { courseId } = payload;
+    let { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, fetchParamObjects, courseSectionsSubscribed } = state;
+    const { fetchPolicy, fetchParamObjects } = state;
+    const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
+    let newFetchParams = updateFetchParams({
+      fetchParamObjects,
+      newPageNumber: pageNumber,
+      newPageSize: pageSize,
+      newSearchQuery: searchQuery,
+      newColumnFilters: columnFilters,
+    });
     const variables = {
-      courseId,
+      courseId: columnFilters.courseId,
     };
     patchState({ isFetching: true });
     console.log('variables for courseSections fetch ', { variables });
@@ -129,6 +137,34 @@ export class CourseSectionState {
         ({ data }: any) => {
           console.log('resposne to get courseSections query ', { data });
           const response = data.courseSections;
+          const totalCount = response[0]?.totalCount
+            ? response[0]?.totalCount
+            : 0;
+          newFetchParams = { ...newFetchParams, totalCount };
+          console.log('from after getting courses', {
+            totalCount,
+            response,
+            newFetchParams,
+          });
+          let paginatedCourseSections = state.paginatedCourseSections;
+          paginatedCourseSections = {
+            ...paginatedCourseSections,
+            [pageNumber]: response,
+          };
+          let courseSections = convertPaginatedListToNormalList(
+            paginatedCourseSections
+          );
+          let lastPage = null;
+          if (response.length < newFetchParams.pageSize) {
+            lastPage = newFetchParams.currentPage;
+          }
+          patchState({
+            courseSections,
+            paginatedCourseSections,
+            lastPage,
+            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
+            isFetching: false,
+          });
           patchState({
             courseSections: response,
             isFetching: false,
@@ -255,6 +291,7 @@ export class CourseSectionState {
                 ? SUBSCRIPTION_METHODS.UPDATE_METHOD
                 : SUBSCRIPTION_METHODS.CREATE_METHOD;
               const courseSection = response.courseSection;
+              console.log('coursesection', { courseSection });
               const { newPaginatedItems, newItemsList } =
                 paginatedSubscriptionUpdater({
                   paginatedItems: state.paginatedCourseSections,
@@ -264,7 +301,7 @@ export class CourseSectionState {
 
               form.reset();
               formDirective.resetForm();
-              this.router.navigateByUrl(CourseSectionFormCloseURL);
+              // this.router.navigateByUrl(CourseSectionFormCloseURL);
               patchState({
                 paginatedCourseSections: newPaginatedItems,
                 courseSections: newItemsList,
