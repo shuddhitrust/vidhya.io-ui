@@ -11,6 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import {
   CreateUpdateChapterAction,
+  FetchChaptersAction,
   GetChapterAction,
 } from 'src/app/shared/state/chapters/chapter.actions';
 import { ChapterState } from 'src/app/shared/state/chapters/chapter.state';
@@ -76,7 +77,6 @@ export class AddEditChapterComponent implements OnInit {
     this.store.dispatch(
       new FetchCoursesAction({ searchParams: defaultSearchParams })
     );
-    this.chapterForm = this.setupChapterFormGroup();
     this.courseOptions$.subscribe((val) => {
       console.log('ChapterFormRecord course options = >', val);
       this.chapterForm.get('course').setValue(this.courseId);
@@ -92,6 +92,9 @@ export class AddEditChapterComponent implements OnInit {
     chapterFormRecord: Chapter = emptyChapterFormRecord
   ): FormGroup => {
     console.log('the current User id ', this.currentUserId);
+    console.log('chapter form record before form is setup', {
+      chapterFormRecord,
+    });
     this.instructions = chapterFormRecord.instructions;
     return this.fb.group({
       id: [chapterFormRecord?.id],
@@ -125,6 +128,14 @@ export class AddEditChapterComponent implements OnInit {
         this.store.dispatch(new GetChapterAction({ id }));
       }
       if (this.courseId) {
+        this.store.dispatch(
+          new FetchChaptersAction({
+            searchParams: {
+              ...defaultSearchParams,
+              columnFilters: { courseId: this.courseId },
+            },
+          })
+        );
         this.store.dispatch(
           new FetchCourseSectionsAction({
             searchParams: {

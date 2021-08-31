@@ -36,6 +36,8 @@ import {
   updateFetchParams,
   convertPaginatedListToNormalList,
   paginatedSubscriptionUpdater,
+  sortByIndex,
+  sortArrayOfObjectsByString,
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
@@ -76,14 +78,20 @@ export class ChapterState {
   @Selector()
   static listChapterOptions(state: ChapterStateModel): MatSelectOption[] {
     const options: MatSelectOption[] = state.chapters.map((i) => {
+      console.log('chapter to option => ', { chapter: i });
+      const sectionIndex = i.section?.index
+        ? i.section?.index.toString() + '.'
+        : '';
+      console.log('from list chapter options => ', { sectionIndex });
       const option: MatSelectOption = {
         value: i.id,
-        label: i.title,
+        label: sectionIndex + i.index + ' ' + i.title,
       };
       return option;
     });
-    console.log('options', options);
-    return options;
+    console.log('chapter options', options);
+    const sortedOptions = sortArrayOfObjectsByString(options, 'label');
+    return sortedOptions;
   }
 
   @Selector()

@@ -34,7 +34,10 @@ import {
   SetCourseInChapterForm,
 } from 'src/app/shared/state/chapters/chapter.actions';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
-import { DragDropComponent } from 'src/app/shared/components/drag-drop/drag-drop.component';
+import {
+  DragDropComponent,
+  DragDropInput,
+} from 'src/app/shared/components/drag-drop/drag-drop.component';
 import { parseDateTime, sortByIndex } from 'src/app/shared/common/functions';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { CourseSectionModalComponent } from '../../modals/course-section-modal/course-section-modal.component';
@@ -175,8 +178,8 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
     }
   }
   reorderSections() {
-    const sectionsList = this.courseSections.map((c) => {
-      return { index: c.id, label: c.title };
+    const sectionsList: DragDropInput[] = this.courseSections.map((c) => {
+      return { id: c.id, label: c.title };
     });
     console.log('initial index list ', { sectionsList });
     const dialogRef = this.dialog.open(DragDropComponent, {
@@ -185,15 +188,14 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((newIndexArray) => {
       console.log('after reordering', { newIndexArray });
-      let i = 1;
-      const reorderedList = newIndexArray.map((index) => {
-        let section = this.courseSections.find((c) => c.id == index);
-        section = { ...section, index: i };
-        ++i;
-        return section;
-      });
-      console.log('old order of sections ', { sections: this.courseSections });
-      this.courseSections = Object.assign([], reorderedList);
+      for (let i = 0; i < newIndexArray.length; i++) {
+        let id = newIndexArray[i];
+        let section = this.courseSections.find((c) => c.id == id);
+        section = Object.assign({}, { ...section, index: i + 1 });
+        this.courseSections = this.courseSections.map((s) => {
+          return s.id == id ? section : s;
+        });
+      }
       console.log('new order of sections ', { sections: this.courseSections });
       const indexList = this.courseSections.map((c) => {
         return { id: c.id, index: c.index };
@@ -209,7 +211,7 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
       });
     }
     const chaptersList = newChapters.map((c) => {
-      return { index: c.id, label: c.title };
+      return { id: c.id, label: c.title };
     });
     console.log('initial index list ', { chaptersList });
     const dialogRef = this.dialog.open(DragDropComponent, {
@@ -218,19 +220,14 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((newIndexArray) => {
       console.log('after reordering', { newIndexArray });
-      let i = 1;
-      const reorderedList = newIndexArray.map((index) => {
-        let chapter = this.chapters.find((c) => c.id == index);
-        chapter = { ...chapter, index: i };
-        ++i;
-        return chapter;
-      });
-      console.log('old order of chapters ', { chapters: this.chapters });
-      this.chapters = this.chapters.map((c) => {
-        console.log('new order of chapters ', { chapters: this.chapters });
-        const newChapter = reorderedList.find((nc) => nc.id == c.id);
-        return newChapter ? newChapter : c;
-      });
+      for (let i = 0; i < newIndexArray.length; i++) {
+        const id = newIndexArray[i];
+        let chapter = this.chapters.find((c) => c.id == id);
+        chapter = Object.assign({}, { ...chapter, index: i + 1 });
+        this.chapters = this.chapters.map((c) => {
+          return c.id == id ? chapter : c;
+        });
+      }
       const indexList = this.chapters.map((c) => {
         return { id: c.id, index: c.index };
       });

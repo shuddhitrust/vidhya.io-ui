@@ -64,6 +64,7 @@ export const subscriptionUpdater = ({
         ...fetchParams,
         totalCount: fetchParams.totalCount + 1,
       };
+
       items = [subscriptionItem, ...items];
     } else if (method == SUBSCRIPTION_METHODS.UPDATE_METHOD) {
       items = items.map((i) =>
@@ -436,4 +437,17 @@ export const deepFind = (obj, path) => {
     }
   }
   return current;
+};
+
+export const sortArrayOfObjectsByString = (array: any[], key: string) => {
+  function compare(a, b) {
+    if (a[key] < b[key]) {
+      return -1;
+    }
+    if (a[key] > b[key]) {
+      return 1;
+    }
+    return 0;
+  }
+  return array.sort(compare);
 };

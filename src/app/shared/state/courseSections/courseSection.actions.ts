@@ -43,7 +43,7 @@ export class DeleteCourseSectionAction {
   constructor(public payload: idPayload) {}
 }
 export class ReorderCourseSectionsAction {
-  static readonly type = '[CHAPTERS] Reorder';
+  static readonly type = '[COURSE SECTION] Reorder';
 
   constructor(public payload: { indexList: IndexListType[] }) {}
 }

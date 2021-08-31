@@ -323,7 +323,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   }
   reorderExercises() {
     const exercisesList = this.exerciseKeys.map((key) => {
-      return { index: key.exercise.id, label: key.exercise.prompt };
+      return { id: key.exercise.id, label: key.exercise.prompt };
     });
     console.log('initial index list ', { exercisesList });
     const dialogRef = this.dialog.open(DragDropComponent, {
@@ -333,9 +333,9 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe((newIndexArray) => {
       console.log('after reordering', { newIndexArray });
       let i = 1;
-      const reorderedList = newIndexArray.map((index) => {
+      const reorderedList = newIndexArray.map((id) => {
         let exerciseKey = this.exerciseKeys.find(
-          (key) => key.exercise.id == index
+          (key) => key.exercise.id == id
         );
         exerciseKey = {
           ...exerciseKey,

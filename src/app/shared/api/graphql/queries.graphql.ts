@@ -360,10 +360,16 @@ export const CHAPTER_QUERIES = {
         section {
           id
           title
+          index
         }
         dueDate
         points
         status
+        locked
+        prerequisites {
+          id
+          title
+        }
       }
     }
   `,

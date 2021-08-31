@@ -75,7 +75,7 @@ export class CourseSectionState {
     const options: MatSelectOption[] = state.courseSections.map((i) => {
       const option: MatSelectOption = {
         value: i.id,
-        label: i.title,
+        label: i.index + ' ' + i.title,
       };
       return option;
     });
