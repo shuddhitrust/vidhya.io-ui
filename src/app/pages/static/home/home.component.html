@@ -1,4 +1,9 @@
-<div *ngIf="learners.length; else emptyLearnersListTemplate">
+<div id="hero-block">
+  <h2>Welcome to</h2>
+  <img id="hero-logo" src="assets/images/logo.svg" />
+</div>
+
+<!-- <div *ngIf="learners.length; else emptyLearnersListTemplate">
   <div class="cards">
     <div *ngFor="let learner of learners">
       <mat-card class="card">
@@ -15,17 +20,13 @@
         <mat-card-content>
           {{ learner.bio }}
         </mat-card-content>
-        <!-- <mat-card-actions>
-    <button mat-button>LIKE</button>
-    <button mat-button>SHARE</button>
-  </mat-card-actions> -->
       </mat-card>
     </div>
   </div>
 </div>
 <ng-template #emptyLearnersListTemplate>
   <h2>No students to display!</h2>
-</ng-template>
+</ng-template> -->
 <div class="footer">
   <small
     >Copyright &copy; {{ currentYear }} Shuddhi Vidhaya Initiative, Shuddhi

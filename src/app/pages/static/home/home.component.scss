@@ -2,6 +2,21 @@ h2 {
   text-align: center;
 }
 
+#hero-block {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  text-align: center;
+  height: 50vh;
+  width: 50vw;
+  display: block;
+  margin: 100px auto;
+  padding: 100px;
+}
+
+#hero-logo {
+  width: 50%;
+}
+
 .cards {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -32,4 +47,22 @@ h2 {
 .right-link {
   float: right;
   display: absolute;
+}
+
+@media screen and (max-width: 1250px) {
+  #hero-logo {
+    width: 75%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  #hero-block {
+    width: 100%;
+    margin-top: 20px;
+    padding: 20px;
+  }
+
+  #hero-logo {
+    width: 80%;
+  }
 }
