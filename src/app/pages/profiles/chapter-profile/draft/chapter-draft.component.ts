@@ -221,6 +221,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
         new FetchExerciseKeysAction({
           searchParams: {
             ...defaultSearchParams,
+            pageSize: null,
             columnFilters: this.chapterFilters(),
           },
         })
@@ -314,12 +315,6 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
       id: exercise.id,
     });
     this.store.dispatch(new DeleteExerciseAction({ id: exercise?.id }));
-  }
-  onScroll() {
-    console.log('scrolling exercises');
-    if (!this.isFetchingExerciseKeys) {
-      this.store.dispatch(new FetchNextExercisesAction());
-    }
   }
   reorderExercises() {
     const exercisesList = this.exerciseKeys.map((key) => {

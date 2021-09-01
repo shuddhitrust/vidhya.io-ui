@@ -79,9 +79,11 @@ export class ChapterState {
   static listChapterOptions(state: ChapterStateModel): MatSelectOption[] {
     const options: MatSelectOption[] = state.chapters.map((i) => {
       console.log('chapter to option => ', { chapter: i });
-      const sectionIndex = i.section?.index
-        ? i.section?.index.toString() + '.'
-        : '';
+      let sectionIndex: any = i.section?.index ? i.section?.index + '.' : '';
+      sectionIndex =
+        parseInt(sectionIndex, 10) < 10
+          ? '0' + sectionIndex.toString()
+          : sectionIndex.toString();
       console.log('from list chapter options => ', { sectionIndex });
       const option: MatSelectOption = {
         value: i.id,

@@ -74,12 +74,15 @@ export class AddEditChapterComponent implements OnInit {
     private route: ActivatedRoute,
     private fb: FormBuilder
   ) {
+    this.ngOnInit();
     this.store.dispatch(
       new FetchCoursesAction({ searchParams: defaultSearchParams })
     );
     this.courseOptions$.subscribe((val) => {
       console.log('ChapterFormRecord course options = >', val);
-      this.chapterForm.get('course').setValue(this.courseId);
+      if (this.courseId) {
+        this.chapterForm.get('course').setValue(this.courseId);
+      }
     });
     this.chapterFormRecord$.subscribe((val) => {
       this.chapterFormRecord = val;
@@ -132,6 +135,7 @@ export class AddEditChapterComponent implements OnInit {
           new FetchChaptersAction({
             searchParams: {
               ...defaultSearchParams,
+              pageSize: null,
               columnFilters: { courseId: this.courseId },
             },
           })

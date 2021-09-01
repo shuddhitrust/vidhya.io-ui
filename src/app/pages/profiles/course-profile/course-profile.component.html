@@ -83,35 +83,25 @@
 <span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
   <span *ngIf="!(isFetchingCourseSections$ | async); else loading">
     <span *ngIf="courseSections.length > 0; else sectionFeedEmpty">
-      <div
-        class="scroll-feed"
-        infiniteScroll
-        [infiniteScrollDistance]="2"
-        [infiniteScrollThrottle]="50"
-        infiniteScrollContainer=".scroll-feed"
-        [fromRoot]="true"
-        (scrolled)="onScroll()"
-      >
-        <div *ngFor="let section of courseSections">
-          <span class="section-card">
-            <button
-              *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
-              mat-mini-fab
-              (click)="reorderChapters(section)"
-            >
-              <mat-icon>reorder</mat-icon>
-            </button>
-            <h2 class="section-title" (click)="createEditSection(section)">
-              {{ section.index + " " + section.title }}
-            </h2>
-          </span>
-          <ng-container
-            *ngTemplateOutlet="
-              chaptersListTemplate;
-              context: { chapters: sectionChapters(section) }
-            "
-          ></ng-container>
-        </div>
+      <div *ngFor="let section of courseSections">
+        <span class="section-card">
+          <button
+            *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
+            mat-mini-fab
+            (click)="reorderChapters(section)"
+          >
+            <mat-icon>reorder</mat-icon>
+          </button>
+          <h2 class="section-title" (click)="createEditSection(section)">
+            {{ section.index + " " + section.title }}
+          </h2>
+        </span>
+        <ng-container
+          *ngTemplateOutlet="
+            chaptersListTemplate;
+            context: { chapters: sectionChapters(section) }
+          "
+        ></ng-container>
       </div>
     </span>
   </span>
@@ -123,22 +113,12 @@
 >
   <span *ngIf="!(isFetchingChapters$ | async); else loading">
     <span *ngIf="chapters.length > 0; else chapterFeedEmpty">
-      <div
-        class="scroll-feed"
-        infiniteScroll
-        [infiniteScrollDistance]="2"
-        [infiniteScrollThrottle]="50"
-        infiniteScrollContainer=".scroll-feed"
-        [fromRoot]="true"
-        (scrolled)="onScroll()"
-      >
-        <ng-container
-          *ngTemplateOutlet="
-            chaptersListTemplate;
-            context: { chapters: sectionChapters() }
-          "
-        ></ng-container>
-      </div>
+      <ng-container
+        *ngTemplateOutlet="
+          chaptersListTemplate;
+          context: { chapters: sectionChapters() }
+        "
+      ></ng-container>
     </span>
   </span>
 </span>

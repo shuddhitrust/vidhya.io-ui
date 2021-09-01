@@ -49,27 +49,17 @@
 <span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
   <span *ngIf="!(isFetchingExercises$ | async); else loading">
     <span *ngIf="exercises.length > 0; else feedEmpty">
-      <div
-        class="scroll-feed"
-        infiniteScroll
-        [infiniteScrollDistance]="2"
-        [infiniteScrollThrottle]="50"
-        infiniteScrollContainer=".scroll-feed"
-        [fromRoot]="true"
-        (scrolled)="onScroll()"
-      >
-        <div *ngFor="let exercise of exercises; let i = index">
-          <ng-container
-            *ngTemplateOutlet="
-              exerciseCard;
-              context: {
-                exercise: exercise,
-                response: exerciseSubmissionOf(exercise),
-                index: i
-              }
-            "
-          ></ng-container>
-        </div>
+      <div *ngFor="let exercise of exercises; let i = index">
+        <ng-container
+          *ngTemplateOutlet="
+            exerciseCard;
+            context: {
+              exercise: exercise,
+              response: exerciseSubmissionOf(exercise),
+              index: i
+            }
+          "
+        ></ng-container>
       </div>
     </span>
   </span>

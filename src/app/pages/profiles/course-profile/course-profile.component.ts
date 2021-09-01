@@ -111,6 +111,7 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
       new FetchChaptersAction({
         searchParams: {
           ...defaultSearchParams,
+          pageSize: null,
           columnFilters: this.courseIdColumnFilter(),
         },
       })
@@ -171,12 +172,6 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
     this.store.dispatch(new DeleteCourseAction({ id: this.course.id }));
   }
 
-  onScroll() {
-    console.log('scrolling course');
-    if (!this.isFetchingChapters) {
-      this.store.dispatch(new FetchNextChaptersAction());
-    }
-  }
   reorderSections() {
     const sectionsList: DragDropInput[] = this.courseSections.map((c) => {
       return { id: c.id, label: c.title };

@@ -238,6 +238,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
         new FetchExercisesAction({
           searchParams: {
             ...defaultSearchParams,
+            pageSize: null,
             columnFilters: this.chapterFilters(),
           },
         })
@@ -322,12 +323,6 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
       id: exercise.id,
     });
     this.store.dispatch(new DeleteExerciseAction({ id: exercise?.id }));
-  }
-  onScroll() {
-    console.log('scrolling exercises');
-    if (!this.isFetchingExercises) {
-      this.store.dispatch(new FetchNextExercisesAction());
-    }
   }
 
   reorderExercises() {
