@@ -6,6 +6,10 @@ export const uiroutes = {
     route: 'activate',
     auth: { resource: null, actions: [] },
   },
+  REGISTER_ROUTE: {
+    route: 'register',
+    auth: { resource: null, actions: [] },
+  },
   PASSWORD_RESET_ROUTE: {
     route: 'password-reset',
     auth: { resource: null, actions: [] },

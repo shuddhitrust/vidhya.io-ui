@@ -1,5 +1,5 @@
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -22,6 +22,7 @@ import {
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { Observable } from 'rxjs';
 import { AuthStateModel } from 'src/app/shared/state/auth/auth.model';
+import { uiroutes } from 'src/app/shared/common/ui-routes';
 
 const INVITECODE = 'INVITECODE';
 const REGISTER = 'REGISTER';
@@ -35,7 +36,8 @@ const RESEND_ACTIVATION_EMAIL = 'RESEND_ACTIVATION_EMAIL';
   templateUrl: './login-modal.component.html',
   styleUrls: ['./login-modal.component.scss'],
 })
-export class LoginModalComponent {
+export class LoginModalComponent implements OnInit {
+  url: string;
   INVITECODE = INVITECODE;
   REGISTER = REGISTER;
   LOGIN = LOGIN;
@@ -86,6 +88,23 @@ export class LoginModalComponent {
     });
   }
 
+  ngOnInit() {
+    this.url = window.location.href;
+    if (this.url.includes(uiroutes.REGISTER_ROUTE.route)) {
+      const invitecode = this.url.split(uiroutes.REGISTER_ROUTE.route + '/')[1];
+      console.log('REGISTER!!!', {
+        url: this.url,
+        invitecode,
+        isLoggedIn: this.isLoggedIn,
+      });
+      if (invitecode && !this.isLoggedIn) {
+        console.log({ url: this.url, invitecode });
+        this.showRegister();
+        this.setupInvitecodeForm(invitecode);
+      }
+    }
+  }
+
   setupForgotPasswordForm() {
     this.emailForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -98,10 +117,10 @@ export class LoginModalComponent {
     });
   }
 
-  setupInvitecodeForm() {
+  setupInvitecodeForm(invitecode = '') {
     this.invitecodeForm = this.fb.group({
       invitecode: [
-        '',
+        invitecode,
         [
           Validators.required,
           Validators.maxLength(10),

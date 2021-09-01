@@ -9,7 +9,10 @@ import {
 } from 'src/app/shared/common/constants';
 import { MembershipStatusOptions, User } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
-import { VerifyAccountAction } from 'src/app/shared/state/auth/auth.actions';
+import {
+  OpenLoginFormAction,
+  VerifyAccountAction,
+} from 'src/app/shared/state/auth/auth.actions';
 import { AuthStateModel } from 'src/app/shared/state/auth/auth.model';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { FetchPublicMembersAction } from 'src/app/shared/state/members/member.actions';
@@ -2036,6 +2039,10 @@ export class HomeComponent implements OnInit {
       if (token) {
         this.store.dispatch(new VerifyAccountAction({ token }));
       }
+    }
+    if (this.url.includes(uiroutes.REGISTER_ROUTE.route)) {
+      this.store.dispatch(new OpenLoginFormAction());
+      console.log('REGISTER!!!');
     }
   }
 

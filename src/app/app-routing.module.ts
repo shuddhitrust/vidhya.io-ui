@@ -26,6 +26,7 @@ import { PasswordResetComponent } from './pages/forms/password-reset/password-re
 import { CourseProfileComponent } from './pages/profiles/course-profile/course-profile.component';
 import { ChapterProfileComponent } from './pages/profiles/chapter-profile/chapter-profile.component';
 import { PrivacyComponent } from './pages/static/privacy/privacy.component';
+import { LoginModalComponent } from './pages/modals/login/login-modal.component';
 // import { InstitutionProfileComponent } from './pages/modals/institution-profile/institution-profile.component';
 
 const routes: Routes = [
@@ -167,6 +168,11 @@ const routes: Routes = [
   {
     path: `${uiroutes.PASSWORD_RESET_ROUTE.route}/:token`,
     component: PasswordResetComponent,
+    pathMatch: 'full',
+  },
+  {
+    path: `${uiroutes.REGISTER_ROUTE.route}/:invitecode`,
+    component: HomeComponent,
     pathMatch: 'full',
   },
   { path: '', component: HomeComponent },
