@@ -14,6 +14,7 @@ import {
 } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { DeleteInstitutionAction } from 'src/app/shared/state/institutions/institution.actions';
+import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 @Component({
   selector: 'app-institution-modal',
   templateUrl: './institution-modal.component.html',
@@ -36,6 +37,21 @@ export class InstitutionModalComponent {
     this.profileData = data;
   }
 
+  registrationInviteLink() {
+    const parsedUrl = new URL(window.location.href);
+    const baseUrl = parsedUrl.origin;
+    console.log('from registration invite link ', { baseUrl });
+
+    return `${baseUrl}/register?invitecode=${this.profileData.invitecode}`;
+  }
+  copyInviteLink() {
+    this.store.dispatch(
+      new ShowNotificationAction({
+        action: 'success',
+        message: 'Invitation link copied successfully!',
+      })
+    );
+  }
   closeDialog(): void {
     this.dialogRef.close();
   }

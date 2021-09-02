@@ -10,7 +10,15 @@
       <p>
         {{ profileData.bio }}
       </p>
-      <p>Invite Code - {{ profileData?.invitecode }}</p>
+      <p>
+        Invite Code - {{ profileData?.invitecode }}
+        <mat-icon
+          class="icon-button"
+          [cdkCopyToClipboard]="registrationInviteLink()"
+          (click)="copyInviteLink()"
+          >file_copy</mat-icon
+        >
+      </p>
     </mat-card-content>
   </mat-card>
   <mat-dialog-actions class="card-actions">

@@ -20,6 +20,7 @@ import {
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
+import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 
 @Component({
   selector: 'app-institution-profile',
@@ -52,6 +53,21 @@ export class InstitutionProfileComponent implements OnInit {
     });
   }
 
+  registrationInviteLink() {
+    const parsedUrl = new URL(window.location.href);
+    const baseUrl = parsedUrl.origin;
+    console.log('from registration invite link ', { baseUrl });
+
+    return `${baseUrl}/register?invitecode=${this.institution.invitecode}`;
+  }
+  copyInviteLink() {
+    this.store.dispatch(
+      new ShowNotificationAction({
+        action: 'success',
+        message: 'Invitation link copied successfully!',
+      })
+    );
+  }
   authorizeResourceMethod(action) {
     return this.auth.authorizeResource(this.resource, action, {
       institutionId: this.institution.id,

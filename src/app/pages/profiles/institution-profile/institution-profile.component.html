@@ -23,7 +23,16 @@
   </button>
   <h2>{{ institution?.name }}</h2>
   <p>{{ institution?.bio }}</p>
-  <p>Invite Code - {{ institution?.invitecode }}</p>
+  <p>
+    Invite Code - {{ institution?.invitecode }} &nbsp;
+
+    <mat-icon
+      class="icon-button"
+      [cdkCopyToClipboard]="registrationInviteLink()"
+      (click)="copyInviteLink()"
+      >file_copy</mat-icon
+    >
+  </p>
 </div>
 
 <ng-template #loading>
