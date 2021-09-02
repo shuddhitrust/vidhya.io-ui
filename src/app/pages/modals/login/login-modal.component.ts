@@ -80,6 +80,9 @@ export class LoginModalComponent implements OnInit {
       this.authState = val;
       this.invited = this.authState?.currentMember?.invitecode;
       this.isLoggedIn = this.authState.isLoggedIn;
+      if (this.isLoggedIn) {
+        this.closeDialog();
+      }
       this.isSubmittingForm = this.authState.isSubmittingForm;
       if (
         this.closeLoginForm != this.authState.closeLoginForm &&
@@ -98,11 +101,8 @@ export class LoginModalComponent implements OnInit {
 
   ngOnInit() {
     console.log('from init of login modal');
-    if (this.isLoggedIn) {
-      this.closeDialog();
-    }
     this.url = window.location.href;
-    if (this.url.includes(uiroutes.REGISTER_ROUTE.route)) {
+    if (this.url.includes(uiroutes.REGISTER_ROUTE.route) && !this.isLoggedIn) {
       const invitecode = this.url.split(uiroutes.REGISTER_ROUTE.route + '/')[1];
       console.log('REGISTER!!!', {
         url: this.url,
