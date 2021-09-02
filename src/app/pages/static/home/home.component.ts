@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
@@ -18,6 +19,7 @@ import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { FetchPublicMembersAction } from 'src/app/shared/state/members/member.actions';
 import { MemberState } from 'src/app/shared/state/members/member.state';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
+import { LoginModalComponent } from '../../modals/login/login-modal.component';
 
 // const tempUsers = [
 //   {
@@ -1944,7 +1946,11 @@ export class HomeComponent implements OnInit {
     roleName: USER_ROLES_NAMES.LEARNER,
     membershipStatusIs: [MembershipStatusOptions.APPROVED],
   };
-  constructor(private store: Store, private router: Router) {
+  constructor(
+    private store: Store,
+    private router: Router,
+    public dialog: MatDialog
+  ) {
     this.fetchMembers();
     this.learners$.subscribe((val) => {
       this.learners = val;
@@ -2041,7 +2047,7 @@ export class HomeComponent implements OnInit {
       }
     }
     if (this.url.includes(uiroutes.REGISTER_ROUTE.route)) {
-      this.store.dispatch(new OpenLoginFormAction());
+      this.dialog.open(LoginModalComponent);
       console.log('REGISTER!!!');
     }
   }

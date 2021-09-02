@@ -171,7 +171,7 @@ const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path: `${uiroutes.REGISTER_ROUTE.route}/:invitecode`,
+    path: `${uiroutes.REGISTER_ROUTE.route}`,
     component: HomeComponent,
     pathMatch: 'full',
   },

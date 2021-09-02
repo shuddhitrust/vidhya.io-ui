@@ -18,9 +18,7 @@ export class VerifyTokenAction {
 export class VerifyInvitecodeAction {
   static readonly type = '[AUTH] Verify Invitecode';
 
-  constructor(
-    public payload: { form: FormGroup; formDirective: FormGroupDirective }
-  ) {}
+  constructor(public payload: { form: FormGroup }) {}
 }
 export class RegisterAction {
   static readonly type = '[AUTH] Register';

@@ -1,5 +1,11 @@
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
-import { Component, Inject, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Inject,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -23,6 +29,7 @@ import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { Observable } from 'rxjs';
 import { AuthStateModel } from 'src/app/shared/state/auth/auth.model';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
+import { ActivatedRoute } from '@angular/router';
 
 const INVITECODE = 'INVITECODE';
 const REGISTER = 'REGISTER';
@@ -62,7 +69,8 @@ export class LoginModalComponent implements OnInit {
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<LoginModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private route: ActivatedRoute
   ) {
     this.setupLoginForm();
     this.setupForgotPasswordForm();
@@ -89,6 +97,10 @@ export class LoginModalComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log('from init of login modal');
+    if (this.isLoggedIn) {
+      this.closeDialog();
+    }
     this.url = window.location.href;
     if (this.url.includes(uiroutes.REGISTER_ROUTE.route)) {
       const invitecode = this.url.split(uiroutes.REGISTER_ROUTE.route + '/')[1];
@@ -97,11 +109,14 @@ export class LoginModalComponent implements OnInit {
         invitecode,
         isLoggedIn: this.isLoggedIn,
       });
-      if (invitecode && !this.isLoggedIn) {
-        console.log({ url: this.url, invitecode });
-        this.showRegister();
-        this.setupInvitecodeForm(invitecode);
-      }
+      this.route.queryParams.subscribe((params) => {
+        const invitecode = params['invitecode'];
+        if (invitecode) {
+          console.log({ url: this.url, invitecode });
+          this.showRegister();
+          this.setupInvitecodeForm(invitecode);
+        }
+      });
     }
   }
 
@@ -128,6 +143,9 @@ export class LoginModalComponent implements OnInit {
         ],
       ],
     });
+    if (this.invitecodeForm.get('invitecode').valid) {
+      this.verifyInvitecode(this.invitecodeForm);
+    }
   }
 
   setupRegisterForm() {
@@ -148,10 +166,9 @@ export class LoginModalComponent implements OnInit {
     this.store.dispatch(new LoginAction({ form, formDirective }));
   }
 
-  verifyInvitecode(form: FormGroup, formDirective: FormGroupDirective) {
-    this.store.dispatch(new VerifyInvitecodeAction({ form, formDirective }));
+  verifyInvitecode(form: FormGroup) {
+    this.store.dispatch(new VerifyInvitecodeAction({ form }));
   }
-
   register(form: FormGroup, formDirective: FormGroupDirective) {
     console.log('register button was clicked');
     this.store.dispatch(new RegisterAction({ form, formDirective }));

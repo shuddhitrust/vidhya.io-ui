@@ -1073,7 +1073,7 @@ export class AuthState {
     { payload }: VerifyInvitecodeAction
   ) {
     const state = getState();
-    const { form, formDirective } = payload;
+    const { form } = payload;
     let { isSubmittingForm } = state;
     if (form.valid) {
       this.store.dispatch(
@@ -1109,7 +1109,7 @@ export class AuthState {
             console.log('got data', { data });
             if (response?.ok) {
               form.reset();
-              formDirective.resetForm();
+              // formDirective.resetForm();
               console.log('*1* Updating current member from verifyInviteCode', {
                 currentMember: { ...state.currentMember, invitecode },
               });
