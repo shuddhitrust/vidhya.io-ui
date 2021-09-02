@@ -201,8 +201,8 @@ export class AuthState {
         message: 'Checking authentication status...',
       })
     );
-    const localStorageToken = localStorage.getItem(AUTH_TOKEN_KEY);
-    const localStorageRefreshToken = localStorage.getItem(
+    const localStorageToken = sessionStorage.getItem(AUTH_TOKEN_KEY);
+    const localStorageRefreshToken = sessionStorage.getItem(
       AUTH_REFRESH_TOKEN_KEY
     );
     if (localStorageToken && localStorageRefreshToken) {
@@ -356,14 +356,14 @@ export class AuthState {
     const { token, refreshToken } = state;
     console.log('Setting to local storage => ', { token, refreshToken });
     if (token) {
-      localStorage.setItem(AUTH_TOKEN_KEY, token);
+      sessionStorage.setItem(AUTH_TOKEN_KEY, token);
     } else {
-      localStorage.removeItem(AUTH_TOKEN_KEY);
+      sessionStorage.removeItem(AUTH_TOKEN_KEY);
     }
     if (refreshToken) {
-      localStorage.setItem(AUTH_REFRESH_TOKEN_KEY, refreshToken);
+      sessionStorage.setItem(AUTH_REFRESH_TOKEN_KEY, refreshToken);
     } else {
-      localStorage.removeItem(AUTH_REFRESH_TOKEN_KEY);
+      sessionStorage.removeItem(AUTH_REFRESH_TOKEN_KEY);
     }
   }
 
