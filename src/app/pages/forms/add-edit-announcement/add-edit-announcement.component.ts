@@ -16,11 +16,18 @@ import {
 import { AnnouncementState } from 'src/app/shared/state/announcements/announcement.state';
 import { Observable } from 'rxjs';
 import { emptyAnnouncementFormRecord } from 'src/app/shared/state/announcements/announcement.model';
-import { Announcement, MatSelectOption } from 'src/app/shared/common/models';
+import {
+  Announcement,
+  CurrentMember,
+  MatSelectOption,
+} from 'src/app/shared/common/models';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { GroupState } from 'src/app/shared/state/groups/group.state';
 import { FetchGroupsAction } from 'src/app/shared/state/groups/group.actions';
-import { defaultSearchParams } from 'src/app/shared/common/constants';
+import {
+  defaultSearchParams,
+  USER_ROLES_NAMES,
+} from 'src/app/shared/common/constants';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 @Component({
   selector: 'app-add-edit-announcement',
@@ -49,6 +56,9 @@ export class AddEditAnnouncementComponent implements OnInit {
   @Select(AuthState.getCurrentUserId)
   currentUserId$: Observable<number>;
   currentUserId: number;
+  @Select(AuthState.getCurrentMember)
+  currentMember$: Observable<CurrentMember>;
+  currentMember: CurrentMember;
   announcementFormRecord: Announcement = emptyAnnouncementFormRecord;
   announcementForm: FormGroup;
 
@@ -63,6 +73,9 @@ export class AddEditAnnouncementComponent implements OnInit {
     );
     this.currentUserId$.subscribe((val) => {
       this.currentUserId = val;
+    });
+    this.currentMember$.subscribe((val) => {
+      this.currentMember = val;
     });
     this.announcementFormRecord$.subscribe((val) => {
       this.announcementFormRecord = val;
@@ -140,6 +153,10 @@ export class AddEditAnnouncementComponent implements OnInit {
       result = true;
     }
     return result;
+  }
+
+  ShowGlobalRecipients() {
+    return this.currentMember.role?.name == USER_ROLES_NAMES.SUPER_ADMIN;
   }
 
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {
