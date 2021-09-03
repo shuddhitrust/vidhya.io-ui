@@ -14,7 +14,9 @@
       <mat-icon>delete</mat-icon>
     </button>
     <h2>{{ announcement.title }}</h2>
-    <p class="left">{{ announcement.message }}</p>
+    <div class="markdown-container">
+      <markdown [data]="announcement?.message"></markdown>
+    </div>
     <small class="left" style="font-style: italic"
       >Posted by {{ announcement?.author?.firstName }}
       {{ announcement?.author?.lastName }} at

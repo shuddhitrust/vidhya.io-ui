@@ -36,6 +36,7 @@ export class AddEditAnnouncementComponent implements OnInit {
   recipientsInstitution = 'recipientsInstitution';
   groups = 'groups';
   params: object = {};
+  message;
   @Select(AnnouncementState.getAnnouncementFormRecord)
   announcementFormRecord$: Observable<Announcement>;
   @Select(GroupState.listGroupOptions)
@@ -142,6 +143,7 @@ export class AddEditAnnouncementComponent implements OnInit {
   }
 
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {
+    form.get('message').setValue(this.message);
     console.log('announcement submit form value => ', form.value);
     if (this.validateRecipients()) {
       this.store.dispatch(
