@@ -17,7 +17,7 @@ import { AuthState } from '../../state/auth/auth.state';
 import { Observable } from 'rxjs';
 
 const uri = environment.graphql_endpoint;
-let token = localStorage.getItem(AUTH_TOKEN_KEY);
+let token = sessionStorage.getItem(AUTH_TOKEN_KEY);
 
 let ws = new WebSocketLink({
   uri: `${environment.websocket_graphql_endpoint}?token=${token}`,
