@@ -18,8 +18,7 @@
       <markdown [data]="announcement?.message"></markdown>
     </div>
     <small class="left" style="font-style: italic"
-      >Posted by {{ announcement?.author?.firstName }}
-      {{ announcement?.author?.lastName }} at
+      >Posted by {{ announcement?.author?.name }} at
       {{ parseDate(announcement.createdAt) }}</small
     >
   </div>
