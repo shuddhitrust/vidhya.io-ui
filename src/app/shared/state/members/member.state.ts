@@ -230,9 +230,6 @@ export class MemberState {
             fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
             isFetching: false,
           });
-          if (!membersSubscribed) {
-            this.store.dispatch(new MemberSubscriptionAction());
-          }
         },
         (error) => {
           this.store.dispatch(

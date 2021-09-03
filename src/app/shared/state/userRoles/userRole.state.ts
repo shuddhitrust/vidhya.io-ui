@@ -174,9 +174,6 @@ export class UserRoleState {
             fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
             isFetching: false,
           });
-          if (!userRolesSubscribed) {
-            this.store.dispatch(new UserRoleSubscriptionAction());
-          }
         },
         (error) => {
           this.store.dispatch(

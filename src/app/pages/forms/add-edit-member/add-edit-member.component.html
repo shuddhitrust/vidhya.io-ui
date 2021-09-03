@@ -14,7 +14,7 @@
     (submit)="submitForm(memberForm, formDirective)"
     #formDirective="ngForm"
   >
-    <div class="col-lg-3 col-md-4 col-sm-12 floating-avatar">
+    <!-- <div class="col-lg-3 col-md-4 col-sm-12 floating-avatar">
       <div
         *ngIf="memberForm.get('avatar').value"
         class="col-lg-12 col-md-12 col-sm-12"
@@ -38,7 +38,7 @@
         placeholder="Your avatar"
         (change)="onAvatarChange($event)"
       />
-    </div>
+    </div> -->
     <mat-form-field class="col-lg-9 col-md-12 col-sm-12" appearance="outline">
       <mat-label>First Name</mat-label>
       <input
