@@ -167,6 +167,8 @@ export type Announcement = {
   author: any;
   message: string;
   institution: any;
+  recipientsGlobal?: boolean;
+  recipientsInstitution?: boolean;
   groups: any[];
   createdAt?: string;
   updatedAt?: string;

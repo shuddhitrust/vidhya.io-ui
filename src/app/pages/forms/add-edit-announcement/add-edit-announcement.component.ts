@@ -31,6 +31,9 @@ import { defaultSearchParams } from 'src/app/shared/common/constants';
 })
 export class AddEditAnnouncementComponent implements OnInit {
   formSubmitting: boolean = false;
+  recipientsGlobal = 'recipientsGlobal';
+  recipientsInstitution = 'recipientsInstitution';
+  groups = 'groups';
   params: object = {};
   @Select(AnnouncementState.getAnnouncementFormRecord)
   announcementFormRecord$: Observable<Announcement>;
@@ -88,7 +91,16 @@ export class AddEditAnnouncementComponent implements OnInit {
         Validators.required,
       ],
       message: [announcementFormRecord?.message, Validators.required],
-      groups: [announcementFormRecord?.groups, Validators.required],
+      [this.recipientsGlobal]: [
+        this.announcementFormRecord?.[this.recipientsGlobal],
+      ],
+      [this.recipientsInstitution]: [
+        this.announcementFormRecord?.[this.recipientsInstitution],
+      ],
+      [this.groups]: [
+        announcementFormRecord?.[this.groups],
+        Validators.required,
+      ],
     });
   };
   ngOnInit(): void {
@@ -99,6 +111,18 @@ export class AddEditAnnouncementComponent implements OnInit {
         this.store.dispatch(new GetAnnouncementAction({ id }));
       }
     });
+  }
+
+  recipientsChanged(field) {
+    if (field != this.recipientsGlobal) {
+      this.announcementForm.get(this.recipientsGlobal).setValue(false);
+    }
+    if (field != this.recipientsInstitution) {
+      this.announcementForm.get(this.recipientsInstitution).setValue(false);
+    }
+    if (field != this.groups) {
+      this.announcementForm.get(this.groups).setValue([]);
+    }
   }
 
   goBack() {

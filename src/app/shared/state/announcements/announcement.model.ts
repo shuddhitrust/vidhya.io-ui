@@ -11,6 +11,8 @@ export const emptyAnnouncementFormRecord: Announcement = {
   author: null,
   message: null,
   institution: null,
+  recipientsGlobal: false,
+  recipientsInstitution: false,
   groups: [],
 };
 export interface AnnouncementStateModel {
