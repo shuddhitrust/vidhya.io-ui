@@ -636,6 +636,7 @@ export const EXERCISE_KEY_QUERIES = {
         validAnswers
         referenceLink
         referenceImages
+        remarks
       }
     }
   `,
@@ -673,6 +674,7 @@ export const EXERCISE_KEY_QUERIES = {
         validAnswers
         referenceLink
         referenceImages
+        remarks
       }
     }
   `,

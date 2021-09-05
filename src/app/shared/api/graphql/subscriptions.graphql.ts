@@ -224,6 +224,7 @@ export const SUBSCRIPTIONS = {
           validAnswers
           referenceLink
           referenceImages
+          remarks
         }
         method
       }
