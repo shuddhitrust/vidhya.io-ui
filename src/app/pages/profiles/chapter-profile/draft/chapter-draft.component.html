@@ -199,8 +199,8 @@
     <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
       <input hidden="true" matInput />
       <mat-checkbox matInput formControlName="required"
-        >Required exercise (Participant cannot mark this chapter as completed
-        without submitting this)</mat-checkbox
+        >Required exercise (Participant cannot submit this chapter without
+        submitting this)</mat-checkbox
       >
     </mat-form-field>
 
@@ -443,4 +443,13 @@
       />
     </mat-form-field>
   </span>
+
+  <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+    <mat-label>Additional Remarks about Grading</mat-label>
+    <input
+      matInput
+      [(ngModel)]="response.remarks"
+      placeholder="Additional guidance for grading"
+    />
+  </mat-form-field>
 </ng-template>

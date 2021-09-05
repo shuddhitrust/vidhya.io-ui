@@ -265,10 +265,11 @@ export type ExerciseKey = {
   exercise: any;
   chapter: any;
   course: any;
-  validOption: string;
-  validAnswers: string[];
-  referenceLink: string;
-  referenceImages: string[];
+  validOption?: string;
+  validAnswers?: string[];
+  referenceLink?: string;
+  referenceImages?: string[];
+  remarks?: string;
 };
 
 export type ExerciseSubmission = {

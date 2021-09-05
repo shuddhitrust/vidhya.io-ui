@@ -195,6 +195,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
       validAnswers: [exerciseKeyRecord?.validAnswers],
       referenceLink: [exerciseKeyRecord?.referenceLink],
       referenceImages: [exerciseKeyRecord?.referenceImages],
+      remarks: [exerciseKeyRecord?.remarks],
     });
   }
 
@@ -352,6 +353,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     this.exerciseForm = this.setupExerciseForm();
     this.exerciseFormOptions = startingExerciseFormOptions;
     this.imagesQueuedForUpload = [];
+    this.exerciseKey = Object.assign({}, emptyExerciseKeyFormRecord);
     this.resetFormOptionErrors();
   }
   addExercise() {
@@ -474,6 +476,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     form.get('referenceLink').setValue(this.exerciseKey.referenceLink);
     const referenceImages = this.exerciseKey.referenceImages;
     form.get('referenceImages').setValue(referenceImages);
+    form.get('remarks').setValue(this.exerciseKey.remarks);
     this.uploadNewReferenceImages(form);
   }
 

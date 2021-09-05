@@ -28,6 +28,7 @@ export const emptyExerciseKeyFormRecord: ExerciseKey = {
   validAnswers: [''],
   referenceLink: null,
   referenceImages: [],
+  remarks: null,
 };
 
 export interface ExerciseStateModel {
