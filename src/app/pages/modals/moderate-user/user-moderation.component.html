@@ -18,7 +18,7 @@
     </mat-card-content>
     <hr />
     <form [formGroup]="moderationForm" novalidate #formDirective="ngForm">
-      <div *ngIf="disableApproval()">
+      <div *ngIf="!disableApproval()">
         <p>
           In order to approve <b>{{ profileData?.firstName }}</b> as a member at
           <b>{{ profileData?.institution?.name }}</b

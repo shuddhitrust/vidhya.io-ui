@@ -22,7 +22,9 @@ export class UserModerationRendererComponent {
   }
 
   disableApproval() {
-    return this.rowData.membershipStatus != MembershipStatusOptions.PENDING;
+    return (
+      this.rowData.membershipStatus == MembershipStatusOptions.UNINITIALIZED
+    );
   }
 
   showProfile() {
