@@ -1,5 +1,5 @@
 <button
-  *ngIf="!disableApproval(); else suspendButtonTemplate"
+  [disabled]="disableApproval()"
   mat-raised-button
   color="primary"
   (click)="invokeParentMethod()"
