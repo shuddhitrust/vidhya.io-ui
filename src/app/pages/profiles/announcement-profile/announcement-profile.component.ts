@@ -27,7 +27,7 @@ import { AuthorizationService } from 'src/app/shared/api/authorization/authoriza
   templateUrl: './announcement-profile.component.html',
   styleUrls: [
     './announcement-profile.component.scss',
-    './../../../../shared/common/shared-styles.css',
+    './../../../shared/common/shared-styles.css',
   ],
 })
 export class AnnouncementProfileComponent implements OnInit, OnDestroy {
