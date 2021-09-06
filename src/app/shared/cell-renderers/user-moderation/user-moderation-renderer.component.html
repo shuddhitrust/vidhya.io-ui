@@ -1,8 +1,14 @@
 <button
+  *ngIf="disableApproval(); else suspendButtonTemplate"
   mat-raised-button
   color="primary"
-  [disabled]="disableModeration()"
   (click)="invokeParentMethod()"
 >
   Moderate
 </button>
+
+<ng-template #suspendButtonTemplate>
+  <button mat-raised-button color="warn" (click)="invokeParentMethod()">
+    Suspend
+  </button>
+</ng-template>

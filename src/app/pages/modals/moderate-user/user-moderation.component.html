@@ -18,35 +18,37 @@
     </mat-card-content>
     <hr />
     <form [formGroup]="moderationForm" novalidate #formDirective="ngForm">
-      <p>
-        In order to approve <b>{{ profileData?.firstName }}</b> as a member at
-        <b>{{ profileData?.institution?.name }}</b
-        >, please choose a role for them:-
-      </p>
-      <mat-form-field
-        class="col-lg-8 col-md-8 col-sm-8"
-        [class.dropdoawn-loading]="isFetchingUserRoles"
-        appearance="outline"
-      >
-        <mat-label>Role</mat-label>
-        <mat-select
-          formControlName="role"
-          placeholder="The role of this member in the institution"
+      <div *ngIf="disableApproval()">
+        <p>
+          In order to approve <b>{{ profileData?.firstName }}</b> as a member at
+          <b>{{ profileData?.institution?.name }}</b
+          >, please choose a role for them:-
+        </p>
+        <mat-form-field
+          class="col-lg-8 col-md-8 col-sm-8"
+          [class.dropdoawn-loading]="isFetchingUserRoles"
+          appearance="outline"
         >
-          <mat-option *ngFor="let role of roleOptions" [value]="role.value">
-            {{ role.label }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <button
-        mat-raised-button
-        color="primary"
-        *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
-        (click)="approvalConfirmation()"
-      >
-        Approve
-      </button>
-      <hr />
+          <mat-label>Role</mat-label>
+          <mat-select
+            formControlName="role"
+            placeholder="The role of this member in the institution"
+          >
+            <mat-option *ngFor="let role of roleOptions" [value]="role.value">
+              {{ role.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <button
+          mat-raised-button
+          color="primary"
+          *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
+          (click)="approvalConfirmation()"
+        >
+          Approve
+        </button>
+        <hr />
+      </div>
       <p>
         If <b>{{ profileData?.firstName }}</b> is not a member at
         <b>{{ profileData?.institution?.name }}</b

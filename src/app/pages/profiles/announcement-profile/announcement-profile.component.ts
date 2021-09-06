@@ -25,7 +25,10 @@ import { AuthorizationService } from 'src/app/shared/api/authorization/authoriza
 @Component({
   selector: 'app-announcement-profile',
   templateUrl: './announcement-profile.component.html',
-  styleUrls: ['./announcement-profile.component.scss'],
+  styleUrls: [
+    './announcement-profile.component.scss',
+    './../../../../shared/common/shared-styles.css',
+  ],
 })
 export class AnnouncementProfileComponent implements OnInit, OnDestroy {
   resource = resources.ANNOUNCEMENT;

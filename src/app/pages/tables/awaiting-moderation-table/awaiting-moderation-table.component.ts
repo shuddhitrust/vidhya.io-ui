@@ -55,6 +55,12 @@ export class AwaitingModerationTableComponent implements OnInit {
     {
       field: 'name',
     },
+    {
+      field: 'institution',
+      cellRenderer: (params) => {
+        return params?.data?.institution?.name;
+      },
+    },
     { field: 'title' },
     {
       field: 'bio',

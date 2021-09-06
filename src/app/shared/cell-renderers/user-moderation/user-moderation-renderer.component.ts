@@ -21,7 +21,7 @@ export class UserModerationRendererComponent {
     this.cellValue = this.getValueToDisplay(params);
   }
 
-  disableModeration() {
+  disableApproval() {
     return this.rowData.membershipStatus != MembershipStatusOptions.PENDING;
   }
 

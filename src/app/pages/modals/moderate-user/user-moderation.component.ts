@@ -10,6 +10,7 @@ import { Observable } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import {
+  MembershipStatusOptions,
   resources,
   RESOURCE_ACTIONS,
   User,
@@ -71,6 +72,13 @@ export class UserModerationProfileComponent implements OnInit {
     return this.auth.authorizeResource(this.resource, action, {
       institutionId: this.profileData?.institution?.id,
     });
+  }
+
+  disableApproval() {
+    return (
+      this.profileData?.membershipStatus ==
+      MembershipStatusOptions.UNINITIALIZED
+    );
   }
 
   setupModerationFormGroup = (user): FormGroup => {
