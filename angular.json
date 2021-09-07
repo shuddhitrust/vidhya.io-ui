@@ -53,6 +53,8 @@
           },
           "configurations": {
             "staging": {
+              "buildOptimizer": true,
+              "optimization": true,
               "budgets": [
                 {
                   "type": "initial",
