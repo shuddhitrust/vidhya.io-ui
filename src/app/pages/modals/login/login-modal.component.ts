@@ -100,19 +100,12 @@ export class LoginModalComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('from init of login modal');
     this.url = window.location.href;
     if (this.url.includes(uiroutes.REGISTER_ROUTE.route) && !this.isLoggedIn) {
       const invitecode = this.url.split(uiroutes.REGISTER_ROUTE.route + '/')[1];
-      console.log('REGISTER!!!', {
-        url: this.url,
-        invitecode,
-        isLoggedIn: this.isLoggedIn,
-      });
       this.route.queryParams.subscribe((params) => {
         const invitecode = params['invitecode'];
         if (invitecode) {
-          console.log({ url: this.url, invitecode });
           this.showRegister();
           this.setupInvitecodeForm(invitecode);
         }
@@ -162,7 +155,6 @@ export class LoginModalComponent implements OnInit {
   }
 
   login(form: FormGroup, formDirective: FormGroupDirective) {
-    console.log('login button is clicked!');
     this.store.dispatch(new LoginAction({ form, formDirective }));
   }
 
@@ -170,7 +162,6 @@ export class LoginModalComponent implements OnInit {
     this.store.dispatch(new VerifyInvitecodeAction({ form }));
   }
   register(form: FormGroup, formDirective: FormGroupDirective) {
-    console.log('register button was clicked');
     this.store.dispatch(new RegisterAction({ form, formDirective }));
   }
 

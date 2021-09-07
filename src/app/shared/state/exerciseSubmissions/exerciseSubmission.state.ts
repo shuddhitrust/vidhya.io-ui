@@ -96,7 +96,7 @@ export class ExerciseSubmissionState {
       };
       return option;
     });
-    console.log('options', options);
+    
     return options;
   }
 
@@ -142,9 +142,6 @@ export class ExerciseSubmissionState {
       state.gradingGroupsfetchParamObjects[
         state.gradingGroupsfetchParamObjects.length - 1
       ];
-    console.log('from fetchNextExerciseSubmissionGroups', {
-      previousFetchParams,
-    });
     const pageNumber = previousFetchParams.currentPage + 1;
     const newSearchParams: SearchParams = {
       pageNumber,
@@ -169,7 +166,7 @@ export class ExerciseSubmissionState {
     { getState, patchState }: StateContext<ExerciseSubmissionStateModel>,
     { payload }: FetchExerciseSubmissionsAction
   ) {
-    console.log('Fetching exerciseSubmissions from exerciseSubmission state');
+    
     let { searchParams } = payload;
     let state = getState();
     const {
@@ -198,7 +195,7 @@ export class ExerciseSubmissionState {
       })
     ) {
       patchState({ isFetching: true });
-      console.log('variables for exerciseSubmissions fetch ', { variables });
+      
       this.apollo
         .watchQuery({
           query: EXERCISE_SUBMISSION_QUERIES.GET_EXERCISE_SUBMISSION_GROUPS,
@@ -207,46 +204,36 @@ export class ExerciseSubmissionState {
         })
         .valueChanges.subscribe(
           ({ data }: any) => {
-            console.log('resposne to get exerciseSubmissions query ', { data });
+            
             const response = data.exerciseSubmissionGroups;
             const totalCount = response[0]?.totalCount
               ? response[0]?.totalCount
               : 0;
             newFetchParams = { ...newFetchParams, totalCount };
-            console.log('from after getting exerciseSubmissions', {
-              totalCount,
-              response,
-              newFetchParams,
-            });
+
             if (
               columnFiltersChanged({
                 fetchParamObjects: gradingGroupsfetchParamObjects,
                 newFetchParams,
               })
             ) {
-              console.log('filter params have changed ', {
-                old: gradingGroupsfetchParamObjects[
-                  gradingGroupsfetchParamObjects?.length - 1
-                ]?.columnFilters,
-                new: newFetchParams.columnFilters,
-              });
               // Resetting the state to clear existing groups.
               patchState({ paginatedGradingGroups: [] });
               state = getState();
             } else {
-              console.log('filter params have NOT changed ', {
-                old: gradingGroupsfetchParamObjects[
-                  gradingGroupsfetchParamObjects?.length - 1
-                ]?.columnFilters,
-                new: newFetchParams.columnFilters,
-              });
+              // console.log('filter params have NOT changed ', {
+              //   old: gradingGroupsfetchParamObjects[
+              //     gradingGroupsfetchParamObjects?.length - 1
+              //   ]?.columnFilters,
+              //   new: newFetchParams.columnFilters,
+              // });
             }
             let paginatedGradingGroups = state.paginatedGradingGroups;
             paginatedGradingGroups = {
               ...paginatedGradingGroups,
               [pageNumber]: response,
             };
-            console.log({ paginatedGradingGroups });
+            
             let gradingGroups = convertPaginatedListToNormalList(
               paginatedGradingGroups
             );
@@ -287,9 +274,6 @@ export class ExerciseSubmissionState {
     const lastPageNumber = state.lastPage;
     const previousFetchParams =
       state.fetchParamObjects[state.fetchParamObjects.length - 1];
-    console.log('from FetchNextExerciseSubmissionsAction', {
-      previousFetchParams,
-    });
     const pageNumber = previousFetchParams.currentPage + 1;
     const newSearchParams: SearchParams = {
       pageNumber,
@@ -312,7 +296,7 @@ export class ExerciseSubmissionState {
     { getState, patchState }: StateContext<ExerciseSubmissionStateModel>,
     { payload }: FetchExerciseSubmissionsAction
   ) {
-    console.log('Fetching exerciseSubmissions from exerciseSubmission state');
+    
     let { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, fetchParamObjects, exerciseSubmissionsSubscribed } =
@@ -324,9 +308,6 @@ export class ExerciseSubmissionState {
       newPageSize: pageSize,
       newSearchQuery: searchQuery,
       newColumnFilters: columnFilters,
-    });
-    console.log('fetch exercise submissions columnFilters => ', {
-      columnFilters,
     });
     const variables = {
       searchField: searchQuery,
@@ -340,7 +321,7 @@ export class ExerciseSubmissionState {
     };
     if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
       patchState({ isFetching: true });
-      console.log('variables for exerciseSubmissions fetch ', { variables });
+      
       this.apollo
         .watchQuery({
           query: EXERCISE_SUBMISSION_QUERIES.GET_EXERCISE_SUBMISSIONS,
@@ -349,24 +330,19 @@ export class ExerciseSubmissionState {
         })
         .valueChanges.subscribe(
           ({ data }: any) => {
-            console.log('resposne to get exerciseSubmissions query ', { data });
+            
             const response = data.exerciseSubmissions;
             const totalCount = response[0]?.totalCount
               ? response[0]?.totalCount
               : 0;
             newFetchParams = { ...newFetchParams, totalCount };
-            console.log('from after getting exerciseSubmissions', {
-              totalCount,
-              response,
-              newFetchParams,
-            });
             let paginatedExerciseSubmissions =
               state.paginatedExerciseSubmissions;
             paginatedExerciseSubmissions = {
               ...paginatedExerciseSubmissions,
               [pageNumber]: response,
             };
-            console.log({ paginatedExerciseSubmissions });
+            
             let exerciseSubmissions = convertPaginatedListToNormalList(
               paginatedExerciseSubmissions
             );
@@ -410,10 +386,6 @@ export class ExerciseSubmissionState {
         })
         .subscribe((result: any) => {
           const state = getState();
-          console.log('exerciseSubmission subscription result ', {
-            exerciseSubmissions: state.exerciseSubmissions,
-            result,
-          });
           const method = result?.data?.notifyExerciseSubmission?.method;
           const exerciseSubmission =
             result?.data?.notifyExerciseSubmission?.exerciseSubmission;
@@ -490,13 +462,10 @@ export class ExerciseSubmissionState {
         ({ data }: any) => {
           const response = data.createUpdateExerciseSubmissions;
           patchState({ formSubmitting: false });
-          console.log('create exerciseSubmission ', { response });
+          
           if (response.ok) {
             this.router.navigateByUrl(ExerciseSubmissionFormCloseURL);
             const modifiedExerciseSubmissions = response.exerciseSubmissions;
-            console.log('modifiedExericseSubmissions', {
-              modifiedExerciseSubmissions,
-            });
             // Replacing the existing submissions in state with the modified submissions in the response
             let exerciseSubmissions = state.exerciseSubmissions.map((e) => {
               const modifiedSubmission = modifiedExerciseSubmissions.find(
@@ -507,13 +476,6 @@ export class ExerciseSubmissionState {
             // Getting the last used fetch params so that we can check if the returned submissions are applicable to the filters
             const previousFetchParams =
               state.fetchParamObjects[state.fetchParamObjects.length - 1];
-            console.log('from FetchNextExerciseSubmissionsAction', {
-              previousFetchParams,
-            });
-            console.log('before filtering ', {
-              previousFetchParams,
-              exerciseSubmissions,
-            });
             // Filtering out submissions that are no longer valid for the current set of filters
             exerciseSubmissions = exerciseSubmissions.filter((e) => {
               const statusValid = previousFetchParams.columnFilters?.status
@@ -521,7 +483,7 @@ export class ExerciseSubmissionState {
                 : true;
               return statusValid;
             });
-            console.log('after filtering ', { exerciseSubmissions });
+            
             patchState({
               exerciseSubmissions,
               exerciseSubmissionFormRecord: emptyExerciseSubmissionFormRecord,
@@ -541,10 +503,10 @@ export class ExerciseSubmissionState {
               })
             );
           }
-          console.log('From createUpdateExerciseSubmission', { response });
+          
         },
         (error) => {
-          console.log('Some error happened ', error);
+          
           this.store.dispatch(
             new ShowNotificationAction({
               message: getErrorMessageFromGraphQLResponse(error),
@@ -570,7 +532,7 @@ export class ExerciseSubmissionState {
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteExerciseSubmission;
-          console.log('from delete exerciseSubmission ', { data });
+          
           if (response.ok) {
             this.router.navigateByUrl(ExerciseSubmissionFormCloseURL);
             const method = SUBSCRIPTION_METHODS.DELETE_METHOD;

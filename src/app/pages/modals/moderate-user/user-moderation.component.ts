@@ -53,12 +53,8 @@ export class UserModerationProfileComponent implements OnInit {
   ) {
     this.roleOptions$.subscribe((val) => {
       this.roleOptions = val;
-      console.log('roleOptions => ', { roleOptions: this.roleOptions });
     });
     this.profileData = data;
-    console.log('profieData from usermoderationprofile => ', {
-      profileData: this.profileData,
-    });
     this.moderationForm = this.setupModerationFormGroup(this.profileData);
   }
 
@@ -117,9 +113,6 @@ export class UserModerationProfileComponent implements OnInit {
     }
   }
   approveUser() {
-    console.log('payload before dispatching Member action => ', {
-      id: this.profileData.id,
-    });
     this.store.dispatch(
       new ApproveMemberAction({
         userId: this.profileData.id,
@@ -151,9 +144,6 @@ export class UserModerationProfileComponent implements OnInit {
     }
   }
   denyUser() {
-    console.log('payload before dispatching Member action => ', {
-      id: this.profileData.id,
-    });
     this.store.dispatch(
       new SuspendMemberAction({
         userId: this.profileData.id,

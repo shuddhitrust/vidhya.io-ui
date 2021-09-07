@@ -79,9 +79,6 @@ export class MemberProfileComponent {
     });
   }
   deleteMember() {
-    console.log('payload before dispatching Member action => ', {
-      id: this.profileData.id,
-    });
     this.store.dispatch(new DeleteMemberAction({ id: this.profileData.id }));
     this.closeDialog();
   }

@@ -56,7 +56,7 @@ export class NavbarComponent implements OnInit {
     this.store.dispatch(new OpenLoginFormAction());
     const dialogRef = this.dialog.open(LoginModalComponent);
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog result: ${result}`);
+      
     });
   }
 

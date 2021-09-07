@@ -21,7 +21,7 @@ export class InstitutionProfileRendererComponent {
   }
 
   showProfile() {
-    console.log('params', this.rowData);
+    
   }
 
   getValueToDisplay(params: ICellRendererParams) {
@@ -39,7 +39,7 @@ export class InstitutionProfileRendererComponent {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog result: ${result}`);
+      
     });
   }
 }

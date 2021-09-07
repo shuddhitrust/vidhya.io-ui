@@ -75,7 +75,7 @@ export class GroupState {
       };
       return option;
     });
-    console.log('options', options);
+    
     return options;
   }
 
@@ -134,7 +134,7 @@ export class GroupState {
     { getState, patchState }: StateContext<GroupStateModel>,
     { payload }: FetchGroupsAction
   ) {
-    console.log('Fetching groups from group state');
+    
     let { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, fetchParamObjects, groupsSubscribed } = state;
@@ -153,7 +153,7 @@ export class GroupState {
     };
     if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
       patchState({ isFetching: true });
-      console.log('variables for groups fetch ', { variables });
+      
       this.apollo
         .watchQuery({
           query: GROUP_QUERIES.GET_GROUPS,
@@ -162,23 +162,18 @@ export class GroupState {
         })
         .valueChanges.subscribe(
           ({ data }: any) => {
-            console.log('resposne to get groups query ', { data });
+            
             const response = data.groups;
             const totalCount = response[0]?.totalCount
               ? response[0]?.totalCount
               : 0;
             newFetchParams = { ...newFetchParams, totalCount };
-            console.log('from after getting groups', {
-              totalCount,
-              response,
-              newFetchParams,
-            });
             let paginatedGroups = state.paginatedGroups;
             paginatedGroups = {
               ...paginatedGroups,
               [pageNumber]: response,
             };
-            console.log({ paginatedGroups });
+            
             let groups = convertPaginatedListToNormalList(paginatedGroups);
             let lastPage = null;
             if (response.length < newFetchParams.pageSize) {
@@ -217,10 +212,6 @@ export class GroupState {
         })
         .subscribe((result: any) => {
           const state = getState();
-          console.log('group subscription result ', {
-            groups: state.groups,
-            result,
-          });
           const method = result?.data?.notifyGroup?.method;
           const group = result?.data?.notifyGroup?.group;
           const { newPaginatedItems, newItemsList } =
@@ -244,7 +235,7 @@ export class GroupState {
     { payload }: GetGroupAction
   ) {
     const { id } = payload;
-    console.log('from group state with id', { id });
+    
     patchState({ isFetching: true });
     this.apollo
       .watchQuery({
@@ -281,7 +272,7 @@ export class GroupState {
       formSubmitting = true;
       patchState({ formSubmitting });
       const values = form.value;
-      console.log('Group Form values', values);
+      
       const updateForm = values.id == null ? false : true;
       const { id, ...sanitizedValues } = values;
       const variables = updateForm
@@ -302,7 +293,7 @@ export class GroupState {
           ({ data }: any) => {
             const response = updateForm ? data.updateGroup : data.createGroup;
             patchState({ formSubmitting: false });
-            console.log('update group ', { response });
+            
             if (response.ok) {
               const method = updateForm
                 ? SUBSCRIPTION_METHODS.UPDATE_METHOD
@@ -341,10 +332,10 @@ export class GroupState {
                 })
               );
             }
-            console.log('From createUpdateGroup', { response });
+            
           },
           (error) => {
-            console.log('Some error happened ', error);
+            
             this.store.dispatch(
               new ShowNotificationAction({
                 message: getErrorMessageFromGraphQLResponse(error),
@@ -379,7 +370,7 @@ export class GroupState {
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteGroup;
-          console.log('from delete group ', { data });
+          
           if (response.ok) {
             this.router.navigateByUrl(GroupFormCloseURL);
             const method = SUBSCRIPTION_METHODS.DELETE_METHOD;

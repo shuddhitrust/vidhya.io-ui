@@ -56,7 +56,7 @@ export class InstitutionProfileComponent implements OnInit {
   registrationInviteLink() {
     const parsedUrl = new URL(window.location.href);
     const baseUrl = parsedUrl.origin;
-    console.log('from registration invite link ', { baseUrl });
+    
 
     return `${baseUrl}/register?invitecode=${this.institution.invitecode}`;
   }

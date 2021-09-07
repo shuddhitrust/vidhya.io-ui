@@ -79,14 +79,12 @@ export class AddEditChapterComponent implements OnInit {
       new FetchCoursesAction({ searchParams: defaultSearchParams })
     );
     this.courseOptions$.subscribe((val) => {
-      console.log('ChapterFormRecord course options = >', val);
       if (this.courseId) {
         this.chapterForm.get('course').setValue(this.courseId);
       }
     });
     this.chapterFormRecord$.subscribe((val) => {
       this.chapterFormRecord = val;
-      console.log('ChapterFormRecord => ', val);
       this.chapterForm = this.setupChapterFormGroup(this.chapterFormRecord);
     });
   }
@@ -94,10 +92,6 @@ export class AddEditChapterComponent implements OnInit {
   setupChapterFormGroup = (
     chapterFormRecord: Chapter = emptyChapterFormRecord
   ): FormGroup => {
-    console.log('the current User id ', this.currentUserId);
-    console.log('chapter form record before form is setup', {
-      chapterFormRecord,
-    });
     this.instructions = chapterFormRecord.instructions;
     return this.fb.group({
       id: [chapterFormRecord?.id],
@@ -126,7 +120,6 @@ export class AddEditChapterComponent implements OnInit {
       this.params = params;
       const id = params['id'];
       this.courseId = params['courseId'];
-      console.log('From ngOnInit of add-edit-chapter', { id });
       if (id) {
         this.store.dispatch(new GetChapterAction({ id }));
       }
@@ -158,10 +151,6 @@ export class AddEditChapterComponent implements OnInit {
 
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {
     form.get('instructions').setValue(this.instructions);
-    console.log('chapter submit form value => ', {
-      form: form.value,
-      instructions: this.instructions,
-    });
     this.store.dispatch(
       new CreateUpdateChapterAction({
         form,

@@ -69,17 +69,14 @@ export class AddEditUserRoleComponent implements OnInit {
   ) {
     this.userRoleForm = this.setupUserRoleFormGroup();
     this.userRoleFormRecord$.subscribe((val) => {
-      console.log('userRole form record was reset', { val });
       this.userRoleFormRecord = val;
       this.userRoleForm = this.setupUserRoleFormGroup(this.userRoleFormRecord);
     });
-    console.log('Permissions Table => ', this.permissionsTable);
   }
 
   setupUserRoleFormGroup = (
     userRoleFormRecord: UserRole = emptyUserRoleFormRecord
   ): FormGroup => {
-    console.log('setting up the userRole form ', { userRoleFormRecord });
 
     const formGroup = this.fb.group({
       name: [userRoleFormRecord.name, Validators.required],
@@ -98,10 +95,6 @@ export class AddEditUserRoleComponent implements OnInit {
     this.permissionsTable = this.auth.convertPermissionsToTable(
       this.permissionsObject
     );
-    console.log('before setting the table => ', {
-      permissionsObject: this.permissionsObject,
-      permissionsTable: this.permissionsTable,
-    });
     return formGroup;
   };
   ngOnInit(): void {
@@ -169,11 +162,6 @@ export class AddEditUserRoleComponent implements OnInit {
 
   submitForm(formDirective: FormGroupDirective) {
     this.userRoleForm.get('permissions').setValue(this.permissionsObject);
-    console.log('form => ', {
-      form: this.userRoleForm.value,
-      permissionObject: this.permissionsObject,
-      example: this.permissionsObject['MODERATION']['LIST'],
-    });
     this.store.dispatch(
       new CreateUpdateUserRoleAction({ form: this.userRoleForm, formDirective })
     );

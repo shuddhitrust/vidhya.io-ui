@@ -40,7 +40,6 @@ export class InstitutionModalComponent {
   registrationInviteLink() {
     const parsedUrl = new URL(window.location.href);
     const baseUrl = parsedUrl.origin;
-    console.log('from registration invite link ', { baseUrl });
 
     return `${baseUrl}/register?invitecode=${this.profileData.invitecode}`;
   }

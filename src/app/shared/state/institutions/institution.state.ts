@@ -73,7 +73,7 @@ export class InstitutionState {
       };
       return option;
     });
-    console.log('institution dropdown ptions', options);
+    
     return options;
   }
 
@@ -124,15 +124,12 @@ export class InstitutionState {
       newColumnFilters: columnFilters,
     });
     patchState({ isFetching: true });
-    console.log('new pagination object after the update method => ', {
-      newFetchParams,
-    });
     const variables = {
       searchField: searchQuery,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
-    console.log('variables for institutions fetch ', { variables });
+    
     this.apollo
       .watchQuery({
         query: INSTITUTION_QUERIES.GET_INSTITUTIONS,
@@ -147,7 +144,7 @@ export class InstitutionState {
             : 0;
 
           newFetchParams = { ...newFetchParams, totalCount };
-          console.log('new institutions from fetch ', response);
+          
           patchState({
             institutions: response,
             fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
@@ -179,10 +176,6 @@ export class InstitutionState {
         })
         .subscribe((result: any) => {
           const state = getState();
-          console.log('institution subscription result ', {
-            institutions: state.institutions,
-            result,
-          });
           const method = result?.data?.notifyInstitution?.method;
           const institution = result?.data?.notifyInstitution?.institution;
           const { items, fetchParamObjects } = subscriptionUpdater({
@@ -242,7 +235,7 @@ export class InstitutionState {
       formSubmitting = true;
       patchState({ formSubmitting });
       const values = form.value;
-      console.log('Institution Form values', values);
+      
       const updateForm = values.id == null ? false : true;
       const { id, ...sanitizedValues } = values;
       const variables = updateForm
@@ -265,7 +258,7 @@ export class InstitutionState {
               ? data.updateInstitution
               : data.createInstitution;
             patchState({ formSubmitting: false });
-            console.log('update institution ', { response });
+            
             if (response.ok) {
               this.store.dispatch(
                 new ShowNotificationAction({
@@ -289,10 +282,10 @@ export class InstitutionState {
                 })
               );
             }
-            console.log('From createUpdateInstitution', { response });
+            
           },
           (error) => {
-            console.log('Some error happened ', error);
+            
             this.store.dispatch(
               new ShowNotificationAction({
                 message: getErrorMessageFromGraphQLResponse(error),
@@ -327,7 +320,7 @@ export class InstitutionState {
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteInstitution;
-          console.log('from delete institution ', { data });
+          
           if (response.ok) {
             this.store.dispatch(
               new ShowNotificationAction({

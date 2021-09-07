@@ -21,7 +21,7 @@ export class RoleProfileRendererComponent {
   }
 
   showProfile() {
-    console.log('params', this.rowData);
+    
   }
 
   getValueToDisplay(params: ICellRendererParams) {
@@ -39,7 +39,7 @@ export class RoleProfileRendererComponent {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog result: ${result}`);
+      
     });
   }
 }

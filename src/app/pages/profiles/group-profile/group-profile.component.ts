@@ -61,7 +61,7 @@ export class GroupProfileComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       const groupId = params['id'];
-      console.log('Getting group from group profile', { id: groupId });
+      
       this.store.dispatch(new GetGroupAction({ id: groupId }));
     });
   }
@@ -83,16 +83,13 @@ export class GroupProfileComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('close dialog result for announcment => ', result);
+      
       if (result == true) {
         this.deleteGroup();
       }
     });
   }
   deleteGroup() {
-    console.log('payload before passing to action => ', {
-      id: this.group.id,
-    });
     this.store.dispatch(new DeleteGroupAction({ id: this.group.id }));
   }
 

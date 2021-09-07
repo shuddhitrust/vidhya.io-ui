@@ -34,11 +34,6 @@ export class NotificationState {
         : this.defaultConfig.autoClose;
     id = id != null || id != undefined ? id : this.defaultConfig.id;
     patchState({ message, action, autoClose });
-    console.log('notification message ', {
-      message,
-      action,
-      config: this.defaultConfig,
-    });
     this.toastService[action](message, { ...this.defaultConfig, autoClose });
   }
 }

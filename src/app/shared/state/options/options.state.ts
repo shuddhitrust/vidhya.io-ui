@@ -28,7 +28,7 @@ export class OptionsState {
     const options = state.membersByInstitution.map((m) => {
       return { value: m.id, label: m.name };
     });
-    console.log('members by institution options', options);
+    
     return options;
   }
 
@@ -47,7 +47,7 @@ export class OptionsState {
     //       label: `${m.name} (${getOptionLabel(m.type, groupTypeOptions)})`,
     //     };
     //   });
-    // console.log('members by institution options', options);
+    // 
     // return options;
     return [];
   }
@@ -66,7 +66,7 @@ export class OptionsState {
     const variables = {
       institutionId: payload.memberInstitutionId,
     };
-    console.log('variables for members fetch by institution', { variables });
+    
     this.apollo
       .watchQuery({
         query: USER_QUERIES.GET_USERS,
@@ -109,7 +109,7 @@ export class OptionsState {
       id: groupInstitutionId,
       filter: filter ? filter : null,
     };
-    console.log('Fetching members by institution ', variables);
+    
     if (groupInstitutionId) {
       // client
       //   .query({
@@ -118,7 +118,7 @@ export class OptionsState {
       //     fetchPolicy: fetchPolicyForGroups,
       //   })
       //   .then((res: any) => {
-      //     console.log('Fetch members by institution Id response => ', res);
+      //     
       //     isFetchingGroupsByInstitution = false;
       //     groupsByInstitution = res?.data?.getInstitution?.groups?.items;
       //     fetchPolicyForGroups = null;

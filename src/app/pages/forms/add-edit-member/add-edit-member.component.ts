@@ -93,9 +93,7 @@ export class AddEditMemberComponent implements OnInit {
     private router: Router,
     private uploadService: UploadService
   ) {
-    console.log('from the member form component!');
     this.authState$.subscribe((val) => {
-      console.log('is fully authenticated from member form ', val);
       this.authState = val;
       this.isFullyAuthenticated = this.authState.isFullyAuthenticated;
       this.currentMember = this.authState.currentMember;
@@ -139,7 +137,6 @@ export class AddEditMemberComponent implements OnInit {
     if (!this.memberForm) {
       this.memberForm = this.setupMemberFormGroup();
     }
-    console.log('this.memberForm => ', this.memberForm);
     this.checkIfFormContainsRecord();
   }
   checkIfFormContainsRecord() {
@@ -164,7 +161,6 @@ export class AddEditMemberComponent implements OnInit {
       bio: [memberFormRecord?.bio, Validators.maxLength(this.bioMaxLength)],
     });
     this.previewPath = formGroup.get('avatar').value;
-    console.log('memberForm at the end of setupMemberFormGroup ', formGroup);
     return formGroup;
   };
   ngOnInit(): void {
@@ -187,12 +183,6 @@ export class AddEditMemberComponent implements OnInit {
         label: this.currentMember?.institution?.name,
       },
     ];
-    console.log(
-      'institution options => ',
-      this.institutionOptions,
-      'this.memberform.value',
-      this.memberForm.value
-    );
   }
 
   goHome() {
@@ -223,7 +213,6 @@ export class AddEditMemberComponent implements OnInit {
   }
 
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {
-    console.log('this.avatarFile on submit', this.avatarFile);
     if (this.avatarFile) {
       this.store.dispatch(
         new ToggleLoadingScreen({
@@ -237,9 +226,6 @@ export class AddEditMemberComponent implements OnInit {
         (res) => {
           const url = res.secure_url;
           form.get('avatar').setValue(url);
-          console.log('after setting the new url after upload ', {
-            formValue: form.value,
-          });
           this.store.dispatch(
             new CreateUpdateMemberAction({ form, formDirective })
           );

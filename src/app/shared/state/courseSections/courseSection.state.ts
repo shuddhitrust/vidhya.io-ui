@@ -79,7 +79,7 @@ export class CourseSectionState {
       };
       return option;
     });
-    console.log('options', options);
+    
     return options;
   }
 
@@ -110,7 +110,7 @@ export class CourseSectionState {
     { getState, patchState }: StateContext<CourseSectionStateModel>,
     { payload }: FetchCourseSectionsAction
   ) {
-    console.log('Fetching courseSections from courseSection state');
+    
     let { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, fetchParamObjects } = state;
@@ -126,7 +126,7 @@ export class CourseSectionState {
       courseId: columnFilters.courseId,
     };
     patchState({ isFetching: true });
-    console.log('variables for courseSections fetch ', { variables });
+    
     this.apollo
       .watchQuery({
         query: COURSE_SECTION_QUERIES.GET_COURSE_SECTIONS,
@@ -135,17 +135,12 @@ export class CourseSectionState {
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
-          console.log('resposne to get courseSections query ', { data });
+          
           const response = data.courseSections;
           const totalCount = response[0]?.totalCount
             ? response[0]?.totalCount
             : 0;
           newFetchParams = { ...newFetchParams, totalCount };
-          console.log('from after getting courses', {
-            totalCount,
-            response,
-            newFetchParams,
-          });
           let paginatedCourseSections = state.paginatedCourseSections;
           paginatedCourseSections = {
             ...paginatedCourseSections,
@@ -195,10 +190,6 @@ export class CourseSectionState {
         })
         .subscribe((result: any) => {
           const state = getState();
-          console.log('courseSection subscription result ', {
-            courseSections: state.courseSections,
-            result,
-          });
           const method = result?.data?.notifyCourseSection?.method;
           const courseSection =
             result?.data?.notifyCourseSection?.courseSection;
@@ -262,7 +253,7 @@ export class CourseSectionState {
       formSubmitting = true;
       patchState({ formSubmitting });
       const values = form.value;
-      console.log('CourseSection Form values', values);
+      
       const updateForm = values.id == null ? false : true;
       const { id, ...sanitizedValues } = values;
       const variables = updateForm
@@ -285,13 +276,13 @@ export class CourseSectionState {
               ? data.updateCourseSection
               : data.createCourseSection;
             patchState({ formSubmitting: false });
-            console.log('update courseSection ', { response });
+            
             if (response.ok) {
               const method = updateForm
                 ? SUBSCRIPTION_METHODS.UPDATE_METHOD
                 : SUBSCRIPTION_METHODS.CREATE_METHOD;
               const courseSection = response.courseSection;
-              console.log('coursesection', { courseSection });
+              
               const { newPaginatedItems, newItemsList } =
                 paginatedSubscriptionUpdater({
                   paginatedItems: state.paginatedCourseSections,
@@ -324,10 +315,10 @@ export class CourseSectionState {
                 })
               );
             }
-            console.log('From createUpdateCourseSection', { response });
+            
           },
           (error) => {
-            console.log('Some error happened ', error);
+            
             this.store.dispatch(
               new ShowNotificationAction({
                 message: getErrorMessageFromGraphQLResponse(error),
@@ -362,7 +353,7 @@ export class CourseSectionState {
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteCourseSection;
-          console.log('from delete courseSection ', { data });
+          
           if (response.ok) {
             this.router.navigateByUrl(CourseSectionFormCloseURL);
             const method = SUBSCRIPTION_METHODS.DELETE_METHOD;
@@ -429,7 +420,7 @@ export class CourseSectionState {
       .subscribe(
         ({ data }: any) => {
           const response = data.reorderChapters;
-          console.log('Reordering of course sections ', { response });
+          
         },
         (error) => {
           this.store.dispatch(

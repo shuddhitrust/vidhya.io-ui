@@ -130,9 +130,6 @@ export class MemberState {
       newColumnFilters: columnFilters,
     });
     patchState({ isFetching: true });
-    console.log('new pagination object after the update method => ', {
-      newFetchParams,
-    });
     const variables = {
       searchField: searchQuery,
       membershipStatusNot: columnFilters.membershipStatusNot,
@@ -141,7 +138,7 @@ export class MemberState {
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
-    console.log('variables for members fetch ', { variables });
+    
     this.apollo
       .watchQuery({
         query: USER_QUERIES.GET_USERS,
@@ -155,11 +152,6 @@ export class MemberState {
             ? response[0]?.totalCount
             : 0;
           newFetchParams = { ...newFetchParams, totalCount };
-          console.log('from after getting members', {
-            totalCount,
-            response,
-            newFetchParams,
-          });
           patchState({
             members: response,
             fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
@@ -195,9 +187,6 @@ export class MemberState {
       newColumnFilters: columnFilters,
     });
     patchState({ isFetching: true });
-    console.log('new pagination object after the update method => ', {
-      newFetchParams,
-    });
     const variables = {
       searchField: searchQuery,
       membershipStatusNot: columnFilters.membershipStatusNot,
@@ -206,7 +195,7 @@ export class MemberState {
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
-    console.log('variables for members fetch ', { variables });
+    
     this.apollo
       .watchQuery({
         query: USER_QUERIES.GET_PUBLIC_USERS,
@@ -220,11 +209,6 @@ export class MemberState {
             ? response[0]?.totalCount
             : 0;
           newFetchParams = { ...newFetchParams, totalCount };
-          console.log('from after getting members', {
-            totalCount,
-            response,
-            newFetchParams,
-          });
           patchState({
             members: response,
             fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
@@ -252,10 +236,6 @@ export class MemberState {
         })
         .subscribe((result: any) => {
           const state = getState();
-          console.log('member subscription result ', {
-            members: state.members,
-            result,
-          });
           const method = result?.data?.notifyUser?.method;
           const member = result?.data?.notifyUser?.member;
           const { items, fetchParamObjects } = subscriptionUpdater({
@@ -315,7 +295,7 @@ export class MemberState {
       formSubmitting = true;
       patchState({ formSubmitting });
       const values = form.value;
-      console.log('Member Form values', values);
+      
       const { id, ...sanitizedValues } = values;
       const variables = {
         input: sanitizedValues,
@@ -331,10 +311,10 @@ export class MemberState {
           ({ data }: any) => {
             const response = data.updateUser;
             patchState({ formSubmitting: false });
-            console.log('update member ', { response });
+            
             if (response.ok) {
               const user = response?.user;
-              console.log('from after updating the user ', { data, user });
+              
               this.store.dispatch(new UpdateCurrentUserInStateAction({ user }));
               this.store.dispatch(
                 new ShowNotificationAction({
@@ -355,10 +335,10 @@ export class MemberState {
                 })
               );
             }
-            console.log('From createUpdateMember', { response });
+            
           },
           (error) => {
-            console.log('Some error happened ', error);
+            
             this.store.dispatch(
               new ShowNotificationAction({
                 message: getErrorMessageFromGraphQLResponse(error),
@@ -393,7 +373,7 @@ export class MemberState {
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteMember;
-          console.log('from delete member ', { data });
+          
           if (response.ok) {
             this.store.dispatch(
               new ShowNotificationAction({
@@ -440,7 +420,7 @@ export class MemberState {
       .subscribe(
         ({ data }: any) => {
           const response = data.approveUser;
-          console.log('from delete member ', { data });
+          
           if (response.ok) {
             const state = getState();
             const newMembers = state.members.filter(
@@ -487,7 +467,7 @@ export class MemberState {
       .subscribe(
         ({ data }: any) => {
           const response = data.suspendUser;
-          console.log('from delete member ', { data });
+          
           if (response.ok) {
             this.store.dispatch(
               new ShowNotificationAction({

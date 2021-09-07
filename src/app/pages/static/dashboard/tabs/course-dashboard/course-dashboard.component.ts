@@ -54,7 +54,7 @@ export class CourseDashboardComponent implements OnInit {
 
   ngOnInit(): void {}
   onScroll() {
-    console.log('scrolling groups');
+    
     if (!this.isFetching) {
       this.store.dispatch(new FetchNextCoursesAction());
     }

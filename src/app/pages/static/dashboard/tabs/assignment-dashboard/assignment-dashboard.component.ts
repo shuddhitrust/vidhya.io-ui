@@ -56,13 +56,12 @@ export class AssignmentDashboardComponent implements OnInit {
     private router: Router,
     private auth: AuthorizationService
   ) {
-    console.log('calling fetch assignments from assignment dashboard')
     this.fetchAssignments();
     this.isFetching$.subscribe((val) => {
       this.isFetching = val;
     });
     this.assignments$.subscribe((val) => {
-      console.log('new assignments', { assignments: val });
+      
       this.assignments = val ? val : [];
     });
   }
@@ -76,7 +75,7 @@ export class AssignmentDashboardComponent implements OnInit {
 
   ngOnInit(): void {}
   onScroll() {
-    console.log('scrolling groups');
+    
     if (!this.isFetching) {
       this.fetchNextAssignments();
     }

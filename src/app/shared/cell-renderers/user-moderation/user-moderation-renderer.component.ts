@@ -28,7 +28,7 @@ export class UserModerationRendererComponent {
   }
 
   showProfile() {
-    console.log('params', this.rowData);
+    
   }
 
   getValueToDisplay(params: ICellRendererParams) {

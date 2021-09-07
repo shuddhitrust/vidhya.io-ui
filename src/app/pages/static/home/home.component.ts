@@ -1963,10 +1963,6 @@ export class HomeComponent implements OnInit {
       this.isLoggedIn = val;
     });
     this.membershipStatus$.subscribe((val) => {
-      console.log('*1* Membership status changed ', {
-        currentMembershipStatusOptions: this.membershipStatus,
-        newMembershipStatusOptions: val,
-      });
       if (this.membershipStatus != val && val !== undefined) {
         this.membershipStatus = val;
         this.processMembershipStatusOptions();
@@ -1986,10 +1982,6 @@ export class HomeComponent implements OnInit {
     //   this.authState.membershipStatus == MembershipStatusOptions.PENDING_APPROVAL;
     // this.suspended =
     //   this.authState.membershipStatus == MembershipStatusOptions.SUSPENDED;
-    console.log('from the home page => ', {
-      pendingApproval: this.pendingApproval,
-      suspended: this.suspended,
-    });
   }
 
   generateSubtitle(user) {
@@ -2012,10 +2004,6 @@ export class HomeComponent implements OnInit {
   }
 
   processMembershipStatusOptions() {
-    console.log(
-      '*1* Sending pending approval notification from processMembershipStatusOptions',
-      { membershipStatus: this.membershipStatus }
-    );
     if (this.membershipStatus == MembershipStatusOptions.PENDING) {
       this.store.dispatch(
         new ShowNotificationAction({
@@ -2030,15 +2018,15 @@ export class HomeComponent implements OnInit {
   }
 
   closeAnnouncements() {
-    console.log('clicked on close announcements');
+    
     this.showAnnouncements = false;
   }
 
   activateAccount() {
     this.url = window.location.href;
-    console.log('this.url => ', { url: this.url });
+    
     if (this.url.includes(uiroutes.ACTIVATE_ACCOUNT_ROUTE.route)) {
-      console.log('account activation!!!');
+      
       const token = this.url.split(
         uiroutes.ACTIVATE_ACCOUNT_ROUTE.route + '/'
       )[1];
@@ -2048,7 +2036,7 @@ export class HomeComponent implements OnInit {
     }
     if (this.url.includes(uiroutes.REGISTER_ROUTE.route)) {
       this.dialog.open(LoginModalComponent);
-      console.log('REGISTER!!!');
+      
     }
   }
 

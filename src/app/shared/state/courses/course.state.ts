@@ -78,7 +78,7 @@ export class CourseState {
       };
       return option;
     });
-    console.log('options', options);
+    
     return options;
   }
 
@@ -137,7 +137,7 @@ export class CourseState {
     { getState, patchState }: StateContext<CourseStateModel>,
     { payload }: FetchCoursesAction
   ) {
-    console.log('Fetching courses from course state');
+    
     let { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, fetchParamObjects, coursesSubscribed } = state;
@@ -156,7 +156,7 @@ export class CourseState {
     };
     if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
       patchState({ isFetching: true });
-      console.log('variables for courses fetch ', { variables });
+      
       this.apollo
         .watchQuery({
           query: COURSE_QUERIES.GET_COURSES,
@@ -165,17 +165,12 @@ export class CourseState {
         })
         .valueChanges.subscribe(
           ({ data }: any) => {
-            console.log('resposne to get courses query ', { data });
+            
             const response = data.courses;
             const totalCount = response[0]?.totalCount
               ? response[0]?.totalCount
               : 0;
             newFetchParams = { ...newFetchParams, totalCount };
-            console.log('from after getting courses', {
-              totalCount,
-              response,
-              newFetchParams,
-            });
             let paginatedCourses = state.paginatedCourses;
             paginatedCourses = {
               ...paginatedCourses,
@@ -219,10 +214,6 @@ export class CourseState {
         })
         .subscribe((result: any) => {
           const state = getState();
-          console.log('course subscription result ', {
-            courses: state.courses,
-            result,
-          });
           const method = result?.data?.notifyCourse?.method;
           const course = result?.data?.notifyCourse?.course;
           const { newPaginatedItems, newItemsList } =
@@ -283,7 +274,7 @@ export class CourseState {
       formSubmitting = true;
       patchState({ formSubmitting });
       const values = form.value;
-      console.log('Course Form values', values);
+      
       const updateForm = values.id == null ? false : true;
       const { id, ...sanitizedValues } = values;
       const variables = updateForm
@@ -304,7 +295,7 @@ export class CourseState {
           ({ data }: any) => {
             const response = updateForm ? data.updateCourse : data.createCourse;
             patchState({ formSubmitting: false });
-            console.log('update course ', { response });
+            
             if (response.ok) {
               const method = updateForm
                 ? SUBSCRIPTION_METHODS.UPDATE_METHOD
@@ -342,10 +333,10 @@ export class CourseState {
                 })
               );
             }
-            console.log('From createUpdateCourse', { response });
+            
           },
           (error) => {
-            console.log('Some error happened ', error);
+            
             this.store.dispatch(
               new ShowNotificationAction({
                 message: getErrorMessageFromGraphQLResponse(error),
@@ -380,7 +371,7 @@ export class CourseState {
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteCourse;
-          console.log('from delete course ', { data });
+          
           if (response.ok) {
             this.router.navigateByUrl(CourseFormCloseURL);
             const method = SUBSCRIPTION_METHODS.DELETE_METHOD;
@@ -442,7 +433,7 @@ export class CourseState {
       .subscribe(
         ({ data }: any) => {
           const response = data.publishCourse;
-          console.log('from publish course ', { data });
+          
           if (response.ok) {
             this.store.dispatch(
               new ShowNotificationAction({

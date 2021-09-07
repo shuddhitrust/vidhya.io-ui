@@ -148,7 +148,6 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     });
     this.chapter$.subscribe((val) => {
       this.chapter = val;
-      console.log('Current chapter => ', this.chapter);
       this.fetchExerciseKeys();
       this.exerciseForm = this.setupExerciseForm();
     });
@@ -217,7 +216,6 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
 
   fetchExerciseKeys() {
     if (this.chapterFilters()) {
-      console.log('calling fetchExerciseKeys from chapter-draft profile');
       this.store.dispatch(
         new FetchExerciseKeysAction({
           searchParams: {
@@ -258,16 +256,12 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('close dialog result for announcment => ', result);
       if (result == true) {
         this.deleteChapter();
       }
     });
   }
   deleteChapter() {
-    console.log('payload before passing to action => ', {
-      id: this.chapter.id,
-    });
     this.store.dispatch(new DeleteChapterAction({ id: this.chapter?.id }));
   }
 
@@ -291,11 +285,6 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     const exercise = exerciseKey?.exercise;
     this.resetExerciseForm();
     this.exerciseForm = this.setupExerciseForm(exerciseKey);
-    console.log('editing exercise ', {
-      exercise,
-      exerciseKeys: this.exerciseKeys,
-      exerciseKey: exerciseKey,
-    });
     this.showExerciseForm = true;
   }
   deleteExerciseConfirmation(key) {
@@ -304,7 +293,6 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('close dialog result for exercise => ', result);
       if (result == true) {
         this.deleteExercise(key);
       }
@@ -312,22 +300,17 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   }
   deleteExercise(exerciseKey) {
     const exercise = exerciseKey?.exercise;
-    console.log('payload before passing to action => ', {
-      id: exercise.id,
-    });
     this.store.dispatch(new DeleteExerciseAction({ id: exercise?.id }));
   }
   reorderExercises() {
     const exercisesList = this.exerciseKeys.map((key) => {
       return { id: key.exercise.id, label: key.exercise.prompt };
     });
-    console.log('initial index list ', { exercisesList });
     const dialogRef = this.dialog.open(DragDropComponent, {
       data: exercisesList,
     });
 
     dialogRef.afterClosed().subscribe((newIndexArray) => {
-      console.log('after reordering', { newIndexArray });
       let i = 1;
       const reorderedList = newIndexArray.map((id) => {
         let exerciseKey = this.exerciseKeys.find(
@@ -340,9 +323,8 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
         i++;
         return exerciseKey;
       });
-      console.log('old order of exercises ', { exercises: this.exerciseKeys });
       this.exerciseKeys = Object.assign([], reorderedList);
-      console.log('new order of exercises ', { exercises: this.exerciseKeys });
+      
       const indexList = this.exerciseKeys.map((key) => {
         return { id: key.exercise?.id, index: key.exercise.index };
       });
@@ -431,7 +413,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
       this.uploadService.upload(formData).subscribe(
         (res) => {
           const url = res.secure_url;
-          console.log('uploading new file ', imageIndex, url);
+          
           const existingReferenceImages = form.get('referenceImages').value;
           // We update the referenceImages field in the form with the new url
           const newReferenceImages = existingReferenceImages.concat(url);
@@ -446,7 +428,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
           }
         },
         (err) => {
-          console.log('Error while uploading image', { err });
+          
           this.store.dispatch(
             new ShowNotificationAction({
               message:
@@ -460,14 +442,11 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   }
 
   uploadNewReferenceImages(form) {
-    console.log('Starting to upload reference images', {
-      imagesQueuedForUpload: this.imagesQueuedForUpload,
-    });
     this.uploadImage(0, form);
   }
 
   updateGradingKeyInExerciseForm(form) {
-    console.log('exerciseKey', { exerciseKey: this.exerciseKey });
+    
     form.get('validOption').setValue(this.exerciseKey.validOption);
     let allValidAnswers = this.exerciseKey?.validAnswers;
     allValidAnswers = allValidAnswers.filter((a) => a?.length > 0); // removing empty answers if any
@@ -489,7 +468,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   }
 
   updateExerciseKeyOption(option) {
-    console.log({ option });
+    
     let newExerciseKey = Object.assign({}, this.exerciseKey);
     newExerciseKey.validOption = option;
     this.exerciseKey = newExerciseKey;
@@ -509,9 +488,6 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
       reader.readAsDataURL(file);
 
       this.imagesQueuedForUpload.push(previewImageObject);
-      console.log('updated imagesQueuedForUpload', {
-        imagesQueuedForUpload: this.imagesQueuedForUpload,
-      });
     }
   }
 
@@ -536,16 +512,13 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   }
 
   updateFormBeforeSubmit(form, formDirective) {
-    console.log('imagesQueuedForUpload', {
-      imagesQueuedForUpload: this.imagesQueuedForUpload,
-    });
     this.formDirective = formDirective;
     this.sanitizeAndUpdateOptions(form);
     this.updateGradingKeyInExerciseForm(form);
   }
 
   submitExerciseForm(form) {
-    console.log('exercise submit form value => ', form.value);
+    
     if (!this.invalidOptions) {
       this.store.dispatch(
         new CreateUpdateExerciseAction({

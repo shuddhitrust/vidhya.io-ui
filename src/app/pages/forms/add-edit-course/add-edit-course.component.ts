@@ -81,7 +81,6 @@ export class AddEditCourseComponent implements OnInit {
       );
     });
     this.memberOptions$.subscribe((options) => {
-      console.log('memberOptions', { memberOptions: this.memberOptions });
       this.memberOptions = options;
     });
     this.store.dispatch(
@@ -96,7 +95,6 @@ export class AddEditCourseComponent implements OnInit {
       new FetchCoursesAction({ searchParams: defaultSearchParams })
     );
     this.currentUserId$.subscribe((val) => {
-      console.log('from current user id in constructor => ', val);
       this.currentUserId = val;
     });
     this.courseForm = this.setupCourseFormGroup();
@@ -117,7 +115,6 @@ export class AddEditCourseComponent implements OnInit {
   setupCourseFormGroup = (
     courseFormRecord: Course = emptyCourseFormRecord
   ): FormGroup => {
-    console.log('the current User id ', this.currentUserId);
     const participantIds = courseFormRecord?.participants?.map((p) => p.id);
     const formGroup = this.fb.group({
       id: [courseFormRecord?.id],

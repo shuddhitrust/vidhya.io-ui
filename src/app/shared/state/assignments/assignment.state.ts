@@ -85,7 +85,7 @@ export class AssignmentState {
     { getState, patchState }: StateContext<AssignmentStateModel>,
     { payload }: FetchAssignmentsAction
   ) {
-    console.log('Fetching assignments from assignment state');
+    
     let { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, fetchParamObjects, assignmentsSubscribed } = state;
@@ -104,7 +104,7 @@ export class AssignmentState {
     };
     if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
       patchState({ isFetching: true });
-      console.log('variables for assignments fetch ', { variables });
+      
       this.apollo
         .watchQuery({
           query: ASSIGNMENT_QUERIES.GET_ASSIGNMENTS,
@@ -113,23 +113,18 @@ export class AssignmentState {
         })
         .valueChanges.subscribe(
           ({ data }: any) => {
-            console.log('resposne to get assignments query ', { data });
+            
             const response = data.assignments;
             const totalCount = response[0]?.totalCount
               ? response[0]?.totalCount
               : 0;
             newFetchParams = { ...newFetchParams, totalCount };
-            console.log('from after getting assignments', {
-              totalCount,
-              response,
-              newFetchParams,
-            });
             let paginatedAssignments = state.paginatedAssignments;
             paginatedAssignments = {
               ...paginatedAssignments,
               [pageNumber]: response,
             };
-            console.log({ paginatedAssignments });
+            
             let assignments =
               convertPaginatedListToNormalList(paginatedAssignments);
             let lastPage = null;

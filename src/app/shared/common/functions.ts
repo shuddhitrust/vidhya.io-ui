@@ -50,13 +50,6 @@ export const subscriptionUpdater = ({
   fetchParamObjects: FetchParams[];
   pk?: string;
 }) => {
-  console.log('From SubscriptionUpdater method =>', {
-    items,
-    method,
-    subscriptionItem,
-    fetchParamObjects,
-    pk,
-  });
   let fetchParams = fetchParamObjects[fetchParamObjects.length - 1];
   if (subscriptionItem && method) {
     if (method == SUBSCRIPTION_METHODS.CREATE_METHOD) {
@@ -79,7 +72,7 @@ export const subscriptionUpdater = ({
     }
   }
   const newFetchParamss = fetchParamObjects.concat([fetchParams]);
-  console.log('After updating items =>', { items, fetchParams });
+  
   return { items, fetchParamObjects: newFetchParamss };
 };
 
@@ -95,16 +88,11 @@ export const paginatedSubscriptionUpdater = ({
   fetchParamObjects?: FetchParams[];
   pk?: string;
 }) => {
-  console.log('From SubscriptionUpdater method =>', {
-    paginatedItems,
-    method,
-    modifiedItem,
-  });
   let newPaginatedItems = {};
   if (modifiedItem && method) {
     if (method == SUBSCRIPTION_METHODS.CREATE_METHOD) {
       newPaginatedItems = Object.assign({}, paginatedItems);
-      console.log('frst page ', { newPaginatedItems });
+      
       const firstPageItems = newPaginatedItems[1] ? newPaginatedItems[1] : [];
       let itemAlreadyExists = null;
       if (firstPageItems.length) {
@@ -112,7 +100,7 @@ export const paginatedSubscriptionUpdater = ({
           (item) => item[pk] == modifiedItem[pk]
         );
       }
-      console.log('Firstpageitems', { firstPageItems });
+      
       if (!itemAlreadyExists) {
         const newFirstPage = [modifiedItem, ...firstPageItems];
         newPaginatedItems[1] = newFirstPage;
@@ -151,10 +139,6 @@ export const fetchParamsNewOrNot = ({
   fetchParamObjects: FetchParams[];
   newFetchParams: FetchParams;
 }): boolean => {
-  console.log('from fetchParamsNewOrNot', {
-    fetchParamObjects,
-    newFetchParams,
-  });
   let result = true;
   // if (fetchParamObjects.length < 1) {
   //   return true;
@@ -175,7 +159,7 @@ export const fetchParamsNewOrNot = ({
       return false;
     }
   }
-  console.log('fetchParamsNewOrNot result => ', { result });
+  
   return result;
 };
 
@@ -186,10 +170,6 @@ export const columnFiltersChanged = ({
   fetchParamObjects: FetchParams[];
   newFetchParams: FetchParams;
 }): boolean => {
-  console.log('from fetchParamsNewOrNot', {
-    fetchParamObjects,
-    newFetchParams,
-  });
   let result = true;
   // if (fetchParamObjects.length < 1) {
   //   return true;
@@ -237,11 +217,6 @@ export const updateFetchParams = ({
     searchQuery = fetchParams.searchQuery;
     columnFilters = fetchParams.columnFilters;
   }
-  console.log('from updateFetchParams => ', {
-    fetchParams,
-    newPageNumber,
-    newPageSize,
-  });
   pageSize = newPageSize;
   currentPage = newPageNumber;
   searchQuery = newSearchQuery;
@@ -352,12 +327,9 @@ export const autoGenOptions = (type: object): MatSelectOption[] => {
 };
 
 export const getErrorMessageFromGraphQLResponse = (errors): string => {
-  console.log('From getERrorMessageFromGraphQLResponse ', {
-    errors: JSON.stringify(errors),
-  });
   const keys = Object.keys(errors);
   const message = errors[keys[0]][0]?.message;
-  console.log('object.keys(errors) => ', { errors, keys, message });
+  
   return message
     ? message
     : 'Something went wrong! Action could not be completed successfully.';

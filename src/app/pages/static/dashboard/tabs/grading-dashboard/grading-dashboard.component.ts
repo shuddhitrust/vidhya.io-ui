@@ -108,22 +108,13 @@ export class GradingDashboardComponent implements OnInit {
   ) {
     this.gradingGroups$.subscribe((val) => {
       this.gradingGroups = val;
-      console.log({
-        gradingGroups: this.gradingGroups,
-      });
     });
     this.isFetchingGradingGroup$.subscribe((val) => {
       this.isFetchingGradingGroup = val;
     });
     this.exerciseSubmissions$.subscribe((val) => {
       this.resetUnsavedSubmissions();
-      console.log('before sorting', {
-        exerciseSubmissions: val,
-      });
       this.exerciseSubmissions = sortByIndex(val, 'exercise.index');
-      console.log('after sorting', {
-        exerciseSubmissions: this.exerciseSubmissions,
-      });
     });
     this.updateGradingGroupByFilter();
 
@@ -132,10 +123,7 @@ export class GradingDashboardComponent implements OnInit {
       this.isFetching = val;
     });
 
-    console.log({
-      groupByOptions: this.groupByOptions,
-      gradingGroups: this.gradingGroups,
-    });
+
   }
 
   submissionSubtitle(submission) {
@@ -182,10 +170,6 @@ export class GradingDashboardComponent implements OnInit {
       participantId: this.submissionsParticipantFilter,
       status: this.submissionStatusFilter,
     };
-    console.log('from openGroupedCard => columnFilters', {
-      card,
-      columnFilters: this.exerciseSubmissionColumnFilters,
-    });
     this.fetchExerciseSubmissions();
   }
   preventLossOfUnsavedWork() {
@@ -205,7 +189,7 @@ export class GradingDashboardComponent implements OnInit {
   }
 
   fetchGradingGroups() {
-    console.log('calling fetchGradingGroups', { groupBy: this.groupBy });
+    
     this.updateGradingGroupByFilter();
     this.showGroupCards = true;
     this.store.dispatch(
@@ -226,9 +210,6 @@ export class GradingDashboardComponent implements OnInit {
 
   fetchExerciseSubmissions() {
     this.updateExerciseSubmissionColumnFilters();
-    console.log('exercise submissions columnFilter from component => ', {
-      columnFilters: this.exerciseSubmissionColumnFilters,
-    });
     this.store.dispatch(
       new FetchExerciseSubmissionsAction({
         searchParams: {
@@ -244,7 +225,7 @@ export class GradingDashboardComponent implements OnInit {
     }
   }
   onScroll() {
-    console.log('scrolling groups');
+    
     if (this.showGroupCards) {
       this.fetchNextGradingGroups();
     } else {
@@ -255,7 +236,7 @@ export class GradingDashboardComponent implements OnInit {
     this.router.navigateByUrl(uiroutes.GRADING_FORM_ROUTE.route);
   }
   showExpandedImage(image) {
-    console.log('image ', { image });
+    
   }
 
   openExerciseSubmission(exerciseSubmission) {
@@ -268,7 +249,7 @@ export class GradingDashboardComponent implements OnInit {
     this.store.dispatch(
       new GetExerciseKeyAction({ exerciseId: exerciseSubmission?.exercise.id })
     );
-    console.log('from showAnswerKey', { exerciseSubmission });
+    
     const dialogRef = this.dialog.open(ExercicseKeyDialog, {
       data: {
         exerciseKeyRecord$: this.exerciseKeyRecord$,
@@ -277,7 +258,7 @@ export class GradingDashboardComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('close dialog result for exercise => ', result);
+      
     });
   }
 
@@ -286,24 +267,20 @@ export class GradingDashboardComponent implements OnInit {
   }
 
   markCorrect(exerciseSubmission) {
-    console.log('from markCorrect', { exerciseSubmission });
+    
     this.updatePoints(exerciseSubmission, exerciseSubmission?.exercise?.points);
   }
 
   markIncorrect(exerciseSubmission) {
-    console.log('from markIncorrect', { exerciseSubmission });
+    
     this.updatePoints(exerciseSubmission, 0);
   }
   updatePoints(exerciseSubmission, points) {
-    console.log('from updatePoints', {
-      exerciseSubmission,
-      exerciseSubmissions: this.exerciseSubmissions,
-    });
     this.gradingUpdate(exerciseSubmission);
     let submission = this.exerciseSubmissions.find((s: ExerciseSubmission) => {
       return s.id == exerciseSubmission.id;
     });
-    console.log('submission before update', { submission });
+    
 
     submission = Object.assign({}, submission);
     submission.points = points;
@@ -313,7 +290,7 @@ export class GradingDashboardComponent implements OnInit {
         return submission;
       } else return s;
     });
-    console.log('submission after update', { submission });
+    
   }
   changePoints(event, exerciseSubmission) {
     event.preventDefault();
@@ -347,9 +324,6 @@ export class GradingDashboardComponent implements OnInit {
   }
 
   submitExerciseSubmissionForm() {
-    console.log('Submitting exerciseSubmissions', {
-      exerciseSubmissions: this.exerciseSubmissions,
-    });
     const submissionsToSave = this.exerciseSubmissions.filter((s) =>
       this.modifiedExerciseSubmissionIds.includes(s.id)
     );

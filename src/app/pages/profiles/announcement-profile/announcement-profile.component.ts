@@ -74,7 +74,6 @@ export class AnnouncementProfileComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('close dialog result for announcment => ', result);
       if (result == true) {
         this.deleteAnnouncement();
       }
@@ -86,9 +85,6 @@ export class AnnouncementProfileComponent implements OnInit, OnDestroy {
   }
 
   deleteAnnouncement() {
-    console.log('payload before passing to action => ', {
-      id: this.announcement.id,
-    });
     this.store.dispatch(
       new DeleteAnnouncementAction({ id: this.announcement.id })
     );

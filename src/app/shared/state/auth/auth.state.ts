@@ -106,9 +106,6 @@ export class AuthState {
    * @param expiresAt
    */
   startAutoRefreshTokenTimeout = (expiresAt) => {
-    console.log('***Starting the autoRefreshToken Timeout', {
-      date: new Date(expiresAt * 1000),
-    });
     const expires = new Date(expiresAt * 1000);
     const timeBeforeExpiry = minute;
     const timeout = expires.getTime() - Date.now() - timeBeforeExpiry * 1000;
@@ -163,10 +160,6 @@ export class AuthState {
   }
   @Selector()
   static getCurrentMemberInstitutionId(state: AuthStateModel): number {
-    console.log(
-      'current member instition id ',
-      state.currentMember?.institution?.id
-    );
     return state.currentMember?.institution?.id;
   }
   @Selector()
@@ -241,26 +234,18 @@ export class AuthState {
           this.store.dispatch(
             new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
           );
-          console.log('data from verify token response ', {
-            data,
-            response,
-            success: response.success,
-          });
           if (response.success) {
-            console.log('token verified successfully', { token });
+            
             const { expiresAt, userId } = getDecodedToken(token);
-            console.log('decodedToken');
+            
             currentMember = { ...currentMember, id: userId };
-            console.log('*1* Updating current member from verifyToken', {
-              currentMember,
-            });
 
             patchState({
               currentMember,
               expiresAt,
               isLoggedIn: true,
             });
-            console.log({ state: getState() });
+            
             if (!currentMember.username) {
               this.store.dispatch(new GetCurrentUserAction());
             }
@@ -286,7 +271,7 @@ export class AuthState {
   @Action(RefreshTokenAction)
   refreshToken({ getState, patchState }: StateContext<AuthStateModel>) {
     const state = getState();
-    console.log('calling refresh token method', { state });
+    
     const { refreshToken, currentMember } = state;
     if (refreshToken) {
       this.apollo
@@ -299,14 +284,9 @@ export class AuthState {
         .subscribe(
           ({ data }: any) => {
             const response = data.refreshToken;
-            console.log('data from verify token response ', {
-              data,
-              response,
-              success: response.success,
-            });
             const { token, refreshToken } = response;
             if (response.success) {
-              console.log('token refreshed successfully', { token });
+              
               const { userId, expiresAt } = getDecodedToken(token);
               const currentMember = { ...state.currentMember, id: userId };
               this.store.dispatch(
@@ -317,7 +297,7 @@ export class AuthState {
                 expiresAt,
                 isLoggedIn: true,
               });
-              console.log({ state: getState() });
+              
               if (!currentMember.username) {
                 this.store.dispatch(new GetCurrentUserAction());
               }
@@ -354,7 +334,7 @@ export class AuthState {
   setAuthSession({ getState }: StateContext<AuthStateModel>) {
     const state = getState();
     const { token, refreshToken } = state;
-    console.log('Setting to local storage => ', { token, refreshToken });
+    
     if (token) {
       sessionStorage.setItem(AUTH_TOKEN_KEY, token);
     } else {
@@ -386,11 +366,8 @@ export class AuthState {
           this.store.dispatch(
             new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
           );
-          console.log('***********From getCurrentUser => ', { data });
+          
           const user = data.me;
-          console.log(
-            'initiating UpdateCurrentUserInStateAction from getCurrentUser'
-          );
           this.store.dispatch(new UpdateCurrentUserInStateAction({ user }));
         },
         (error) => {
@@ -412,7 +389,7 @@ export class AuthState {
     { payload }: UpdateCurrentUserInStateAction
   ) {
     const { user } = payload;
-    console.log('running UpdateCurrentUserInState', { user });
+    
     let state = getState();
     const { isLoggedIn, currentMember } = state;
     const userPermissions = user?.role?.permissions?.toString()
@@ -438,7 +415,7 @@ export class AuthState {
         permissions,
       },
     };
-    console.log('newCurrentMember ', { currentMember: newCurrentMember });
+    
     const firstTimeSetup = calculateFirstTiimeSetup(newCurrentMember);
     if (firstTimeSetup) {
       this.store.dispatch(
@@ -450,11 +427,6 @@ export class AuthState {
       const isFullyAuthenticated =
         isLoggedIn == true &&
         newCurrentMember?.membershipStatus == MembershipStatusOptions.APPROVED;
-      console.log('*1* Updating current member from updateCurrentUserInState', {
-        currentMember: newCurrentMember,
-        isFullyAuthenticated,
-        isLoggedIn,
-      });
       patchState({
         isFullyAuthenticated,
         currentMember: newCurrentMember,
@@ -499,7 +471,7 @@ export class AuthState {
             const response = data.tokenAuth;
             isSubmittingForm = false;
             patchState({ isSubmittingForm });
-            console.log('got data', { data });
+            
             if (response.success) {
               form.reset();
               formDirective.resetForm();
@@ -660,7 +632,7 @@ export class AuthState {
             const response = data.register;
             isSubmittingForm = false;
             patchState({ isSubmittingForm });
-            console.log('got data', { data });
+            
             if (response?.success) {
               form.reset();
               formDirective.resetForm();
@@ -741,7 +713,7 @@ export class AuthState {
           const response = data.verifyAccount;
           isSubmittingForm = false;
           patchState({ isSubmittingForm });
-          console.log('got data', { data });
+          
           this.router.navigateByUrl(uiroutes.HOME_ROUTE.route);
           if (response.success) {
             this.store.dispatch(
@@ -796,7 +768,7 @@ export class AuthState {
             const response = data.resendActivationEmail;
             isSubmittingForm = false;
             patchState({ isSubmittingForm });
-            console.log('got data', { data });
+            
             if (response.success) {
               form.reset();
               formDirective.resetForm();
@@ -867,7 +839,7 @@ export class AuthState {
             const response = data.sendPasswordResetEmail;
             isSubmittingForm = false;
             patchState({ isSubmittingForm });
-            console.log('got data', { data });
+            
             if (response.success) {
               form.reset();
               formDirective.resetForm();
@@ -945,7 +917,7 @@ export class AuthState {
             const response = data.psswordReset;
             isSubmittingForm = false;
             patchState({ isSubmittingForm });
-            console.log('got data', { data });
+            
             if (response.success) {
               form.reset();
               formDirective.resetForm();
@@ -1013,7 +985,7 @@ export class AuthState {
             const response = data.passwordChange;
             isSubmittingForm = false;
             patchState({ isSubmittingForm });
-            console.log('got data', { data });
+            
             if (response.success) {
               form.reset();
               formDirective.resetForm();
@@ -1077,7 +1049,7 @@ export class AuthState {
       );
       isSubmittingForm = true;
       const invitecode = form.value.invitecode;
-      console.log('invitecode after doing verify invite code ', { invitecode });
+      
       patchState({
         isSubmittingForm,
       });
@@ -1099,13 +1071,10 @@ export class AuthState {
             const response = data.verifyInvitecode;
             isSubmittingForm = false;
             patchState({ isSubmittingForm });
-            console.log('got data', { data });
+            
             if (response?.ok) {
               form.reset();
               // formDirective.resetForm();
-              console.log('*1* Updating current member from verifyInviteCode', {
-                currentMember: { ...state.currentMember, invitecode },
-              });
 
               patchState({
                 currentMember: { ...state.currentMember, invitecode },
@@ -1153,12 +1122,8 @@ export class AuthState {
     { payload }: GetInstitutionByInvitecodeAction
   ) {
     let { currentMember } = payload;
-    console.log(
-      'Got currentMember from GetInstitutionByInvitecodeAction payload',
-      { currentMember }
-    );
     const invitecode = currentMember.invitecode;
-    console.log('From GetInstitutionByInviteCodeAction', { invitecode });
+    
     if (invitecode) {
       this.apollo
         .mutate({
@@ -1170,16 +1135,12 @@ export class AuthState {
         .subscribe(
           ({ data }: any) => {
             const response = data.institutionByInvitecode;
-            console.log('got data GetInstitutionByInviteCodeAction', { data });
+            
 
             currentMember = {
               ...currentMember,
               institution: { id: response?.id, name: response?.name },
             };
-            console.log(
-              '*1* Updating current member from updateCurrentUserInState',
-              { currentMember }
-            );
             patchState({
               currentMember,
               firstTimeSetup: true,
@@ -1236,7 +1197,7 @@ export class AuthState {
                 })
               );
             }
-            console.log('Added invitecode to User', { data });
+            
           },
           (error) => {
             console.error('There was an error ', error);
@@ -1259,11 +1220,6 @@ export class AuthState {
 
 const getDecodedToken = (token) => {
   const decodedToken: any = jwtDecode(token);
-  console.log('decoded token => ', {
-    decodedToken,
-    exp: new Date(decodedToken.exp * 1000),
-    origIat: new Date(decodedToken.origIat * 1000),
-  });
   return {
     userId: decodedToken.sub.toString(),
     // userId: parseInt(decodedToken.sub, 10),
@@ -1274,6 +1230,6 @@ const getDecodedToken = (token) => {
 const calculateFirstTiimeSetup = (currentMember: CurrentMember): boolean => {
   const firstTimeSetup =
     currentMember?.membershipStatus == MembershipStatusOptions.UNINITIALIZED;
-  console.log('firsttimesetup calculated => ', { firstTimeSetup });
+  
   return firstTimeSetup;
 };

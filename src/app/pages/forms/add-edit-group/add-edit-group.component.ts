@@ -87,7 +87,6 @@ export class AddEditGroupComponent implements OnInit {
       this.institutionOptions = options;
     });
     this.memberOptions$.subscribe((options) => {
-      console.log('memberOptions', { memberOptions: this.memberOptions });
       this.memberOptions = options;
     });
 
@@ -106,10 +105,6 @@ export class AddEditGroupComponent implements OnInit {
     this.groupFormRecord$.subscribe((val) => {
       this.groupFormRecord = val;
       this.groupForm = this.setupGroupFormGroup(this.groupFormRecord);
-    });
-    console.log('Group type options ', {
-      groupTypeOptions,
-      memberOptions: this.memberOptions,
     });
   }
 
@@ -160,7 +155,6 @@ export class AddEditGroupComponent implements OnInit {
     this.route.queryParams.subscribe((params) => {
       this.params = params;
       const id = params['id'];
-      console.log('Getting group from add-edit-group', { id });
       if (id) {
         this.store.dispatch(new GetGroupAction({ id }));
       }
@@ -172,7 +166,6 @@ export class AddEditGroupComponent implements OnInit {
   }
 
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {
-    console.log('this.logoFile on submit', this.logoFile);
     if (this.logoFile) {
       this.store.dispatch(
         new ToggleLoadingScreen({
@@ -186,9 +179,6 @@ export class AddEditGroupComponent implements OnInit {
         (res) => {
           const url = res.secure_url;
           form.get('avatar').setValue(url);
-          console.log('after setting the new url after upload ', {
-            formValue: form.value,
-          });
           this.store.dispatch(
             new CreateUpdateGroupAction({ form, formDirective })
           );

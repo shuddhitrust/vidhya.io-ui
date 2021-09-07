@@ -159,16 +159,13 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('close dialog result for announcment => ', result);
+      
       if (result == true) {
         this.deleteCourse();
       }
     });
   }
   deleteCourse() {
-    console.log('payload before passing to action => ', {
-      id: this.course.id,
-    });
     this.store.dispatch(new DeleteCourseAction({ id: this.course.id }));
   }
 
@@ -176,13 +173,13 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
     const sectionsList: DragDropInput[] = this.courseSections.map((c) => {
       return { id: c.id, label: c.title };
     });
-    console.log('initial index list ', { sectionsList });
+    
     const dialogRef = this.dialog.open(DragDropComponent, {
       data: sectionsList,
     });
 
     dialogRef.afterClosed().subscribe((newIndexArray) => {
-      console.log('after reordering', { newIndexArray });
+      
       for (let i = 0; i < newIndexArray.length; i++) {
         let id = newIndexArray[i];
         let section = this.courseSections.find((c) => c.id == id);
@@ -191,7 +188,7 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
           return s.id == id ? section : s;
         });
       }
-      console.log('new order of sections ', { sections: this.courseSections });
+      
       const indexList = this.courseSections.map((c) => {
         return { id: c.id, index: c.index };
       });
@@ -208,13 +205,13 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
     const chaptersList = newChapters.map((c) => {
       return { id: c.id, label: c.title };
     });
-    console.log('initial index list ', { chaptersList });
+    
     const dialogRef = this.dialog.open(DragDropComponent, {
       data: chaptersList,
     });
 
     dialogRef.afterClosed().subscribe((newIndexArray) => {
-      console.log('after reordering', { newIndexArray });
+      
       for (let i = 0; i < newIndexArray.length; i++) {
         const id = newIndexArray[i];
         let chapter = this.chapters.find((c) => c.id == id);
@@ -250,7 +247,7 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('close dialog result for create course section => ', result);
+      
     });
   }
 

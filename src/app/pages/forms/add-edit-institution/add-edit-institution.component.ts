@@ -49,9 +49,7 @@ export class AddEditInstitutionComponent implements OnInit {
     private uploadService: UploadService
   ) {
     this.institutionForm = this.setupInstitutionFormGroup();
-    console.log('logo value', { logo: this.institutionForm.get('logo').value });
     this.institutionFormRecord$.subscribe((val) => {
-      console.log('institution form record was reset', { val });
       this.institutionFormRecord = val;
       this.institutionForm = this.setupInstitutionFormGroup(
         this.institutionFormRecord
@@ -62,7 +60,6 @@ export class AddEditInstitutionComponent implements OnInit {
   setupInstitutionFormGroup = (
     institutionFormRecord: Institution = emptyInstitutionFormRecord
   ): FormGroup => {
-    console.log('setting up the institution form ', { institutionFormRecord });
     this.logoFile = null;
     this.previewPath = null;
     const formGroup = this.fb.group({
@@ -112,7 +109,6 @@ export class AddEditInstitutionComponent implements OnInit {
   }
 
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {
-    console.log('this.logoFile on submit', this.logoFile);
     if (this.logoFile) {
       this.store.dispatch(
         new ToggleLoadingScreen({
@@ -126,9 +122,6 @@ export class AddEditInstitutionComponent implements OnInit {
         (res) => {
           const url = res.secure_url;
           form.get('logo').setValue(url);
-          console.log('after setting the new url after upload ', {
-            formValue: form.value,
-          });
           this.store.dispatch(
             new CreateUpdateInstitutionAction({ form, formDirective })
           );

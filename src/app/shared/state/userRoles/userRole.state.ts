@@ -142,15 +142,12 @@ export class UserRoleState {
       newColumnFilters: columnFilters,
     });
     patchState({ isFetching: true });
-    console.log('new pagination object after the update method => ', {
-      newFetchParams,
-    });
     const variables = {
       searchField: searchQuery,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
-    console.log('variables for roles fetch ', { variables });
+    
     this.apollo
       .watchQuery({
         query: USER_ROLE_QUERIES.GET_USER_ROLES,
@@ -164,11 +161,6 @@ export class UserRoleState {
             ? response[0]?.totalCount
             : 0;
           newFetchParams = { ...newFetchParams, totalCount };
-          console.log('from after getting roles', {
-            totalCount,
-            response,
-            newFetchParams,
-          });
           patchState({
             roles: response,
             fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
@@ -200,10 +192,6 @@ export class UserRoleState {
         })
         .subscribe((result: any) => {
           const state = getState();
-          console.log('userRole subscription result ', {
-            userRoles: state.roles,
-            result,
-          });
           const method = result?.data?.notifyUserRole?.method;
           const userRole = result?.data?.notifyUserRole?.userRole;
           const { items, fetchParamObjects } = subscriptionUpdater({
@@ -238,11 +226,11 @@ export class UserRoleState {
       .valueChanges.subscribe(
         ({ data }: any) => {
           let response = data.userRole;
-          console.log('resource from getUserRoleAction', { data, response });
+          
           const userRolePermissions = JSON.parse(
             response.permissions.toString()
           );
-          console.log('userRolePermissions => ', { userRolePermissions });
+          
           const permissions = constructPermissions(userRolePermissions);
           const userRoleFormRecord = {
             id: response.id,
@@ -278,7 +266,7 @@ export class UserRoleState {
       formSubmitting = true;
       patchState({ formSubmitting });
       const values = form.value;
-      console.log('UserRole Form values', values);
+      
       const updateForm = values.createdAt == null ? false : true;
       const { createdAt, ...sanitizedValues } = values;
       const variables = updateForm
@@ -301,7 +289,7 @@ export class UserRoleState {
               ? data.updateUserRole
               : data.createUserRole;
             patchState({ formSubmitting: false });
-            console.log('update userRole ', { response });
+            
             if (response.ok) {
               this.store.dispatch(
                 new ShowNotificationAction({
@@ -326,10 +314,10 @@ export class UserRoleState {
                 })
               );
             }
-            console.log('From createUpdateUserRole', { response });
+            
           },
           (error) => {
-            console.log('Some error happened ', error);
+            
             this.store.dispatch(
               new ShowNotificationAction({
                 message: getErrorMessageFromGraphQLResponse(error),
@@ -364,7 +352,7 @@ export class UserRoleState {
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteUserRole;
-          console.log('from delete role ', { data });
+          
           if (response.ok) {
             this.store.dispatch(
               new ShowNotificationAction({

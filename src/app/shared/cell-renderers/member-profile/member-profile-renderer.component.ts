@@ -21,7 +21,7 @@ export class MemberProfileRendererComponent {
   }
 
   showProfile() {
-    console.log('params', this.rowData);
+    
   }
 
   getValueToDisplay(params: ICellRendererParams) {

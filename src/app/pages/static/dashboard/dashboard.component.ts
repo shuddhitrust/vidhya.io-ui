@@ -86,7 +86,7 @@ export class DashboardComponent implements OnInit {
 
   processEntities(): any[] {
     let newEntities = adminEntities.filter((e) => {
-      console.log('from process entities => ', { e });
+      
       return this.authorizeResourceMethod(e.value);
     });
     return newEntities;
@@ -97,7 +97,6 @@ export class DashboardComponent implements OnInit {
   }
 
   onTabChange($event) {
-    console.log({event: $event})
     const tab = $event.tab.textLabel;
     this.router.navigate([], {
       relativeTo: this.route,

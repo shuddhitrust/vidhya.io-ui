@@ -68,7 +68,7 @@ export class ReportState {
       };
       return option;
     });
-    console.log('options', options);
+    
     return options;
   }
 
@@ -126,7 +126,7 @@ export class ReportState {
     { getState, patchState }: StateContext<ReportStateModel>,
     { payload }: FetchReportsAction
   ) {
-    console.log('Fetching reports from report state');
+    
     let { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, fetchParamObjects, reportsSubscribed } = state;
@@ -145,7 +145,7 @@ export class ReportState {
     };
     if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
       patchState({ isFetching: true });
-      console.log('variables for reports fetch ', { variables });
+      
       this.apollo
         .watchQuery({
           query: REPORT_QUERIES.GET_REPORTS,
@@ -154,17 +154,12 @@ export class ReportState {
         })
         .valueChanges.subscribe(
           ({ data }: any) => {
-            console.log('resposne to get reports query ', { data });
+            
             const response = data.reports;
             const totalCount = response[0]?.totalCount
               ? response[0]?.totalCount
               : 0;
             newFetchParams = { ...newFetchParams, totalCount };
-            console.log('from after getting reports', {
-              totalCount,
-              response,
-              newFetchParams,
-            });
             let reports = state.reports;
             reports = reports.concat(response);
             let lastPage = null;
@@ -203,10 +198,6 @@ export class ReportState {
         })
         .subscribe((result: any) => {
           const state = getState();
-          console.log('report subscription result ', {
-            reports: state.reports,
-            result,
-          });
           const method = result?.data?.notifyReport?.method;
           const report = result?.data?.notifyReport?.report;
           const { items, fetchParamObjects } = subscriptionUpdater({
@@ -266,7 +257,7 @@ export class ReportState {
       formSubmitting = true;
       patchState({ formSubmitting });
       const values = form.value;
-      console.log('Report Form values', values);
+      
       const updateForm = values.id == null ? false : true;
       const { id, ...sanitizedValues } = values;
       const variables = updateForm
@@ -287,7 +278,7 @@ export class ReportState {
           ({ data }: any) => {
             const response = updateForm ? data.updateReport : data.createReport;
             patchState({ formSubmitting: false });
-            console.log('update report ', { response });
+            
             if (response.ok) {
               this.store.dispatch(
                 new ShowNotificationAction({
@@ -312,10 +303,10 @@ export class ReportState {
                 })
               );
             }
-            console.log('From createUpdateReport', { response });
+            
           },
           (error) => {
-            console.log('Some error happened ', error);
+            
             this.store.dispatch(
               new ShowNotificationAction({
                 message: getErrorMessageFromGraphQLResponse(error),
@@ -350,7 +341,7 @@ export class ReportState {
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteReport;
-          console.log('from delete report ', { data });
+          
           if (response.ok) {
             this.router.navigateByUrl(ReportFormCloseURL);
             this.store.dispatch(

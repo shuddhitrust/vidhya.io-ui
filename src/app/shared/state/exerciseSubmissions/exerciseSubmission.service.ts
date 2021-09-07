@@ -11,7 +11,7 @@ export class ExerciseSubmissionService {
   public sanitizeExerciseSubmissions = (
     submissions: ExerciseSubmission[]
   ): ExerciseSubmission[] => {
-    console.log('parsing exercise submissions', { submissions });
+    
     const newSubmissions = submissions.map((s) => {
       let submission: ExerciseSubmission = Object.assign(
         {},
@@ -31,7 +31,7 @@ export class ExerciseSubmissionService {
       submission.remarks = s.remarks;
       return submission;
     });
-    console.log('after sanitizing ', { newSubmissions });
+    
     return newSubmissions;
   };
 }

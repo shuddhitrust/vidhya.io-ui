@@ -72,7 +72,7 @@ export class ExerciseKeyState {
       };
       return option;
     });
-    console.log('options', options);
+    
     return options;
   }
 
@@ -134,7 +134,7 @@ export class ExerciseKeyState {
     { getState, patchState }: StateContext<ExerciseKeyStateModel>,
     { payload }: FetchExerciseKeysAction
   ) {
-    console.log('Fetching exerciseKeys from exerciseKey state');
+    
     let { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, fetchParamObjects, exerciseKeysSubscribed } = state;
@@ -156,7 +156,7 @@ export class ExerciseKeyState {
     };
     if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
       patchState({ isFetching: true });
-      console.log('variables for exerciseKeys fetch ', { variables });
+      
       this.apollo
         .watchQuery({
           query: EXERCISE_KEY_QUERIES.GET_EXERCISE_KEYS,
@@ -165,23 +165,18 @@ export class ExerciseKeyState {
         })
         .valueChanges.subscribe(
           ({ data }: any) => {
-            console.log('resposne to get exerciseKeys query ', { data });
+            
             const response = data.exerciseKeys;
             const totalCount = response[0]?.totalCount
               ? response[0]?.totalCount
               : 0;
             newFetchParams = { ...newFetchParams, totalCount };
-            console.log('from after getting exerciseKeys', {
-              totalCount,
-              response,
-              newFetchParams,
-            });
             let paginatedExerciseKeys = state.paginatedExerciseKeys;
             paginatedExerciseKeys = {
               ...paginatedExerciseKeys,
               [pageNumber]: response,
             };
-            console.log({ paginatedExerciseKeys });
+            
             let exerciseKeys = convertPaginatedListToNormalList(
               paginatedExerciseKeys
             );
@@ -225,10 +220,6 @@ export class ExerciseKeyState {
         })
         .subscribe((result: any) => {
           const state = getState();
-          console.log('exerciseKey subscription result ', {
-            exerciseKeys: state.exerciseKeys,
-            result,
-          });
           const method = result?.data?.notifyExerciseKey?.method;
           const exerciseKey = result?.data?.notifyExerciseKey?.exerciseKey;
           const { newPaginatedItems, newItemsList } =

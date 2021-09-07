@@ -81,7 +81,7 @@ export class ExerciseState {
       };
       return option;
     });
-    console.log('options', options);
+    
     return options;
   }
 
@@ -141,7 +141,7 @@ export class ExerciseState {
     { getState, patchState }: StateContext<ExerciseStateModel>,
     { payload }: FetchExercisesAction
   ) {
-    console.log('Fetching exercises from exercise state');
+    
     let { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, fetchParamObjects, exercisesSubscribed } = state;
@@ -158,7 +158,7 @@ export class ExerciseState {
     //   const lastKnownFetchParamObjects = fetchParamObjects[fetchParamObjects.length-1];
     //   console.log('lastKnownFetchParams', {lastKnownFetchParamObjects, fetchParamObjects})
     //   const lastUsedChapterId = lastKnownFetchParamObjects['columnFilters']['chapterId'];
-    //   console.log('lastUsedChapterId => ',{lastUsedChapterId});
+    //   
     //   if(lastUsedChapterId != newColumnFilters.chapterId) {
     //     console.log('resetting the exercises because this is different')
     //     patchState({exercises: []});
@@ -173,7 +173,7 @@ export class ExerciseState {
     };
     if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
       patchState({ isFetching: true });
-      console.log('variables for exercises fetch ', { variables });
+      
       this.apollo
         .watchQuery({
           query: EXERCISE_QUERIES.GET_EXERCISES,
@@ -182,23 +182,18 @@ export class ExerciseState {
         })
         .valueChanges.subscribe(
           ({ data }: any) => {
-            console.log('resposne to get exercises query ', { data });
+            
             const response = data.exercises;
             const totalCount = response[0]?.totalCount
               ? response[0]?.totalCount
               : 0;
             newFetchParams = { ...newFetchParams, totalCount };
-            console.log('from after getting exercises', {
-              totalCount,
-              response,
-              newFetchParams,
-            });
             let paginatedExercises = state.paginatedExercises;
             paginatedExercises = {
               ...paginatedExercises,
               [pageNumber]: response?.exercises,
             };
-            console.log({ paginatedExercises });
+            
             let exercises =
               convertPaginatedListToNormalList(paginatedExercises);
 
@@ -254,10 +249,6 @@ export class ExerciseState {
         })
         .subscribe((result: any) => {
           const state = getState();
-          console.log('exercise subscription result ', {
-            exercises: state.exercises,
-            result,
-          });
           const method = result?.data?.notifyExercise?.method;
           const exercise = result?.data?.notifyExercise?.exercise;
           const { newPaginatedItems, newItemsList } =
@@ -318,7 +309,7 @@ export class ExerciseState {
       let errorFetching = false;
       patchState({ formSubmitting, errorFetching });
       const values = form.value;
-      console.log('Exercise Form values', values);
+      
       const updateForm = values.id == null ? false : true;
       const { id, ...sanitizedValues } = values;
       const variables = updateForm
@@ -341,7 +332,7 @@ export class ExerciseState {
               ? data.updateExercise
               : data.createExercise;
             patchState({ formSubmitting: false });
-            console.log('update exercise ', { response });
+            
             if (response.ok) {
               const method = updateForm
                 ? SUBSCRIPTION_METHODS.UPDATE_METHOD
@@ -383,10 +374,10 @@ export class ExerciseState {
                 })
               );
             }
-            console.log('From createUpdateExercise', { response });
+            
           },
           (error) => {
-            console.log('Some error happened ', error);
+            
             this.store.dispatch(
               new ShowNotificationAction({
                 message: getErrorMessageFromGraphQLResponse(error),
@@ -421,7 +412,7 @@ export class ExerciseState {
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteExercise;
-          console.log('from delete exercise ', { data });
+          
           if (response.ok) {
             const method = SUBSCRIPTION_METHODS.DELETE_METHOD;
             const exercise = response.exercise;
@@ -482,7 +473,7 @@ export class ExerciseState {
       .subscribe(
         ({ data }: any) => {
           const response = data.reorderExercses;
-          console.log('Reordering of chapters ', { response });
+          
         },
         (error) => {
           this.store.dispatch(

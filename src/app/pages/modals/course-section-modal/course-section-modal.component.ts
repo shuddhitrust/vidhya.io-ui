@@ -120,9 +120,6 @@ export class CourseSectionModalComponent {
     });
   }
   deleteCourseSection() {
-    console.log('payload before dispatching Member action => ', {
-      id: this.courseSection.id,
-    });
     this.store.dispatch(
       new DeleteCourseSectionAction({ id: this.courseSection.id })
     );

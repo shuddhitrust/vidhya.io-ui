@@ -47,12 +47,6 @@ export class AuthenticationGuard implements CanActivate {
     const routePermissions = next.data;
     const resource = routePermissions?.resource;
     const actions = routePermissions?.actions;
-    console.log('from canActivate ', {
-      route: next,
-      routePermissions,
-      resource,
-      actions,
-    });
     if (this.isLoggedIn && !this.isFullyAuthenticated) {
       return false;
     } else {
@@ -61,16 +55,6 @@ export class AuthenticationGuard implements CanActivate {
         for (let i = 0; i < actions.length; i++) {
           const action = actions[i];
           // if resource permissions exists for this route, it will check with authorization service and return it's output
-          console.log(
-            'canActivate checking auth guard for ',
-            {
-              resource,
-              action,
-            },
-            'this.auth.authorizeResource(resource, action, {});',
-            (result =
-              result || this.auth.authorizeResource(resource, action, {}))
-          );
           result = result || this.auth.authorizeResource(resource, action, {});
         }
         return result;
@@ -171,12 +155,12 @@ export class AuthInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<unknown>> {
     // add JWT auth header if a user is logged in for API requests
     const isApiUrl = request.url.startsWith(environment.graphql_endpoint);
-    console.log('from authInterceptor ', { isApiUrl, token: this.token });
+    
     if (this.token && isApiUrl) {
       request = request.clone({
         setHeaders: { Authorization: `JWT ${this.token}` },
       });
-      console.log('After setting authorization header ', request);
+      
     }
 
     return next.handle(request);

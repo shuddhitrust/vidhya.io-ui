@@ -89,7 +89,6 @@ export class AddEditAnnouncementComponent implements OnInit {
   setupAnnouncementFormGroup = (
     announcementFormRecord: Announcement = emptyAnnouncementFormRecord
   ): FormGroup => {
-    console.log('the current User id ', this.currentUserId);
     return this.fb.group({
       id: [announcementFormRecord?.id],
       author: [
@@ -161,7 +160,6 @@ export class AddEditAnnouncementComponent implements OnInit {
 
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {
     form.get('message').setValue(this.message);
-    console.log('announcement submit form value => ', form.value);
     if (this.validateRecipients()) {
       this.store.dispatch(
         new CreateUpdateAnnouncementAction({

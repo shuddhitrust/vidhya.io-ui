@@ -91,7 +91,7 @@ export class AuthorizationService {
         recordConstraint && permissions[resource]
           ? permissions[resource][action]
           : false;
-      // console.log('VERDICT => ', { recordConstraint, verdict });
+      // 
       return verdict;
     }
   };
@@ -118,7 +118,7 @@ export class AuthorizationService {
         };
       }
     }
-    console.log('after constructing the table => ', { permissionsTableData });
+    
     return permissionsTableData;
   };
 }

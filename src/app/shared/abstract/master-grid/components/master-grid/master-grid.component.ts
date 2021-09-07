@@ -140,10 +140,6 @@ export class MasterGridComponent implements OnInit, OnChanges {
       ...this.searchParams,
       columnFilters: this.columnFilters,
     };
-    console.log(
-      'new searchParams after adding columnFilters => ',
-      this.searchParams
-    );
     this.fetchRecords();
     this.sizeToFit();
   }
@@ -194,7 +190,7 @@ export class MasterGridComponent implements OnInit, OnChanges {
     this.fetchRecords();
   }
   onPageChange(number: number) {
-    console.log('on page change ', { number });
+    
     this.searchParams.pageNumber = number;
     this.fetchRecords();
   }

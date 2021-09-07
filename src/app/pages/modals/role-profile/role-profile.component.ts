@@ -79,11 +79,6 @@ export class RoleProfileComponent {
     this.isFetching$.subscribe((val) => {
       this.isFetching = val;
     });
-    console.log({
-      profileData: this.profileData,
-      permissionsObject: this.permissionsObject,
-      permissionsTable: this.permissionsTable,
-    });
   }
 
   closeDialog(): void {
@@ -121,9 +116,6 @@ export class RoleProfileComponent {
     });
   }
   deleteRole() {
-    console.log('payload before dispatching Role action => ', {
-      id: this.profileData.id,
-    });
     this.store.dispatch(new DeleteUserRoleAction({ id: this.profileData.id }));
     this.closeDialog();
   }

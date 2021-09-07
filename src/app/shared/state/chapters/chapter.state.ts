@@ -78,20 +78,20 @@ export class ChapterState {
   @Selector()
   static listChapterOptions(state: ChapterStateModel): MatSelectOption[] {
     const options: MatSelectOption[] = state.chapters.map((i) => {
-      console.log('chapter to option => ', { chapter: i });
+      
       let sectionIndex: any = i.section?.index ? i.section?.index + '.' : '';
       sectionIndex =
         parseInt(sectionIndex, 10) < 10
           ? '0' + sectionIndex.toString()
           : sectionIndex.toString();
-      console.log('from list chapter options => ', { sectionIndex });
+      
       const option: MatSelectOption = {
         value: i.id,
         label: sectionIndex + i.index + ' ' + i.title,
       };
       return option;
     });
-    console.log('chapter options', options);
+    
     const sortedOptions = sortArrayOfObjectsByString(options, 'label');
     return sortedOptions;
   }
@@ -164,7 +164,7 @@ export class ChapterState {
     { getState, patchState }: StateContext<ChapterStateModel>,
     { payload }: FetchChaptersAction
   ) {
-    console.log('Fetching chapters from chapter state');
+    
     let { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, fetchParamObjects, chaptersSubscribed } = state;
@@ -184,7 +184,7 @@ export class ChapterState {
     };
     if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
       patchState({ isFetching: true });
-      console.log('variables for chapters fetch ', { variables });
+      
       this.apollo
         .watchQuery({
           query: CHAPTER_QUERIES.GET_CHAPTERS,
@@ -193,23 +193,18 @@ export class ChapterState {
         })
         .valueChanges.subscribe(
           ({ data }: any) => {
-            console.log('resposne to get chapters query ', { data });
+            
             const response = data.chapters;
             const totalCount = response[0]?.totalCount
               ? response[0]?.totalCount
               : 0;
             newFetchParams = { ...newFetchParams, totalCount };
-            console.log('from after getting chapters', {
-              totalCount,
-              response,
-              newFetchParams,
-            });
             let paginatedChapters = state.paginatedChapters;
             paginatedChapters = {
               ...paginatedChapters,
               [pageNumber]: response,
             };
-            console.log({ paginatedChapters });
+            
             let chapters = convertPaginatedListToNormalList(paginatedChapters);
             let lastPage = null;
             if (response.length < newFetchParams.pageSize) {
@@ -251,10 +246,6 @@ export class ChapterState {
         })
         .subscribe((result: any) => {
           const state = getState();
-          console.log('chapter subscription result ', {
-            chapters: state.chapters,
-            result,
-          });
           const method = result?.data?.notifyChapter?.method;
           const chapter = result?.data?.notifyChapter?.chapter;
           const { newPaginatedItems, newItemsList } =
@@ -315,7 +306,7 @@ export class ChapterState {
       formSubmitting = true;
       patchState({ formSubmitting });
       const values = form.value;
-      console.log('Chapter Form values', values);
+      
       const updateForm = values.id == null ? false : true;
       const { id, ...sanitizedValues } = values;
       const variables = updateForm
@@ -338,7 +329,7 @@ export class ChapterState {
               ? data.updateChapter
               : data.createChapter;
             patchState({ formSubmitting: false });
-            console.log('update chapter ', { response });
+            
             if (response.ok) {
               const method = updateForm
                 ? SUBSCRIPTION_METHODS.UPDATE_METHOD
@@ -377,10 +368,10 @@ export class ChapterState {
                 })
               );
             }
-            console.log('From createUpdateChapter', { response });
+            
           },
           (error) => {
-            console.log('Some error happened ', error);
+            
             this.store.dispatch(
               new ShowNotificationAction({
                 message: getErrorMessageFromGraphQLResponse(error),
@@ -415,7 +406,7 @@ export class ChapterState {
       .subscribe(
         ({ data }: any) => {
           const response = data.publishCourse;
-          console.log('from publish chapter ', { data });
+          
           if (response.ok) {
             this.store.dispatch(
               new ShowNotificationAction({
@@ -457,7 +448,7 @@ export class ChapterState {
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteChapter;
-          console.log('from delete chapter ', { data });
+          
           if (response.ok) {
             const method = SUBSCRIPTION_METHODS.DELETE_METHOD;
             const chapter = response.chapter;
@@ -525,7 +516,7 @@ export class ChapterState {
       .subscribe(
         ({ data }: any) => {
           const response = data.reorderChapters;
-          console.log('Reordering of chapters ', { response });
+          
         },
         (error) => {
           this.store.dispatch(

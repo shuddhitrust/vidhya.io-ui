@@ -168,17 +168,10 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
           }
         }
       );
-      console.log('this.exercises from component', {
-        exercises: this.exercises,
-        submissions: this.exerciseSubmissions,
-      });
-      console.log('exerciseSubmissions', {
-        exerciseSubmissions: this.exerciseSubmissions,
-      });
     });
     this.chapter$.subscribe((val) => {
       this.chapter = val;
-      console.log('Current chapter => ', this.chapter);
+      
       this.fetchExercises();
     });
     this.formSubmitting$.subscribe((val) => {
@@ -204,21 +197,15 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     submission.chapter = this.chapter.id;
     submission.course = this.chapter?.course?.id;
     submission.participant = this.currentMember?.id;
-    console.log('submission');
+    
     return submission;
   }
 
   exerciseSubmissionOf(exercise) {
-    console.log({ thisExerciseSubmissions: this.exerciseSubmissions });
+    
     const index = this.exerciseSubmissions.findIndex(
       (e) => e.exercise == exercise.id
     );
-    console.log('response => ', {
-      [exercise.id]: index
-        ? this.exerciseSubmissions[index]
-        : emptyExerciseSubmissionFormRecord,
-      exercise,
-    });
     return index >= 0
       ? this.exerciseSubmissions[index]
       : emptyExerciseSubmissionFormRecord;
@@ -261,11 +248,6 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     const submission = this.exerciseSubmissions.find(
       (sub) => sub.exercise == exercise.id
     );
-    console.log('from exerciseSubmitted ', {
-      exercise,
-      submission,
-      submissions: this.exerciseSubmissions,
-    });
     return submission?.id ? true : false;
   }
 
@@ -293,16 +275,13 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('close dialog result for announcment => ', result);
+      
       if (result == true) {
         this.deleteChapter();
       }
     });
   }
   deleteChapter() {
-    console.log('payload before passing to action => ', {
-      id: this.chapter.id,
-    });
     this.store.dispatch(new DeleteChapterAction({ id: this.chapter?.id }));
   }
 
@@ -312,16 +291,13 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('close dialog result for exercise => ', result);
+      
       if (result == true) {
         this.deleteExercise(exercise);
       }
     });
   }
   deleteExercise(exercise) {
-    console.log('payload before passing to action => ', {
-      id: exercise.id,
-    });
     this.store.dispatch(new DeleteExerciseAction({ id: exercise?.id }));
   }
 
@@ -329,13 +305,13 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     const exercisesList = this.exercises.map((e) => {
       return { index: e.id, label: e.prompt };
     });
-    console.log('initial index list ', { exercisesList });
+    
     const dialogRef = this.dialog.open(DragDropComponent, {
       data: exercisesList,
     });
 
     dialogRef.afterClosed().subscribe((newIndexArray) => {
-      console.log('after reordering', { newIndexArray });
+      
       let i = 1;
       const reorderedList = newIndexArray.map((index) => {
         let exercise = this.exercises.find((e) => e.id == index);
@@ -343,9 +319,9 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
         i++;
         return exercise;
       });
-      console.log('old order of exercises ', { exercises: this.exercises });
+      
       this.exercises = Object.assign([], reorderedList);
-      console.log('new order of exercises ', { exercises: this.exercises });
+      
       const indexList = this.exercises.map((e) => {
         return { id: e.id, index: e.index };
       });
@@ -442,11 +418,6 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     this.uploadService.upload(formData).subscribe(
       (res) => {
         const url = res.secure_url;
-        console.log('uploading new file ', {
-          imageIndex,
-          url,
-          uploadedImages: this.uploadedImages,
-        });
 
         // We update the referenceImages field in the form with the new url
         this.uploadedImages[exerciseId] =
@@ -462,7 +433,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
           this.imagesQueuedForUpload[exerciseId].length - 1;
         if (exerciseId == lastExerciseId && imageIndex == lastImageIndex) {
           // if it is, then we update the form and submit it.
-          console.log({ lastExerciseId, lastImageIndex });
+          
           this.submitExerciseSubmissionForm();
         } else {
           imageIndex++;
@@ -470,7 +441,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
         }
       },
       (err) => {
-        console.log('Error while uploading image', { err });
+        
         this.store.dispatch(
           new ShowNotificationAction({
             message:
@@ -533,23 +504,16 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
         previewImageObject,
       ]);
       this.imagesQueuedForUpload[exercise.id] = imagesQueuedForExercise;
-      console.log('updated imagesQueuedForUpload', {
-        imagesQueuedForUpload: this.imagesQueuedForUpload,
-      });
     }
   }
 
   updateFormBeforeSubmit() {
-    console.log('updateFormBeforeSubmit', {
-      exerciseSubmissions: this.exerciseSubmissions,
-      imagesQueuedForUpload: this.imagesQueuedForUpload,
-    });
     this.uploadNewImages();
   }
 
   validateExerciseSubmissions() {
     let submissionsValid = true;
-    console.log('All exercises', { exercises: this.exercises });
+    
     this.exercises.forEach((e) => {
       if (e.required == true) {
         const questionType = e.questionType;
@@ -590,9 +554,6 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
   submitExerciseSubmissionForm() {
     const newSubmissions = this.exerciseSubmissions.filter((s) => {
       return s.id == null;
-    });
-    console.log('Submitting exerciseSubmissions', {
-      newSubmissions,
     });
     const validationResult = this.validateExerciseSubmissions();
     if (validationResult) {

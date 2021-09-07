@@ -49,9 +49,7 @@ export class PasswordResetComponent implements OnInit {
       this.router.navigate(['']);
     } else {
       this.url = window.location.href;
-      console.log('this.url => ', { url: this.url });
       if (this.router.url === uiroutes.PASSWORD_RESET_ROUTE.route) {
-        console.log('account activation!!!');
         this.token = this.url.split(
           uiroutes.PASSWORD_RESET_ROUTE.route + '/'
         )[1];
@@ -72,7 +70,6 @@ export class PasswordResetComponent implements OnInit {
   }
 
   resetPasswordForm(form: FormGroup, formDirective: FormGroupDirective) {
-    console.log('register button was clicked');
     this.store.dispatch(new PasswordResetAction({ form, formDirective }));
   }
 

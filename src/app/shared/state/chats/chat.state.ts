@@ -133,7 +133,7 @@ export class ChatState {
       };
       return option;
     });
-    console.log('chat dropdown ptions', options);
+    
     return options;
   }
 
@@ -181,7 +181,7 @@ export class ChatState {
       })
       .subscribe(
         ({ data }: any) => {
-          console.log('Chat search respose => ', { data });
+          
           const response = data.chatSearch ? data.chatSearch : [];
           let results: ChatSearchResult[] = [];
 
@@ -227,7 +227,7 @@ export class ChatState {
               };
             })
           );
-          console.log('results => ', { results });
+          
           patchState({
             chatSearchResults: results,
             isFetchingChatMembers: false,
@@ -303,7 +303,7 @@ export class ChatState {
         .valueChanges.subscribe(
           ({ data }: any) => {
             const response = data.chats;
-            console.log('response from fetchChats => ', { response });
+            
             const totalCount = response[0]?.totalCount
               ? response[0]?.totalCount
               : 0;
@@ -315,7 +315,7 @@ export class ChatState {
             // Parsing the individual chats in to chat objects
             responseChats = responseChats.map((chat) => {
               let member;
-              console.log('Chat => ', chat);
+              
               if (chat.individualMemberOne?.id == this.currentMember?.id) {
                 member = chat.individualMemberTwo;
               } else if (
@@ -323,7 +323,7 @@ export class ChatState {
               ) {
                 member = chat.individualMemberOne;
               }
-              console.log('member => ', member);
+              
               const preppedChat = {
                 id: chat.id,
                 name: member.name,
@@ -334,7 +334,7 @@ export class ChatState {
               return preppedChat;
             });
             // Parsing the groups into chat objects
-            console.log('responseGroups', { responseGroups });
+            
             responseGroups = responseGroups.map((group) => {
               const preppedChat = {
                 id: group?.chat?.id,
@@ -345,7 +345,7 @@ export class ChatState {
               };
               return preppedChat;
             });
-            console.log('after parsing responseGroups', { responseGroups });
+            
 
             chats = chats.concat(responseChats).concat(responseGroups);
 
@@ -381,7 +381,7 @@ export class ChatState {
     { payload }: GetChatAction
   ) {
     const { id } = payload;
-    console.log('id from select Chat action ', { id });
+    
     if (id) {
       const state = getState();
       if (id !== state.chatFormRecord.id) {
@@ -425,7 +425,7 @@ export class ChatState {
       .valueChanges.subscribe(
         ({ data }: any) => {
           const response = data.chat;
-          console.log('Response for getChat => ', { data });
+          
           const state = getState();
           const chats = [response, ...state.chats];
           patchState({
@@ -502,7 +502,7 @@ export class ChatState {
   //     formSubmitting = true;
   //     patchState({ formSubmitting });
   //     const values = form.value;
-  //     console.log('Chat Form values', values);
+  //     
   //     const updateForm = values.id == null ? false : true;
   //     const { id, ...sanitizedValues } = values;
   //     const variables = updateForm
@@ -523,7 +523,7 @@ export class ChatState {
   //         ({ data }: any) => {
   //           const response = updateForm ? data.updateChat : data.createChat;
   //           patchState({ formSubmitting: false });
-  //           console.log('update chat ', { response });
+  //           
   //           if (response.ok) {
   //             this.store.dispatch(
   //               new ShowNotificationAction({
@@ -548,10 +548,10 @@ export class ChatState {
   //               })
   //             );
   //           }
-  //           console.log('From createUpdateChat', { response });
+  //           
   //         },
   //         (error) => {
-  //           console.log('Some error happened ', error);
+  //           
   //           this.store.dispatch(
   //             new ShowNotificationAction({
   //               message: getErrorMessageFromGraphQLResponse(error),
@@ -583,7 +583,7 @@ export class ChatState {
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteChat;
-          console.log('from delete chat ', { data });
+          
           if (response.ok) {
             this.store.dispatch(
               new ShowNotificationAction({
@@ -654,13 +654,6 @@ export class ChatState {
       newSearchQuery: searchQuery,
       newColumnFilters: columnFilters,
     });
-    console.log(
-      'from fetchChatMessages => ',
-      fetchParamsNewOrNot({
-        fetchParamObjects: chatMessagesFetchParamss,
-        newFetchParams,
-      })
-    );
     if (
       fetchParamsNewOrNot({
         fetchParamObjects: chatMessagesFetchParamss,
@@ -689,7 +682,7 @@ export class ChatState {
             newFetchParams = { ...newFetchParams, totalCount };
             let chat: ChatUIObject = state.chats.find((c) => c.id == chatId);
             if (chat) {
-              console.log('line 460 from chat state => ', { chat, response });
+              
               const chatmessageSet = chat.chatmessageSet.concat(response);
               chat = { ...chat, chatmessageSet };
               let chats = state.chats.filter((c) => c.id != chat.id);
@@ -742,10 +735,6 @@ export class ChatState {
         })
         .subscribe((result: any) => {
           const state = getState();
-          console.log('chat subscription result ', {
-            chats: state.chats,
-            result,
-          });
           const method = result?.data?.notifyChatMessage?.method;
           const chatMessage = result?.data?.notifyChatMessage?.chatMessage;
           if (chatMessage) {
@@ -756,7 +745,7 @@ export class ChatState {
               const chatMessages = chat.chatmessageSet
                 ? chat.chatmessageSet
                 : [];
-              console.log('Chat, chatmessages => ', { chat, chatMessages });
+              
               const { items, fetchParamObjects } = subscriptionUpdater({
                 items: chatMessages,
                 method,
@@ -789,7 +778,7 @@ export class ChatState {
   ) {
     const { id, message } = payload;
     const state = getState();
-    console.log('From createChatMessageAction => ', { payload });
+    
     patchState({ isCreatingNewChatMessage: true });
     this.apollo
       .mutate({
@@ -806,10 +795,10 @@ export class ChatState {
         const response = data.createChatMessage;
         // if (response.ok) {
         //   const chat = response.chatMessage?.chat;
-        //   console.log('SETTIING NEW CHAT TO THE CHATFORMRECORD ', { chat });
+        //   
         //   patchState({ chatFormRecord: chat });
         // }
-        console.log('from creating the chat ', { data });
+        
       });
   }
 

@@ -77,7 +77,7 @@ export const memberColumns: any[] = [
   {
     field: 'role',
     cellRenderer: (params) => {
-      console.log('from member role ', { params });
+      
       return params?.data?.role?.name;
     },
   },

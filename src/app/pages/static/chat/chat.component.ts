@@ -76,7 +76,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
   constructor(private store: Store) {
     this.chat$.subscribe((val) => {
       this.chat = this.prepCurrentChat(val);
-      console.log({ autoScrollToBottom: this.autoScrollToBottom });
+      
       if (this.autoScrollToBottom) {
         setTimeout(() => {
           this.scrollToBottom();
@@ -84,7 +84,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
       }
       this.autoScrollToBottom = true;
       this.draft = '';
-      console.log('Chat changed => ', { chat: this.chat });
+      
     });
     this.isFetchingChats$.subscribe((val) => {
       this.isFetchingChats = val;
@@ -97,7 +97,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
     });
     this.chatSearch$.subscribe((val) => {
       this.chatSearchResults = val;
-      console.log('chatSearch => ', { chatMebmers: this.chatSearchResults });
+      
     });
     this.isFetchingChatMembers$.subscribe((val) => {
       this.isFetchingChatMembers = val;
@@ -107,7 +107,7 @@ export class ChatComponent implements OnInit, AfterViewInit {
     });
     this.chats$.subscribe((val) => {
       this.chats = val;
-      console.log('chats => ', { chats: val });
+      
     });
     this.store.dispatch(
       new FetchChatsAction({ searchParams: defaultSearchParams })
@@ -139,15 +139,15 @@ export class ChatComponent implements OnInit, AfterViewInit {
   }
   ngOnInit(): void {}
   scrollToBottom(): void {
-    console.log('ChatWindow exists => ', { chatWindow: this.chatWindow });
+    
     if (this.chatWindow) {
-      console.log('chat window => ', { chatWindow: this.chatWindow });
+      
       this.chatWindow.nativeElement.scrollTop =
         this.chatWindow.nativeElement.scrollHeight;
     }
   }
   prepCurrentChat(chat: ChatUIObject): ChatUIObject {
-    console.log('from prepCurrentChat ', { chat });
+    
     let newChat = Object.assign({}, chat);
     if (chat?.chatmessageSet?.length > 1) {
       return {
@@ -175,21 +175,21 @@ export class ChatComponent implements OnInit, AfterViewInit {
   }
 
   onSelectChat(chat) {
-    console.log('on select chat => ', { chat, thisChat: this.chat });
+    
     if (chat.id != this.chat?.id) {
       this.store.dispatch(new SelectChatAction({ id: chat?.id }));
       this.draft = '';
     }
   }
   onChatScroll() {
-    console.log('onChatScroll');
+    
     if (!this.isFetchingChats) {
       this.store.dispatch(new FetchNextChatsAction());
     }
   }
 
   onChatMessagesScroll() {
-    console.log('onChatMessagesScroll');
+    
     if (this.chat?.id && this.chat?.chatmessageSet?.length) {
       this.autoScrollToBottom = false; // Setting this to be true so that it doesn't autoscroll to lowest when chat updates
       if (!this.isFetchingChatMessages) {
@@ -211,9 +211,9 @@ export class ChatComponent implements OnInit, AfterViewInit {
     this.store.dispatch(new SelectChatAction({ id: null }));
   }
   sendMessage() {
-    console.log('sending message...', { draft: this.draft });
+    
     if (this.draft.length) {
-      console.log('Mesage to be sent => ', { draft: this.draft });
+      
       if (!this.isCreatingNewChatMessage) {
         this.store.dispatch(
           new CreateChatMessageAction({

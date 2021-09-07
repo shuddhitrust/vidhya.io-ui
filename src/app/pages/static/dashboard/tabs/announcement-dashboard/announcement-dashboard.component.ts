@@ -51,7 +51,7 @@ export class AnnouncementDashboardComponent implements OnInit {
 
   ngOnInit(): void {}
   onScroll() {
-    console.log('scrolling announcements');
+    
     if (!this.isFetching) {
       this.store.dispatch(new FetchNextAnnouncementsAction());
     }
