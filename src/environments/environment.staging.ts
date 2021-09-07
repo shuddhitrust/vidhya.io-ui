@@ -10,11 +10,14 @@
 
 const api_endpoint = 'https://vidhya-io-staging.herokuapp.com';
 const websocket_api_endpoint = 'wss://vidhya-io-staging.herokuapp.com';
+const cloudinary_endpoint = 'https://api.cloudinary.com/v1_1/svidhya';
+const cloudinary_preset = 'l4vdzicq';
 
 export const environment = {
-  production: false,
+  production: true,
   api_endpoint,
-  file_uplod_endpoint: `${api_endpoint}/upload/`,
+  file_uplod_endpoint: `${cloudinary_endpoint}/upload/`,
+  cloudinary_preset,
   graphql_endpoint: `${api_endpoint}/graphql/`,
   websocket_graphql_endpoint: `${websocket_api_endpoint}/graphql/`,
 };

@@ -184,7 +184,7 @@ export class AddEditGroupComponent implements OnInit {
       formData.append('file', this.logoFile);
       this.uploadService.upload(formData).subscribe(
         (res) => {
-          const url = `${environment.api_endpoint}${res.file}`;
+          const url = res.secure_url;
           form.get('avatar').setValue(url);
           console.log('after setting the new url after upload ', {
             formValue: form.value,

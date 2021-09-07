@@ -8,9 +8,12 @@ import { Observable } from 'rxjs';
 })
 export class UploadService {
   FILE_UPLOAD_ENDPOINT: string = environment.file_uplod_endpoint;
+  preset: string = environment.cloudinary_preset;
+
   constructor(private http: HttpClient) {}
 
   public upload(formData): Observable<any> {
+    formData.append('upload_preset', this.preset);
     return this.http.post<any>(this.FILE_UPLOAD_ENDPOINT, formData);
   }
 }

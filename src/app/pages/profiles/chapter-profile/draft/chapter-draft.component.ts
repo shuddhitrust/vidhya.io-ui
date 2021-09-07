@@ -430,7 +430,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
       formData.append('file', this.imagesQueuedForUpload[imageIndex].file);
       this.uploadService.upload(formData).subscribe(
         (res) => {
-          const url = `${environment.api_endpoint}${res.file}`;
+          const url = res.secure_url;
           console.log('uploading new file ', imageIndex, url);
           const existingReferenceImages = form.get('referenceImages').value;
           // We update the referenceImages field in the form with the new url

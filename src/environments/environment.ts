@@ -4,11 +4,14 @@
 
 const api_endpoint = 'http://localhost:8000';
 const websocket_api_endpoint = 'ws://localhost:8000';
+const cloudinary_endpoint = 'https://api.cloudinary.com/v1_1/svidhya';
+const cloudinary_preset = 'l4vdzicq';
 
 export const environment = {
   production: false,
   api_endpoint,
-  file_uplod_endpoint: `${api_endpoint}/upload/`,
+  file_uplod_endpoint: `${cloudinary_endpoint}/upload/`,
+  cloudinary_preset,
   graphql_endpoint: `${api_endpoint}/graphql/`,
   websocket_graphql_endpoint: `${websocket_api_endpoint}/graphql/`,
 };

@@ -441,7 +441,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     );
     this.uploadService.upload(formData).subscribe(
       (res) => {
-        const url = `${environment.api_endpoint}${res.file}`;
+        const url = res.secure_url;
         console.log('uploading new file ', {
           imageIndex,
           url,
