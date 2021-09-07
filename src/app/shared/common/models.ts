@@ -366,6 +366,7 @@ export const resources = {
   LEARNER: 'LEARNER',
   INSTITUTION: 'INSTITUTION',
   ANNOUNCEMENT: 'ANNOUNCEMENT',
+  ASSIGNMENT: 'ASSIGNMENT',
   CHAPTER: 'CHAPTER',
   COURSE: 'COURSE',
   GROUP: 'GROUP',
@@ -378,10 +379,11 @@ export const resources = {
 
 export type UserPermissions = {
   MODERATION: ResourceActions;
-  LEARNER: ResourceActions;
-  CLASS_ADMIN: ResourceActions;
+  USER_ROLE: ResourceActions;
   MEMBER: ResourceActions;
   INSTITUTION_ADMIN: ResourceActions;
+  CLASS_ADMIN: ResourceActions;
+  LEARNER: ResourceActions;
   INSTITUTION: ResourceActions;
   ANNOUNCEMENT: ResourceActions;
   ASSIGNMENT: ResourceActions;
@@ -392,16 +394,16 @@ export type UserPermissions = {
   EXERCISE_KEY: ResourceActions;
   EXERCISE_SUBMISSION: ResourceActions;
   REPORT: ResourceActions;
-  USER_ROLE: ResourceActions;
   OWN_PROFILE: ResourceActions;
 };
 
 export const defaultResourcePermissions: UserPermissions = {
   MODERATION: defaultActions,
-  LEARNER: defaultActions,
-  CLASS_ADMIN: defaultActions,
+  USER_ROLE: defaultActions,
   MEMBER: defaultActions,
   INSTITUTION_ADMIN: defaultActions,
+  CLASS_ADMIN: defaultActions,
+  LEARNER: defaultActions,
   INSTITUTION: defaultActions,
   ANNOUNCEMENT: defaultActions,
   ASSIGNMENT: defaultActions,
@@ -412,6 +414,5 @@ export const defaultResourcePermissions: UserPermissions = {
   EXERCISE_KEY: defaultActions,
   EXERCISE_SUBMISSION: defaultActions,
   REPORT: defaultActions,
-  USER_ROLE: defaultActions,
   OWN_PROFILE: defaultActions,
 };

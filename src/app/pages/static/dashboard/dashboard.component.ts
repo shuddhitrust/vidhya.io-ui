@@ -55,7 +55,6 @@ export class DashboardComponent implements OnInit {
   params: object = {};
   @Select(AuthState.getPermissions)
   permissions$: Observable<UserPermissions>;
-
   entities: any[] = [];
   resources = resources;
   constructor(
@@ -98,10 +97,11 @@ export class DashboardComponent implements OnInit {
   }
 
   onTabChange($event) {
-    const tabIndex = $event['index'];
+    console.log({event: $event})
+    const tab = $event.tab.textLabel;
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { tab: this.tabIndexList[tabIndex] },
+      queryParams: { tab },
       queryParamsHandling: 'merge',
       skipLocationChange: false,
     });

@@ -56,6 +56,7 @@ export class AssignmentDashboardComponent implements OnInit {
     private router: Router,
     private auth: AuthorizationService
   ) {
+    console.log('calling fetch assignments from assignment dashboard')
     this.fetchAssignments();
     this.isFetching$.subscribe((val) => {
       this.isFetching = val;
@@ -112,15 +113,15 @@ export class AssignmentDashboardComponent implements OnInit {
   }
 
   fetchAssignments() {
-    this.updateAssignmentFilter();
-    this.store.dispatch(
-      new FetchAssignmentsAction({
-        searchParams: {
-          ...defaultSearchParams,
-          columnFilters: this.assignmentColumnFilters,
-        },
-      })
-    );
+      this.updateAssignmentFilter();
+      this.store.dispatch(
+        new FetchAssignmentsAction({
+          searchParams: {
+            ...defaultSearchParams,
+            columnFilters: this.assignmentColumnFilters,
+          },
+        })
+      );
   }
 
   fetchNextAssignments() {
