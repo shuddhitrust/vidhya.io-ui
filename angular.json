@@ -76,6 +76,8 @@
               "outputHashing": "all"
             },
             "production": {
+              "buildOptimizer": true,
+              "optimization": true,
               "budgets": [
                 {
                   "type": "initial",
