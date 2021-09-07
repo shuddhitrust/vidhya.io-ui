@@ -681,13 +681,6 @@ export class AuthState {
                 })
               );
               // this.store.dispatch(new VerifyTokenAction());
-              this.store.dispatch(
-                new ShowNotificationAction({
-                  message:
-                    'Registered successfully! Check your email inbox to fully activate your account.',
-                  action: 'success',
-                })
-              );
             } else {
               this.store.dispatch(
                 new ShowNotificationAction({
@@ -1226,6 +1219,23 @@ export class AuthState {
         .subscribe(
           ({ data }: any) => {
             const response = data.addInvitecode;
+            if (response.ok) {
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message:
+                    'Registered successfully! Check your email inbox to fully activate your account.',
+                  action: 'success',
+                })
+              );
+            } else {
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message:
+                    'It appears there was an error while attempting to register. Please contact the admin.',
+                  action: 'error',
+                })
+              );
+            }
             console.log('Added invitecode to User', { data });
           },
           (error) => {
