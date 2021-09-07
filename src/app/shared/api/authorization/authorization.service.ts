@@ -57,7 +57,8 @@ export class AuthorizationService {
     // });
     const permissions = this.permissions;
     if (action == '*') {
-      const keys = Object.keys(permissions[resource]);
+      const resourceExists = resources[resource] ? true : false;
+      const keys = resourceExists ? Object.keys(permissions[resource]) : [];
       for (let i = 0; i < keys.length; i++) {
         if (permissions[resource][keys[i]] == true) {
           return true;
