@@ -1,4 +1,3 @@
-import { AnyARecord } from 'dns';
 import { pageSizeOptions } from './table.config';
 
 export const defaultPageSize = pageSizeOptions[0].value;

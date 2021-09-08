@@ -60,6 +60,7 @@ import { ExerciseKeyState } from 'src/app/shared/state/exerciseKeys/exerciseKey.
 import {
   FetchExerciseKeysAction,
   ResetExerciseKeyFormAction,
+  ResetExerciseKeyStateAction,
 } from 'src/app/shared/state/exerciseKeys/exerciseKey.actions';
 import { UploadService } from 'src/app/shared/api/upload.service';
 import { environment } from 'src/environments/environment';
@@ -508,7 +509,8 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.store.dispatch(new ResetExerciseKeyFormAction());
+    this.store.dispatch(new ResetExerciseKeyStateAction());
+
   }
 
   updateFormBeforeSubmit(form, formDirective) {
