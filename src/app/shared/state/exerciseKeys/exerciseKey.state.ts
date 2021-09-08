@@ -167,10 +167,7 @@ export class ExerciseKeyState {
           ({ data }: any) => {
             
             const response = data.exerciseKeys;
-            const totalCount = response[0]?.totalCount
-              ? response[0]?.totalCount
-              : 0;
-            newFetchParams = { ...newFetchParams, totalCount };
+            newFetchParams = { ...newFetchParams };
             let paginatedExerciseKeys = state.paginatedExerciseKeys;
             paginatedExerciseKeys = {
               ...paginatedExerciseKeys,

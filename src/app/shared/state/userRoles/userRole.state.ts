@@ -156,9 +156,9 @@ export class UserRoleState {
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
-          const response = data.userRoles;
-          const totalCount = response[0]?.totalCount
-            ? response[0]?.totalCount
+          const response = data.userRoles.records;
+          const totalCount = data.userRoles.total
+            ? data.userRoles.total
             : 0;
           newFetchParams = { ...newFetchParams, totalCount };
           patchState({

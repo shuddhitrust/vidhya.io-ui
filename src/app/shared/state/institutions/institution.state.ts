@@ -138,9 +138,9 @@ export class InstitutionState {
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
-          const response = data.institutions;
-          const totalCount = response[0]?.totalCount
-            ? response[0]?.totalCount
+          const response = data.institutions.records
+          const totalCount = data.institutions.total
+            ? data.institutions.total
             : 0;
 
           newFetchParams = { ...newFetchParams, totalCount };

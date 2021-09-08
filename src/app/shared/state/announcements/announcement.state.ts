@@ -171,10 +171,7 @@ export class AnnouncementState {
           ({ data }: any) => {
             
             const response = data.announcements;
-            const totalCount = response[0]?.totalCount
-              ? response[0]?.totalCount
-              : 0;
-            newFetchParams = { ...newFetchParams, totalCount };
+            newFetchParams = { ...newFetchParams };
             let paginatedAnnouncements = state.paginatedAnnouncements;
             paginatedAnnouncements = {
               ...paginatedAnnouncements,

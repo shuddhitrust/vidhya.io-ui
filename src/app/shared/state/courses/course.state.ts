@@ -167,10 +167,8 @@ export class CourseState {
           ({ data }: any) => {
             
             const response = data.courses;
-            const totalCount = response[0]?.totalCount
-              ? response[0]?.totalCount
-              : 0;
-            newFetchParams = { ...newFetchParams, totalCount };
+
+            newFetchParams = { ...newFetchParams };
             let paginatedCourses = state.paginatedCourses;
             paginatedCourses = {
               ...paginatedCourses,

@@ -206,10 +206,7 @@ export class ExerciseSubmissionState {
           ({ data }: any) => {
             
             const response = data.exerciseSubmissionGroups;
-            const totalCount = response[0]?.totalCount
-              ? response[0]?.totalCount
-              : 0;
-            newFetchParams = { ...newFetchParams, totalCount };
+            newFetchParams = { ...newFetchParams };
 
             if (
               columnFiltersChanged({
@@ -332,10 +329,7 @@ export class ExerciseSubmissionState {
           ({ data }: any) => {
             
             const response = data.exerciseSubmissions;
-            const totalCount = response[0]?.totalCount
-              ? response[0]?.totalCount
-              : 0;
-            newFetchParams = { ...newFetchParams, totalCount };
+            newFetchParams = { ...newFetchParams };
             let paginatedExerciseSubmissions =
               state.paginatedExerciseSubmissions;
             paginatedExerciseSubmissions = {

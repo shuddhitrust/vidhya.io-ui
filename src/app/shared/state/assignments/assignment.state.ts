@@ -115,10 +115,8 @@ export class AssignmentState {
           ({ data }: any) => {
             
             const response = data.assignments;
-            const totalCount = response[0]?.totalCount
-              ? response[0]?.totalCount
-              : 0;
-            newFetchParams = { ...newFetchParams, totalCount };
+
+            newFetchParams = { ...newFetchParams };
             let paginatedAssignments = state.paginatedAssignments;
             paginatedAssignments = {
               ...paginatedAssignments,

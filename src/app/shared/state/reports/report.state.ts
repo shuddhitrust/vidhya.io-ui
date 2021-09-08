@@ -156,10 +156,7 @@ export class ReportState {
           ({ data }: any) => {
             
             const response = data.reports;
-            const totalCount = response[0]?.totalCount
-              ? response[0]?.totalCount
-              : 0;
-            newFetchParams = { ...newFetchParams, totalCount };
+            newFetchParams = { ...newFetchParams };
             let reports = state.reports;
             reports = reports.concat(response);
             let lastPage = null;

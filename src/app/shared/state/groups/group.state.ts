@@ -164,10 +164,7 @@ export class GroupState {
           ({ data }: any) => {
             
             const response = data.groups;
-            const totalCount = response[0]?.totalCount
-              ? response[0]?.totalCount
-              : 0;
-            newFetchParams = { ...newFetchParams, totalCount };
+            newFetchParams = { ...newFetchParams };
             let paginatedGroups = state.paginatedGroups;
             paginatedGroups = {
               ...paginatedGroups,

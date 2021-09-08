@@ -195,10 +195,8 @@ export class ChapterState {
           ({ data }: any) => {
             
             const response = data.chapters;
-            const totalCount = response[0]?.totalCount
-              ? response[0]?.totalCount
-              : 0;
-            newFetchParams = { ...newFetchParams, totalCount };
+
+            newFetchParams = { ...newFetchParams,  };
             let paginatedChapters = state.paginatedChapters;
             paginatedChapters = {
               ...paginatedChapters,

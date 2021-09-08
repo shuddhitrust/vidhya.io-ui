@@ -73,24 +73,26 @@ export const USER_QUERIES = {
         limit: $limit
         offset: $offset
       ) {
-        id
-        username
-        firstName
-        lastName
-        name
-        title
-        bio
-        avatar
-        membershipStatus
-        role {
-          name
-        }
-        institution {
-          id
-          name
-        }
-        lastActive
-        totalCount
+          records {
+            id
+            username
+            firstName
+            lastName
+            name
+            title
+            bio
+            avatar
+            membershipStatus
+            role {
+              name
+            }
+            institution {
+              id
+              name
+            }
+            lastActive
+          }
+          total
       }
     }
   `,
@@ -111,12 +113,15 @@ export const USER_QUERIES = {
         limit: $limit
         offset: $offset
       ) {
+        records {
         id
         name
         title
         bio
         avatar
         institution
+        }
+        total
       }
     }
   `,
@@ -137,10 +142,13 @@ export const USER_ROLE_QUERIES = {
   GET_USER_ROLES: gql`
     query userRoles($searchField: String, $limit: Int, $offset: Int) {
       userRoles(searchField: $searchField, limit: $limit, offset: $offset) {
+        records {
         name
         priority
         description
         createdAt
+        }
+        total
       }
     }
   `,
@@ -165,13 +173,15 @@ export const INSTITUTION_QUERIES = {
   GET_INSTITUTIONS: gql`
     query institutions($searchField: String, $limit: Int, $offset: Int) {
       institutions(searchField: $searchField, limit: $limit, offset: $offset) {
+        records {
         id
         name
         location
         city
         bio
         invitecode
-        totalCount
+        }
+        total
       }
     }
   `,

@@ -147,9 +147,9 @@ export class MemberState {
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
-          const response = data.users;
-          const totalCount = response[0]?.totalCount
-            ? response[0]?.totalCount
+          const response = data.users.records;
+          const totalCount = data.users.total
+            ? data.users.total
             : 0;
           newFetchParams = { ...newFetchParams, totalCount };
           patchState({
@@ -204,9 +204,9 @@ export class MemberState {
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
-          const response = data.publicUsers;
-          const totalCount = response[0]?.totalCount
-            ? response[0]?.totalCount
+          const response = data.publicUsers.records
+          const totalCount = data.publicUsers.total
+            ? data.publicUsers.total
             : 0;
           newFetchParams = { ...newFetchParams, totalCount };
           patchState({

@@ -304,10 +304,7 @@ export class ChatState {
           ({ data }: any) => {
             const response = data.chats;
             
-            const totalCount = response[0]?.totalCount
-              ? response[0]?.totalCount
-              : 0;
-            newFetchParams = { ...newFetchParams, totalCount };
+            newFetchParams = { ...newFetchParams };
             let chats = state.chats;
             let responseChats = response.chats;
             let responseGroups = response.groups;
@@ -676,10 +673,7 @@ export class ChatState {
         .valueChanges.subscribe(
           ({ data }: any) => {
             const response = data.chatMessages;
-            const totalCount = response[0]?.totalCount
-              ? response[0]?.totalCount
-              : 0;
-            newFetchParams = { ...newFetchParams, totalCount };
+            newFetchParams = { ...newFetchParams };
             let chat: ChatUIObject = state.chats.find((c) => c.id == chatId);
             if (chat) {
               
