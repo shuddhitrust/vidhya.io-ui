@@ -4,10 +4,10 @@
     *ngIf="authorizeResourceMethod(resourceActions.CREATE)"
     (click)="createGroup()"
     class="floating-header-button-top"
-    mat-raised-button
+    mat-icon-button
     color="primary"
   >
-    Create Group
+   <mat-icon>add_circle</mat-icon>
   </button>
 </div>
 <span *ngIf="authorizeResourceMethod(resourceActions.LIST)">

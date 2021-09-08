@@ -53,13 +53,14 @@
     <button
       *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
       type="button"
-      mat-raised-button
+      mat-mini-fab
       color="primary"
+      class="floating-header"
       [class.button-loading]="isSubmittingForm$ | async"
       (click)="submitExerciseSubmissionForm()"
-      [disabled]="!showSaveButton()"
+
     >
-      {{ (isSubmittingForm$ | async) ? "Saving..." : "Save all" }}
+      <mat-icon>save</mat-icon>
     </button>
   </div>
   <span *ngIf="showGroupCards; else submissionsTemplate">

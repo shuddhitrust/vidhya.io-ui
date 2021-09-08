@@ -92,6 +92,11 @@
     display: block;
     margin: 20px auto;
   }
+  .floating-header-button-top,.floating-header-button-container {
+  margin-right: 5px;
+  margin-top: -52px;
+}
+
 }
 
 @keyframes spinner {
