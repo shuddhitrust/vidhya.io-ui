@@ -58,7 +58,7 @@
       class="floating-header"
       [class.button-loading]="isSubmittingForm$ | async"
       (click)="submitExerciseSubmissionForm()"
-
+      [disabled]="!showSaveButton()"
     >
       <mat-icon>save</mat-icon>
     </button>
