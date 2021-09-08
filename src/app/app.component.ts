@@ -20,16 +20,18 @@ export class AppComponent {
   @Select(AuthState.getFirstTimeSetup)
   firstTimeSetup$: Observable<boolean>;
   firstTimeSetup;
-  currentRoute: string;
   constructor(private store: Store, private router: Router, private readonly location: Location) {
     this.firstTimeSetup$.subscribe(val => {
       this.firstTimeSetup = val;
     })
-    this.currentRoute = this.location.path().substring(1)
+  }
+
+  currentRoute() {
+    return this.location.path().substring(1)
   }
 
   showHomePage() {
-    return this.currentRoute == uiroutes.HOME_ROUTE.route;
+    return this.currentRoute() != uiroutes.MEMBER_FORM_ROUTE.route;
   }
 
   showUnprotectedPage(route) {
@@ -40,7 +42,7 @@ export class AppComponent {
         }
         break;
       case uiroutes.MEMBER_FORM_ROUTE.route:
-        if(this.firstTimeSetup && this.currentRoute == uiroutes.MEMBER_FORM_ROUTE.route) {
+        if(this.firstTimeSetup && this.currentRoute() == uiroutes.MEMBER_FORM_ROUTE.route) {
           return true;
         }
         break;
