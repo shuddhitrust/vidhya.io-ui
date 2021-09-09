@@ -442,7 +442,9 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
           }
         },
         (err) => {
-          
+                              this.store.dispatch(
+            new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+          );
           this.store.dispatch(
             new ShowNotificationAction({
               message:
