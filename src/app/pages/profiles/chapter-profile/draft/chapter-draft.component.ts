@@ -71,6 +71,7 @@ import {
   ExercicseDeleteConfirmationDialog,
 } from '../chapter-profile.component';
 import { DragDropComponent } from 'src/app/shared/components/drag-drop/drag-drop.component';
+import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
 const startingExerciseFormOptions = ['', ''];
 
 type previewImage = {
@@ -177,7 +178,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     exerciseKeyRecord: ExerciseKey = emptyExerciseKeyFormRecord
   ) {
     exerciseKeyRecord = this.sanitizeExerciseKeyRecord(exerciseKeyRecord);
-    return this.fb.group({
+    const exerciseForm = this.fb.group({
       id: [exerciseKeyRecord?.exercise?.id],
       prompt: [exerciseKeyRecord?.exercise?.prompt, Validators.required],
       index: [
@@ -197,6 +198,8 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
       referenceImages: [exerciseKeyRecord?.referenceImages],
       remarks: [exerciseKeyRecord?.remarks],
     });
+    console.log('after setting up form' , {exerciseForm})
+    return exerciseForm;
   }
 
   parseDate(date) {
@@ -398,6 +401,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
       this.resetFormOptionErrors();
     }
     form.get('options').setValue(options);
+    console.log('form value after sanitize ', {form: form.value})
   }
 
   resetFormOptionErrors() {
@@ -411,8 +415,14 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     } else {
       const formData = new FormData();
       formData.append('file', this.imagesQueuedForUpload[imageIndex].file);
+      this.store.dispatch(
+            new ToggleLoadingScreen({ showLoadingScreen: true, message: 'Uploading file' })
+          );
       this.uploadService.upload(formData).subscribe(
         (res) => {
+                    this.store.dispatch(
+            new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+          );
           const url = res.secure_url;
           
           const existingReferenceImages = form.get('referenceImages').value;
@@ -424,6 +434,9 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
             // if it is, then we update the form and submit it.
             this.submitExerciseForm(form);
           } else {
+                      this.store.dispatch(
+            new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+          );
             imageIndex++;
             this.uploadImage(imageIndex, form);
           }
@@ -457,7 +470,12 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     const referenceImages = this.exerciseKey.referenceImages;
     form.get('referenceImages').setValue(referenceImages);
     form.get('remarks').setValue(this.exerciseKey.remarks);
-    this.uploadNewReferenceImages(form);
+    console.log('images',this.imagesQueuedForUpload.length, 'form.value', form.value, 'exerciseKey', this.exerciseKey)
+    if (this.imagesQueuedForUpload.length == 0) {
+      this.submitExerciseForm(form);
+    } else {
+      this.uploadNewReferenceImages(form);
+    }
   }
 
   updateExerciseFormOptions() {
@@ -502,10 +520,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
       this.exerciseKey.referenceImages
     );
     newReferenceImages.splice(i, 1);
-    this.exerciseKey = {
-      ...this.exerciseKey,
-      referenceImages: newReferenceImages,
-    };
+    this.exerciseKey.referenceImages = newReferenceImages;
   }
 
   ngOnDestroy() {
@@ -514,6 +529,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   }
 
   updateFormBeforeSubmit(form, formDirective) {
+    console.log('from updateFormBeforeSubmit', {form: form.value})
     this.formDirective = formDirective;
     this.sanitizeAndUpdateOptions(form);
     this.updateGradingKeyInExerciseForm(form);

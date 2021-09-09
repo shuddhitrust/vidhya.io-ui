@@ -130,6 +130,9 @@ export class AddEditInstitutionComponent implements OnInit {
           );
         },
         (err) => {
+                    this.store.dispatch(
+            new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+          );
           this.store.dispatch(
             new ShowNotificationAction({
               message: 'Unable to upload file. Reset and try again',
