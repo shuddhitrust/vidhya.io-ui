@@ -16,11 +16,17 @@ import {
 } from '@angular/material/dialog';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
+  CurrentMember,
   Group,
+  MatSelectOption,
   resources,
   RESOURCE_ACTIONS,
 } from 'src/app/shared/common/models';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
+import { AuthState } from 'src/app/shared/state/auth/auth.state';
+import { OptionsState } from 'src/app/shared/state/options/options.state';
+import { FetchMemberOptionsByInstitution } from 'src/app/shared/state/options/options.actions';
+import { groupTypeOptions } from 'src/app/shared/state/groups/group.model';
 
 @Component({
   selector: 'app-group-profile',
@@ -38,20 +44,66 @@ export class GroupProfileComponent implements OnInit, OnDestroy {
   group: Group;
   @Select(GroupState.isFetching)
   isFetchingGroup$: Observable<boolean>;
-
+  @Select(AuthState.getCurrentMember)
+  currentMember$: Observable<CurrentMember>;
+  currentMember: CurrentMember;
+  @Select(OptionsState.listMembersByInstitution)
+  memberOptions$: Observable<MatSelectOption[]>;
+  memberOptions: MatSelectOption[] = [];
+  groupTypeOptions: MatSelectOption[] = groupTypeOptions;
+  groupTypeLabel: string = '';
+  selectedMemberColumns = [
+    { field: 'label', headerName: 'Group Members' },
+    { field: 'role', headerName: 'Role' },
+  ];
+  memberRows: any[] = [];
   constructor(
     public dialog: MatDialog,
-    private location: Location,
-    private route: ActivatedRoute,
     private store: Store,
+    private route: ActivatedRoute,
+    private location: Location,
     private router: Router,
     private auth: AuthorizationService
   ) {
+    this.fetchMemberOptions();
+    this.memberOptions$.subscribe((val) => {
+      this.memberOptions = val;
+      this.populateMemberRows();
+    });
     this.group$.subscribe((val) => {
       this.group = val;
+      this.populateMemberRows();
+      this.groupTypeLabel = this.groupTypeOptions.find(
+        (option) => option.value == this.group?.groupType
+      )?.label;
     });
   }
-
+  fetchMemberOptions() {
+    this.currentMember$.subscribe((val) => {
+      this.currentMember = val;
+    });
+    this.store.dispatch(
+      new FetchMemberOptionsByInstitution({
+        memberInstitutionId: this.currentMember?.institution?.id,
+      })
+    );
+  }
+  populateMemberRows() {
+    const memberIds = this.group?.members.map((m) => m.id);
+    const adminIds = this.group?.admins.map((m) => m.id);
+    this.memberRows = this.memberOptions.filter((o) => {
+      return memberIds.includes(o.value) || adminIds.includes(o.value);
+    });
+    this.memberRows = this.memberRows.map((row) => {
+      if (memberIds.includes(row.value)) {
+        row.role = 'Member';
+      }
+      if (adminIds.includes(row.value)) {
+        row.role = 'Admin';
+      }
+      return row;
+    });
+  }
   authorizeResourceMethod(action) {
     return this.auth.authorizeResource(this.resource, action, {
       adminIds: this.group?.admins?.map((admin) => admin.id),
@@ -61,7 +113,7 @@ export class GroupProfileComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       const groupId = params['id'];
-      
+
       this.store.dispatch(new GetGroupAction({ id: groupId }));
     });
   }
@@ -83,7 +135,6 @@ export class GroupProfileComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      
       if (result == true) {
         this.deleteGroup();
       }

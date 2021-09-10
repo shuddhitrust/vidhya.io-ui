@@ -20,3 +20,12 @@ h2 {
   float: right;
   margin: 5px 10px;
 }
+
+.group-member-table {
+  height: 500px;
+  width: 75%;
+  min-width: 500px;
+  overflow: auto;
+  display: block;
+  margin: auto;
+}

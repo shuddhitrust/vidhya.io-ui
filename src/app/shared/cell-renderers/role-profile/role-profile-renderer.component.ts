@@ -11,8 +11,8 @@ import { resources, RESOURCE_ACTIONS } from '../../common/models';
   styleUrls: ['./role-profile-renderer.component.scss'],
 })
 export class RoleProfileRendererComponent {
-    resource = resources.USER_ROLE;
-    resourceActions = RESOURCE_ACTIONS;
+  resource = resources.USER_ROLE;
+  resourceActions = RESOURCE_ACTIONS;
   cellValue: string;
   rowData: any;
   params: any;
@@ -24,36 +24,29 @@ export class RoleProfileRendererComponent {
     this.cellValue = this.getValueToDisplay(params);
   }
 
-  showProfile() {
-    
-  }
+  showProfile() {}
 
   getValueToDisplay(params: ICellRendererParams) {
     return params.valueFormatted ? params.valueFormatted : params.value;
   }
 
-  constructor(public dialog: MatDialog,    private auth: AuthorizationService) {}
+  constructor(public dialog: MatDialog, private auth: AuthorizationService) {}
 
   public invokeParentMethod() {
-    if(this.authorizeResourceMethod(this.resourceActions.GET)) {
+    if (this.authorizeResourceMethod(this.resourceActions.GET)) {
       this.params.context.componentParent.openRoleProfile(this.rowData);
     }
   }
 
   authorizeResourceMethod(action) {
-    console.log('from authorizeResourceMethod', {action, resource: this.resource, 'result': this.auth.authorizeResource(this.resource, action, {})})
     return this.auth.authorizeResource(this.resource, action, {});
   }
-
-
 
   openDialog() {
     const dialogRef = this.dialog.open(RoleProfileComponent, {
       data: this.rowData,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      
-    });
+    dialogRef.afterClosed().subscribe((result) => {});
   }
 }

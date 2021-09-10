@@ -3,7 +3,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from '@apollo/client/utilities';
 import { Select } from '@ngxs/store';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
-import { resources, RESOURCE_ACTIONS, UserPermissions } from 'src/app/shared/common/models';
+import {
+  resources,
+  RESOURCE_ACTIONS,
+  UserPermissions,
+} from 'src/app/shared/common/models';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { uiroutes } from '../../../shared/common/ui-routes';
 import {
@@ -73,7 +77,6 @@ export class DashboardComponent implements OnInit {
     this.permissions$.subscribe((val) => {
       this.entities = this.processEntities();
       this.populateVisibleTabs();
-      console.log({'visibleTabs': this.visibleTabs});
     });
   }
 
@@ -95,44 +98,45 @@ export class DashboardComponent implements OnInit {
   }
   populateVisibleTabs() {
     const keys = Object.keys(this.tabIndexList);
-    const visibleTabKeys = keys.filter(index => {
-      const tab = this.tabIndexList[index]
-    switch(tab) {
-      case ADMIN:
-        return this.entities.length
-      case ANNOUNCEMENTS:
-        return this.authorizeResourceMethod(resources.ANNOUNCEMENT);
-      case ASSIGNMENTS:
-        return this.authorizeResourceMethod(resources.EXERCISE_SUBMISSION, RESOURCE_ACTIONS.CREATE);
-      case COURSES:
-        return this.authorizeResourceMethod(resources.COURSE);
-      case GROUPS:
-        return this.authorizeResourceMethod(resources.GROUP);
-      case GRADING:
-        return this.authorizeResourceMethod(resources.GRADING);
-      case REPORTS:
-        return this.authorizeResourceMethod(resources.REPORT);
-      default:
-        return false;
-    }
-  })
-  this.visibleTabs = visibleTabKeys.map(key => this.tabIndexList[key] );
-}
+    const visibleTabKeys = keys.filter((index) => {
+      const tab = this.tabIndexList[index];
+      switch (tab) {
+        case ADMIN:
+          return this.entities.length;
+        case ANNOUNCEMENTS:
+          return this.authorizeResourceMethod(resources.ANNOUNCEMENT);
+        case ASSIGNMENTS:
+          return this.authorizeResourceMethod(
+            resources.EXERCISE_SUBMISSION,
+            RESOURCE_ACTIONS.CREATE
+          );
+        case COURSES:
+          return this.authorizeResourceMethod(resources.COURSE);
+        case GROUPS:
+          return this.authorizeResourceMethod(resources.GROUP);
+        case GRADING:
+          return this.authorizeResourceMethod(resources.GRADING);
+        case REPORTS:
+          return this.authorizeResourceMethod(resources.REPORT);
+        default:
+          return false;
+      }
+    });
+    this.visibleTabs = visibleTabKeys.map((key) => this.tabIndexList[key]);
+  }
 
   processEntities(): any[] {
     let newEntities = adminEntities.filter((e) => {
-      
       return this.authorizeResourceMethod(e.value);
     });
     return newEntities;
   }
 
-  authorizeResourceMethod(resource, action='*') {
+  authorizeResourceMethod(resource, action = '*') {
     return this.auth.authorizeResource(resource, action);
   }
 
   onTabChange(tab) {
-    console.log('from ontabchange', {tab});
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { tab },

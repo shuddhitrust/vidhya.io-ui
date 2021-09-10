@@ -24,8 +24,16 @@
       <mat-icon>edit</mat-icon>
     </button>
     <h2>{{ group?.name }}</h2>
+    <p>{{ groupTypeLabel }}</p>
     <p>{{ group?.description }}</p>
   </div>
+
+  <ag-grid-angular
+    class="ag-theme-alpine group-member-table"
+    [rowData]="memberRows"
+    [columnDefs]="selectedMemberColumns"
+  >
+  </ag-grid-angular>
 </span>
 
 <ng-template #loading>

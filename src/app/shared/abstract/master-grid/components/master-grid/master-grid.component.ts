@@ -153,7 +153,7 @@ export class MasterGridComponent implements OnInit, OnChanges {
   }
 
   autoSizeAllColumns() {
-    this.gridApi.columnApi.autoSizeAllColumns();
+    this.gridColumnApi.autoSizeAllColumns();
   }
 
   showLoading() {

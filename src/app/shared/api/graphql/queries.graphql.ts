@@ -73,25 +73,25 @@ export const USER_QUERIES = {
         limit: $limit
         offset: $offset
       ) {
-          records {
-            id
-            username
-            firstName
-            lastName
+        records {
+          id
+          username
+          firstName
+          lastName
+          name
+          title
+          bio
+          avatar
+          membershipStatus
+          role {
             name
-            title
-            bio
-            avatar
-            membershipStatus
-            role {
-              name
-            }
-            institution {
-              id
-              name
-            }
           }
-          total
+          institution {
+            id
+            name
+          }
+        }
+        total
       }
     }
   `,
@@ -113,12 +113,12 @@ export const USER_QUERIES = {
         offset: $offset
       ) {
         records {
-        id
-        name
-        title
-        bio
-        avatar
-        institution
+          id
+          name
+          title
+          bio
+          avatar
+          institution
         }
         total
       }
@@ -142,10 +142,10 @@ export const USER_ROLE_QUERIES = {
     query userRoles($searchField: String, $limit: Int, $offset: Int) {
       userRoles(searchField: $searchField, limit: $limit, offset: $offset) {
         records {
-        name
-        priority
-        description
-        createdAt
+          name
+          priority
+          description
+          createdAt
         }
         total
       }
@@ -173,12 +173,12 @@ export const INSTITUTION_QUERIES = {
     query institutions($searchField: String, $limit: Int, $offset: Int) {
       institutions(searchField: $searchField, limit: $limit, offset: $offset) {
         records {
-        id
-        name
-        location
-        city
-        bio
-        invitecode
+          id
+          name
+          location
+          city
+          bio
+          invitecode
         }
         total
       }
@@ -213,6 +213,16 @@ export const GROUP_QUERIES = {
   GET_GROUPS: gql`
     query groups($searchField: String, $limit: Int, $offset: Int) {
       groups(searchField: $searchField, limit: $limit, offset: $offset) {
+        id
+        name
+        description
+        createdAt
+      }
+    }
+  `,
+  GET_ADMIN_GROUPS: gql`
+    query adminGroups($searchField: String, $limit: Int, $offset: Int) {
+      adminGroups(searchField: $searchField, limit: $limit, offset: $offset) {
         id
         name
         description

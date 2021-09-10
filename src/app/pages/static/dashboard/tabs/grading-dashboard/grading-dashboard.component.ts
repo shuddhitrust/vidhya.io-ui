@@ -168,7 +168,6 @@ export class GradingDashboardComponent implements OnInit {
       groupBy: this.groupBy,
       status: gradingStatus,
     };
-    console.log('from updateGradingGroupByFilter', { gradingStatus, groupBy });
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { gradingStatus, groupBy },

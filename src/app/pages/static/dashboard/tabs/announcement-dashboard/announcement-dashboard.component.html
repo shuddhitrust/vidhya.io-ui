@@ -1,13 +1,13 @@
 <div class="feed-header-block">
   <!-- <h2>Announcements</h2> -->
   <button
-    *ngIf="authorizeResourceMethod(resourceActions.CREATE)"
+    *ngIf="showAnnouncementCreateOption()"
     (click)="createAnnouncement()"
     class="floating-header-button-top"
     mat-icon-button
     color="primary"
   >
-   <mat-icon>add_circle</mat-icon>
+    <mat-icon>add_circle</mat-icon>
   </button>
 </div>
 <span *ngIf="authorizeResourceMethod(resourceActions.LIST)">

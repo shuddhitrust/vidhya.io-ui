@@ -198,7 +198,6 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
       referenceImages: [exerciseKeyRecord?.referenceImages],
       remarks: [exerciseKeyRecord?.remarks],
     });
-    console.log('after setting up form' , {exerciseForm})
     return exerciseForm;
   }
 
@@ -328,7 +327,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
         return exerciseKey;
       });
       this.exerciseKeys = Object.assign([], reorderedList);
-      
+
       const indexList = this.exerciseKeys.map((key) => {
         return { id: key.exercise?.id, index: key.exercise.index };
       });
@@ -401,7 +400,6 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
       this.resetFormOptionErrors();
     }
     form.get('options').setValue(options);
-    console.log('form value after sanitize ', {form: form.value})
   }
 
   resetFormOptionErrors() {
@@ -416,15 +414,18 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
       const formData = new FormData();
       formData.append('file', this.imagesQueuedForUpload[imageIndex].file);
       this.store.dispatch(
-            new ToggleLoadingScreen({ showLoadingScreen: true, message: 'Uploading file' })
-          );
+        new ToggleLoadingScreen({
+          showLoadingScreen: true,
+          message: 'Uploading file',
+        })
+      );
       this.uploadService.upload(formData).subscribe(
         (res) => {
-                    this.store.dispatch(
+          this.store.dispatch(
             new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
           );
           const url = res.secure_url;
-          
+
           const existingReferenceImages = form.get('referenceImages').value;
           // We update the referenceImages field in the form with the new url
           const newReferenceImages = existingReferenceImages.concat(url);
@@ -434,15 +435,15 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
             // if it is, then we update the form and submit it.
             this.submitExerciseForm(form);
           } else {
-                      this.store.dispatch(
-            new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
-          );
+            this.store.dispatch(
+              new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+            );
             imageIndex++;
             this.uploadImage(imageIndex, form);
           }
         },
         (err) => {
-                              this.store.dispatch(
+          this.store.dispatch(
             new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
           );
           this.store.dispatch(
@@ -462,7 +463,6 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   }
 
   updateGradingKeyInExerciseForm(form) {
-    
     form.get('validOption').setValue(this.exerciseKey.validOption);
     let allValidAnswers = this.exerciseKey?.validAnswers;
     allValidAnswers = allValidAnswers.filter((a) => a?.length > 0); // removing empty answers if any
@@ -472,7 +472,6 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     const referenceImages = this.exerciseKey.referenceImages;
     form.get('referenceImages').setValue(referenceImages);
     form.get('remarks').setValue(this.exerciseKey.remarks);
-    console.log('images',this.imagesQueuedForUpload.length, 'form.value', form.value, 'exerciseKey', this.exerciseKey)
     if (this.imagesQueuedForUpload.length == 0) {
       this.submitExerciseForm(form);
     } else {
@@ -489,7 +488,6 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   }
 
   updateExerciseKeyOption(option) {
-    
     let newExerciseKey = Object.assign({}, this.exerciseKey);
     newExerciseKey.validOption = option;
     this.exerciseKey = newExerciseKey;
@@ -527,18 +525,15 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.store.dispatch(new ResetExerciseKeyStateAction());
-
   }
 
   updateFormBeforeSubmit(form, formDirective) {
-    console.log('from updateFormBeforeSubmit', {form: form.value})
     this.formDirective = formDirective;
     this.sanitizeAndUpdateOptions(form);
     this.updateGradingKeyInExerciseForm(form);
   }
 
   submitExerciseForm(form) {
-    
     if (!this.invalidOptions) {
       this.store.dispatch(
         new CreateUpdateExerciseAction({

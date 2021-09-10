@@ -32,7 +32,6 @@ import { AuthStateModel } from 'src/app/shared/state/auth/auth.model';
 import { MemberDeleteConfirmationDialog } from '../../modals/member-profile/member-profile.component';
 import { OptionsState } from 'src/app/shared/state/options/options.state';
 import { OptionsStateModel } from 'src/app/shared/state/options/options.model';
-import { FetchGroupOptionsByInstitution } from 'src/app/shared/state/options/options.actions';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
 import { UploadService } from 'src/app/shared/api/upload.service';
@@ -126,8 +125,7 @@ export class AddEditMemberComponent implements OnInit {
       } else {
         this.optionsState$.subscribe((val: OptionsStateModel) => {
           this.optionsState = val;
-          this.isFetchingGroups = val.isFetchingGroupsByInstitution;
-          this.groupInstitutionId = val.groupInstitutionId;
+          this.isFetchingGroups = val.isFetchingAdminGroups;
         });
         this.groupOptions$.subscribe((val) => {
           this.groupOptions = val;

@@ -23,12 +23,13 @@ import {
 } from 'src/app/shared/common/models';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { GroupState } from 'src/app/shared/state/groups/group.state';
-import { FetchGroupsAction } from 'src/app/shared/state/groups/group.actions';
 import {
   defaultSearchParams,
   USER_ROLES_NAMES,
 } from 'src/app/shared/common/constants';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
+import { OptionsState } from 'src/app/shared/state/options/options.state';
+import { FetchAdminGroupOptions } from 'src/app/shared/state/options/options.actions';
 @Component({
   selector: 'app-add-edit-announcement',
   templateUrl: './add-edit-announcement.component.html',
@@ -46,7 +47,7 @@ export class AddEditAnnouncementComponent implements OnInit {
   message;
   @Select(AnnouncementState.getAnnouncementFormRecord)
   announcementFormRecord$: Observable<Announcement>;
-  @Select(GroupState.listGroupOptions)
+  @Select(OptionsState.listGroupAdminOptions)
   groupOptions$: Observable<MatSelectOption[]>;
   @Select(AnnouncementState.formSubmitting)
   formSubmitting$: Observable<boolean>;
@@ -68,9 +69,7 @@ export class AddEditAnnouncementComponent implements OnInit {
     private route: ActivatedRoute,
     private fb: FormBuilder
   ) {
-    this.store.dispatch(
-      new FetchGroupsAction({ searchParams: defaultSearchParams })
-    );
+    this.store.dispatch(new FetchAdminGroupOptions());
     this.currentUserId$.subscribe((val) => {
       this.currentUserId = val;
     });

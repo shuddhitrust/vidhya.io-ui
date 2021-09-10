@@ -64,8 +64,8 @@ export class AddEditCourseComponent implements OnInit {
   courseFormRecord: Course = emptyCourseFormRecord;
   courseForm: FormGroup;
   @Select(AuthState.getCurrentMemberInstitutionId)
-  memberInstitutionId$: Observable<string>;
-  memberInstitutionId: string;
+  memberInstitutionId$: Observable<number>;
+  memberInstitutionId: number;
   constructor(
     private location: Location,
     private store: Store,

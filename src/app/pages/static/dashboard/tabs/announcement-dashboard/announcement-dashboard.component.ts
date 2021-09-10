@@ -7,6 +7,7 @@ import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { parseDateTime } from 'src/app/shared/common/functions';
 import {
   Announcement,
+  MatSelectOption,
   resources,
   RESOURCE_ACTIONS,
 } from 'src/app/shared/common/models';
@@ -16,6 +17,7 @@ import {
   FetchNextAnnouncementsAction,
 } from 'src/app/shared/state/announcements/announcement.actions';
 import { AnnouncementState } from 'src/app/shared/state/announcements/announcement.state';
+import { OptionsState } from 'src/app/shared/state/options/options.state';
 
 @Component({
   selector: 'app-announcement-dashboard',
@@ -35,12 +37,17 @@ export class AnnouncementDashboardComponent implements OnInit {
   @Select(AnnouncementState.isFetching)
   isFetching$: Observable<boolean>;
   isFetching: boolean;
-
+  @Select(OptionsState.listGroupAdminOptions)
+  groupOptions$: Observable<MatSelectOption[]>;
+  adminGroups = [];
   constructor(
     private store: Store,
     private router: Router,
     private auth: AuthorizationService
   ) {
+    this.groupOptions$.subscribe((val) => {
+      this.adminGroups = val;
+    });
     this.store.dispatch(
       new FetchAnnouncementsAction({ searchParams: defaultSearchParams })
     );
@@ -49,9 +56,15 @@ export class AnnouncementDashboardComponent implements OnInit {
     });
   }
 
+  showAnnouncementCreateOption() {
+    return (
+      this.authorizeResourceMethod(this.resourceActions.CREATE) ||
+      this.adminGroups.length
+    );
+  }
+
   ngOnInit(): void {}
   onScroll() {
-    
     if (!this.isFetching) {
       this.store.dispatch(new FetchNextAnnouncementsAction());
     }

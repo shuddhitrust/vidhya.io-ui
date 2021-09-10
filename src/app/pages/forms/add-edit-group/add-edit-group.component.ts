@@ -82,8 +82,8 @@ export class AddEditGroupComponent implements OnInit {
   groupTypeOptions: MatSelectOption[] = groupTypeOptions;
   institutionOptions;
   @Select(AuthState.getCurrentMemberInstitutionId)
-  memberInstitutionId$: Observable<string>;
-  memberInstitutionId: string;
+  memberInstitutionId$: Observable<number>;
+  memberInstitutionId: number;
   showInstitutionField: boolean = false;
   constructor(
     public dialog: MatDialog,
@@ -129,9 +129,6 @@ export class AddEditGroupComponent implements OnInit {
   }
 
   fetchMemberOptions() {
-    console.log('fetching member options ', {
-      institutionId: this.memberInstitutionId,
-    });
     this.store.dispatch(
       new FetchMemberOptionsByInstitution({
         memberInstitutionId: this.memberInstitutionId,
@@ -140,7 +137,6 @@ export class AddEditGroupComponent implements OnInit {
   }
 
   institutionChanged = (event$) => {
-    console.log('institutionChanged', { event$ });
     this.memberInstitutionId = event$.value;
     this.fetchMemberOptions();
   };

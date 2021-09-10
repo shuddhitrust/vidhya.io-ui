@@ -14,8 +14,8 @@ export class InstitutionProfileRendererComponent {
   cellValue: string;
   rowData: any;
   params: any;
-    resource = resources.USER_ROLE;
-    resourceActions = RESOURCE_ACTIONS;
+  resource = resources.USER_ROLE;
+  resourceActions = RESOURCE_ACTIONS;
 
   // gets called once before the renderer is used
   agInit(params: ICellRendererParams): void {
@@ -24,9 +24,7 @@ export class InstitutionProfileRendererComponent {
     this.cellValue = this.getValueToDisplay(params);
   }
 
-  showProfile() {
-    
-  }
+  showProfile() {}
 
   getValueToDisplay(params: ICellRendererParams) {
     return params.valueFormatted ? params.valueFormatted : params.value;
@@ -34,24 +32,20 @@ export class InstitutionProfileRendererComponent {
 
   constructor(public dialog: MatDialog, private auth: AuthorizationService) {}
 
-    authorizeResourceMethod(action) {
-    console.log('from authorizeResourceMethod', {action, resource: this.resource, 'result': this.auth.authorizeResource(this.resource, action, {})})
+  authorizeResourceMethod(action) {
     return this.auth.authorizeResource(this.resource, action, {});
   }
 
-
   public invokeParentMethod() {
-    if(this.authorizeResourceMethod(this.resourceActions.GET)) {
+    if (this.authorizeResourceMethod(this.resourceActions.GET)) {
       this.params.context.componentParent.openInstitutionProfile(this.rowData);
-    }    
+    }
   }
   openDialog() {
     const dialogRef = this.dialog.open(InstitutionModalComponent, {
       data: this.rowData,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      
-    });
+    dialogRef.afterClosed().subscribe((result) => {});
   }
 }

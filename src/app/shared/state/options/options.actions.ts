@@ -1,12 +1,10 @@
 export class FetchMemberOptionsByInstitution {
   static readonly type = '[MEMBER] Fetch members by institution';
 
-  constructor(public payload: { memberInstitutionId: string }) {}
+  constructor(public payload: { memberInstitutionId: number }) {}
 }
-export class FetchGroupOptionsByInstitution {
-  static readonly type = '[GROUP] Fetch groups by institution';
+export class FetchAdminGroupOptions {
+  static readonly type = '[GROUP] Fetch admin groups ';
 
-  constructor(
-    public payload: { groupInstitutionId: string; filter?: object }
-  ) {}
+  constructor() {}
 }

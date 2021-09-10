@@ -1,7 +1,7 @@
 import { State, Action, Selector, StateContext, Store } from '@ngxs/store';
 import { defaultOptionsState, OptionsStateModel } from './options.model';
 import {
-  FetchGroupOptionsByInstitution,
+  FetchAdminGroupOptions,
   FetchMemberOptionsByInstitution,
 } from './options.actions';
 import { Injectable } from '@angular/core';
@@ -11,7 +11,7 @@ import {
   getOptionLabel,
 } from '../../common/functions';
 import { groupTypeOptions } from '../groups/group.model';
-import { USER_QUERIES } from '../../api/graphql/queries.graphql';
+import { GROUP_QUERIES, USER_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 
@@ -50,6 +50,13 @@ export class OptionsState {
     //
     // return options;
     return [];
+  }
+  @Selector()
+  static listGroupAdminOptions(state: OptionsStateModel): MatSelectOption[] {
+    const options = state.adminGroups.map((g) => {
+      return { value: g.id, label: g.name, subtitle: g.groupType };
+    });
+    return options;
   }
 
   @Selector()
@@ -92,48 +99,36 @@ export class OptionsState {
       );
   }
 
-  @Action(FetchGroupOptionsByInstitution)
-  fetchGroupsByInstitution(
-    { getState, patchState }: StateContext<OptionsStateModel>,
-    { payload }: FetchGroupOptionsByInstitution
-  ) {
+  @Action(FetchAdminGroupOptions)
+  fetchGroupsByInstitution({
+    getState,
+    patchState,
+  }: StateContext<OptionsStateModel>) {
     const state = getState();
-    let {
-      fetchPolicyForGroups,
-      isFetchingGroupsByInstitution,
-      groupsByInstitution,
-    } = state;
-    const { groupInstitutionId, filter } = payload;
-    isFetchingGroupsByInstitution = true;
-    patchState({ isFetchingGroupsByInstitution });
-    const variables = {
-      id: groupInstitutionId,
-      filter: filter ? filter : null,
-    };
-
-    if (groupInstitutionId) {
-      // client
-      //   .query({
-      //     query: customQueries.GetInstitutionGroups,
-      //     variables,
-      //     fetchPolicy: fetchPolicyForGroups,
-      //   })
-      //   .then((res: any) => {
-      //
-      //     isFetchingGroupsByInstitution = false;
-      //     groupsByInstitution = res?.data?.getInstitution?.groups?.items;
-      //     fetchPolicyForGroups = null;
-      //     patchState({
-      //       groupsByInstitution,
-      //       isFetchingGroupsByInstitution,
-      //       fetchPolicyForGroups,
-      //     });
-      //   })
-      //   .catch((err) => {
-      //     isFetchingGroupsByInstitution = false;
-      //     groupsByInstitution = [];
-      //     patchState({ groupsByInstitution, isFetchingGroupsByInstitution });
-      //   });
-    }
+    let { isFetchingAdminGroups, adminGroups } = state;
+    isFetchingAdminGroups = true;
+    patchState({ isFetchingAdminGroups });
+    this.apollo
+      .watchQuery({
+        query: GROUP_QUERIES.GET_ADMIN_GROUPS,
+      })
+      .valueChanges.subscribe(
+        (res: any) => {
+          isFetchingAdminGroups = false;
+          adminGroups = res?.data?.adminGroups;
+          patchState({
+            adminGroups,
+            isFetchingAdminGroups,
+          });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+        }
+      );
   }
 }
