@@ -1,6 +1,8 @@
 <div id="main">
   <app-navbar></app-navbar>
-  <router-outlet *ngIf="isFullyAuthenticated$ |async; else otherStuff"></router-outlet>
+  <router-outlet
+    *ngIf="isFullyAuthenticated$ | async; else otherStuff"
+  ></router-outlet>
   <!-- <router-outlet *ngIf="showApp; else homePage"></router-outlet> -->
 </div>
 
@@ -9,9 +11,10 @@
     *ngIf="showUnprotectedPage(uiroutes.PASSWORD_RESET_ROUTE.route)"
   ></app-password-reset>
   <app-add-edit-member
-  *ngIf="showUnprotectedPage(uiroutes.MEMBER_FORM_ROUTE.route)">
-</app-add-edit-member>
+    *ngIf="showUnprotectedPage(uiroutes.MEMBER_FORM_ROUTE.route)"
+  >
+  </app-add-edit-member>
   <app-home *ngIf="showHomePage()"></app-home>
 </ng-template>
 
-<app-loading></app-loading>
+<!-- <app-loading></app-loading> -->

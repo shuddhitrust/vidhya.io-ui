@@ -10,9 +10,9 @@
       <br />
       <div class="col-lg-12 col-md-12 col-sm-12">
         <h3 style="text-align: center">Resource Permissions</h3>
-        <app-loading
+        <app-simple-loading-spinner
           *ngIf="isFetching; else permissionsTableTemplate"
-        ></app-loading>
+        ></app-simple-loading-spinner>
         <ng-template #permissionsTableTemplate>
           <table mat-table [dataSource]="permissionsTable">
             <ng-container matColumnDef="resource">

@@ -5,7 +5,6 @@ import {
   AuthenticationGuard,
   RegistrationFormAuthGuard,
 } from './shared/api/authentication.guard';
-import { DashboardComponent } from './pages/static/dashboard/dashboard.component';
 import { HomeComponent } from './pages/static/home/home.component';
 import { ProfileComponent } from './pages/static/profile/profile.component';
 import { SupportComponent } from './pages/static/support/support.component';
@@ -32,7 +31,10 @@ import { LoginModalComponent } from './pages/modals/login/login-modal.component'
 const routes: Routes = [
   {
     path: uiroutes.DASHBOARD_ROUTE.route,
-    component: DashboardComponent,
+    loadChildren: () =>
+      import('./pages/static/dashboard/dashboard.module').then(
+        (m) => m.DashboardModule
+      ),
     canActivate: [AuthenticationGuard],
     data: uiroutes.DASHBOARD_ROUTE.auth,
   },
