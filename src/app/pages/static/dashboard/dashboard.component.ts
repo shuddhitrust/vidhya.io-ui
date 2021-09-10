@@ -123,6 +123,7 @@ export class DashboardComponent implements OnInit {
       }
     });
     this.visibleTabs = visibleTabKeys.map((key) => this.tabIndexList[key]);
+    this.onTabChange(0);
   }
 
   processEntities(): any[] {
@@ -136,7 +137,8 @@ export class DashboardComponent implements OnInit {
     return this.auth.authorizeResource(resource, action);
   }
 
-  onTabChange(tab) {
+  onTabChange($event) {
+    const tab = this.visibleTabs[$event];
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { tab },

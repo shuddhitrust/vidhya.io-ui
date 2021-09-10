@@ -1,63 +1,46 @@
 <nz-tabset
   [nzSelectedIndex]="activeTabIndex"
   [nzSize]="'large'"
+  [nzTabBarGutter]="20"
   [nzTabBarStyle]="{
     'font-family': 'Hahmlet, Roboto, sans-serif;',
     padding: '10px'
   }"
+  (nzSelectedIndexChange)="onTabChange($event)"
   nzCentered
 >
-  <nz-tab
-    (nzClick)="onTabChange(ADMIN)"
-    [nzTitle]="ADMIN"
-    *ngIf="visibleTabs.includes(ADMIN)"
-  >
-    <div class="mat-tab">
-      <app-admin-dashboard
-        [params]="params"
-        [entities]="entities"
-      ></app-admin-dashboard></div
+  <nz-tab [nzTitle]="ADMIN" *ngIf="visibleTabs.includes(ADMIN)">
+    <ng-template nz-tab>
+      <div class="mat-tab">
+        <app-admin-dashboard
+          [params]="params"
+          [entities]="entities"
+        ></app-admin-dashboard></div></ng-template
   ></nz-tab>
-  <nz-tab
-    [nzTitle]="ANNOUNCEMENTS"
-    (nzClick)="onTabChange(ANNOUNCEMENTS)"
-    *ngIf="visibleTabs.includes(ANNOUNCEMENTS)"
-  >
-    <app-announcement-dashboard></app-announcement-dashboard>
-  </nz-tab>
-  <nz-tab
-    [nzTitle]="ASSIGNMENTS"
-    (nzClick)="onTabChange(ASSIGNMENTS)"
-    *ngIf="visibleTabs.includes(ASSIGNMENTS)"
-  >
-    <app-assignment-dashboard></app-assignment-dashboard>
-  </nz-tab>
-  <nz-tab
-    [nzTitle]="COURSES"
-    (nzClick)="onTabChange(COURSES)"
-    *ngIf="visibleTabs.includes(COURSES)"
-  >
-    <app-course-dashboard></app-course-dashboard
+  <nz-tab [nzTitle]="ANNOUNCEMENTS" *ngIf="visibleTabs.includes(ANNOUNCEMENTS)">
+    <ng-template nz-tab>
+      <app-announcement-dashboard></app-announcement-dashboard> </ng-template
   ></nz-tab>
-  <nz-tab
-    [nzTitle]="GROUPS"
-    (nzClick)="onTabChange(GROUPS)"
-    *ngIf="visibleTabs.includes(GROUPS)"
-  >
-    <app-group-dashboard></app-group-dashboard
+  <nz-tab [nzTitle]="ASSIGNMENTS" *ngIf="visibleTabs.includes(ASSIGNMENTS)">
+    <ng-template nz-tab>
+      <app-assignment-dashboard></app-assignment-dashboard> </ng-template
   ></nz-tab>
-  <nz-tab
-    [nzTitle]="GRADING"
-    (nzClick)="onTabChange(GRADING)"
-    *ngIf="visibleTabs.includes(GRADING)"
-  >
-    <app-grading-dashboard></app-grading-dashboard>
+  <nz-tab [nzTitle]="COURSES" *ngIf="visibleTabs.includes(COURSES)">
+    <ng-template nz-tab>
+      <app-course-dashboard></app-course-dashboard
+    ></ng-template>
   </nz-tab>
-  <nz-tab
-    [nzTitle]="REPORTS"
-    (nzClick)="onTabChange(REPORTS)"
-    *ngIf="visibleTabs.includes(REPORTS)"
-  >
-    <app-report-dashboard></app-report-dashboard
+  <nz-tab [nzTitle]="GROUPS" *ngIf="visibleTabs.includes(GROUPS)">
+    <ng-template nz-tab>
+      <app-group-dashboard></app-group-dashboard
+    ></ng-template>
+  </nz-tab>
+  <nz-tab [nzTitle]="GRADING" *ngIf="visibleTabs.includes(GRADING)">
+    <ng-template nz-tab>
+      <app-grading-dashboard></app-grading-dashboard> </ng-template
+  ></nz-tab>
+  <nz-tab [nzTitle]="REPORTS" *ngIf="visibleTabs.includes(REPORTS)">
+    <ng-template nz-tab>
+      <app-report-dashboard></app-report-dashboard></ng-template
   ></nz-tab>
 </nz-tabset>
