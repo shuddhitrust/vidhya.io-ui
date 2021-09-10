@@ -137,7 +137,6 @@ export class DashboardComponent implements OnInit {
   }
 
   onTabChange(tab) {
-    console.log('onTabChange', { tab });
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { tab },
