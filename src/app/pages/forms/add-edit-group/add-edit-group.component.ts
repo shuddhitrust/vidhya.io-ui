@@ -20,7 +20,11 @@ import {
   groupTypeOptions,
 } from 'src/app/shared/state/groups/group.model';
 import { InstitutionState } from 'src/app/shared/state/institutions/institution.state';
-import { Group, MatSelectOption } from 'src/app/shared/common/models';
+import {
+  CurrentMember,
+  Group,
+  MatSelectOption,
+} from 'src/app/shared/common/models';
 import { FetchInstitutionsAction } from 'src/app/shared/state/institutions/institution.actions';
 import { OptionsState } from 'src/app/shared/state/options/options.state';
 import {
@@ -28,7 +32,10 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
-import { defaultSearchParams } from 'src/app/shared/common/constants';
+import {
+  defaultSearchParams,
+  USER_ROLES_NAMES,
+} from 'src/app/shared/common/constants';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
 import { environment } from 'src/environments/environment';
@@ -45,14 +52,20 @@ import { AuthState } from 'src/app/shared/state/auth/auth.state';
   ],
 })
 export class AddEditGroupComponent implements OnInit {
-  selectedMemberColumns = [{ field: 'label', headerName: 'Group Members' }];
-  memberRows: MatSelectOption[] = [];
+  selectedMemberColumns = [
+    { field: 'label', headerName: 'Group Members' },
+    { field: 'role', headerName: 'Role' },
+  ];
+  memberRows: any[] = [];
   formSubmitting: boolean = false;
   params: object = {};
   @Select(GroupState.getGroupFormRecord)
   groupFormRecord$: Observable<Group>;
   @Select(GroupState.formSubmitting)
   formSubmitting$: Observable<boolean>;
+  @Select(AuthState.getCurrentMember)
+  currentMember$: Observable<CurrentMember>;
+  currentMember: CurrentMember;
   groupFormRecord: Group = emptyGroupFormRecord;
   groupForm: FormGroup;
   logoFile = null;
@@ -71,7 +84,7 @@ export class AddEditGroupComponent implements OnInit {
   @Select(AuthState.getCurrentMemberInstitutionId)
   memberInstitutionId$: Observable<string>;
   memberInstitutionId: string;
-
+  showInstitutionField: boolean = false;
   constructor(
     public dialog: MatDialog,
     private location: Location,
@@ -80,6 +93,9 @@ export class AddEditGroupComponent implements OnInit {
     private fb: FormBuilder,
     private uploadService: UploadService
   ) {
+    this.currentMember$.subscribe((val) => {
+      this.currentMember = val;
+    });
     this.memberInstitutionId$.subscribe((val) => {
       this.memberInstitutionId = val;
     });
@@ -93,20 +109,41 @@ export class AddEditGroupComponent implements OnInit {
     this.isFetchingMembers$.subscribe((val) => {
       this.isFetchingMembers = val;
     });
-    this.store.dispatch(
-      new FetchMemberOptionsByInstitution({
-        memberInstitutionId: this.memberInstitutionId,
-      })
-    );
-    this.store.dispatch(
-      new FetchInstitutionsAction({ searchParams: defaultSearchParams })
-    );
+    this.fetchMemberOptions();
+    this.setupInstitution();
     this.groupForm = this.setupGroupFormGroup();
     this.groupFormRecord$.subscribe((val) => {
       this.groupFormRecord = val;
       this.groupForm = this.setupGroupFormGroup(this.groupFormRecord);
     });
   }
+
+  setupInstitution() {
+    this.showInstitutionField =
+      this.currentMember.role.name == USER_ROLES_NAMES.SUPER_ADMIN;
+    if (this.showInstitutionField) {
+      this.store.dispatch(
+        new FetchInstitutionsAction({ searchParams: defaultSearchParams })
+      );
+    }
+  }
+
+  fetchMemberOptions() {
+    console.log('fetching member options ', {
+      institutionId: this.memberInstitutionId,
+    });
+    this.store.dispatch(
+      new FetchMemberOptionsByInstitution({
+        memberInstitutionId: this.memberInstitutionId,
+      })
+    );
+  }
+
+  institutionChanged = (event$) => {
+    console.log('institutionChanged', { event$ });
+    this.memberInstitutionId = event$.value;
+    this.fetchMemberOptions();
+  };
 
   setupGroupFormGroup = (
     groupFormRecord: Group = emptyGroupFormRecord
@@ -119,8 +156,13 @@ export class AddEditGroupComponent implements OnInit {
       id: [groupFormRecord?.id],
       avatar: [groupFormRecord?.avatar],
       name: [groupFormRecord?.name, Validators.required],
-      institution: [groupFormRecord?.institution?.id, Validators.required],
-      admins: [adminIds],
+      institution: [
+        groupFormRecord?.institution?.id
+          ? groupFormRecord?.institution?.id
+          : this.currentMember.institution.id,
+        Validators.required,
+      ],
+      admins: [adminIds.length ? adminIds : [this.currentMember.id]],
       members: [memberIds],
       groupType: [groupFormRecord?.groupType, Validators.required],
       description: [groupFormRecord?.description, Validators.required],
@@ -163,6 +205,23 @@ export class AddEditGroupComponent implements OnInit {
 
   goBack() {
     this.location.back();
+  }
+
+  updateMemberRows($event) {
+    const memberIds = this.groupForm.get('members').value.map((id) => id);
+    const adminIds = this.groupForm.get('admins').value.map((id) => id);
+    this.memberRows = this.memberOptions.filter((o) => {
+      return memberIds.includes(o.value) || adminIds.includes(o.value);
+    });
+    this.memberRows = this.memberRows.map((row) => {
+      if (memberIds.includes(row.value)) {
+        row.role = 'Member';
+      }
+      if (adminIds.includes(row.value)) {
+        row.role = 'Admin';
+      }
+      return row;
+    });
   }
 
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {

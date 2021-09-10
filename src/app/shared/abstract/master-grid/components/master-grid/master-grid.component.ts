@@ -153,8 +153,8 @@ export class MasterGridComponent implements OnInit, OnChanges {
   }
 
   autoSizeAllColumns() {
-    this.gridApi.autoSizeAllColumns();
-    }
+    this.gridApi.columnApi.autoSizeAllColumns();
+  }
 
   showLoading() {
     if (this.gridApi) {
@@ -194,7 +194,6 @@ export class MasterGridComponent implements OnInit, OnChanges {
     this.fetchRecords();
   }
   onPageChange(number: number) {
-    
     this.searchParams.pageNumber = number;
     this.fetchRecords();
   }

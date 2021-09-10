@@ -56,6 +56,7 @@
       <mat-label>Institution</mat-label>
       <mat-select
         formControlName="institution"
+        (selectionChange)="institutionChanged($event)"
         placeholder="The institution you belong to"
       >
         <mat-option
@@ -121,13 +122,14 @@
       <mat-select
         multiple
         formControlName="admins"
+        (selectionChange)="updateMemberRows($event)"
         placeholder="The members who are admins"
       >
         <mat-option
           *ngFor="let member of memberOptions$ | async"
           [value]="member.value"
         >
-          {{ member.label }}
+          {{ member.label }} ({{ member.subtitle }})
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -142,10 +144,11 @@
       <mat-select
         multiple
         formControlName="members"
+        (selectionChange)="updateMemberRows($event)"
         placeholder="The members of the group"
       >
         <mat-option *ngFor="let member of memberOptions" [value]="member.value">
-          {{ member.label }}
+          {{ member.label }} ({{ member.subtitle }})
         </mat-option>
       </mat-select>
     </mat-form-field>

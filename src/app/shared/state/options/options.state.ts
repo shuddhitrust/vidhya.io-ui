@@ -26,9 +26,9 @@ export class OptionsState {
   @Selector()
   static listMembersByInstitution(state: OptionsStateModel): MatSelectOption[] {
     const options = state.membersByInstitution.map((m) => {
-      return { value: m.id, label: m.name };
+      return { value: m.id, label: m.name, subtitle: m.role?.name };
     });
-    
+
     return options;
   }
 
@@ -47,7 +47,7 @@ export class OptionsState {
     //       label: `${m.name} (${getOptionLabel(m.type, groupTypeOptions)})`,
     //     };
     //   });
-    // 
+    //
     // return options;
     return [];
   }
@@ -65,8 +65,9 @@ export class OptionsState {
     patchState({ isFetchingMembersByInstitution: true });
     const variables = {
       institutionId: payload.memberInstitutionId,
+      membershipStatusIs: ['AP'],
     };
-    
+
     this.apollo
       .watchQuery({
         query: USER_QUERIES.GET_USERS,
@@ -75,7 +76,7 @@ export class OptionsState {
       .valueChanges.subscribe(
         ({ data }: any) => {
           patchState({ isFetchingMembersByInstitution: false });
-          const response = data.users;
+          const response = data.users.records;
           patchState({
             membersByInstitution: response,
           });
@@ -109,7 +110,7 @@ export class OptionsState {
       id: groupInstitutionId,
       filter: filter ? filter : null,
     };
-    
+
     if (groupInstitutionId) {
       // client
       //   .query({
@@ -118,7 +119,7 @@ export class OptionsState {
       //     fetchPolicy: fetchPolicyForGroups,
       //   })
       //   .then((res: any) => {
-      //     
+      //
       //     isFetchingGroupsByInstitution = false;
       //     groupsByInstitution = res?.data?.getInstitution?.groups?.items;
       //     fetchPolicyForGroups = null;

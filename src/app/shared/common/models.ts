@@ -35,7 +35,11 @@ export type HotToastStatus =
   | 'error'
   | 'loading';
 
-export type MatSelectOption = { label: string; value: number | string };
+export type MatSelectOption = {
+  label: string;
+  value: number | string;
+  subtitle?: string;
+};
 
 export type FetchParams = {
   currentPage: number;
