@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from '@apollo/client/utilities';
 import { Select } from '@ngxs/store';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
-import { resources, UserPermissions } from 'src/app/shared/common/models';
+import { resources, RESOURCE_ACTIONS, UserPermissions } from 'src/app/shared/common/models';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { uiroutes } from '../../../shared/common/ui-routes';
 import {
@@ -18,7 +18,7 @@ import {
 
 export const ADMIN = 'Admin';
 export const ANNOUNCEMENTS = 'Announcements';
-export const CHAPTERS = 'Assignments';
+export const ASSIGNMENTS = 'Assignments';
 export const COURSES = 'Courses';
 export const GROUPS = 'Groups';
 export const GRADING = 'Grading';
@@ -27,7 +27,7 @@ export const REPORTS = 'Reports';
 const tabIndexList = {
   0: ADMIN,
   1: ANNOUNCEMENTS,
-  2: CHAPTERS,
+  2: ASSIGNMENTS,
   3: COURSES,
   4: GROUPS,
   5: GRADING,
@@ -50,6 +50,13 @@ const adminEntities = [
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit {
+  ADMIN = ADMIN;
+  ANNOUNCEMENTS = ANNOUNCEMENTS;
+  ASSIGNMENTS = ASSIGNMENTS;
+  COURSES = COURSES;
+  GROUPS = GROUPS;
+  GRADING = GRADING;
+  REPORTS = REPORTS;
   activeTabIndex = 0;
   tabIndexList = tabIndexList;
   params: object = {};
@@ -57,6 +64,7 @@ export class DashboardComponent implements OnInit {
   permissions$: Observable<UserPermissions>;
   entities: any[] = [];
   resources = resources;
+  visibleTabs = [];
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -64,6 +72,8 @@ export class DashboardComponent implements OnInit {
   ) {
     this.permissions$.subscribe((val) => {
       this.entities = this.processEntities();
+      this.populateVisibleTabs();
+      console.log({'visibleTabs': this.visibleTabs});
     });
   }
 
@@ -83,6 +93,31 @@ export class DashboardComponent implements OnInit {
       }
     });
   }
+  populateVisibleTabs() {
+    const keys = Object.keys(this.tabIndexList);
+    const visibleTabKeys = keys.filter(index => {
+      const tab = this.tabIndexList[index]
+    switch(tab) {
+      case ADMIN:
+        return this.entities.length
+      case ANNOUNCEMENTS:
+        return this.authorizeResourceMethod(resources.ANNOUNCEMENT);
+      case ASSIGNMENTS:
+        return this.authorizeResourceMethod(resources.EXERCISE_SUBMISSION, RESOURCE_ACTIONS.CREATE);
+      case COURSES:
+        return this.authorizeResourceMethod(resources.COURSE);
+      case GROUPS:
+        return this.authorizeResourceMethod(resources.GROUP);
+      case GRADING:
+        return this.authorizeResourceMethod(resources.GRADING);
+      case REPORTS:
+        return this.authorizeResourceMethod(resources.REPORT);
+      default:
+        return false;
+    }
+  })
+  this.visibleTabs = visibleTabKeys.map(key => this.tabIndexList[key] );
+}
 
   processEntities(): any[] {
     let newEntities = adminEntities.filter((e) => {
@@ -92,12 +127,12 @@ export class DashboardComponent implements OnInit {
     return newEntities;
   }
 
-  authorizeResourceMethod(resource) {
-    return this.auth.authorizeResource(resource, '*');
+  authorizeResourceMethod(resource, action='*') {
+    return this.auth.authorizeResource(resource, action);
   }
 
-  onTabChange($event) {
-    const tab = $event.tab.textLabel;
+  onTabChange(tab) {
+    console.log('from ontabchange', {tab});
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { tab },

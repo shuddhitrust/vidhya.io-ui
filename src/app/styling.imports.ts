@@ -22,6 +22,8 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
 import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
+
 const components = [
   MatToolbarModule,
   MatIconModule,
@@ -45,6 +47,7 @@ const components = [
   NzListModule,
   NzLayoutModule,
   ClipboardModule,
+  NzTabsModule
 ];
 
 @NgModule({

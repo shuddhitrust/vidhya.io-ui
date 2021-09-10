@@ -1,57 +1,29 @@
-<mat-tab-group
-  mat-align-tabs="center"
-  color="primary"
-  [(selectedIndex)]="activeTabIndex"
-  (selectedTabChange)="onTabChange($event)"
->
-  <mat-tab *ngIf="entities.length" [label]="tabIndexList[0]">
+
+    <nz-tabset nzCentered>
+      <nz-tab (nzClick)="onTabChange(ADMIN)" [nzTitle]=ADMIN *ngIf="visibleTabs.includes(ADMIN)">
     <div class="mat-tab">
       <app-admin-dashboard
         [params]="params"
         [entities]="entities"
       ></app-admin-dashboard>
-    </div>
-  </mat-tab>
-  <mat-tab
-    *ngIf="authorizeResourceMethod(resources.ANNOUNCEMENT)"
-    [label]="tabIndexList[1]"
-  >
-    <div class="mat-tab">
+    </div></nz-tab>
+      <nz-tab [nzTitle]=ANNOUNCEMENTS (nzClick)="onTabChange(ANNOUNCEMENTS)" *ngIf="visibleTabs.includes(ANNOUNCEMENTS)"
+  
+>
       <app-announcement-dashboard></app-announcement-dashboard>
-    </div>
-  </mat-tab>
-  <mat-tab
-    *ngIf="authorizeResourceMethod(resources.ASSIGNMENT)"
-    [label]="tabIndexList[2]"
+</nz-tab>
+      <nz-tab [nzTitle]=ASSIGNMENTS (nzClick)="onTabChange(ASSIGNMENTS)" *ngIf="visibleTabs.includes(ASSIGNMENTS)"
   >
-    <div class="mat-tab">
       <app-assignment-dashboard></app-assignment-dashboard>
-    </div>
-  </mat-tab>
-  <mat-tab
-    [label]="tabIndexList[3]"
-    *ngIf="authorizeResourceMethod(resources.COURSE)"
+    </nz-tab>
+      <nz-tab [nzTitle]=COURSES  (nzClick)="onTabChange(COURSES)"  *ngIf="visibleTabs.includes(COURSES)"
   >
-    <div class="mat-tab"><app-course-dashboard></app-course-dashboard></div>
-  </mat-tab>
-  <mat-tab
-    [label]="tabIndexList[4]"
-    *ngIf="authorizeResourceMethod(resources.GROUP)"
+   <app-course-dashboard></app-course-dashboard></nz-tab>
+      <nz-tab [nzTitle]=GROUPS  (nzClick)="onTabChange(GROUPS)"  *ngIf="visibleTabs.includes(GROUPS)"
   >
-    <div class="mat-tab"><app-group-dashboard></app-group-dashboard></div>
-  </mat-tab>
-  <mat-tab
-    [label]="tabIndexList[5]"
-    *ngIf="authorizeResourceMethod(resources.GRADING)"
+   <app-group-dashboard></app-group-dashboard></nz-tab>
+      <nz-tab [nzTitle]=REPORTS (nzClick)="onTabChange(REPORTS)" *ngIf="visibleTabs.includes(REPORTS)"
   >
-    <div class="mat-tab">
-      <app-grading-dashboard></app-grading-dashboard>
-    </div>
-  </mat-tab>
-  <mat-tab
-    [label]="tabIndexList[6]"
-    *ngIf="authorizeResourceMethod(resources.REPORT)"
-  >
-    <div class="mat-tab"><app-report-dashboard></app-report-dashboard></div>
-  </mat-tab>
-</mat-tab-group>
+   <app-report-dashboard></app-report-dashboard></nz-tab>
+
+    </nz-tabset>
