@@ -96,7 +96,7 @@ export class ExerciseSubmissionState {
       };
       return option;
     });
-    
+
     return options;
   }
 
@@ -166,7 +166,6 @@ export class ExerciseSubmissionState {
     { getState, patchState }: StateContext<ExerciseSubmissionStateModel>,
     { payload }: FetchExerciseSubmissionsAction
   ) {
-    
     let { searchParams } = payload;
     let state = getState();
     const {
@@ -192,10 +191,11 @@ export class ExerciseSubmissionState {
       fetchParamsNewOrNot({
         fetchParamObjects: gradingGroupsfetchParamObjects,
         newFetchParams,
-      })
+      }) &&
+      columnFilters?.groupBy // This action is only executed when groupBy is valid
     ) {
       patchState({ isFetching: true });
-      
+
       this.apollo
         .watchQuery({
           query: EXERCISE_SUBMISSION_QUERIES.GET_EXERCISE_SUBMISSION_GROUPS,
@@ -204,7 +204,6 @@ export class ExerciseSubmissionState {
         })
         .valueChanges.subscribe(
           ({ data }: any) => {
-            
             const response = data.exerciseSubmissionGroups;
             newFetchParams = { ...newFetchParams };
 
@@ -230,7 +229,7 @@ export class ExerciseSubmissionState {
               ...paginatedGradingGroups,
               [pageNumber]: response,
             };
-            
+
             let gradingGroups = convertPaginatedListToNormalList(
               paginatedGradingGroups
             );
@@ -293,7 +292,6 @@ export class ExerciseSubmissionState {
     { getState, patchState }: StateContext<ExerciseSubmissionStateModel>,
     { payload }: FetchExerciseSubmissionsAction
   ) {
-    
     let { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, fetchParamObjects, exerciseSubmissionsSubscribed } =
@@ -318,7 +316,7 @@ export class ExerciseSubmissionState {
     };
     if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
       patchState({ isFetching: true });
-      
+
       this.apollo
         .watchQuery({
           query: EXERCISE_SUBMISSION_QUERIES.GET_EXERCISE_SUBMISSIONS,
@@ -327,7 +325,6 @@ export class ExerciseSubmissionState {
         })
         .valueChanges.subscribe(
           ({ data }: any) => {
-            
             const response = data.exerciseSubmissions;
             newFetchParams = { ...newFetchParams };
             let paginatedExerciseSubmissions =
@@ -336,7 +333,7 @@ export class ExerciseSubmissionState {
               ...paginatedExerciseSubmissions,
               [pageNumber]: response,
             };
-            
+
             let exerciseSubmissions = convertPaginatedListToNormalList(
               paginatedExerciseSubmissions
             );
@@ -456,7 +453,7 @@ export class ExerciseSubmissionState {
         ({ data }: any) => {
           const response = data.createUpdateExerciseSubmissions;
           patchState({ formSubmitting: false });
-          
+
           if (response.ok) {
             this.router.navigateByUrl(ExerciseSubmissionFormCloseURL);
             const modifiedExerciseSubmissions = response.exerciseSubmissions;
@@ -477,7 +474,7 @@ export class ExerciseSubmissionState {
                 : true;
               return statusValid;
             });
-            
+
             patchState({
               exerciseSubmissions,
               exerciseSubmissionFormRecord: emptyExerciseSubmissionFormRecord,
@@ -497,10 +494,8 @@ export class ExerciseSubmissionState {
               })
             );
           }
-          
         },
         (error) => {
-          
           this.store.dispatch(
             new ShowNotificationAction({
               message: getErrorMessageFromGraphQLResponse(error),
@@ -526,7 +521,7 @@ export class ExerciseSubmissionState {
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteExerciseSubmission;
-          
+
           if (response.ok) {
             this.router.navigateByUrl(ExerciseSubmissionFormCloseURL);
             const method = SUBSCRIPTION_METHODS.DELETE_METHOD;

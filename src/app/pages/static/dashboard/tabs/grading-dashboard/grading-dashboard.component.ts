@@ -5,7 +5,7 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
@@ -68,6 +68,7 @@ export class GradingDashboardComponent implements OnInit {
     groupBy: this.groupBy,
     status: this.submissionStatusFilter,
   };
+  params: object = {};
   questionTypes: any = ExerciseQuestionTypeOptions;
   modifiedExerciseSubmissionIds: number[] = [];
   exerciseSubmissionStatusTypes = ExerciseSubmissionStatusOptions;
@@ -104,6 +105,7 @@ export class GradingDashboardComponent implements OnInit {
     private router: Router,
     private auth: AuthorizationService,
     public dialog: MatDialog,
+    private route: ActivatedRoute,
     private exerciseSubmissionService: ExerciseSubmissionService
   ) {
     this.gradingGroups$.subscribe((val) => {
@@ -122,8 +124,6 @@ export class GradingDashboardComponent implements OnInit {
     this.isFetching$.subscribe((val) => {
       this.isFetching = val;
     });
-
-
   }
 
   submissionSubtitle(submission) {
@@ -137,7 +137,22 @@ export class GradingDashboardComponent implements OnInit {
         : ''
     }`;
   }
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.route.queryParams.subscribe((params) => {
+      this.params = params;
+      const statusOptions = Object.values(ExerciseSubmissionStatusOptions);
+      const groupByOptions = Object.values(groupByTypes);
+      const status = params['gradingStatus'];
+      const groupBy = params['groupBy'];
+      this.submissionStatusFilter = statusOptions.includes(status)
+        ? status
+        : null;
+      this.groupBy = groupByOptions.includes(groupBy) ? groupBy : null;
+      if (this.groupBy && this.submissionStatusFilter) {
+        this.fetchGradingGroups();
+      }
+    });
+  }
 
   trackByFn(index: any, item: any) {
     return index;
@@ -147,10 +162,19 @@ export class GradingDashboardComponent implements OnInit {
   }
 
   updateGradingGroupByFilter() {
+    const gradingStatus = this.submissionStatusFilter;
+    const groupBy = this.groupBy;
     this.gradingGroupColumnFilters = {
       groupBy: this.groupBy,
-      status: this.submissionStatusFilter,
+      status: gradingStatus,
     };
+    console.log('from updateGradingGroupByFilter', { gradingStatus, groupBy });
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { gradingStatus, groupBy },
+      queryParamsHandling: 'merge',
+      skipLocationChange: false,
+    });
   }
 
   updateExerciseSubmissionColumnFilters() {
@@ -189,7 +213,6 @@ export class GradingDashboardComponent implements OnInit {
   }
 
   fetchGradingGroups() {
-    
     this.updateGradingGroupByFilter();
     this.showGroupCards = true;
     this.store.dispatch(
@@ -225,7 +248,6 @@ export class GradingDashboardComponent implements OnInit {
     }
   }
   onScroll() {
-    
     if (this.showGroupCards) {
       this.fetchNextGradingGroups();
     } else {
@@ -235,9 +257,7 @@ export class GradingDashboardComponent implements OnInit {
   createExerciseSubmission() {
     this.router.navigateByUrl(uiroutes.GRADING_FORM_ROUTE.route);
   }
-  showExpandedImage(image) {
-    
-  }
+  showExpandedImage(image) {}
 
   openExerciseSubmission(exerciseSubmission) {
     this.router.navigate([uiroutes.GRADING_PROFILE_ROUTE.route], {
@@ -249,7 +269,7 @@ export class GradingDashboardComponent implements OnInit {
     this.store.dispatch(
       new GetExerciseKeyAction({ exerciseId: exerciseSubmission?.exercise.id })
     );
-    
+
     const dialogRef = this.dialog.open(ExercicseKeyDialog, {
       data: {
         exerciseKeyRecord$: this.exerciseKeyRecord$,
@@ -257,9 +277,7 @@ export class GradingDashboardComponent implements OnInit {
       },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      
-    });
+    dialogRef.afterClosed().subscribe((result) => {});
   }
 
   gradingUpdate(exerciseSubmission: ExerciseSubmission) {
@@ -267,12 +285,10 @@ export class GradingDashboardComponent implements OnInit {
   }
 
   markCorrect(exerciseSubmission) {
-    
     this.updatePoints(exerciseSubmission, exerciseSubmission?.exercise?.points);
   }
 
   markIncorrect(exerciseSubmission) {
-    
     this.updatePoints(exerciseSubmission, 0);
   }
   updatePoints(exerciseSubmission, points) {
@@ -280,7 +296,6 @@ export class GradingDashboardComponent implements OnInit {
     let submission = this.exerciseSubmissions.find((s: ExerciseSubmission) => {
       return s.id == exerciseSubmission.id;
     });
-    
 
     submission = Object.assign({}, submission);
     submission.points = points;
@@ -290,7 +305,6 @@ export class GradingDashboardComponent implements OnInit {
         return submission;
       } else return s;
     });
-    
   }
   changePoints(event, exerciseSubmission) {
     event.preventDefault();

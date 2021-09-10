@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
@@ -34,6 +34,7 @@ export class AssignmentDashboardComponent implements OnInit {
   exerciseSubmissionColumnFilters = {};
   submissionStatusFilter: string = null;
   groupByFilter: string = resources.CHAPTER;
+  params: object = {};
   assignmentColumnFilters: any = {
     groupBy: this.groupByFilter,
     status: this.submissionStatusFilter,
@@ -54,7 +55,8 @@ export class AssignmentDashboardComponent implements OnInit {
   constructor(
     private store: Store,
     private router: Router,
-    private auth: AuthorizationService
+    private auth: AuthorizationService,
+    private route: ActivatedRoute,
   ) {
     this.fetchAssignments();
     this.isFetching$.subscribe((val) => {
@@ -73,7 +75,17 @@ export class AssignmentDashboardComponent implements OnInit {
     return this.auth.authorizeResource(this.resource, action);
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+        this.route.queryParams.subscribe((params) => {
+      this.params = params;
+      const statusOptions = Object.values(ExerciseSubmissionStatusOptions)
+      const status = params['status']
+      this.submissionStatusFilter =  statusOptions.includes(status) ? status : null;
+      if(this.submissionStatusFilter) {
+        this.fetchAssignments();
+      }
+    });
+  }
   onScroll() {
     
     if (!this.isFetching) {
@@ -106,9 +118,16 @@ export class AssignmentDashboardComponent implements OnInit {
   }
 
   updateAssignmentFilter() {
+    const status = this.submissionStatusFilter
     this.assignmentColumnFilters = {
-      status: this.submissionStatusFilter,
+      status,
     };
+        this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { status },
+      queryParamsHandling: 'merge',
+      skipLocationChange: false,
+    });
   }
 
   fetchAssignments() {

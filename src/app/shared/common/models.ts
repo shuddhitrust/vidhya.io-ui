@@ -366,7 +366,6 @@ export const resources = {
   LEARNER: 'LEARNER',
   INSTITUTION: 'INSTITUTION',
   ANNOUNCEMENT: 'ANNOUNCEMENT',
-  ASSIGNMENT: 'ASSIGNMENT',
   CHAPTER: 'CHAPTER',
   COURSE: 'COURSE',
   GROUP: 'GROUP',
@@ -386,7 +385,6 @@ export type UserPermissions = {
   LEARNER: ResourceActions;
   INSTITUTION: ResourceActions;
   ANNOUNCEMENT: ResourceActions;
-  ASSIGNMENT: ResourceActions;
   CHAPTER: ResourceActions;
   COURSE: ResourceActions;
   GROUP: ResourceActions;
@@ -406,7 +404,6 @@ export const defaultResourcePermissions: UserPermissions = {
   LEARNER: defaultActions,
   INSTITUTION: defaultActions,
   ANNOUNCEMENT: defaultActions,
-  ASSIGNMENT: defaultActions,
   CHAPTER: defaultActions,
   COURSE: defaultActions,
   GROUP: defaultActions,
