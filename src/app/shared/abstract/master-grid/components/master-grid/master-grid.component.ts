@@ -141,7 +141,7 @@ export class MasterGridComponent implements OnInit, OnChanges {
       columnFilters: this.columnFilters,
     };
     this.fetchRecords();
-    this.sizeToFit();
+    this.autoSizeAllColumns();
   }
 
   authorizeResourceMethod(action) {
@@ -151,6 +151,10 @@ export class MasterGridComponent implements OnInit, OnChanges {
   sizeToFit() {
     this.gridApi.sizeColumnsToFit();
   }
+
+  autoSizeAllColumns() {
+    this.gridApi.autoSizeAllColumns();
+    }
 
   showLoading() {
     if (this.gridApi) {
