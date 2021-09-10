@@ -141,7 +141,7 @@ export class MasterGridComponent implements OnInit, OnChanges {
       columnFilters: this.columnFilters,
     };
     this.fetchRecords();
-    this.autoSizeAllColumns();
+    // this.autoSizeAllColumns();
   }
 
   authorizeResourceMethod(action) {

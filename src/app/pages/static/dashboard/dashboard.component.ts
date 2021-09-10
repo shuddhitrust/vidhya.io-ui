@@ -85,7 +85,7 @@ export class DashboardComponent implements OnInit {
       this.params = params;
       const tabName = params['tab'];
       if (tabName) {
-        const indexByParams = getIndexFromTabName(tabName);
+        const indexByParams = this.getIndexFromTabName(tabName);
         if (indexByParams === 'NaN') {
           this.router.navigateByUrl(uiroutes.DASHBOARD_ROUTE.route);
         }
@@ -137,6 +137,7 @@ export class DashboardComponent implements OnInit {
   }
 
   onTabChange(tab) {
+    console.log('onTabChange', { tab });
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { tab },
@@ -144,15 +145,12 @@ export class DashboardComponent implements OnInit {
       skipLocationChange: false,
     });
   }
+
+  getIndexFromTabName = (tabName: string): string => {
+    const index = this.visibleTabs.find((key) => {
+      return this.visibleTabs[key] == tabName;
+    });
+
+    return index.toString();
+  };
 }
-
-const getIndexFromTabName = (tabName: string): string => {
-  const tabIndexKeys = Object.keys(tabIndexList);
-  let indexByParams = parseInt(
-    tabIndexKeys.find((key) => {
-      return tabIndexList[key] == tabName;
-    })
-  );
-
-  return indexByParams.toString();
-};
