@@ -1,11 +1,11 @@
-<button mat-icon-button (click)="drawer.toggle()" id="drawer-puller">
+<!-- <button mat-icon-button (click)="drawer.toggle()" id="drawer-puller">
   <mat-icon>{{
     opened === true ? "navigate_before" : "navigate_next"
   }}</mat-icon>
-</button>
-<mat-drawer-container class="drawer-container">
-  <mat-drawer #drawer mode="side" [(opened)]="opened" class="drawer-content">
-    <mat-selection-list [multiple]="false">
+</button> -->
+
+    <nz-layout>
+      <nz-sider>    <mat-selection-list [multiple]="false">
       <mat-list-option
         [ngClass]="
           selectedEntity === entity.value
@@ -18,10 +18,9 @@
       >
         {{ entity.label }}
       </mat-list-option>
-    </mat-selection-list>
-  </mat-drawer>
-
-  <app-awaiting-moderation-table
+    </mat-selection-list></nz-sider>
+      <nz-layout>
+ <app-awaiting-moderation-table
     *ngIf="selectedEntity == moderation"
   ></app-awaiting-moderation-table>
 
@@ -42,4 +41,5 @@
   ></app-class-admins-table>
 
   <app-learners-table *ngIf="selectedEntity == learners"></app-learners-table>
-</mat-drawer-container>
+    </nz-layout>
+

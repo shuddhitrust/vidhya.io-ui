@@ -10,6 +10,13 @@
   overflow: hidden;
 }
 
+  nz-sider {
+    background: #fff;
+  }
+
+  nz-layout {
+    min-width: 500px;
+  }
 #drawer-puller {
   float: left;
   position: absolute;
