@@ -63,9 +63,6 @@ export class AwaitingModerationTableComponent implements OnInit {
     },
     { field: 'title' },
     {
-      field: 'bio',
-    },
-    {
       field: 'membershipStatus',
       cellRenderer: (params) => {
         return getOptionLabel(params.value, membershipStatusOptions);
