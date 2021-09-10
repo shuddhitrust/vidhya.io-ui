@@ -150,6 +150,6 @@ export class DashboardComponent implements OnInit {
       return this.visibleTabs[key] == tabName;
     });
 
-    return index.toString();
+    return index?.toString();
   };
 }
