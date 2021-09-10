@@ -93,13 +93,13 @@ export const memberColumns: any[] = [
       return getOptionLabel(params.value, membershipStatusOptions);
     },
   },
-  {
-    field: 'lastActive',
-    cellRenderer: (params) => {
-      return parseDateTime(params.value);
-    },
-    tooltipField: 'lastActive',
-  },
+  // {
+  //   field: 'lastActive',
+  //   cellRenderer: (params) => {
+  //     return parseDateTime(params.value);
+  //   },
+  //   tooltipField: 'lastActive',
+  // },
 ];
 
 export const MemberFormCloseURL = uiroutes.MEMBER_PROFILE_ROUTE.route;

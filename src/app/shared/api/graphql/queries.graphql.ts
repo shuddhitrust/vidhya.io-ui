@@ -90,7 +90,6 @@ export const USER_QUERIES = {
               id
               name
             }
-            lastActive
           }
           total
       }

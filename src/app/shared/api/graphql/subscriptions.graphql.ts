@@ -34,7 +34,6 @@ export const SUBSCRIPTIONS = {
             id
             name
           }
-          lastActive
         }
         method
       }

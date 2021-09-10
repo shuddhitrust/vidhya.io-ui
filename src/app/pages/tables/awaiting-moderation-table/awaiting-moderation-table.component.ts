@@ -68,13 +68,13 @@ export class AwaitingModerationTableComponent implements OnInit {
         return getOptionLabel(params.value, membershipStatusOptions);
       },
     },
-    {
-      field: 'lastActive',
-      cellRenderer: (params) => {
-        return parseDateTime(params.value);
-      },
-      tooltipField: 'lastActive',
-    },
+    // {
+    //   field: 'lastActive',
+    //   cellRenderer: (params) => {
+    //     return parseDateTime(params.value);
+    //   },
+    //   tooltipField: 'lastActive',
+    // },
     {
       field: 'moderate',
       cellRenderer: 'moderationRenderer',
