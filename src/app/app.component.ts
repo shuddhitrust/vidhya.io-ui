@@ -20,18 +20,28 @@ export class AppComponent {
   @Select(AuthState.getFirstTimeSetup)
   firstTimeSetup$: Observable<boolean>;
   firstTimeSetup;
-  constructor(private store: Store, private router: Router, private readonly location: Location) {
-    this.firstTimeSetup$.subscribe(val => {
+  constructor(
+    private store: Store,
+    private router: Router,
+    private readonly location: Location
+  ) {
+    this.firstTimeSetup$.subscribe((val) => {
       this.firstTimeSetup = val;
-    })
+    });
   }
 
-  currentRoute() {
-    return this.location.path().substring(1)
+  currentRoute(): string {
+    return this.location.path().substring(1);
   }
 
   showHomePage() {
-    return this.currentRoute() != uiroutes.MEMBER_FORM_ROUTE.route;
+    // Make sure to add the routes of other components that are allowed to be shown when not logged in fully
+    return (
+      this.currentRoute() != uiroutes.MEMBER_FORM_ROUTE.route &&
+      !this.currentRoute()
+        .toString()
+        .includes(uiroutes.PASSWORD_RESET_ROUTE.route)
+    );
   }
 
   showUnprotectedPage(route) {
@@ -42,7 +52,10 @@ export class AppComponent {
         }
         break;
       case uiroutes.MEMBER_FORM_ROUTE.route:
-        if(this.firstTimeSetup && this.currentRoute() == uiroutes.MEMBER_FORM_ROUTE.route) {
+        if (
+          this.firstTimeSetup &&
+          this.currentRoute() == uiroutes.MEMBER_FORM_ROUTE.route
+        ) {
           return true;
         }
         break;

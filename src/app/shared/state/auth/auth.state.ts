@@ -235,9 +235,8 @@ export class AuthState {
             new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
           );
           if (response.success) {
-            
             const { expiresAt, userId } = getDecodedToken(token);
-            
+
             currentMember = { ...currentMember, id: userId };
 
             patchState({
@@ -245,7 +244,7 @@ export class AuthState {
               expiresAt,
               isLoggedIn: true,
             });
-            
+
             if (!currentMember.username) {
               this.store.dispatch(new GetCurrentUserAction());
             }
@@ -271,7 +270,7 @@ export class AuthState {
   @Action(RefreshTokenAction)
   refreshToken({ getState, patchState }: StateContext<AuthStateModel>) {
     const state = getState();
-    
+
     const { refreshToken, currentMember } = state;
     if (refreshToken) {
       this.apollo
@@ -286,7 +285,6 @@ export class AuthState {
             const response = data.refreshToken;
             const { token, refreshToken } = response;
             if (response.success) {
-              
               const { userId, expiresAt } = getDecodedToken(token);
               const currentMember = { ...state.currentMember, id: userId };
               this.store.dispatch(
@@ -297,7 +295,7 @@ export class AuthState {
                 expiresAt,
                 isLoggedIn: true,
               });
-              
+
               if (!currentMember.username) {
                 this.store.dispatch(new GetCurrentUserAction());
               }
@@ -334,7 +332,7 @@ export class AuthState {
   setAuthSession({ getState }: StateContext<AuthStateModel>) {
     const state = getState();
     const { token, refreshToken } = state;
-    
+
     if (token) {
       sessionStorage.setItem(AUTH_TOKEN_KEY, token);
     } else {
@@ -366,7 +364,7 @@ export class AuthState {
           this.store.dispatch(
             new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
           );
-          
+
           const user = data.me;
           this.store.dispatch(new UpdateCurrentUserInStateAction({ user }));
         },
@@ -389,7 +387,7 @@ export class AuthState {
     { payload }: UpdateCurrentUserInStateAction
   ) {
     const { user } = payload;
-    
+
     let state = getState();
     const { isLoggedIn, currentMember } = state;
     const userPermissions = user?.role?.permissions?.toString()
@@ -415,7 +413,7 @@ export class AuthState {
         permissions,
       },
     };
-    
+
     const firstTimeSetup = calculateFirstTiimeSetup(newCurrentMember);
     if (firstTimeSetup) {
       this.store.dispatch(
@@ -471,7 +469,7 @@ export class AuthState {
             const response = data.tokenAuth;
             isSubmittingForm = false;
             patchState({ isSubmittingForm });
-            
+
             if (response.success) {
               form.reset();
               formDirective.resetForm();
@@ -632,7 +630,7 @@ export class AuthState {
             const response = data.register;
             isSubmittingForm = false;
             patchState({ isSubmittingForm });
-            
+
             if (response?.success) {
               form.reset();
               formDirective.resetForm();
@@ -713,7 +711,7 @@ export class AuthState {
           const response = data.verifyAccount;
           isSubmittingForm = false;
           patchState({ isSubmittingForm });
-          
+
           this.router.navigateByUrl(uiroutes.HOME_ROUTE.route);
           if (response.success) {
             this.store.dispatch(
@@ -768,7 +766,7 @@ export class AuthState {
             const response = data.resendActivationEmail;
             isSubmittingForm = false;
             patchState({ isSubmittingForm });
-            
+
             if (response.success) {
               form.reset();
               formDirective.resetForm();
@@ -839,7 +837,7 @@ export class AuthState {
             const response = data.sendPasswordResetEmail;
             isSubmittingForm = false;
             patchState({ isSubmittingForm });
-            
+
             if (response.success) {
               form.reset();
               formDirective.resetForm();
@@ -914,10 +912,10 @@ export class AuthState {
         })
         .subscribe(
           ({ data }: any) => {
-            const response = data.psswordReset;
+            const response = data.passwordReset;
             isSubmittingForm = false;
             patchState({ isSubmittingForm });
-            
+
             if (response.success) {
               form.reset();
               formDirective.resetForm();
@@ -985,7 +983,7 @@ export class AuthState {
             const response = data.passwordChange;
             isSubmittingForm = false;
             patchState({ isSubmittingForm });
-            
+
             if (response.success) {
               form.reset();
               formDirective.resetForm();
@@ -1049,7 +1047,7 @@ export class AuthState {
       );
       isSubmittingForm = true;
       const invitecode = form.value.invitecode;
-      
+
       patchState({
         isSubmittingForm,
       });
@@ -1071,7 +1069,7 @@ export class AuthState {
             const response = data.verifyInvitecode;
             isSubmittingForm = false;
             patchState({ isSubmittingForm });
-            
+
             if (response?.ok) {
               form.reset();
               // formDirective.resetForm();
@@ -1123,7 +1121,7 @@ export class AuthState {
   ) {
     let { currentMember } = payload;
     const invitecode = currentMember.invitecode;
-    
+
     if (invitecode) {
       this.apollo
         .mutate({
@@ -1135,7 +1133,6 @@ export class AuthState {
         .subscribe(
           ({ data }: any) => {
             const response = data.institutionByInvitecode;
-            
 
             currentMember = {
               ...currentMember,
@@ -1197,7 +1194,6 @@ export class AuthState {
                 })
               );
             }
-            
           },
           (error) => {
             console.error('There was an error ', error);
@@ -1230,6 +1226,6 @@ const getDecodedToken = (token) => {
 const calculateFirstTiimeSetup = (currentMember: CurrentMember): boolean => {
   const firstTimeSetup =
     currentMember?.membershipStatus == MembershipStatusOptions.UNINITIALIZED;
-  
+
   return firstTimeSetup;
 };

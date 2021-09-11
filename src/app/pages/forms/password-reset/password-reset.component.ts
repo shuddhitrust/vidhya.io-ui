@@ -49,7 +49,7 @@ export class PasswordResetComponent implements OnInit {
       this.router.navigate(['']);
     } else {
       this.url = window.location.href;
-      if (this.router.url === uiroutes.PASSWORD_RESET_ROUTE.route) {
+      if (this.router.url.includes(uiroutes.PASSWORD_RESET_ROUTE.route)) {
         this.token = this.url.split(
           uiroutes.PASSWORD_RESET_ROUTE.route + '/'
         )[1];
@@ -62,10 +62,11 @@ export class PasswordResetComponent implements OnInit {
   }
 
   setupPasswordResetForm() {
+    this.fetchTokenFromUrl();
     this.passwordResetForm = this.fb.group({
       token: [this.token, Validators.required],
-      password1: ['', Validators.required],
-      password2: ['', Validators.required],
+      newPassword1: ['', Validators.required],
+      newPassword2: ['', Validators.required],
     });
   }
 
