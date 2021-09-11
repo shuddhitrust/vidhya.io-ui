@@ -15,15 +15,8 @@ import {
 } from './tabs/grading-dashboard/grading-dashboard.component';
 import { ChapterPublishedComponent } from '../../profiles/chapter-profile/published/chapter-published.component';
 import { ChapterDraftComponent } from '../../profiles/chapter-profile/draft/chapter-draft.component';
-import {
-  ChapterDeleteConfirmationDialog,
-  ChapterProfileComponent,
-  ExercicseDeleteConfirmationDialog,
-} from '../../profiles/chapter-profile/chapter-profile.component';
-import {
-  CourseDeleteConfirmationDialog,
-  CourseProfileComponent,
-} from '../../profiles/course-profile/course-profile.component';
+import { ChapterProfileComponent } from '../../profiles/chapter-profile/chapter-profile.component';
+import { CourseProfileComponent } from '../../profiles/course-profile/course-profile.component';
 import {
   UserApprovalConfirmationDialog,
   UserDenialConfirmationDialog,
@@ -32,15 +25,9 @@ import {
 import { UserModerationRendererComponent } from 'src/app/shared/cell-renderers/user-moderation/user-moderation-renderer.component';
 import { ChatComponent } from '../chat/chat.component';
 import { AddEditUserRoleComponent } from '../../forms/add-edit-user-role/add-edit-user-role.component';
-import {
-  RoleDeleteConfirmationDialog,
-  RoleProfileComponent,
-} from '../../modals/role-profile/role-profile.component';
+import { RoleProfileComponent } from '../../modals/role-profile/role-profile.component';
 import { RolesTableComponent } from '../../tables/roles-table/roles-table.component';
-import {
-  InstitutionDeleteConfirmationDialogModal,
-  InstitutionModalComponent,
-} from '../../modals/institution-modal/institution-modal.component';
+import { InstitutionModalComponent } from '../../modals/institution-modal/institution-modal.component';
 import { PaginatorComponent } from 'src/app/shared/abstract/master-grid/components/paginator/paginator.component';
 import { LoginModalComponent } from '../../modals/login/login-modal.component';
 import {
@@ -50,23 +37,11 @@ import {
 import { OwnProfileComponent } from '../../profiles/own-user-profile/own-profile.component';
 import { AddEditChapterComponent } from '../../forms/add-edit-chapter/add-edit-chapter.component';
 import { AddEditCourseComponent } from '../../forms/add-edit-course/add-edit-course.component';
-import {
-  MemberDeleteConfirmationDialog,
-  MemberProfileComponent,
-} from '../../modals/member-profile/member-profile.component';
-import {
-  GroupDeleteConfirmationDialog,
-  GroupProfileComponent,
-} from '../../profiles/group-profile/group-profile.component';
-import {
-  AnnouncementDeleteConfirmationDialog,
-  AnnouncementProfileComponent,
-} from '../../profiles/announcement-profile/announcement-profile.component';
+import { MemberProfileComponent } from '../../modals/member-profile/member-profile.component';
+import { GroupProfileComponent } from '../../profiles/group-profile/group-profile.component';
+import { AnnouncementProfileComponent } from '../../profiles/announcement-profile/announcement-profile.component';
 import { AddEditAnnouncementComponent } from '../../forms/add-edit-announcement/add-edit-announcement.component';
-import {
-  InstitutionDeleteConfirmationDialog,
-  InstitutionProfileComponent,
-} from '../../profiles/institution-profile/institution-profile.component';
+import { InstitutionProfileComponent } from '../../profiles/institution-profile/institution-profile.component';
 import { MemberProfileRendererComponent } from 'src/app/shared/cell-renderers/member-profile/member-profile-renderer.component';
 import { LearnersTableComponent } from '../../tables/learners-table/learners-table.component';
 import { ClassAdminsTableComponent } from '../../tables/class-admin-table/class-admins-table.component';
@@ -84,10 +59,7 @@ import { MarkdownModule, MarkedOptions, MarkedRenderer } from 'ngx-markdown';
 import { HttpClient } from '@angular/common/http';
 import { SimpleLoadingSpinnerComponent } from 'src/app/shared/components/loading/simple-spinner/simple-loading-spinner.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
-import {
-  CourseSectionModalComponent,
-  CouseSectionDeleteConfirmationDialog,
-} from '../../modals/course-section-modal/course-section-modal.component';
+import { CourseSectionModalComponent } from '../../modals/course-section-modal/course-section-modal.component';
 import { NgxsModule } from '@ngxs/store';
 import { HotToastModule } from '@ngneat/hot-toast';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
@@ -159,13 +131,9 @@ export function markedOptionsFactory(): MarkedOptions {
     MemberProfileComponent,
     AddEditGroupComponent,
     InstitutionProfileComponent,
-    InstitutionDeleteConfirmationDialog,
     GroupProfileComponent,
     AddEditAnnouncementComponent,
     AnnouncementProfileComponent,
-    AnnouncementDeleteConfirmationDialog,
-    GroupDeleteConfirmationDialog,
-    MemberDeleteConfirmationDialog,
     MemberProfileComponent,
     AddEditCourseComponent,
     AddEditChapterComponent,
@@ -174,10 +142,8 @@ export function markedOptionsFactory(): MarkedOptions {
     LoginModalComponent,
     PaginatorComponent,
     InstitutionModalComponent,
-    InstitutionDeleteConfirmationDialogModal,
     RolesTableComponent,
     RoleProfileComponent,
-    RoleDeleteConfirmationDialog,
     AddEditUserRoleComponent,
     ChatComponent,
     UserModerationProfileComponent,
@@ -186,15 +152,11 @@ export function markedOptionsFactory(): MarkedOptions {
     UserDenialConfirmationDialog,
     GradingDashboardComponent,
     CourseProfileComponent,
-    CourseDeleteConfirmationDialog,
     ChapterProfileComponent,
-    ChapterDeleteConfirmationDialog,
-    ExercicseDeleteConfirmationDialog,
     ChapterDraftComponent,
     ChapterPublishedComponent,
     ExercicseKeyDialog,
     CourseSectionModalComponent,
-    CouseSectionDeleteConfirmationDialog,
     SimpleLoadingSpinnerComponent,
     MasterConfirmationDialog,
   ],

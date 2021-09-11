@@ -22,6 +22,10 @@ import {
   User,
 } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
+import {
+  MasterConfirmationDialog,
+  MasterConfirmationDialogObject,
+} from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { emptyCourseFormRecord } from 'src/app/shared/state/courses/course.model';
 import {
   CreateUpdateCourseSectionAction,
@@ -109,8 +113,14 @@ export class CourseSectionModalComponent {
   }
 
   deleteConfirmation() {
-    const dialogRef = this.dialog.open(CouseSectionDeleteConfirmationDialog, {
-      data: this.courseSection,
+    const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
+      title: 'Confirm delete?',
+      message: `Are you sure you want to delete the course titled "${this.course.title}"`,
+      confirmButtonText: 'Delete',
+      denyButtonText: 'Cancel',
+    };
+    const dialogRef = this.dialog.open(MasterConfirmationDialog, {
+      data: masterDialogConfirmationObject,
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -125,15 +135,4 @@ export class CourseSectionModalComponent {
     );
     this.closeDialog();
   }
-}
-
-@Component({
-  selector: 'member-delete-confirmation-dialog',
-  templateUrl: 'delete-confirmation-dialog.html',
-})
-export class CouseSectionDeleteConfirmationDialog {
-  constructor(
-    public dialogRef: MatDialogRef<CouseSectionDeleteConfirmationDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: CourseSection
-  ) {}
 }

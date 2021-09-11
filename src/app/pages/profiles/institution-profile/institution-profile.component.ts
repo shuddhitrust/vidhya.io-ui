@@ -21,6 +21,10 @@ import {
 } from '@angular/material/dialog';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
+import {
+  MasterConfirmationDialog,
+  MasterConfirmationDialogObject,
+} from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-institution-profile',
@@ -56,7 +60,6 @@ export class InstitutionProfileComponent implements OnInit {
   registrationInviteLink() {
     const parsedUrl = new URL(window.location.href);
     const baseUrl = parsedUrl.origin;
-    
 
     return `${baseUrl}/register?invitecode=${this.institution.invitecode}`;
   }
@@ -101,8 +104,14 @@ export class InstitutionProfileComponent implements OnInit {
   }
 
   deleteConfirmation() {
-    const dialogRef = this.dialog.open(InstitutionDeleteConfirmationDialog, {
-      data: this.institution,
+    const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
+      title: 'Confirm delete?',
+      message: `Are you sure you want to delete the institution named "${this.institution.name}"`,
+      confirmButtonText: 'Delete',
+      denyButtonText: 'Cancel',
+    };
+    const dialogRef = this.dialog.open(MasterConfirmationDialog, {
+      data: masterDialogConfirmationObject,
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -117,15 +126,4 @@ export class InstitutionProfileComponent implements OnInit {
     );
     // this.closeDialog();
   }
-}
-
-@Component({
-  selector: 'institution-delete-confirmation-dialog',
-  templateUrl: 'delete-confirmation-dialog.html',
-})
-export class InstitutionDeleteConfirmationDialog {
-  constructor(
-    public dialogRef: MatDialogRef<InstitutionDeleteConfirmationDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: Institution
-  ) {}
 }

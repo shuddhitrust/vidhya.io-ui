@@ -6,22 +6,15 @@ import { Observable } from 'rxjs';
 import {
   DeleteChapterAction,
   GetChapterAction,
-  PublishChapterAction,
-  ResetChapterFormAction,
 } from 'src/app/shared/state/chapters/chapter.actions';
 import { ChapterState } from 'src/app/shared/state/chapters/chapter.state';
-import {
-  MatDialog,
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   Chapter,
   ChapterStatusOptions,
   CourseStatusOptions,
   Exercise,
-  ExerciseKey,
   ExerciseQuestionTypeOptions,
   ExerciseSubmission,
   MatSelectOption,
@@ -33,10 +26,8 @@ import { AuthorizationService } from 'src/app/shared/api/authorization/authoriza
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { ExerciseState } from 'src/app/shared/state/exercises/exercise.state';
 import {
-  CreateUpdateExerciseAction,
   DeleteExerciseAction,
   FetchExercisesAction,
-  FetchNextExercisesAction,
   ReorderExercisesAction,
   ResetExerciseStateAction,
 } from 'src/app/shared/state/exercises/exercise.actions';
@@ -46,31 +37,18 @@ import {
   parseDateTime,
   sortByIndex,
 } from 'src/app/shared/common/functions';
-import {
-  emptyExerciseFormRecord,
-  emptyExerciseKeyFormRecord,
-} from 'src/app/shared/state/exercises/exercise.model';
-import {
-  FormBuilder,
-  FormGroup,
-  FormGroupDirective,
-  Validators,
-} from '@angular/forms';
-import {
-  CreateUpdateExerciseSubmissionsAction,
-  ResetExerciseSubmissionFormAction,
-} from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.actions';
-import {
-  ChapterDeleteConfirmationDialog,
-  ExercicseDeleteConfirmationDialog,
-} from '../chapter-profile.component';
+import { FormGroupDirective } from '@angular/forms';
+import { CreateUpdateExerciseSubmissionsAction } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.actions';
 import { emptyExerciseSubmissionFormRecord } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.model';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { UploadService } from 'src/app/shared/api/upload.service';
-import { environment } from 'src/environments/environment';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { ExerciseSubmissionService } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.service';
 import { DragDropComponent } from 'src/app/shared/components/drag-drop/drag-drop.component';
+import {
+  MasterConfirmationDialog,
+  MasterConfirmationDialogObject,
+} from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 
 const startingExerciseFormOptions = ['', ''];
 
@@ -171,7 +149,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     });
     this.chapter$.subscribe((val) => {
       this.chapter = val;
-      
+
       this.fetchExercises();
     });
     this.formSubmitting$.subscribe((val) => {
@@ -197,12 +175,11 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     submission.chapter = this.chapter.id;
     submission.course = this.chapter?.course?.id;
     submission.participant = this.currentMember?.id;
-    
+
     return submission;
   }
 
   exerciseSubmissionOf(exercise) {
-    
     const index = this.exerciseSubmissions.findIndex(
       (e) => e.exercise == exercise.id
     );
@@ -270,12 +247,17 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     });
   }
   deleteConfirmation() {
-    const dialogRef = this.dialog.open(ChapterDeleteConfirmationDialog, {
-      data: this.chapter,
+    const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
+      title: 'Confirm delete?',
+      message: `Are you sure you want to delete the chapter titled "${this.chapter.title}"`,
+      confirmButtonText: 'Delete',
+      denyButtonText: 'Cancel',
+    };
+    const dialogRef = this.dialog.open(MasterConfirmationDialog, {
+      data: masterDialogConfirmationObject,
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      
       if (result == true) {
         this.deleteChapter();
       }
@@ -286,12 +268,17 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
   }
 
   deleteExerciseConfirmation(exercise) {
-    const dialogRef = this.dialog.open(ExercicseDeleteConfirmationDialog, {
-      data: exercise,
+    const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
+      title: 'Confirm delete?',
+      message: `Are you sure you want to delete the chapter titled "${this.chapter.title}"`,
+      confirmButtonText: 'Delete',
+      denyButtonText: 'Cancel',
+    };
+    const dialogRef = this.dialog.open(MasterConfirmationDialog, {
+      data: masterDialogConfirmationObject,
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      
       if (result == true) {
         this.deleteExercise(exercise);
       }
@@ -305,13 +292,12 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     const exercisesList = this.exercises.map((e) => {
       return { index: e.id, label: e.prompt };
     });
-    
+
     const dialogRef = this.dialog.open(DragDropComponent, {
       data: exercisesList,
     });
 
     dialogRef.afterClosed().subscribe((newIndexArray) => {
-      
       let i = 1;
       const reorderedList = newIndexArray.map((index) => {
         let exercise = this.exercises.find((e) => e.id == index);
@@ -319,9 +305,9 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
         i++;
         return exercise;
       });
-      
+
       this.exercises = Object.assign([], reorderedList);
-      
+
       const indexList = this.exercises.map((e) => {
         return { id: e.id, index: e.index };
       });
@@ -433,7 +419,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
           this.imagesQueuedForUpload[exerciseId].length - 1;
         if (exerciseId == lastExerciseId && imageIndex == lastImageIndex) {
           // if it is, then we update the form and submit it.
-          
+
           this.submitExerciseSubmissionForm();
         } else {
           imageIndex++;
@@ -441,7 +427,6 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
         }
       },
       (err) => {
-        
         this.store.dispatch(
           new ShowNotificationAction({
             message:
@@ -513,7 +498,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
 
   validateExerciseSubmissions() {
     let submissionsValid = true;
-    
+
     this.exercises.forEach((e) => {
       if (e.required == true) {
         const questionType = e.questionType;

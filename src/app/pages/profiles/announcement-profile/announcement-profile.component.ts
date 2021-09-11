@@ -105,14 +105,3 @@ export class AnnouncementProfileComponent implements OnInit, OnDestroy {
     this.store.dispatch(new ResetAnnouncementFormAction());
   }
 }
-
-@Component({
-  selector: 'announcement-delete-confirmation-dialog',
-  templateUrl: './delete-confirmation-dialog.html',
-})
-export class AnnouncementDeleteConfirmationDialog {
-  constructor(
-    public dialogRef: MatDialogRef<AnnouncementDeleteConfirmationDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: Announcement
-  ) {}
-}

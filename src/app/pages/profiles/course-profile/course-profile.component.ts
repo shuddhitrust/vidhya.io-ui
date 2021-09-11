@@ -47,6 +47,10 @@ import {
   FetchCourseSectionsAction,
   ReorderCourseSectionsAction,
 } from 'src/app/shared/state/courseSections/courseSection.actions';
+import {
+  MasterConfirmationDialog,
+  MasterConfirmationDialogObject,
+} from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-course-profile',
@@ -154,12 +158,17 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
     });
   }
   deleteConfirmation() {
-    const dialogRef = this.dialog.open(CourseDeleteConfirmationDialog, {
-      data: this.course,
+    const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
+      title: 'Confirm delete?',
+      message: `Are you sure you want to delete the course named "${this.course.title}"`,
+      confirmButtonText: 'Delete',
+      denyButtonText: 'Cancel',
+    };
+    const dialogRef = this.dialog.open(MasterConfirmationDialog, {
+      data: masterDialogConfirmationObject,
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      
       if (result == true) {
         this.deleteCourse();
       }
@@ -173,13 +182,12 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
     const sectionsList: DragDropInput[] = this.courseSections.map((c) => {
       return { id: c.id, label: c.title };
     });
-    
+
     const dialogRef = this.dialog.open(DragDropComponent, {
       data: sectionsList,
     });
 
     dialogRef.afterClosed().subscribe((newIndexArray) => {
-      
       for (let i = 0; i < newIndexArray.length; i++) {
         let id = newIndexArray[i];
         let section = this.courseSections.find((c) => c.id == id);
@@ -188,7 +196,7 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
           return s.id == id ? section : s;
         });
       }
-      
+
       const indexList = this.courseSections.map((c) => {
         return { id: c.id, index: c.index };
       });
@@ -205,13 +213,12 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
     const chaptersList = newChapters.map((c) => {
       return { id: c.id, label: c.title };
     });
-    
+
     const dialogRef = this.dialog.open(DragDropComponent, {
       data: chaptersList,
     });
 
     dialogRef.afterClosed().subscribe((newIndexArray) => {
-      
       for (let i = 0; i < newIndexArray.length; i++) {
         const id = newIndexArray[i];
         let chapter = this.chapters.find((c) => c.id == id);
@@ -246,9 +253,7 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
       },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      
-    });
+    dialogRef.afterClosed().subscribe((result) => {});
   }
 
   sectionChapters(section = { id: null }) {
@@ -297,15 +302,4 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.store.dispatch(new ResetCourseFormAction());
   }
-}
-
-@Component({
-  selector: 'course-delete-confirmation-dialog',
-  templateUrl: './delete-confirmation-dialog.html',
-})
-export class CourseDeleteConfirmationDialog {
-  constructor(
-    public dialogRef: MatDialogRef<CourseDeleteConfirmationDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: Course
-  ) {}
 }

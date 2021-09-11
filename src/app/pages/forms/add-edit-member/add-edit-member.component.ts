@@ -15,27 +15,15 @@ import {
 } from 'src/app/shared/state/members/member.actions';
 import { MemberState } from 'src/app/shared/state/members/member.state';
 import { Observable } from 'rxjs';
-import {
-  emptyMemberFormRecord,
-  membershipStatusOptions,
-} from 'src/app/shared/state/members/member.model';
+import { emptyMemberFormRecord } from 'src/app/shared/state/members/member.model';
 import { InstitutionState } from 'src/app/shared/state/institutions/institution.state';
-import { FetchInstitutionsAction } from 'src/app/shared/state/institutions/institution.actions';
-import {
-  CurrentMember,
-  defaultResourcePermissions,
-  MatSelectOption,
-  User,
-} from 'src/app/shared/common/models';
+import { MatSelectOption, User } from 'src/app/shared/common/models';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { AuthStateModel } from 'src/app/shared/state/auth/auth.model';
-import { MemberDeleteConfirmationDialog } from '../../modals/member-profile/member-profile.component';
 import { OptionsState } from 'src/app/shared/state/options/options.state';
 import { OptionsStateModel } from 'src/app/shared/state/options/options.model';
-import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
 import { UploadService } from 'src/app/shared/api/upload.service';
-import { environment } from 'src/environments/environment';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 
 @Component({

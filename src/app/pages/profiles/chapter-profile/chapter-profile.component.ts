@@ -72,25 +72,3 @@ export class ChapterProfileComponent implements OnDestroy {
     this.store.dispatch(new ResetExerciseSubmissionFormAction());
   }
 }
-
-@Component({
-  selector: 'chapter-delete-confirmation-dialog',
-  templateUrl: './delete-confirmation-dialog.html',
-})
-export class ChapterDeleteConfirmationDialog {
-  constructor(
-    public dialogRef: MatDialogRef<ChapterDeleteConfirmationDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: Chapter
-  ) {}
-}
-
-@Component({
-  selector: 'exercise-delete-confirmation-dialog',
-  templateUrl: './delete-exercise-confirmation-dialog.html',
-})
-export class ExercicseDeleteConfirmationDialog {
-  constructor(
-    public dialogRef: MatDialogRef<ExercicseDeleteConfirmationDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: Exercise
-  ) {}
-}

@@ -9,20 +9,14 @@ import {
   PublishChapterAction,
 } from 'src/app/shared/state/chapters/chapter.actions';
 import { ChapterState } from 'src/app/shared/state/chapters/chapter.state';
-import {
-  MatDialog,
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   Chapter,
   ChapterStatusOptions,
   CourseStatusOptions,
-  Exercise,
   ExerciseKey,
   ExerciseQuestionTypeOptions,
-  ExerciseSubmission,
   MatSelectOption,
   resources,
   RESOURCE_ACTIONS,
@@ -33,8 +27,6 @@ import { ExerciseState } from 'src/app/shared/state/exercises/exercise.state';
 import {
   CreateUpdateExerciseAction,
   DeleteExerciseAction,
-  FetchExercisesAction,
-  FetchNextExercisesAction,
   ReorderExercisesAction,
 } from 'src/app/shared/state/exercises/exercise.actions';
 import {
@@ -43,10 +35,7 @@ import {
   parseDateTime,
   sortByIndex,
 } from 'src/app/shared/common/functions';
-import {
-  emptyExerciseFormRecord,
-  emptyExerciseKeyFormRecord,
-} from 'src/app/shared/state/exercises/exercise.model';
+import { emptyExerciseKeyFormRecord } from 'src/app/shared/state/exercises/exercise.model';
 import {
   FormBuilder,
   FormGroup,
@@ -54,24 +43,18 @@ import {
   Validators,
 } from '@angular/forms';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
-import { ExerciseSubmissionState } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.state';
-import { emptyExerciseSubmissionFormRecord } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.model';
 import { ExerciseKeyState } from 'src/app/shared/state/exerciseKeys/exerciseKey.state';
 import {
   FetchExerciseKeysAction,
-  ResetExerciseKeyFormAction,
   ResetExerciseKeyStateAction,
 } from 'src/app/shared/state/exerciseKeys/exerciseKey.actions';
 import { UploadService } from 'src/app/shared/api/upload.service';
-import { environment } from 'src/environments/environment';
-import { ObserversModule } from '@angular/cdk/observers';
-import { ObserveOnSubscriber } from 'rxjs/internal/operators/observeOn';
-import {
-  ChapterDeleteConfirmationDialog,
-  ExercicseDeleteConfirmationDialog,
-} from '../chapter-profile.component';
 import { DragDropComponent } from 'src/app/shared/components/drag-drop/drag-drop.component';
 import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
+import {
+  MasterConfirmationDialog,
+  MasterConfirmationDialogObject,
+} from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 const startingExerciseFormOptions = ['', ''];
 
 type previewImage = {
@@ -254,8 +237,14 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     });
   }
   deleteConfirmation() {
-    const dialogRef = this.dialog.open(ChapterDeleteConfirmationDialog, {
-      data: this.chapter,
+    const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
+      title: 'Confirm delete?',
+      message: `Are you sure you want to delete the chapter titled "${this.chapter.title}"`,
+      confirmButtonText: 'Delete',
+      denyButtonText: 'Cancel',
+    };
+    const dialogRef = this.dialog.open(MasterConfirmationDialog, {
+      data: masterDialogConfirmationObject,
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -291,8 +280,14 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     this.showExerciseForm = true;
   }
   deleteExerciseConfirmation(key) {
-    const dialogRef = this.dialog.open(ExercicseDeleteConfirmationDialog, {
-      data: key.exercise,
+    const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
+      title: 'Confirm delete?',
+      message: `Are you sure you want to delete the exercise "${this.exerciseKey.exericse.prompt}"`,
+      confirmButtonText: 'Delete',
+      denyButtonText: 'Cancel',
+    };
+    const dialogRef = this.dialog.open(MasterConfirmationDialog, {
+      data: masterDialogConfirmationObject,
     });
 
     dialogRef.afterClosed().subscribe((result) => {

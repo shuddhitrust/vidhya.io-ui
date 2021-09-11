@@ -27,6 +27,10 @@ import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { OptionsState } from 'src/app/shared/state/options/options.state';
 import { FetchMemberOptionsByInstitution } from 'src/app/shared/state/options/options.actions';
 import { groupTypeOptions } from 'src/app/shared/state/groups/group.model';
+import {
+  MasterConfirmationDialog,
+  MasterConfirmationDialogObject,
+} from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-group-profile',
@@ -130,8 +134,14 @@ export class GroupProfileComponent implements OnInit, OnDestroy {
     });
   }
   deleteConfirmation() {
-    const dialogRef = this.dialog.open(GroupDeleteConfirmationDialog, {
-      data: this.group,
+    const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
+      title: 'Confirm delete?',
+      message: `Are you sure you want to delete the group named "${this.group.name}"`,
+      confirmButtonText: 'Delete',
+      denyButtonText: 'Cancel',
+    };
+    const dialogRef = this.dialog.open(MasterConfirmationDialog, {
+      data: masterDialogConfirmationObject,
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -147,15 +157,4 @@ export class GroupProfileComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.store.dispatch(new ResetGroupFormAction());
   }
-}
-
-@Component({
-  selector: 'group-delete-confirmation-dialog',
-  templateUrl: './delete-confirmation-dialog.html',
-})
-export class GroupDeleteConfirmationDialog {
-  constructor(
-    public dialogRef: MatDialogRef<GroupDeleteConfirmationDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: Group
-  ) {}
 }

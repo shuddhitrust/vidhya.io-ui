@@ -13,6 +13,10 @@ import {
   RESOURCE_ACTIONS,
 } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
+import {
+  MasterConfirmationDialog,
+  MasterConfirmationDialogObject,
+} from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { DeleteInstitutionAction } from 'src/app/shared/state/institutions/institution.actions';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 @Component({
@@ -82,12 +86,15 @@ export class InstitutionModalComponent {
   }
 
   deleteConfirmation() {
-    const dialogRef = this.dialog.open(
-      InstitutionDeleteConfirmationDialogModal,
-      {
-        data: this.profileData,
-      }
-    );
+    const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
+      title: 'Confirm delete?',
+      message: `Are you sure you want to delete the user named "${this.profileData.name}"`,
+      confirmButtonText: 'Delete',
+      denyButtonText: 'Cancel',
+    };
+    const dialogRef = this.dialog.open(MasterConfirmationDialog, {
+      data: masterDialogConfirmationObject,
+    });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result == true) {
@@ -101,15 +108,4 @@ export class InstitutionModalComponent {
     );
     this.closeDialog();
   }
-}
-
-@Component({
-  selector: 'institution-delete-confirmation-dialog-modal',
-  templateUrl: 'delete-confirmation-dialog.html',
-})
-export class InstitutionDeleteConfirmationDialogModal {
-  constructor(
-    public dialogRef: MatDialogRef<InstitutionDeleteConfirmationDialogModal>,
-    @Inject(MAT_DIALOG_DATA) public data: Institution
-  ) {}
 }

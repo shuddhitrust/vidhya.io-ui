@@ -18,6 +18,10 @@ import {
 } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
+  MasterConfirmationDialog,
+  MasterConfirmationDialogObject,
+} from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import {
   DeleteUserRoleAction,
   GetUserRoleAction,
 } from 'src/app/shared/state/userRoles/userRole.actions';
@@ -105,8 +109,14 @@ export class RoleProfileComponent {
   }
 
   deleteConfirmation() {
-    const dialogRef = this.dialog.open(RoleDeleteConfirmationDialog, {
-      data: this.profileData,
+    const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
+      title: 'Confirm delete?',
+      message: `Are you sure you want to delete the role named "${this.profileData.name}"`,
+      confirmButtonText: 'Delete',
+      denyButtonText: 'Cancel',
+    };
+    const dialogRef = this.dialog.open(MasterConfirmationDialog, {
+      data: masterDialogConfirmationObject,
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -119,15 +129,4 @@ export class RoleProfileComponent {
     this.store.dispatch(new DeleteUserRoleAction({ id: this.profileData.id }));
     this.closeDialog();
   }
-}
-
-@Component({
-  selector: 'role-delete-confirmation-dialog',
-  templateUrl: 'delete-confirmation-dialog.html',
-})
-export class RoleDeleteConfirmationDialog {
-  constructor(
-    public dialogRef: MatDialogRef<RoleDeleteConfirmationDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: User
-  ) {}
 }
