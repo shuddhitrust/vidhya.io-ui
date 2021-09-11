@@ -7,6 +7,9 @@
     padding: '10px'
   }"
   (nzSelectedIndexChange)="onTabChange($event)"
+  [style]="
+    activeTabIndex == visibleTabs.indexOf(ADMIN) ? { 'min-width': '700px' } : {}
+  "
   nzCentered
 >
   <nz-tab [nzTitle]="ADMIN" *ngIf="visibleTabs.includes(ADMIN)">

@@ -24,8 +24,15 @@ h2 {
 .group-member-table {
   height: 500px;
   width: 75%;
-  min-width: 500px;
+  min-width: 250px;
   overflow: auto;
   display: block;
   margin: auto;
+}
+
+@media screen and (max-width: 768px) {
+  .group-member-table {
+    width: 99%;
+    height: 300px;
+  }
 }

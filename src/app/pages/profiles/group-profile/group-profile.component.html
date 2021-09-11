@@ -23,8 +23,12 @@
     >
       <mat-icon>edit</mat-icon>
     </button>
-    <h2>{{ group?.name }}</h2>
-    <p>{{ groupTypeLabel }}</p>
+    <h2>
+      {{ group?.name }}
+      <small
+        ><i>({{ groupTypeLabel }})</i></small
+      >
+    </h2>
     <p>{{ group?.description }}</p>
   </div>
 
