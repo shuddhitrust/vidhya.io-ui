@@ -45,5 +45,4 @@ export const defaultAnnouncementState: AnnouncementStateModel = {
   errorSubmitting: false,
 };
 
-export const AnnouncementFormCloseURL =
-  'dashboard?adminSection=Institutions&tab=Announcements';
+export const AnnouncementFormCloseURL = 'dashboard?tab=Announcements';

@@ -111,6 +111,7 @@ import { ChatState } from 'src/app/shared/state/chats/chat.state';
 import { SubscriptionsState } from 'src/app/shared/state/subscriptions/subscriptions.state';
 import { environment } from 'src/environments/environment';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
+import { MasterConfirmationDialog } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 
 export function markedOptionsFactory(): MarkedOptions {
   const renderer = new MarkedRenderer();
@@ -195,6 +196,7 @@ export function markedOptionsFactory(): MarkedOptions {
     CourseSectionModalComponent,
     CouseSectionDeleteConfirmationDialog,
     SimpleLoadingSpinnerComponent,
+    MasterConfirmationDialog,
   ],
   imports: [
     CommonModule,

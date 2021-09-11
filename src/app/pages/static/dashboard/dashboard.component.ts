@@ -66,7 +66,6 @@ export class DashboardComponent implements OnInit {
   params: object = {};
   @Select(AuthState.getPermissions)
   permissions$: Observable<UserPermissions>;
-  entities: any[] = [];
   resources = resources;
   visibleTabs = [];
   constructor(
@@ -75,12 +74,14 @@ export class DashboardComponent implements OnInit {
     private auth: AuthorizationService
   ) {
     this.permissions$.subscribe((val) => {
-      this.entities = this.processEntities();
       this.populateVisibleTabs();
     });
   }
 
   ngOnInit(): void {
+    this.setActiveIndexFromParams();
+  }
+  setActiveIndexFromParams() {
     this.route.queryParams.subscribe((params) => {
       this.params = params;
       const tabName = params['tab'];
@@ -102,7 +103,7 @@ export class DashboardComponent implements OnInit {
       const tab = this.tabIndexList[index];
       switch (tab) {
         case ADMIN:
-          return this.entities.length;
+          return this.processEntities().length;
         case ANNOUNCEMENTS:
           return this.authorizeResourceMethod(resources.ANNOUNCEMENT);
         case ASSIGNMENTS:
@@ -123,7 +124,7 @@ export class DashboardComponent implements OnInit {
       }
     });
     this.visibleTabs = visibleTabKeys.map((key) => this.tabIndexList[key]);
-    this.onTabChange(0);
+    this.setActiveIndexFromParams();
   }
 
   processEntities(): any[] {
@@ -148,9 +149,7 @@ export class DashboardComponent implements OnInit {
   }
 
   getIndexFromTabName = (tabName: string): string => {
-    const index = this.visibleTabs.find((key) => {
-      return this.visibleTabs[key] == tabName;
-    });
+    const index = this.visibleTabs.indexOf(tabName);
 
     return index?.toString();
   };

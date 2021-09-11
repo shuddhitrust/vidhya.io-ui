@@ -21,6 +21,10 @@ import {
 } from 'src/app/shared/common/models';
 import { parseDateTime } from 'src/app/shared/common/functions';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
+import {
+  MasterConfirmationDialog,
+  MasterConfirmationDialogObject,
+} from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-announcement-profile',
@@ -69,8 +73,14 @@ export class AnnouncementProfileComponent implements OnInit, OnDestroy {
   }
 
   deleteConfirmation() {
-    const dialogRef = this.dialog.open(AnnouncementDeleteConfirmationDialog, {
-      data: this.announcement,
+    const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
+      title: 'Confirm delete?',
+      message: `Are you sure you want to delete the announcement titled "${this.announcement.title}"`,
+      confirmButtonText: 'Delete',
+      denyButtonText: 'Cancel',
+    };
+    const dialogRef = this.dialog.open(MasterConfirmationDialog, {
+      data: masterDialogConfirmationObject,
     });
 
     dialogRef.afterClosed().subscribe((result) => {

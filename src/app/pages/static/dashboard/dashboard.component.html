@@ -14,7 +14,7 @@
       <div class="mat-tab">
         <app-admin-dashboard
           [params]="params"
-          [entities]="entities"
+          [entities]="processEntities()"
         ></app-admin-dashboard></div></ng-template
   ></nz-tab>
   <nz-tab [nzTitle]="ANNOUNCEMENTS" *ngIf="visibleTabs.includes(ANNOUNCEMENTS)">
