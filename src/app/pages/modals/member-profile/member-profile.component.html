@@ -5,6 +5,9 @@
       <mat-card-subtitle>{{ profileData.title }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
+      <div>
+        <img [src]="profileData.avatar" class="avatar" alt="profile pic" />
+      </div>
       <p>
         {{ profileData.bio }}
       </p>
