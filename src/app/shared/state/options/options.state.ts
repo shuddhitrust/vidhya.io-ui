@@ -26,7 +26,7 @@ export class OptionsState {
   @Selector()
   static listMembersByInstitution(state: OptionsStateModel): MatSelectOption[] {
     const options = state.membersByInstitution.map((m) => {
-      return { value: m.id, label: m.name, subtitle: m.role?.name };
+      return { value: m.id, label: `${m.name} (${m.role?.name})` };
     });
 
     return options;
@@ -54,7 +54,7 @@ export class OptionsState {
   @Selector()
   static listGroupAdminOptions(state: OptionsStateModel): MatSelectOption[] {
     const options = state.adminGroups.map((g) => {
-      return { value: g.id, label: g.name, subtitle: g.groupType };
+      return { value: g.id, label: `${g.name} (${g.groupType})` };
     });
     return options;
   }

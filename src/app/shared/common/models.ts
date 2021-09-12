@@ -38,7 +38,6 @@ export type HotToastStatus =
 export type MatSelectOption = {
   label: string;
   value: number | string;
-  subtitle?: string;
 };
 
 export type FetchParams = {

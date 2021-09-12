@@ -129,7 +129,7 @@
           *ngFor="let member of memberOptions$ | async"
           [value]="member.value"
         >
-          {{ member.label }} ({{ member.subtitle }})
+          {{ member.label }}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -148,7 +148,7 @@
         placeholder="The members of the group"
       >
         <mat-option *ngFor="let member of memberOptions" [value]="member.value">
-          {{ member.label }} ({{ member.subtitle }})
+          {{ member.label }}
         </mat-option>
       </mat-select>
     </mat-form-field>
