@@ -442,7 +442,6 @@ export class ExerciseSubmissionState {
     const variables = {
       exerciseSubmissions: exerciseSubmissions,
     };
-    const updateForm = exerciseSubmissions[0].id;
     this.apollo
       .mutate({
         mutation:
