@@ -67,9 +67,12 @@
           <h2>{{ card.title }}</h2>
           <p>{{ card.course }} > {{ card.section }}</p>
           <p>
-            <small
+            <small *ngIf="card.dueDate"
               >Due on
               {{ parseDate(card.dueDate) }}
+            </small>
+            <small>
+              {{ card.pointsScored }} / {{ card.totalPoints }} points
             </small>
           </p>
           <button type="button" class="card-button" mat-icon-button>
