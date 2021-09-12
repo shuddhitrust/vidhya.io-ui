@@ -175,6 +175,7 @@
       <mat-label>Participants</mat-label>
       <mat-select
         multiple
+        (selectionChange)="updateParticipantRows($event)"
         formControlName="participants"
         placeholder="The particippants of this course"
       >

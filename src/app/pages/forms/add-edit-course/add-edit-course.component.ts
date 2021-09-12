@@ -168,6 +168,15 @@ export class AddEditCourseComponent implements OnInit {
     this.location.back();
   }
 
+  updateParticipantRows($event) {
+    const participantIds = this.courseForm
+      .get('participants')
+      .value.map((id) => id);
+    this.participantRows = this.memberOptions.filter((o) => {
+      return participantIds.includes(o.value);
+    });
+  }
+
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {
     this.store.dispatch(
       new CreateUpdateCourseAction({
