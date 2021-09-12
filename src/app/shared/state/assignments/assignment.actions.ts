@@ -13,3 +13,9 @@ export class FetchNextAssignmentsAction {
 
   constructor() {}
 }
+
+export class ForceRefetchAssignmentsAction {
+  static readonly type = '[ASSIGNMENTS] Force Refetch';
+
+  constructor() {}
+}

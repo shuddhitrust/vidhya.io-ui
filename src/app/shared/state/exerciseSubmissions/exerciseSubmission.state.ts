@@ -1,10 +1,11 @@
 import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 import {
+  AssignmentUrl,
   defaultExerciseSubmissionState,
   emptyExerciseSubmissionFormRecord,
-  ExerciseSubmissionFormCloseURL,
   ExerciseSubmissionStateModel,
   GradingGroup,
+  GradingUrl,
 } from './exerciseSubmission.model';
 
 import { Injectable } from '@angular/core';
@@ -28,6 +29,8 @@ import {
   FetchParams,
   CREATE,
   SUBSCRIPTION_METHODS,
+  resources,
+  RESOURCE_ACTIONS,
 } from '../../common/models';
 import { EXERCISE_SUBMISSION_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
@@ -44,6 +47,10 @@ import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
 import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
 import { SearchParams } from '../../abstract/master-grid/table.model';
+import { ForceRefetchChaptersAction } from '../chapters/chapter.actions';
+import { ForceRefetchExercisesAction } from '../exercises/exercise.actions';
+import { AuthorizationService } from '../../api/authorization/authorization.service';
+import { ForceRefetchAssignmentsAction } from '../assignments/assignment.actions';
 
 @State<ExerciseSubmissionStateModel>({
   name: 'exerciseSubmissionState',
@@ -442,6 +449,8 @@ export class ExerciseSubmissionState {
     const variables = {
       exerciseSubmissions: exerciseSubmissions,
     };
+    console.log('exerciseSubmissions', { exerciseSubmissions });
+    const update = exerciseSubmissions[0].id ? true : false;
     this.apollo
       .mutate({
         mutation:
@@ -454,7 +463,15 @@ export class ExerciseSubmissionState {
           patchState({ formSubmitting: false });
 
           if (response.ok) {
-            this.router.navigateByUrl(ExerciseSubmissionFormCloseURL);
+            console.log('from CreateUpdateExerciseSubmissions', { update });
+            if (update) {
+              this.router.navigateByUrl(GradingUrl);
+            } else {
+              this.store.dispatch(new ForceRefetchChaptersAction());
+              this.store.dispatch(new ForceRefetchExercisesAction());
+              this.store.dispatch(new ForceRefetchAssignmentsAction());
+              this.router.navigateByUrl(AssignmentUrl);
+            }
             const modifiedExerciseSubmissions = response.exerciseSubmissions;
             // Replacing the existing submissions in state with the modified submissions in the response
             let exerciseSubmissions = state.exerciseSubmissions.map((e) => {
@@ -522,7 +539,6 @@ export class ExerciseSubmissionState {
           const response = data.deleteExerciseSubmission;
 
           if (response.ok) {
-            this.router.navigateByUrl(ExerciseSubmissionFormCloseURL);
             const method = SUBSCRIPTION_METHODS.DELETE_METHOD;
             const group = response.group;
             const state = getState();

@@ -9,6 +9,7 @@ import { Injectable } from '@angular/core';
 import {
   FetchAssignmentsAction,
   FetchNextAssignmentsAction,
+  ForceRefetchAssignmentsAction,
 } from './assignment.actions';
 import { ASSIGNMENT_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
@@ -57,6 +58,30 @@ export class AssignmentState {
     return state.errorFetching;
   }
 
+  @Action(ForceRefetchAssignmentsAction)
+  forceRefetchExercises({
+    getState,
+    patchState,
+  }: StateContext<AssignmentStateModel>) {
+    patchState({ fetchPolicy: 'network-only' });
+    const state = getState();
+    const previousFetchParams =
+      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    const pageNumber = previousFetchParams.currentPage;
+    const previousSearchParams: SearchParams = {
+      pageNumber,
+      pageSize: previousFetchParams.pageSize,
+      searchQuery: previousFetchParams.searchQuery,
+      columnFilters: previousFetchParams.columnFilters,
+    };
+    console.log('previousFetchParams from force fetch exercises', {
+      previousSearchParams,
+    });
+    this.store.dispatch(
+      new FetchAssignmentsAction({ searchParams: previousSearchParams })
+    );
+  }
+
   @Action(FetchNextAssignmentsAction)
   fetchNextAssignments({ getState }: StateContext<AssignmentStateModel>) {
     const state = getState();
@@ -85,10 +110,9 @@ export class AssignmentState {
     { getState, patchState }: StateContext<AssignmentStateModel>,
     { payload }: FetchAssignmentsAction
   ) {
-    
     let { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, fetchParamObjects, assignmentsSubscribed } = state;
+    const { fetchPolicy, fetchParamObjects } = state;
     const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({
       fetchParamObjects,
@@ -102,53 +126,48 @@ export class AssignmentState {
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
-    if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
-      patchState({ isFetching: true });
-      
-      this.apollo
-        .watchQuery({
-          query: ASSIGNMENT_QUERIES.GET_ASSIGNMENTS,
-          variables,
-          fetchPolicy,
-        })
-        .valueChanges.subscribe(
-          ({ data }: any) => {
-            
-            const response = data.assignments;
+    patchState({ isFetching: true });
 
-            newFetchParams = { ...newFetchParams };
-            let paginatedAssignments = state.paginatedAssignments;
-            paginatedAssignments = {
-              ...paginatedAssignments,
-              [pageNumber]: response,
-            };
-            
-            let assignments =
-              convertPaginatedListToNormalList(paginatedAssignments);
-            let lastPage = null;
-            if (response.length < newFetchParams.pageSize) {
-              lastPage = newFetchParams.currentPage;
-            }
-            patchState({
-              assignments,
-              paginatedAssignments,
-              lastPage,
-              fetchParamObjects: state.fetchParamObjects.concat([
-                newFetchParams,
-              ]),
-              isFetching: false,
-            });
-          },
-          (error) => {
-            this.store.dispatch(
-              new ShowNotificationAction({
-                message: getErrorMessageFromGraphQLResponse(error),
-                action: 'error',
-              })
-            );
-            patchState({ isFetching: false });
+    this.apollo
+      .watchQuery({
+        query: ASSIGNMENT_QUERIES.GET_ASSIGNMENTS,
+        variables,
+        fetchPolicy,
+      })
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          const response = data.assignments;
+
+          newFetchParams = { ...newFetchParams };
+          let paginatedAssignments = state.paginatedAssignments;
+          paginatedAssignments = {
+            ...paginatedAssignments,
+            [pageNumber]: response,
+          };
+
+          let assignments =
+            convertPaginatedListToNormalList(paginatedAssignments);
+          let lastPage = null;
+          if (response.length < newFetchParams.pageSize) {
+            lastPage = newFetchParams.currentPage;
           }
-        );
-    }
+          patchState({
+            assignments,
+            paginatedAssignments,
+            lastPage,
+            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
+            isFetching: false,
+          });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetching: false });
+        }
+      );
   }
 }

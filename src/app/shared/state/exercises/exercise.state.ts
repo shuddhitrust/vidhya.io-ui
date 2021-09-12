@@ -81,7 +81,7 @@ export class ExerciseState {
       };
       return option;
     });
-    
+
     return options;
   }
 
@@ -106,10 +106,26 @@ export class ExerciseState {
   }
 
   @Action(ForceRefetchExercisesAction)
-  forceRefetchExercises({ patchState }: StateContext<ExerciseStateModel>) {
+  forceRefetchExercises({
+    getState,
+    patchState,
+  }: StateContext<ExerciseStateModel>) {
     patchState({ fetchPolicy: 'network-only' });
+    const state = getState();
+    const previousFetchParams =
+      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    const pageNumber = previousFetchParams.currentPage;
+    const previousSearchParams: SearchParams = {
+      pageNumber,
+      pageSize: previousFetchParams.pageSize,
+      searchQuery: previousFetchParams.searchQuery,
+      columnFilters: previousFetchParams.columnFilters,
+    };
+    console.log('previousFetchParams from force fetch exercises', {
+      previousSearchParams,
+    });
     this.store.dispatch(
-      new FetchExercisesAction({ searchParams: defaultSearchParams })
+      new FetchExercisesAction({ searchParams: previousSearchParams })
     );
   }
 
@@ -141,7 +157,6 @@ export class ExerciseState {
     { getState, patchState }: StateContext<ExerciseStateModel>,
     { payload }: FetchExercisesAction
   ) {
-    
     let { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, fetchParamObjects, exercisesSubscribed } = state;
@@ -158,7 +173,7 @@ export class ExerciseState {
     //   const lastKnownFetchParamObjects = fetchParamObjects[fetchParamObjects.length-1];
     //   console.log('lastKnownFetchParams', {lastKnownFetchParamObjects, fetchParamObjects})
     //   const lastUsedChapterId = lastKnownFetchParamObjects['columnFilters']['chapterId'];
-    //   
+    //
     //   if(lastUsedChapterId != newColumnFilters.chapterId) {
     //     console.log('resetting the exercises because this is different')
     //     patchState({exercises: []});
@@ -171,66 +186,60 @@ export class ExerciseState {
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
-    if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
-      patchState({ isFetching: true });
-      
-      this.apollo
-        .watchQuery({
-          query: EXERCISE_QUERIES.GET_EXERCISES,
-          variables,
-          fetchPolicy,
-        })
-        .valueChanges.subscribe(
-          ({ data }: any) => {
-            
-            const response = data.exercises;
-            newFetchParams = { ...newFetchParams };
-            let paginatedExercises = state.paginatedExercises;
-            paginatedExercises = {
-              ...paginatedExercises,
-              [pageNumber]: response?.exercises,
-            };
-            
-            let exercises =
-              convertPaginatedListToNormalList(paginatedExercises);
+    patchState({ isFetching: true });
 
-            let submissions = response.submissions;
-            if (submissions.length) {
-              submissions = exercises.map((e) => {
-                const submission = submissions.find(
-                  (s) => s.exercise?.id == e.id
-                );
-                if (submission) {
-                  return submission;
-                } else return emptyExerciseSubmissionFormRecord;
-              });
-            }
-            let lastPage = null;
-            if (response.length < newFetchParams.pageSize) {
-              lastPage = newFetchParams.currentPage;
-            }
-            patchState({
-              lastPage,
-              exercises,
-              submissions,
-              paginatedExercises,
-              fetchParamObjects: state.fetchParamObjects.concat([
-                newFetchParams,
-              ]),
-              isFetching: false,
+    this.apollo
+      .watchQuery({
+        query: EXERCISE_QUERIES.GET_EXERCISES,
+        variables,
+        fetchPolicy,
+      })
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          const response = data.exercises;
+          newFetchParams = { ...newFetchParams };
+          let paginatedExercises = state.paginatedExercises;
+          paginatedExercises = {
+            ...paginatedExercises,
+            [pageNumber]: response?.exercises,
+          };
+
+          let exercises = convertPaginatedListToNormalList(paginatedExercises);
+
+          let submissions = response.submissions;
+          if (submissions.length) {
+            submissions = exercises.map((e) => {
+              const submission = submissions.find(
+                (s) => s.exercise?.id == e.id
+              );
+              if (submission) {
+                return submission;
+              } else return emptyExerciseSubmissionFormRecord;
             });
-          },
-          (error) => {
-            this.store.dispatch(
-              new ShowNotificationAction({
-                message: getErrorMessageFromGraphQLResponse(error),
-                action: 'error',
-              })
-            );
-            patchState({ isFetching: false });
           }
-        );
-    }
+          let lastPage = null;
+          if (response.length < newFetchParams.pageSize) {
+            lastPage = newFetchParams.currentPage;
+          }
+          patchState({
+            lastPage,
+            exercises,
+            submissions,
+            paginatedExercises,
+            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
+            isFetching: false,
+          });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetching: false });
+        }
+      );
   }
 
   @Action(ExerciseSubscriptionAction)
@@ -306,7 +315,7 @@ export class ExerciseState {
       let errorFetching = false;
       patchState({ formSubmitting, errorFetching });
       const values = form.value;
-      
+
       const updateForm = values.id == null ? false : true;
       const { id, ...sanitizedValues } = values;
       const variables = updateForm
@@ -329,7 +338,7 @@ export class ExerciseState {
               ? data.updateExercise
               : data.createExercise;
             patchState({ formSubmitting: false });
-            
+
             if (response.ok) {
               const method = updateForm
                 ? SUBSCRIPTION_METHODS.UPDATE_METHOD
@@ -371,10 +380,8 @@ export class ExerciseState {
                 })
               );
             }
-            
           },
           (error) => {
-            
             this.store.dispatch(
               new ShowNotificationAction({
                 message: getErrorMessageFromGraphQLResponse(error),
@@ -409,7 +416,7 @@ export class ExerciseState {
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteExercise;
-          
+
           if (response.ok) {
             const method = SUBSCRIPTION_METHODS.DELETE_METHOD;
             const exercise = response.exercise;
@@ -470,7 +477,6 @@ export class ExerciseState {
       .subscribe(
         ({ data }: any) => {
           const response = data.reorderExercses;
-          
         },
         (error) => {
           this.store.dispatch(

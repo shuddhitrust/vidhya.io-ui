@@ -26,6 +26,7 @@ import {
   MatSelectOption,
   FetchParams,
   SUBSCRIPTION_METHODS,
+  startingFetchParams,
 } from '../../common/models';
 import { CHAPTER_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
@@ -78,20 +79,19 @@ export class ChapterState {
   @Selector()
   static listChapterOptions(state: ChapterStateModel): MatSelectOption[] {
     const options: MatSelectOption[] = state.chapters.map((i) => {
-      
       let sectionIndex: any = i.section?.index ? i.section?.index + '.' : '';
       sectionIndex =
         parseInt(sectionIndex, 10) < 10
           ? '0' + sectionIndex.toString()
           : sectionIndex.toString();
-      
+
       const option: MatSelectOption = {
         value: i.id,
         label: sectionIndex + i.index + ' ' + i.title,
       };
       return option;
     });
-    
+
     const sortedOptions = sortArrayOfObjectsByString(options, 'label');
     return sortedOptions;
   }
@@ -129,10 +129,26 @@ export class ChapterState {
   }
 
   @Action(ForceRefetchChaptersAction)
-  forceRefetchChapters({ patchState }: StateContext<ChapterStateModel>) {
+  forceRefetchChapters({
+    getState,
+    patchState,
+  }: StateContext<ChapterStateModel>) {
+    const state = getState();
+    let previousFetchParams =
+      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    previousFetchParams = previousFetchParams
+      ? previousFetchParams
+      : startingFetchParams;
+    const pageNumber = previousFetchParams?.currentPage + 1;
+    const previousSearchParams: SearchParams = {
+      pageNumber,
+      pageSize: previousFetchParams?.pageSize,
+      searchQuery: previousFetchParams?.searchQuery,
+      columnFilters: previousFetchParams?.columnFilters,
+    };
     patchState({ fetchPolicy: 'network-only' });
     this.store.dispatch(
-      new FetchChaptersAction({ searchParams: defaultSearchParams })
+      new FetchChaptersAction({ searchParams: previousSearchParams })
     );
   }
 
@@ -164,7 +180,6 @@ export class ChapterState {
     { getState, patchState }: StateContext<ChapterStateModel>,
     { payload }: FetchChaptersAction
   ) {
-    
     let { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, fetchParamObjects, chaptersSubscribed } = state;
@@ -184,7 +199,7 @@ export class ChapterState {
     };
     if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
       patchState({ isFetching: true });
-      
+
       this.apollo
         .watchQuery({
           query: CHAPTER_QUERIES.GET_CHAPTERS,
@@ -193,16 +208,15 @@ export class ChapterState {
         })
         .valueChanges.subscribe(
           ({ data }: any) => {
-            
             const response = data.chapters;
 
-            newFetchParams = { ...newFetchParams,  };
+            newFetchParams = { ...newFetchParams };
             let paginatedChapters = state.paginatedChapters;
             paginatedChapters = {
               ...paginatedChapters,
               [pageNumber]: response,
             };
-            
+
             let chapters = convertPaginatedListToNormalList(paginatedChapters);
             let lastPage = null;
             if (response.length < newFetchParams.pageSize) {
@@ -304,7 +318,7 @@ export class ChapterState {
       formSubmitting = true;
       patchState({ formSubmitting });
       const values = form.value;
-      
+
       const updateForm = values.id == null ? false : true;
       const { id, ...sanitizedValues } = values;
       const variables = updateForm
@@ -327,7 +341,7 @@ export class ChapterState {
               ? data.updateChapter
               : data.createChapter;
             patchState({ formSubmitting: false });
-            
+
             if (response.ok) {
               const method = updateForm
                 ? SUBSCRIPTION_METHODS.UPDATE_METHOD
@@ -366,10 +380,8 @@ export class ChapterState {
                 })
               );
             }
-            
           },
           (error) => {
-            
             this.store.dispatch(
               new ShowNotificationAction({
                 message: getErrorMessageFromGraphQLResponse(error),
@@ -404,7 +416,7 @@ export class ChapterState {
       .subscribe(
         ({ data }: any) => {
           const response = data.publishCourse;
-          
+
           if (response.ok) {
             this.store.dispatch(
               new ShowNotificationAction({
@@ -446,7 +458,7 @@ export class ChapterState {
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteChapter;
-          
+
           if (response.ok) {
             const method = SUBSCRIPTION_METHODS.DELETE_METHOD;
             const chapter = response.chapter;
@@ -468,11 +480,7 @@ export class ChapterState {
                 action: 'success',
               })
             );
-            this.store.dispatch(
-              new ForceRefetchChaptersAction({
-                searchParams: defaultSearchParams,
-              })
-            );
+            this.store.dispatch(new ForceRefetchChaptersAction());
           } else {
             this.store.dispatch(
               new ShowNotificationAction({
@@ -514,7 +522,6 @@ export class ChapterState {
       .subscribe(
         ({ data }: any) => {
           const response = data.reorderChapters;
-          
         },
         (error) => {
           this.store.dispatch(

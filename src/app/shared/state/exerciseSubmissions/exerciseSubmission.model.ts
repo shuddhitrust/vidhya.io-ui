@@ -1,9 +1,14 @@
 import {
+  ASSIGNMENTS,
+  GRADING,
+} from 'src/app/pages/static/dashboard/dashboard.component';
+import {
   FetchPolicy,
   ExerciseSubmission,
   FetchParams,
   startingFetchParams,
 } from '../../common/models';
+import { uiroutes } from '../../common/ui-routes';
 import { emptyExerciseFormRecord } from '../exercises/exercise.model';
 
 export type GradingGroup = {
@@ -76,4 +81,5 @@ export const defaultExerciseSubmissionState: ExerciseSubmissionStateModel = {
   errorSubmitting: false,
 };
 
-export const ExerciseSubmissionFormCloseURL = 'dashboard?tab=Grading';
+export const GradingUrl = `dashboard?tab=${GRADING}`;
+export const AssignmentUrl = `dashboard?tab=${ASSIGNMENTS}`;
