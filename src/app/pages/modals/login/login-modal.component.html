@@ -214,6 +214,7 @@
           <input
             matInput
             formControlName="email"
+            (keypress)="preventSpaces($event)"
             required
             placeholder="Email ID"
           />
@@ -337,6 +338,7 @@
           <input
             matInput
             formControlName="email"
+            (keypress)="preventSpaces($event)"
             required
             placeholder="Email ID"
           />
@@ -407,6 +409,7 @@
           <input
             matInput
             formControlName="email"
+            (keypress)="preventSpaces($event)"
             required
             placeholder="Email ID"
           />

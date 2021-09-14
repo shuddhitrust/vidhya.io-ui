@@ -72,7 +72,7 @@ export const subscriptionUpdater = ({
     }
   }
   const newFetchParamss = fetchParamObjects.concat([fetchParams]);
-  
+
   return { items, fetchParamObjects: newFetchParamss };
 };
 
@@ -92,7 +92,7 @@ export const paginatedSubscriptionUpdater = ({
   if (modifiedItem && method) {
     if (method == SUBSCRIPTION_METHODS.CREATE_METHOD) {
       newPaginatedItems = Object.assign({}, paginatedItems);
-      
+
       const firstPageItems = newPaginatedItems[1] ? newPaginatedItems[1] : [];
       let itemAlreadyExists = null;
       if (firstPageItems.length) {
@@ -100,7 +100,7 @@ export const paginatedSubscriptionUpdater = ({
           (item) => item[pk] == modifiedItem[pk]
         );
       }
-      
+
       if (!itemAlreadyExists) {
         const newFirstPage = [modifiedItem, ...firstPageItems];
         newPaginatedItems[1] = newFirstPage;
@@ -159,7 +159,7 @@ export const fetchParamsNewOrNot = ({
       return false;
     }
   }
-  
+
   return result;
 };
 
@@ -329,7 +329,7 @@ export const autoGenOptions = (type: object): MatSelectOption[] => {
 export const getErrorMessageFromGraphQLResponse = (errors): string => {
   const keys = Object.keys(errors);
   const message = errors[keys[0]][0]?.message;
-  
+
   return message
     ? message
     : 'Something went wrong! Action could not be completed successfully.';
@@ -422,4 +422,8 @@ export const sortArrayOfObjectsByString = (array: any[], key: string) => {
     return 0;
   }
   return array.sort(compare);
+};
+
+export const preventSpaces = ($event) => {
+  return $event.charCode != 32;
 };

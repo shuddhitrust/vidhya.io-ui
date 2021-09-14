@@ -30,6 +30,7 @@ import { Observable } from 'rxjs';
 import { AuthStateModel } from 'src/app/shared/state/auth/auth.model';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { ActivatedRoute } from '@angular/router';
+import { preventSpaces } from 'src/app/shared/common/functions';
 
 const INVITECODE = 'INVITECODE';
 const REGISTER = 'REGISTER';
@@ -99,6 +100,9 @@ export class LoginModalComponent implements OnInit {
     });
   }
 
+  preventSpaces($event) {
+    return preventSpaces($event);
+  }
   ngOnInit() {
     this.url = window.location.href;
     if (this.url.includes(uiroutes.REGISTER_ROUTE.route) && !this.isLoggedIn) {
