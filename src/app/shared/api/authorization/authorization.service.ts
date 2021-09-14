@@ -75,7 +75,8 @@ export class AuthorizationService {
         const { adminIds, institutionId } = recordData;
         if (
           this.currentMemberRoleName == USER_ROLES_NAMES.SUPER_ADMIN &&
-          resource == resources.MODERATION
+          (resource == resources.MODERATION ||
+            resource == resources.INSTITUTION)
         ) {
           // Super admin has the ability to moderate anyone
           recordConstraint = true;

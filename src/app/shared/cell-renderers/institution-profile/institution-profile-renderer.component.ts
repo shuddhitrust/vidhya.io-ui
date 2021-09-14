@@ -21,7 +21,7 @@ export class InstitutionProfileRendererComponent {
   cellValue: string;
   rowData: any;
   params: any;
-  resource = resources.USER_ROLE;
+  resource = resources.INSTITUTION;
   resourceActions = RESOURCE_ACTIONS;
   @Select(AuthState.getCurrentMember)
   currentMember$: Observable<CurrentMember>;
