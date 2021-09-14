@@ -74,9 +74,6 @@ export class AssignmentState {
       searchQuery: previousFetchParams.searchQuery,
       columnFilters: previousFetchParams.columnFilters,
     };
-    console.log('previousFetchParams from force fetch exercises', {
-      previousSearchParams,
-    });
     this.store.dispatch(
       new FetchAssignmentsAction({ searchParams: previousSearchParams })
     );

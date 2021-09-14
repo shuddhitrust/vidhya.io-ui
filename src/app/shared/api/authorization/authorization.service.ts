@@ -68,6 +68,7 @@ export class AuthorizationService {
     } else {
       let recordConstraint = true;
       if (
+        action == RESOURCE_ACTIONS.GET ||
         action == RESOURCE_ACTIONS.UPDATE ||
         action == RESOURCE_ACTIONS.DELETE
       ) {
@@ -91,7 +92,7 @@ export class AuthorizationService {
         recordConstraint && permissions[resource]
           ? permissions[resource][action]
           : false;
-      // 
+      //
       return verdict;
     }
   };
@@ -118,7 +119,7 @@ export class AuthorizationService {
         };
       }
     }
-    
+
     return permissionsTableData;
   };
 }

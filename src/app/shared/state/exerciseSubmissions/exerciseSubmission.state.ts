@@ -449,7 +449,6 @@ export class ExerciseSubmissionState {
     const variables = {
       exerciseSubmissions: exerciseSubmissions,
     };
-    console.log('exerciseSubmissions', { exerciseSubmissions });
     const update = exerciseSubmissions[0].id ? true : false;
     this.apollo
       .mutate({
@@ -463,7 +462,6 @@ export class ExerciseSubmissionState {
           patchState({ formSubmitting: false });
 
           if (response.ok) {
-            console.log('from CreateUpdateExerciseSubmissions', { update });
             if (update) {
               this.router.navigateByUrl(GradingUrl);
             } else {

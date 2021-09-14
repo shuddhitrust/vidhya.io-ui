@@ -121,9 +121,6 @@ export class ExerciseState {
       searchQuery: previousFetchParams.searchQuery,
       columnFilters: previousFetchParams.columnFilters,
     };
-    console.log('previousFetchParams from force fetch exercises', {
-      previousSearchParams,
-    });
     this.store.dispatch(
       new FetchExercisesAction({ searchParams: previousSearchParams })
     );
