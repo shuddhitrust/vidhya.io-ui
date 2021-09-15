@@ -18,6 +18,10 @@
 <span *ngIf="showDialog == FORGOT_PASSWORD">
   <ng-container *ngTemplateOutlet="forgotPasswordTemplate"></ng-container>
 </span>
+
+<!-- 
+  LOGIN FORM
+ -->
 <ng-template #loginTemplate>
   <div mat-dialog-content class="login-dialog-box">
     <mat-card>
@@ -102,6 +106,9 @@
   </div>
 </ng-template>
 
+<!-- 
+  INVITECODE FORM
+ -->
 <ng-template #invitecodeTemplate>
   <div mat-dialog-content class="invitecode-dialog-box">
     <mat-card>
@@ -164,6 +171,9 @@
   </div>
 </ng-template>
 
+<!-- 
+  REGISTER FORM, WHERE USERNAME, EMAIL AND PASSWORD ARE STORED 
+-->
 <ng-template #registerTemplate>
   <div mat-dialog-content class="register-dialog-box">
     <mat-card>
@@ -183,6 +193,7 @@
           <mat-label>Username</mat-label>
           <input
             matInput
+            autofocus
             formControlName="username"
             required
             placeholder="Username"
@@ -310,6 +321,9 @@
   </div>
 </ng-template>
 
+<!-- 
+  GET EMAIL FOR SENDING PASSWORD RESET EMAIL
+ -->
 <ng-template #forgotPasswordTemplate>
   <div mat-dialog-content class="email-input-dialog-box">
     <mat-card>
@@ -381,6 +395,9 @@
   </div>
 </ng-template>
 
+<!-- 
+  GET EMAIL FOR RESENDING ACTIVATION EMAIL
+ -->
 <ng-template #resendActivationEmailTemplate>
   <div mat-dialog-content class="email-input-dialog-box">
     <mat-card>
@@ -452,6 +469,9 @@
   </div>
 </ng-template>
 
+<!-- 
+  CHOOSE REASON FOR LOGIN ISSUES
+ -->
 <ng-template #troubleSigningInTemplate>
   <div mat-dialog-content class="email-input-dialog-box">
     <mat-card>
