@@ -129,7 +129,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     });
     this.exerciseKeys$.subscribe((val) => {
       this.exerciseKeys = sortByIndex(val, 'exercise.index');
-      this.resetExerciseForm();
+      this.closeExerciseForm();
     });
     this.chapter$.subscribe((val) => {
       this.chapter = val;
@@ -280,9 +280,10 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     this.showExerciseForm = true;
   }
   deleteExerciseConfirmation(key) {
+    console.log('from delete confirmation', { key });
     const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
       title: 'Confirm delete?',
-      message: `Are you sure you want to delete the exercise "${this.exerciseKey.exericse.prompt}"`,
+      message: `Are you sure you want to delete the exercise "${key?.exercise?.prompt}"`,
       confirmButtonText: 'Delete',
       denyButtonText: 'Cancel',
     };
@@ -329,16 +330,16 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
       this.store.dispatch(new ReorderExercisesAction({ indexList }));
     });
   }
-  resetExerciseForm() {
-    this.exerciseForm = this.setupExerciseForm();
-    this.exerciseFormOptions = startingExerciseFormOptions;
-    this.imagesQueuedForUpload = [];
-    this.exerciseKey = Object.assign({}, emptyExerciseKeyFormRecord);
-    this.resetFormOptionErrors();
-  }
   addExercise() {
     this.resetExerciseForm();
     this.showExerciseForm = true;
+  }
+  resetExerciseForm() {
+    this.exerciseForm = this.setupExerciseForm();
+    this.exerciseFormOptions = Object.assign([], startingExerciseFormOptions);
+    this.imagesQueuedForUpload = [];
+    this.exerciseKey = Object.assign({}, emptyExerciseKeyFormRecord);
+    this.resetFormOptionErrors();
   }
 
   closeExerciseForm() {

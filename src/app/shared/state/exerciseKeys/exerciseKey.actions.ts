@@ -23,7 +23,7 @@ export class ExerciseKeySubscriptionAction {
 export class ForceRefetchExerciseKeysAction {
   static readonly type = '[EXERCISE_KEYS] Fetch from network';
 
-  constructor(public payload: { searchParams: SearchParams }) {}
+  constructor() {}
 }
 
 export class GetExerciseKeyAction {

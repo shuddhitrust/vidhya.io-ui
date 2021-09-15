@@ -42,6 +42,7 @@ import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
 import { SearchParams } from '../../abstract/master-grid/table.model';
 import { emptyExerciseSubmissionFormRecord } from '../exerciseSubmissions/exerciseSubmission.model';
 import { ChapterDraftComponent } from 'src/app/pages/profiles/chapter-profile/draft/chapter-draft.component';
+import { ForceRefetchExerciseKeysAction } from '../exerciseKeys/exerciseKey.actions';
 
 @State<ExerciseStateModel>({
   name: 'exerciseState',
@@ -358,6 +359,7 @@ export class ExerciseState {
                 exerciseFormRecord: emptyExerciseFormRecord,
                 fetchPolicy: 'network-only',
               });
+              this.store.dispatch(new ForceRefetchExerciseKeysAction());
               this.store.dispatch(
                 new ShowNotificationAction({
                   message: `Exercise ${
@@ -435,6 +437,7 @@ export class ExerciseState {
                 action: 'success',
               })
             );
+            this.store.dispatch(new ForceRefetchExerciseKeysAction());
           } else {
             this.store.dispatch(
               new ShowNotificationAction({

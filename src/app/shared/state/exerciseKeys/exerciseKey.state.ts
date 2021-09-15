@@ -72,7 +72,7 @@ export class ExerciseKeyState {
       };
       return option;
     });
-    
+
     return options;
   }
 
@@ -98,11 +98,22 @@ export class ExerciseKeyState {
 
   @Action(ForceRefetchExerciseKeysAction)
   forceRefetchExerciseKeys({
+    getState,
     patchState,
   }: StateContext<ExerciseKeyStateModel>) {
     patchState({ fetchPolicy: 'network-only' });
+    const state = getState();
+    const previousFetchParams =
+      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    const pageNumber = previousFetchParams.currentPage;
+    const previousSearchParams: SearchParams = {
+      pageNumber,
+      pageSize: previousFetchParams.pageSize,
+      searchQuery: previousFetchParams.searchQuery,
+      columnFilters: previousFetchParams.columnFilters,
+    };
     this.store.dispatch(
-      new FetchExerciseKeysAction({ searchParams: defaultSearchParams })
+      new FetchExerciseKeysAction({ searchParams: previousSearchParams })
     );
   }
 
@@ -134,7 +145,6 @@ export class ExerciseKeyState {
     { getState, patchState }: StateContext<ExerciseKeyStateModel>,
     { payload }: FetchExerciseKeysAction
   ) {
-    
     let { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, fetchParamObjects, exerciseKeysSubscribed } = state;
@@ -154,54 +164,49 @@ export class ExerciseKeyState {
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
-    if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
-      patchState({ isFetching: true });
-      
-      this.apollo
-        .watchQuery({
-          query: EXERCISE_KEY_QUERIES.GET_EXERCISE_KEYS,
-          variables,
-          fetchPolicy,
-        })
-        .valueChanges.subscribe(
-          ({ data }: any) => {
-            
-            const response = data.exerciseKeys;
-            newFetchParams = { ...newFetchParams };
-            let paginatedExerciseKeys = state.paginatedExerciseKeys;
-            paginatedExerciseKeys = {
-              ...paginatedExerciseKeys,
-              [pageNumber]: response,
-            };
-            
-            let exerciseKeys = convertPaginatedListToNormalList(
-              paginatedExerciseKeys
-            );
-            let lastPage = null;
-            if (response.length < newFetchParams.pageSize) {
-              lastPage = newFetchParams.currentPage;
-            }
-            patchState({
-              lastPage,
-              exerciseKeys,
-              paginatedExerciseKeys,
-              fetchParamObjects: state.fetchParamObjects.concat([
-                newFetchParams,
-              ]),
-              isFetching: false,
-            });
-          },
-          (error) => {
-            this.store.dispatch(
-              new ShowNotificationAction({
-                message: getErrorMessageFromGraphQLResponse(error),
-                action: 'error',
-              })
-            );
-            patchState({ isFetching: false });
+    patchState({ isFetching: true });
+
+    this.apollo
+      .watchQuery({
+        query: EXERCISE_KEY_QUERIES.GET_EXERCISE_KEYS,
+        variables,
+        fetchPolicy,
+      })
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          const response = data.exerciseKeys;
+          newFetchParams = { ...newFetchParams };
+          let paginatedExerciseKeys = state.paginatedExerciseKeys;
+          paginatedExerciseKeys = {
+            ...paginatedExerciseKeys,
+            [pageNumber]: response,
+          };
+
+          let exerciseKeys = convertPaginatedListToNormalList(
+            paginatedExerciseKeys
+          );
+          let lastPage = null;
+          if (response.length < newFetchParams.pageSize) {
+            lastPage = newFetchParams.currentPage;
           }
-        );
-    }
+          patchState({
+            lastPage,
+            exerciseKeys,
+            paginatedExerciseKeys,
+            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
+            isFetching: false,
+          });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetching: false });
+        }
+      );
   }
 
   @Action(ExerciseKeySubscriptionAction)
