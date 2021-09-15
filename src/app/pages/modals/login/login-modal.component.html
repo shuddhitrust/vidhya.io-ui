@@ -24,80 +24,79 @@
  -->
 <ng-template #loginTemplate>
   <div mat-dialog-content class="login-dialog-box">
-    <mat-card>
-      <mat-card-header class="form-title">
-        <mat-card-title>Login</mat-card-title>
-      </mat-card-header>
-      <form
-        [formGroup]="loginForm"
-        novalidate
-        #formDirective="ngForm"
-        (submit)="login(loginForm, formDirective)"
+    <mat-card-header class="form-title">
+      <mat-card-title>Login</mat-card-title>
+    </mat-card-header>
+    <form
+      [formGroup]="loginForm"
+      novalidate
+      #formDirective="ngForm"
+      (submit)="login(loginForm, formDirective)"
+    >
+      <mat-form-field
+        class="col-lg-12 col-md-12 col-sm-12"
+        appearance="outline"
       >
-        <mat-form-field
-          class="col-lg-12 col-md-12 col-sm-12"
-          appearance="outline"
+        <mat-label>Username</mat-label>
+        <input
+          autofocus
+          matInput
+          formControlName="username"
+          required
+          placeholder="Username"
+        />
+        <small
+          class="validation-error"
+          *ngIf="
+            loginForm.get('username').hasError('required') &&
+            formDirective.submitted
+          "
         >
-          <mat-label>Username</mat-label>
-          <input
-            autofocus
-            matInput
-            formControlName="username"
-            required
-            placeholder="Username"
-          />
-          <small
-            class="validation-error"
-            *ngIf="
-              loginForm.get('username').hasError('required') &&
-              formDirective.submitted
-            "
-          >
-            Username is required
-          </small>
-        </mat-form-field>
+          Username is required
+        </small>
+      </mat-form-field>
 
-        <mat-form-field
-          class="col-lg-12 col-md-12 col-sm-12"
-          appearance="outline"
-        >
-          <mat-label>Password</mat-label>
-          <input
-            matInput
-            [type]="hide ? 'password' : 'text'"
-            formControlName="password"
-            required
-            placeholder="Password"
-          />
-          <button
-            mat-icon-button
-            matSuffix
-            (click)="hide = !hide"
-            [attr.aria-label]="'Hide password'"
-            [attr.aria-pressed]="hide"
-          >
-            <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
-          </button>
-          <small
-            class="validation-error"
-            *ngIf="
-              loginForm.get('password').hasError('required') &&
-              formDirective.submitted
-            "
-          >
-            Password is required
-          </small>
-        </mat-form-field>
+      <mat-form-field
+        class="col-lg-12 col-md-12 col-sm-12"
+        appearance="outline"
+      >
+        <mat-label>Password</mat-label>
+        <input
+          matInput
+          [type]="hide ? 'password' : 'text'"
+          formControlName="password"
+          required
+          placeholder="Password"
+        />
         <button
-          class="submit-button"
-          mat-raised-button
-          color="primary"
-          [disabled]="isSubmittingForm === true"
+          mat-icon-button
+          matSuffix
+          (click)="hide = !hide"
+          [attr.aria-label]="'Hide password'"
+          [attr.aria-pressed]="hide"
         >
-          {{ isSubmittingForm === true ? "Logging in..." : "Login" }}
+          <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
         </button>
-      </form>
-    </mat-card>
+        <small
+          class="validation-error"
+          *ngIf="
+            loginForm.get('password').hasError('required') &&
+            formDirective.submitted
+          "
+        >
+          Password is required
+        </small>
+      </mat-form-field>
+      <button
+        type="submit"
+        class="submit-button"
+        mat-raised-button
+        color="primary"
+        [disabled]="isSubmittingForm === true"
+      >
+        {{ isSubmittingForm === true ? "Logging in..." : "Login" }}
+      </button>
+    </form>
     <div class="secondary-auth-options">
       <p
         class="link-button"
@@ -116,59 +115,57 @@
  -->
 <ng-template #invitecodeTemplate>
   <div mat-dialog-content class="invitecode-dialog-box">
-    <mat-card>
-      <mat-card-header class="form-title">
-        <mat-card-title>Enter Invite Code</mat-card-title>
-      </mat-card-header>
-      <form
-        [formGroup]="invitecodeForm"
-        novalidate
-        #formDirective="ngForm"
-        (submit)="verifyInvitecode(invitecodeForm)"
+    <mat-card-header class="form-title">
+      <mat-card-title>Enter Invite Code</mat-card-title>
+    </mat-card-header>
+    <form
+      [formGroup]="invitecodeForm"
+      novalidate
+      #formDirective="ngForm"
+      (submit)="verifyInvitecode(invitecodeForm)"
+    >
+      <mat-form-field
+        class="col-lg-12 col-md-12 col-sm-12"
+        appearance="outline"
       >
-        <mat-form-field
-          class="col-lg-12 col-md-12 col-sm-12"
-          appearance="outline"
+        <mat-label>Invite Code</mat-label>
+        <input
+          matInput
+          autofocus
+          formControlName="invitecode"
+          required
+          placeholder="Enter the invite code you received from your institution"
+        />
+        <small
+          class="validation-error"
+          *ngIf="
+            invitecodeForm.get('invitecode').hasError('required') &&
+            formDirective.submitted
+          "
         >
-          <mat-label>Invite Code</mat-label>
-          <input
-            matInput
-            autofocus
-            formControlName="invitecode"
-            required
-            placeholder="Enter the invite code you received from your institution"
-          />
-          <small
-            class="validation-error"
-            *ngIf="
-              invitecodeForm.get('invitecode').hasError('required') &&
-              formDirective.submitted
-            "
-          >
-            Invite Code is required
-          </small>
-          <small
-            class="validation-error"
-            *ngIf="
-              (invitecodeForm.get('invitecode').hasError('maxlength') ||
-                invitecodeForm.get('invitecode').hasError('minlength')) &&
-              formDirective.submitted
-            "
-          >
-            Please enter a valid invite code
-          </small>
-        </mat-form-field>
-        <button
-          type="submit"
-          class="submit-button"
-          mat-raised-button
-          color="primary"
-          [disabled]="isSubmittingForm === true"
+          Invite Code is required
+        </small>
+        <small
+          class="validation-error"
+          *ngIf="
+            (invitecodeForm.get('invitecode').hasError('maxlength') ||
+              invitecodeForm.get('invitecode').hasError('minlength')) &&
+            formDirective.submitted
+          "
         >
-          {{ isSubmittingForm === true ? "Verifying..." : "Verify invitation" }}
-        </button>
-      </form>
-    </mat-card>
+          Please enter a valid invite code
+        </small>
+      </mat-form-field>
+      <button
+        type="submit"
+        class="submit-button"
+        mat-raised-button
+        color="primary"
+        [disabled]="isSubmittingForm === true"
+      >
+        {{ isSubmittingForm === true ? "Verifying..." : "Verify invitation" }}
+      </button>
+    </form>
     <div class="secondary-auth-options">
       <p class="link-button" (click)="showForgotPassword()">Forgot password?</p>
       <p class="link-button" (click)="showLogin()">Login</p>
@@ -182,144 +179,142 @@
 -->
 <ng-template #registerTemplate>
   <div mat-dialog-content class="register-dialog-box">
-    <mat-card>
-      <mat-card-header class="form-title">
-        <mat-card-title>Register</mat-card-title>
-      </mat-card-header>
-      <form
-        [formGroup]="registerForm"
-        novalidate
-        #formDirective="ngForm"
-        (submit)="register(registerForm, formDirective)"
+    <mat-card-header class="form-title">
+      <mat-card-title>Register</mat-card-title>
+    </mat-card-header>
+    <form
+      [formGroup]="registerForm"
+      novalidate
+      #formDirective="ngForm"
+      (submit)="register(registerForm, formDirective)"
+    >
+      <mat-form-field
+        class="col-lg-12 col-md-12 col-sm-12"
+        appearance="outline"
       >
-        <mat-form-field
-          class="col-lg-12 col-md-12 col-sm-12"
-          appearance="outline"
-        >
-          <mat-label>Username</mat-label>
-          <input
-            matInput
-            autofocus
-            autofocus
-            formControlName="username"
-            required
-            placeholder="Username"
-          /><mat-hint
-            *ngIf="
-              !(
-                registerForm.get('username').hasError('required') &&
-                formDirective.submitted
-              )
-            "
-            >You will not be able to change the username later.</mat-hint
-          >
-          <small
-            class="validation-error"
-            *ngIf="
+        <mat-label>Username</mat-label>
+        <input
+          matInput
+          autofocus
+          autofocus
+          formControlName="username"
+          required
+          placeholder="Username"
+        /><mat-hint
+          *ngIf="
+            !(
               registerForm.get('username').hasError('required') &&
               formDirective.submitted
-            "
-          >
-            Username is required
-          </small>
-        </mat-form-field>
+            )
+          "
+          >You will not be able to change the username later.</mat-hint
+        >
+        <small
+          class="validation-error"
+          *ngIf="
+            registerForm.get('username').hasError('required') &&
+            formDirective.submitted
+          "
+        >
+          Username is required
+        </small>
+      </mat-form-field>
 
-        <mat-form-field
-          class="col-lg-12 col-md-12 col-sm-12"
-          appearance="outline"
+      <mat-form-field
+        class="col-lg-12 col-md-12 col-sm-12"
+        appearance="outline"
+      >
+        <mat-label>Email ID</mat-label>
+        <input
+          matInput
+          formControlName="email"
+          (keypress)="preventSpaces($event)"
+          required
+          placeholder="Email ID"
+        />
+        <small
+          class="validation-error"
+          *ngIf="
+            registerForm.get('email').hasError('required') &&
+            formDirective.submitted
+          "
         >
-          <mat-label>Email ID</mat-label>
-          <input
-            matInput
-            formControlName="email"
-            (keypress)="preventSpaces($event)"
-            required
-            placeholder="Email ID"
-          />
-          <small
-            class="validation-error"
-            *ngIf="
-              registerForm.get('email').hasError('required') &&
-              formDirective.submitted
-            "
-          >
-            Email is required
-          </small>
-          <small
-            class="validation-error"
-            *ngIf="
-              registerForm.get('email').hasError('email') &&
-              formDirective.submitted
-            "
-          >
-            Please enter a valid email
-          </small>
-        </mat-form-field>
+          Email is required
+        </small>
+        <small
+          class="validation-error"
+          *ngIf="
+            registerForm.get('email').hasError('email') &&
+            formDirective.submitted
+          "
+        >
+          Please enter a valid email
+        </small>
+      </mat-form-field>
 
-        <mat-form-field
-          class="col-lg-12 col-md-12 col-sm-12"
-          appearance="outline"
+      <mat-form-field
+        class="col-lg-12 col-md-12 col-sm-12"
+        appearance="outline"
+      >
+        <mat-label>Password</mat-label>
+        <input
+          matInput
+          type="password"
+          formControlName="password1"
+          required
+          placeholder="Password"
+        />
+        <small
+          class="validation-error"
+          *ngIf="
+            registerForm.get('password1').hasError('required') &&
+            formDirective.submitted
+          "
         >
-          <mat-label>Password</mat-label>
-          <input
-            matInput
-            type="password"
-            formControlName="password1"
-            required
-            placeholder="Password"
-          />
-          <small
-            class="validation-error"
-            *ngIf="
-              registerForm.get('password1').hasError('required') &&
-              formDirective.submitted
-            "
-          >
-            Password is required
-          </small>
-        </mat-form-field>
-        <mat-form-field
-          class="col-lg-12 col-md-12 col-sm-12"
-          appearance="outline"
-        >
-          <mat-label>Confirm</mat-label>
-          <input
-            matInput
-            [type]="hide ? 'password' : 'text'"
-            formControlName="password2"
-            required
-            placeholder="Confirm password"
-          />
-          <button
-            mat-icon-button
-            matSuffix
-            (click)="hide = !hide"
-            [attr.aria-label]="'Hide password'"
-            [attr.aria-pressed]="hide"
-          >
-            <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
-          </button>
-          <small
-            class="validation-error"
-            *ngIf="
-              registerForm.get('password2').hasError('required') &&
-              formDirective.submitted
-            "
-          >
-            Password is required
-          </small>
-        </mat-form-field>
+          Password is required
+        </small>
+      </mat-form-field>
+      <mat-form-field
+        class="col-lg-12 col-md-12 col-sm-12"
+        appearance="outline"
+      >
+        <mat-label>Confirm</mat-label>
+        <input
+          matInput
+          [type]="hide ? 'password' : 'text'"
+          formControlName="password2"
+          required
+          placeholder="Confirm password"
+        />
         <button
-          type="submit"
-          class="submit-button"
-          mat-raised-button
-          color="primary"
-          [disabled]="isSubmittingForm === true"
+          mat-icon-button
+          matSuffix
+          (click)="hide = !hide"
+          [attr.aria-label]="'Hide password'"
+          [attr.aria-pressed]="hide"
         >
-          {{ isSubmittingForm === true ? "Registering..." : "Register" }}
+          <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
         </button>
-      </form>
-    </mat-card>
+        <small
+          class="validation-error"
+          *ngIf="
+            registerForm.get('password2').hasError('required') &&
+            formDirective.submitted
+          "
+        >
+          Password is required
+        </small>
+      </mat-form-field>
+      <button
+        type="submit"
+        class="submit-button"
+        mat-raised-button
+        color="primary"
+        [disabled]="isSubmittingForm === true"
+      >
+        {{ isSubmittingForm === true ? "Registering..." : "Register" }}
+      </button>
+    </form>
     <div class="secondary-auth-options">
       <p class="link-button" (click)="showForgotPassword()">Forgot password?</p>
       <p class="link-button" (click)="showLogin()">Login</p>
@@ -333,70 +328,67 @@
  -->
 <ng-template #forgotPasswordTemplate>
   <div mat-dialog-content class="email-input-dialog-box">
-    <mat-card>
-      <mat-card-header class="form-title">
-        <mat-card-title>Send Password Reset Email</mat-card-title>
-        <hr />
-        <mat-card-subtitle style="text-align: left"
-          ><p>
-            Enter the email ID tied to your account and submit this form to
-            receive instructions to reset your password in the email.
-          </p></mat-card-subtitle
-        >
-      </mat-card-header>
-
-      <form
-        [formGroup]="emailForm"
-        novalidate
-        #formDirective="ngForm"
-        (submit)="sendPasswordResetEmail(emailForm, formDirective)"
+    <mat-card-header class="form-title">
+      <mat-card-title>Send Password Reset Email</mat-card-title>
+      <hr />
+      <mat-card-subtitle style="text-align: left"
+        ><p>
+          Enter the email ID tied to your account and submit this form to
+          receive instructions to reset your password in the email.
+        </p></mat-card-subtitle
       >
-        <mat-form-field
-          class="col-lg-12 col-md-12 col-sm-12"
-          appearance="outline"
+    </mat-card-header>
+
+    <form
+      [formGroup]="emailForm"
+      novalidate
+      #formDirective="ngForm"
+      (submit)="sendPasswordResetEmail(emailForm, formDirective)"
+    >
+      <mat-form-field
+        class="col-lg-12 col-md-12 col-sm-12"
+        appearance="outline"
+      >
+        <mat-label>Email ID</mat-label>
+        <input
+          autofocus
+          matInput
+          formControlName="email"
+          (keypress)="preventSpaces($event)"
+          required
+          placeholder="Email ID"
+        />
+        <small
+          class="validation-error"
+          *ngIf="
+            emailForm.get('email').hasError('required') &&
+            formDirective.submitted
+          "
         >
-          <mat-label>Email ID</mat-label>
-          <input
-            autofocus
-            matInput
-            formControlName="email"
-            (keypress)="preventSpaces($event)"
-            required
-            placeholder="Email ID"
-          />
-          <small
-            class="validation-error"
-            *ngIf="
-              emailForm.get('email').hasError('required') &&
-              formDirective.submitted
-            "
-          >
-            Email is required
-          </small>
-          <small
-            class="validation-error"
-            *ngIf="
-              emailForm.get('email').hasError('email') &&
-              formDirective.submitted
-            "
-          >
-            Please enter a valid email
-          </small>
-        </mat-form-field>
-        <button
-          class="submit-button"
-          mat-raised-button
-          color="primary"
-          [disabled]="isSubmittingForm === true"
+          Email is required
+        </small>
+        <small
+          class="validation-error"
+          *ngIf="
+            emailForm.get('email').hasError('email') && formDirective.submitted
+          "
         >
-          {{
-            isSubmittingForm === true
-              ? "Sending Reset Email..."
-              : "Send Reset Instructions"
-          }}
-        </button>
-      </form>
-    </mat-card>
+          Please enter a valid email
+        </small>
+      </mat-form-field>
+      <button
+        class="submit-button"
+        mat-raised-button
+        color="primary"
+        [disabled]="isSubmittingForm === true"
+      >
+        {{
+          isSubmittingForm === true
+            ? "Sending Reset Email..."
+            : "Send Reset Instructions"
+        }}
+      </button>
+    </form>
     <div class="secondary-auth-options">
       <p class="link-button" (click)="showLogin()">Login</p>
     </div>
@@ -408,70 +400,67 @@
  -->
 <ng-template #resendActivationEmailTemplate>
   <div mat-dialog-content class="email-input-dialog-box">
-    <mat-card>
-      <mat-card-header class="form-title">
-        <mat-card-title>Resend activation Email</mat-card-title>
-        <hr />
-        <mat-card-subtitle style="text-align: left"
-          ><p>
-            Enter the email ID you used to register and submit this form to
-            receive instructions to activate your account.
-          </p></mat-card-subtitle
-        >
-      </mat-card-header>
-
-      <form
-        [formGroup]="emailForm"
-        novalidate
-        #formDirective="ngForm"
-        (submit)="sendAccountActivationEmail(emailForm, formDirective)"
+    <mat-card-header class="form-title">
+      <mat-card-title>Resend activation Email</mat-card-title>
+      <hr />
+      <mat-card-subtitle style="text-align: left"
+        ><p>
+          Enter the email ID you used to register and submit this form to
+          receive instructions to activate your account.
+        </p></mat-card-subtitle
       >
-        <mat-form-field
-          class="col-lg-12 col-md-12 col-sm-12"
-          appearance="outline"
+    </mat-card-header>
+
+    <form
+      [formGroup]="emailForm"
+      novalidate
+      #formDirective="ngForm"
+      (submit)="sendAccountActivationEmail(emailForm, formDirective)"
+    >
+      <mat-form-field
+        class="col-lg-12 col-md-12 col-sm-12"
+        appearance="outline"
+      >
+        <mat-label>Email ID</mat-label>
+        <input
+          matInput
+          autofocus
+          formControlName="email"
+          (keypress)="preventSpaces($event)"
+          required
+          placeholder="Email ID"
+        />
+        <small
+          class="validation-error"
+          *ngIf="
+            emailForm.get('email').hasError('required') &&
+            formDirective.submitted
+          "
         >
-          <mat-label>Email ID</mat-label>
-          <input
-            matInput
-            autofocus
-            formControlName="email"
-            (keypress)="preventSpaces($event)"
-            required
-            placeholder="Email ID"
-          />
-          <small
-            class="validation-error"
-            *ngIf="
-              emailForm.get('email').hasError('required') &&
-              formDirective.submitted
-            "
-          >
-            Email is required
-          </small>
-          <small
-            class="validation-error"
-            *ngIf="
-              emailForm.get('email').hasError('email') &&
-              formDirective.submitted
-            "
-          >
-            Please enter a valid email
-          </small>
-        </mat-form-field>
-        <button
-          class="submit-button"
-          mat-raised-button
-          color="primary"
-          [disabled]="isSubmittingForm === true"
+          Email is required
+        </small>
+        <small
+          class="validation-error"
+          *ngIf="
+            emailForm.get('email').hasError('email') && formDirective.submitted
+          "
         >
-          {{
-            isSubmittingForm === true
-              ? "Sending Activation Email..."
-              : "Send Activation Instructions"
-          }}
-        </button>
-      </form>
-    </mat-card>
+          Please enter a valid email
+        </small>
+      </mat-form-field>
+      <button
+        class="submit-button"
+        mat-raised-button
+        color="primary"
+        [disabled]="isSubmittingForm === true"
+      >
+        {{
+          isSubmittingForm === true
+            ? "Sending Activation Email..."
+            : "Send Activation Instructions"
+        }}
+      </button>
+    </form>
     <div class="secondary-auth-options">
       <p class="link-button" (click)="showLogin()">Login</p>
     </div>
@@ -483,24 +472,18 @@
  -->
 <ng-template #troubleSigningInTemplate>
   <div mat-dialog-content class="email-input-dialog-box">
-    <mat-card>
-      <mat-card-header class="form-title">
-        <mat-card-title>What issue are you having?</mat-card-title>
-        <hr />
-      </mat-card-header>
-      <hr />
-      <button
-        (click)="showResendActivation()"
-        mat-raised-button
-        color="primary"
-      >
-        I did not receive my account activation email
-      </button>
-      <hr />
-      <button (click)="showForgotPassword()" mat-raised-button color="primary">
-        I forgot my password
-      </button>
-    </mat-card>
+    <mat-card-header class="form-title">
+      <mat-card-title>What issue are you having?</mat-card-title>
+    </mat-card-header>
+    <hr />
+    <button (click)="showResendActivation()" mat-raised-button color="primary">
+      I did not receive my account activation email
+    </button>
+    <hr />
+    <button (click)="showForgotPassword()" mat-raised-button color="primary">
+      I forgot my password
+    </button>
+    <hr />
     <div class="secondary-auth-options">
       <p class="link-button" (click)="showLogin()">Login</p>
     </div>

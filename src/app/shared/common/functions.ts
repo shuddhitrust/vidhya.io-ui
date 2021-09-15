@@ -425,5 +425,5 @@ export const sortArrayOfObjectsByString = (array: any[], key: string) => {
 };
 
 export const preventSpaces = ($event) => {
-  return $event.charCode != 32;
+  return $event.code != 'Space';
 };
