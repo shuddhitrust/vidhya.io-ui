@@ -23,6 +23,7 @@ import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 
 const components = [
   MatToolbarModule,
@@ -47,7 +48,8 @@ const components = [
   NzListModule,
   NzLayoutModule,
   ClipboardModule,
-  NzTabsModule
+  NzTabsModule,
+  NzToolTipModule,
 ];
 
 @NgModule({

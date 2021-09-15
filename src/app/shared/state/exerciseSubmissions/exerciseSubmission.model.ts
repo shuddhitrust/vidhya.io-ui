@@ -39,6 +39,8 @@ export const emptyExerciseSubmissionFormRecord: ExerciseSubmission = {
   points: null,
   percentage: null,
   status: null,
+  grader: null,
+  flagged: false,
   remarks: null,
 };
 export interface ExerciseSubmissionStateModel {

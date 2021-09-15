@@ -116,21 +116,54 @@
                   : null
               "
             >
+              <button
+                *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
+                mat-mini-fab
+                type="button"
+                [color]="exerciseSubmission.flagged ? 'warn' : 'secondary'"
+                class="card-button"
+                (click)="toggleFlaggedSubmission(exerciseSubmission)"
+                nz-tooltip
+                nzTooltipPlacement="top"
+                [nzTooltipTitle]="
+                  exerciseSubmission.flagged
+                    ? 'Unflag this submission'
+                    : 'Flag this submission for review. Add remarks specifying why this needs review.'
+                "
+              >
+                <mat-icon>report</mat-icon>
+              </button>
               <mat-card-header>
                 <mat-card-title>{{
                   exerciseSubmission?.exercise?.prompt
                 }}</mat-card-title>
 
-                <mat-card-subtitle>
-                  <small>{{ submissionSubtitle(exerciseSubmission) }}</small>
-                  <p>
-                    <small
-                      >Submitted on
-                      {{ parseDateTime(exerciseSubmission.createdAt) }}</small
-                    >
-                    by {{ exerciseSubmission?.participant?.name }}
-                  </p></mat-card-subtitle
+                <mat-card-subtitle
+                  style="margin-bottom: 0px; padding-bottom: 0px"
                 >
+                  <small style="display: block; font-weight: bold">{{
+                    submissionSubtitle(exerciseSubmission)
+                  }}</small
+                  >&#10;
+                  <small
+                    >Submitted on
+                    {{ parseDateTime(exerciseSubmission.createdAt) }}</small
+                  >
+                  by {{ exerciseSubmission?.participant?.name }}
+                </mat-card-subtitle>
+                <mat-card-subtitle
+                  style="margin-top: 0px; padding-top: 0px"
+                  *ngIf="exerciseSubmission?.grader?.name"
+                >
+                  <small>
+                    {{
+                      "Last updated on " +
+                        parseDateTime(exerciseSubmission.updatedAt) +
+                        " by " +
+                        exerciseSubmission?.grader?.name
+                    }}
+                  </small>
+                </mat-card-subtitle>
               </mat-card-header>
               <mat-card-content>
                 <mat-form-field
@@ -214,6 +247,7 @@
                   <mat-label>Remarks</mat-label>
                   <input
                     matInput
+                    [required]="remarksRequired(exerciseSubmission)"
                     (keypress)="updateRemarks($event, exerciseSubmission)"
                     [ngModel]="exerciseSubmission.remarks"
                     placeholder="Optional Remarks"
@@ -228,6 +262,9 @@
                   color="accent"
                   [class.button-loading]="isFetchingExerciseKey$ | async"
                   (click)="showAnswerKey(exerciseSubmission)"
+                  nz-tooltip
+                  nzTooltipPlacement="top"
+                  nzTooltipTitle="View answer key"
                 >
                   <mat-icon>vpn_key</mat-icon>
                 </button>
@@ -238,26 +275,23 @@
                   color="primary"
                   class="card-button"
                   (click)="markCorrect(exerciseSubmission)"
+                  nz-tooltip
+                  nzTooltipPlacement="top"
+                  nzTooltipTitle="Award full points"
                 >
-                  <mat-icon>check</mat-icon>
-                </button>
-                <button
-                  *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
-                  type="button"
-                  color="warn"
-                  class="card-button"
-                  mat-mini-fab
-                  (click)="markIncorrect(exerciseSubmission)"
-                >
-                  <mat-icon>close</mat-icon>
+                  {{ exerciseSubmission.exercise?.points }}
                 </button>
                 <div
                   class="card-button"
                   *ngIf="exerciseSubmission.exercise?.points"
+                  style="margin-top: -10px"
                 >
                   <mat-form-field
                     class="points-input-container"
                     appearance="outline"
+                    nz-tooltip
+                    nzTooltipPlacement="top"
+                    nzTooltipTitle="Award partial points. Explain reason for deducting points in the remarks."
                   >
                     <input
                       matInput
@@ -270,6 +304,19 @@
                     >
                   </mat-form-field>
                 </div>
+                <button
+                  *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
+                  type="button"
+                  color="secondary"
+                  class="card-button"
+                  mat-mini-fab
+                  nz-tooltip
+                  nzTooltipPlacement="top"
+                  nzTooltipTitle="Award 0 points"
+                  (click)="markIncorrect(exerciseSubmission)"
+                >
+                  {{ 0 }}
+                </button>
               </mat-card-actions>
             </mat-card>
           </div>

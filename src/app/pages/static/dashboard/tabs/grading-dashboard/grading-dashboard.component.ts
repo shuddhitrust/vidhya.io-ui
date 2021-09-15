@@ -128,8 +128,8 @@ export class GradingDashboardComponent implements OnInit {
 
   submissionSubtitle(submission) {
     return `${submission?.exercise?.course?.title}${
-      submission?.chapter?.section.title
-        ? ' > ' + submission?.chapter?.section.title
+      submission?.chapter?.section?.title
+        ? ' > ' + submission?.chapter?.section?.title
         : ''
     }${
       submission.exercise?.chapter?.dueDate
@@ -290,6 +290,29 @@ export class GradingDashboardComponent implements OnInit {
   markIncorrect(exerciseSubmission) {
     this.updatePoints(exerciseSubmission, 0);
   }
+  toggleFlaggedSubmission(exerciseSubmission) {
+    this.gradingUpdate(exerciseSubmission);
+    let submission = this.exerciseSubmissions.find((s: ExerciseSubmission) => {
+      return s.id == exerciseSubmission.id;
+    });
+
+    submission = Object.assign({}, submission);
+    submission.flagged = !submission.flagged;
+    this.exerciseSubmissions = this.exerciseSubmissions.map((s) => {
+      if (s.id == submission.id) {
+        return submission;
+      } else return s;
+    });
+  }
+  remarksRequired(exerciseSubmission) {
+    return this.partialScore(exerciseSubmission) || exerciseSubmission.flagged;
+  }
+  partialScore(exerciseSubmission) {
+    return (
+      exerciseSubmission.points > 0 &&
+      exerciseSubmission.points < exerciseSubmission.exercise.points
+    );
+  }
   updatePoints(exerciseSubmission, points) {
     this.gradingUpdate(exerciseSubmission);
     let submission = this.exerciseSubmissions.find((s: ExerciseSubmission) => {
@@ -363,6 +386,7 @@ export class GradingDashboardComponent implements OnInit {
 export class ExercicseKeyDialog {
   exerciseKey: ExerciseKey;
   isFetchingExerciseKey: boolean = false;
+  chapterRoute = '';
   questionTypes: any = ExerciseQuestionTypeOptions;
   constructor(
     public dialogRef: MatDialogRef<ExercicseKeyDialog>,
@@ -370,6 +394,9 @@ export class ExercicseKeyDialog {
   ) {
     data.exerciseKeyRecord$.subscribe((val) => {
       this.exerciseKey = val;
+      console.log('exerciseKey', this.exerciseKey);
+      this.chapterRoute = `/${uiroutes.CHAPTER_PROFILE_ROUTE.route}?id=${this.exerciseKey.exercise?.chapter?.id}`;
+      console.log('chapterRoute', this.chapterRoute);
     });
     data.isFetchingExerciseKey$.subscribe((val) => {
       this.isFetchingExerciseKey = val;

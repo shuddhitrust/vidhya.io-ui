@@ -526,6 +526,10 @@ export const EXERCISE_SUBMISSION_QUERIES = {
         points
         percentage
         status
+        flagged
+        grader {
+          name
+        }
         remarks
       }
     }
@@ -587,7 +591,12 @@ export const EXERCISE_SUBMISSION_QUERIES = {
         percentage
         status
         remarks
+        flagged
+        grader {
+          name
+        }
         createdAt
+        updatedAt
       }
     }
   `,

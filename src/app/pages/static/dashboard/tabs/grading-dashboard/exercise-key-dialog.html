@@ -96,6 +96,11 @@
     <mat-label>Additional Remarks</mat-label>
     <input matInput disabled [value]="exerciseKey?.remarks" />
   </mat-form-field>
+  <p>
+    <a [href]="chapterRoute" target="_blank" rel="noopener noreferrer nofollow"
+      >View this exercise in context</a
+    >
+  </p>
 </mat-dialog-content>
 <ng-template #loadingTemplate>
   <app-simple-loading-spinner></app-simple-loading-spinner>
