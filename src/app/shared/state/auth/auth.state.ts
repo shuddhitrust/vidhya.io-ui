@@ -1047,6 +1047,13 @@ export class AuthState {
       );
       isSubmittingForm = true;
       const invitecode = form.value.invitecode;
+      /**
+       * // Setting the invitecode in localstorage as backup
+       * in case it isn't picked up from the state
+       * while adding it to the user record after registration.
+       * Check in AddInviteCode action's method for follow up on its usage.
+       */
+      localStorage.setItem('invitecode', invitecode);
 
       patchState({
         isSubmittingForm,
@@ -1164,13 +1171,16 @@ export class AuthState {
     const state = getState();
     const { email } = payload;
     let { currentMember } = state;
-    const invitecode = currentMember.invitecode;
+    const invitecodeFromLocalstorage = localStorage.getItem('invitecode');
+    const invitecode = currentMember.invitecode
+      ? currentMember.invitecode
+      : invitecodeFromLocalstorage;
     if (invitecode) {
       this.apollo
         .mutate({
           mutation: AUTH_MUTATIONS.ADD_INVITECODE,
           variables: {
-            invitecode: currentMember.invitecode,
+            invitecode,
             email,
           },
         })
@@ -1205,6 +1215,14 @@ export class AuthState {
             );
           }
         );
+    } else {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message:
+            'It appears there was an error while attempting to register. Please contact the admin.',
+          action: 'error',
+        })
+      );
     }
   }
 
