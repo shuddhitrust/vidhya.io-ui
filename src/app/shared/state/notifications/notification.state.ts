@@ -18,6 +18,7 @@ export class NotificationState {
     dismissible: defaultNotificationState.dismissible,
     position: defaultNotificationState.position,
     id: defaultNotificationState.id,
+    duration: defaultNotificationState.duration,
   };
   constructor(private toastService: HotToastService) {}
 

@@ -7,6 +7,7 @@ export interface NotificationStateModel {
   dismissible: boolean;
   position: HotToastPositionOptions;
   id: string;
+  duration: number;
 }
 
 export const defaultNotificationState: NotificationStateModel = {
@@ -16,4 +17,5 @@ export const defaultNotificationState: NotificationStateModel = {
   dismissible: true,
   position: 'bottom-center',
   id: null,
+  duration: 5000,
 };
