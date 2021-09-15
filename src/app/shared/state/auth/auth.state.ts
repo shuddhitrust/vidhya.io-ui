@@ -1187,6 +1187,7 @@ export class AuthState {
         .subscribe(
           ({ data }: any) => {
             const response = data.addInvitecode;
+            localStorage.removeItem('invitecode');
             if (response.ok) {
               this.store.dispatch(
                 new ShowNotificationAction({
