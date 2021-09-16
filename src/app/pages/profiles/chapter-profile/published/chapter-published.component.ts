@@ -17,6 +17,7 @@ import {
   Exercise,
   ExerciseQuestionTypeOptions,
   ExerciseSubmission,
+  ExerciseSubmissionStatusOptions,
   MatSelectOption,
   resources,
   RESOURCE_ACTIONS,
@@ -33,9 +34,13 @@ import {
 } from 'src/app/shared/state/exercises/exercise.actions';
 import {
   autoGenOptions,
+  ChapterSubtitle,
+  ChapterTitle,
+  ExerciseTitle,
   getOptionLabel,
   parseDateTime,
   sortByIndex,
+  SubmissionStatus,
 } from 'src/app/shared/common/functions';
 import { FormGroupDirective } from '@angular/forms';
 import { CreateUpdateExerciseSubmissionsAction } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.actions';
@@ -159,13 +164,19 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
       this.errorFetching = val;
     });
   }
-
+  chapterTitle(chapter) {
+    return ChapterTitle(chapter);
+  }
   chapterSubtitle(chapter) {
-    return `${chapter.course?.title} ${
-      chapter.section?.title ? ' > ' + chapter.section?.title + '. ' : '. '
-    } ${chapter.dueDate ? `Due on ${this.parseDate(chapter?.dueDate)}` : ''}`;
+    return ChapterSubtitle(chapter);
   }
 
+  exerciseTitle(exercise: Exercise): string {
+    return ExerciseTitle(this.chapter, exercise);
+  }
+  submissionStatus(submission: ExerciseSubmission): string {
+    return SubmissionStatus(submission);
+  }
   setupExerciseSubmission(exercise: Exercise): ExerciseSubmission {
     let submission: ExerciseSubmission = Object.assign(
       {},

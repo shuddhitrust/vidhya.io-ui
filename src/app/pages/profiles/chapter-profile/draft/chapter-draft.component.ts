@@ -15,6 +15,7 @@ import {
   Chapter,
   ChapterStatusOptions,
   CourseStatusOptions,
+  Exercise,
   ExerciseKey,
   ExerciseQuestionTypeOptions,
   MatSelectOption,
@@ -31,6 +32,9 @@ import {
 } from 'src/app/shared/state/exercises/exercise.actions';
 import {
   autoGenOptions,
+  ChapterSubtitle,
+  ChapterTitle,
+  ExerciseTitle,
   getOptionLabel,
   parseDateTime,
   sortByIndex,
@@ -187,13 +191,15 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   parseDate(date) {
     return parseDateTime(date);
   }
+  chapterTitle(chapter: Chapter): string {
+    return ChapterTitle(chapter);
+  }
+  chapterSubtitle(chapter: Chapter): string {
+    return ChapterSubtitle(chapter);
+  }
 
-  chapterSubtitle(chapter) {
-    return `${chapter.course?.title} ${
-      chapter.section?.title ? ' > ' + chapter.section?.title + '. ' : '. '
-    } ${
-      chapter.dueDate ? `Due on ${this.parseDate(chapter?.dueDate)}. ` : ' '
-    }${chapter.points} Points`;
+  exerciseTitle(exercise: Exercise): string {
+    return ExerciseTitle(this.chapter, exercise);
   }
 
   chapterFilters() {
@@ -280,7 +286,6 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     this.showExerciseForm = true;
   }
   deleteExerciseConfirmation(key) {
-    console.log('from delete confirmation', { key });
     const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
       title: 'Confirm delete?',
       message: `Are you sure you want to delete the exercise "${key?.exercise?.prompt}"`,

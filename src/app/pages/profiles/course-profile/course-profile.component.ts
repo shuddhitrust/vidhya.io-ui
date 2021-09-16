@@ -38,7 +38,11 @@ import {
   DragDropComponent,
   DragDropInput,
 } from 'src/app/shared/components/drag-drop/drag-drop.component';
-import { parseDateTime, sortByIndex } from 'src/app/shared/common/functions';
+import {
+  ChapterTitle,
+  parseDateTime,
+  sortByIndex,
+} from 'src/app/shared/common/functions';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { CourseSectionModalComponent } from '../../modals/course-section-modal/course-section-modal.component';
 import { emptyCourseSectionFormRecord } from 'src/app/shared/state/courseSections/courseSection.model';
@@ -126,6 +130,9 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
     return this.auth.authorizeResource(this.resource, action, {
       adminIds: [this.course?.instructor?.id],
     });
+  }
+  chapterTitle(chapter) {
+    return ChapterTitle(chapter);
   }
 
   ngOnInit(): void {
@@ -261,11 +268,7 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
       return c.section?.id == section.id;
     });
   }
-  chapterTitle(chapter) {
-    return `${chapter.section?.index ? chapter.section?.index + '.' : ''}${
-      chapter.index ? chapter.index : ''
-    } ${chapter.title}`;
-  }
+
   chapterPrerequisites(chapter) {
     let prerequisites = '';
     chapter?.prerequisites?.forEach((c) => {

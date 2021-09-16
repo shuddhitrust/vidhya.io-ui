@@ -5,6 +5,10 @@ import {
   SUBSCRIPTION_METHODS,
   User,
   UserPermissions,
+  Chapter,
+  Exercise,
+  ExerciseSubmission,
+  ExerciseSubmissionStatusOptions,
 } from './models';
 import {
   day,
@@ -426,4 +430,46 @@ export const sortArrayOfObjectsByString = (array: any[], key: string) => {
 
 export const preventSpaces = ($event) => {
   return $event.code != 'Space';
+};
+
+export const ChapterTitle = (chapter: Chapter): string => {
+  return `${chapter.section?.index ? chapter.section?.index + '.' : ''}${
+    chapter.index ? chapter.index : ''
+  } ${chapter.title}`;
+};
+
+export const ChapterSubtitle = (chapter: Chapter): string => {
+  return `${chapter.course?.title} ${
+    chapter.section?.title ? ' > ' + chapter.section?.title + '. ' : '. '
+  } ${chapter.dueDate ? `Due on ${parseDateTime(chapter?.dueDate)}` : ''}`;
+};
+
+export const ExerciseTitle = (chapter: Chapter, exercise: Exercise): string => {
+  return `${chapter.section?.index ? `${chapter.section?.index}.` : ''}${
+    chapter?.index ? `${chapter?.index}.` : ''
+  }${exercise.index}) ${exercise.prompt}`;
+};
+
+export const SubmissionStatus = (submission: ExerciseSubmission): string => {
+  let result = 'Not yet submitted';
+  if (submission.status == ExerciseSubmissionStatusOptions.pending) {
+    result = 'Not yet submitted';
+  } else if (submission.status == ExerciseSubmissionStatusOptions.submitted) {
+    result = 'Awaiting grading';
+  } else if (submission.status == ExerciseSubmissionStatusOptions.returned) {
+    result = `Your work was returned ${
+      submission.grader?.name ? `by ${submission.grader.name}` : ''
+    }`;
+  } else if (submission.status == ExerciseSubmissionStatusOptions.graded) {
+    result = `This was graded ${
+      submission.grader?.name
+        ? `by ${submission.grader?.name} `
+        : 'automatically '
+    } at ${
+      parseDateTime(submission.updatedAt)
+        ? parseDateTime(submission.updatedAt)
+        : parseDateTime(submission.createdAt)
+    }`;
+  }
+  return result;
 };

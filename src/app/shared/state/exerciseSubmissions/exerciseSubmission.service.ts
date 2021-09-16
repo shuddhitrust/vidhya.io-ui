@@ -11,7 +11,6 @@ export class ExerciseSubmissionService {
   public sanitizeExerciseSubmissions = (
     submissions: ExerciseSubmission[]
   ): ExerciseSubmission[] => {
-    
     const newSubmissions = submissions.map((s) => {
       let submission: ExerciseSubmission = Object.assign(
         {},
@@ -29,9 +28,13 @@ export class ExerciseSubmissionService {
       submission.points = s.points;
       submission.status = s.status;
       submission.remarks = s.remarks;
+      submission.flagged = s.flagged;
+      submission.grader = s.grader;
+      submission.createdAt = s.createdAt;
+      submission.updatedAt = s.updatedAt;
       return submission;
     });
-    
+
     return newSubmissions;
   };
 }

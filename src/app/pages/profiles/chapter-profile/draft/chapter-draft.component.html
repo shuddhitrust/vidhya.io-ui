@@ -4,7 +4,7 @@
 
 <span *ngIf="!(isFetchingChapter$ | async)">
   <mat-card class="feed-card" style="overflow: hidden">
-    <h2>{{ chapter?.title }}</h2>
+    <h2>{{ chapterTitle(chapter) }}</h2>
     <small class="left" style="font-style: italic">
       {{ chapterSubtitle(chapter) }}
     </small>
@@ -129,7 +129,7 @@
       <mat-icon>edit</mat-icon>
     </button>
 
-    <p>{{ exerciseKey?.exercise.prompt }}</p>
+    <p>{{ exerciseTitle(exerciseKey.exercise) }}</p>
     <p>
       {{ showQuestionTypeLabel(exerciseKey?.exercise.questionType) }} -
       {{ questionTypeDescriptions[exerciseKey?.exercise.questionType] }}

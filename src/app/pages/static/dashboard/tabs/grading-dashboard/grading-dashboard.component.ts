@@ -394,9 +394,7 @@ export class ExercicseKeyDialog {
   ) {
     data.exerciseKeyRecord$.subscribe((val) => {
       this.exerciseKey = val;
-      console.log('exerciseKey', this.exerciseKey);
       this.chapterRoute = `/${uiroutes.CHAPTER_PROFILE_ROUTE.route}?id=${this.exerciseKey.exercise?.chapter?.id}`;
-      console.log('chapterRoute', this.chapterRoute);
     });
     data.isFetchingExerciseKey$.subscribe((val) => {
       this.isFetchingExerciseKey = val;
