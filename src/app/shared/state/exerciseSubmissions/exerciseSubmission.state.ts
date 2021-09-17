@@ -31,6 +31,7 @@ import {
   SUBSCRIPTION_METHODS,
   resources,
   RESOURCE_ACTIONS,
+  startingFetchParams,
 } from '../../common/models';
 import { EXERCISE_SUBMISSION_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
@@ -131,11 +132,25 @@ export class ExerciseSubmissionState {
 
   @Action(ForceRefetchExerciseSubmissionsAction)
   forceRefetchExerciseSubmissions({
+    getState,
     patchState,
   }: StateContext<ExerciseSubmissionStateModel>) {
+    const state = getState();
+    let previousFetchParams =
+      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    previousFetchParams = previousFetchParams
+      ? previousFetchParams
+      : startingFetchParams;
+    const pageNumber = previousFetchParams?.currentPage;
+    const previousSearchParams: SearchParams = {
+      pageNumber,
+      pageSize: previousFetchParams?.pageSize,
+      searchQuery: previousFetchParams?.searchQuery,
+      columnFilters: previousFetchParams?.columnFilters,
+    };
     patchState({ fetchPolicy: 'network-only' });
     this.store.dispatch(
-      new FetchExerciseSubmissionsAction({ searchParams: defaultSearchParams })
+      new FetchExerciseSubmissionsAction({ searchParams: previousSearchParams })
     );
   }
 
@@ -557,11 +572,7 @@ export class ExerciseSubmissionState {
                 action: 'success',
               })
             );
-            this.store.dispatch(
-              new ForceRefetchExerciseSubmissionsAction({
-                searchParams: defaultSearchParams,
-              })
-            );
+            this.store.dispatch(new ForceRefetchExerciseSubmissionsAction());
           } else {
             this.store.dispatch(
               new ShowNotificationAction({

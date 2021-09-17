@@ -25,6 +25,7 @@ import {
   MatSelectOption,
   FetchParams,
   SUBSCRIPTION_METHODS,
+  startingFetchParams,
 } from '../../common/models';
 import { COURSE_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
@@ -78,7 +79,7 @@ export class CourseState {
       };
       return option;
     });
-    
+
     return options;
   }
 
@@ -103,10 +104,26 @@ export class CourseState {
   }
 
   @Action(ForceRefetchCoursesAction)
-  forceRefetchCourses({ patchState }: StateContext<CourseStateModel>) {
+  forceRefetchCourses({
+    getState,
+    patchState,
+  }: StateContext<CourseStateModel>) {
+    const state = getState();
+    let previousFetchParams =
+      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    previousFetchParams = previousFetchParams
+      ? previousFetchParams
+      : startingFetchParams;
+    const pageNumber = previousFetchParams?.currentPage;
+    const previousSearchParams: SearchParams = {
+      pageNumber,
+      pageSize: previousFetchParams?.pageSize,
+      searchQuery: previousFetchParams?.searchQuery,
+      columnFilters: previousFetchParams?.columnFilters,
+    };
     patchState({ fetchPolicy: 'network-only' });
     this.store.dispatch(
-      new FetchCoursesAction({ searchParams: defaultSearchParams })
+      new FetchCoursesAction({ searchParams: previousSearchParams })
     );
   }
 
@@ -137,7 +154,6 @@ export class CourseState {
     { getState, patchState }: StateContext<CourseStateModel>,
     { payload }: FetchCoursesAction
   ) {
-    
     let { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, fetchParamObjects, coursesSubscribed } = state;
@@ -156,7 +172,7 @@ export class CourseState {
     };
     if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
       patchState({ isFetching: true });
-      
+
       this.apollo
         .watchQuery({
           query: COURSE_QUERIES.GET_COURSES,
@@ -165,7 +181,6 @@ export class CourseState {
         })
         .valueChanges.subscribe(
           ({ data }: any) => {
-            
             const response = data.courses;
 
             newFetchParams = { ...newFetchParams };
@@ -272,7 +287,7 @@ export class CourseState {
       formSubmitting = true;
       patchState({ formSubmitting });
       const values = form.value;
-      
+
       const updateForm = values.id == null ? false : true;
       const { id, ...sanitizedValues } = values;
       const variables = updateForm
@@ -293,7 +308,7 @@ export class CourseState {
           ({ data }: any) => {
             const response = updateForm ? data.updateCourse : data.createCourse;
             patchState({ formSubmitting: false });
-            
+
             if (response.ok) {
               const method = updateForm
                 ? SUBSCRIPTION_METHODS.UPDATE_METHOD
@@ -331,10 +346,8 @@ export class CourseState {
                 })
               );
             }
-            
           },
           (error) => {
-            
             this.store.dispatch(
               new ShowNotificationAction({
                 message: getErrorMessageFromGraphQLResponse(error),
@@ -369,7 +382,7 @@ export class CourseState {
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteCourse;
-          
+
           if (response.ok) {
             this.router.navigateByUrl(CourseFormCloseURL);
             const method = SUBSCRIPTION_METHODS.DELETE_METHOD;
@@ -392,11 +405,7 @@ export class CourseState {
                 action: 'success',
               })
             );
-            this.store.dispatch(
-              new ForceRefetchCoursesAction({
-                searchParams: defaultSearchParams,
-              })
-            );
+            this.store.dispatch(new ForceRefetchCoursesAction());
           } else {
             this.store.dispatch(
               new ShowNotificationAction({
@@ -431,7 +440,7 @@ export class CourseState {
       .subscribe(
         ({ data }: any) => {
           const response = data.publishCourse;
-          
+
           if (response.ok) {
             this.store.dispatch(
               new ShowNotificationAction({

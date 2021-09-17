@@ -23,7 +23,7 @@ export class ReportSubscriptionAction {
 export class ForceRefetchReportsAction {
   static readonly type = '[REPORTS] Fetch from network';
 
-  constructor(public payload: { searchParams: SearchParams }) {}
+  constructor() {}
 }
 
 export class GetReportAction {

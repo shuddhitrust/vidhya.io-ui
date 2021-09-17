@@ -17,7 +17,7 @@ export class InstitutionSubscriptionAction {
 export class ForceRefetchInstitutionsAction {
   static readonly type = '[INSTITUTIONS] Fetch from network';
 
-  constructor(public payload: { searchParams: SearchParams }) {}
+  constructor() {}
 }
 
 export class GetInstitutionAction {

@@ -61,7 +61,7 @@ export class MembersTableComponent implements OnInit {
   }
 
   forceRefetchMembers(searchParams: SearchParams) {
-    this.store.dispatch(new ForceRefetchMembersAction({ searchParams }));
+    this.store.dispatch(new ForceRefetchMembersAction());
   }
 
   createMember() {

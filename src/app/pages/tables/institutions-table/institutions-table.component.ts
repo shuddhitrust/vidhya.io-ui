@@ -78,7 +78,7 @@ export class InstitutionsTableComponent implements OnInit {
   }
 
   forceRefetchInstitutions(searchParams: SearchParams) {
-    this.store.dispatch(new ForceRefetchInstitutionsAction({ searchParams }));
+    this.store.dispatch(new ForceRefetchInstitutionsAction());
   }
 
   openInstitutionProfile(rowData) {

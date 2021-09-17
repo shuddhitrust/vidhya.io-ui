@@ -24,6 +24,7 @@ import {
   MatSelectOption,
   FetchParams,
   SUBSCRIPTION_METHODS,
+  startingFetchParams,
 } from '../../common/models';
 import { ANNOUNCEMENT_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
@@ -77,7 +78,7 @@ export class AnnouncementState {
       };
       return option;
     });
-    
+
     return options;
   }
 
@@ -105,11 +106,25 @@ export class AnnouncementState {
 
   @Action(ForceRefetchAnnouncementsAction)
   forceRefetchAnnouncements({
+    getState,
     patchState,
   }: StateContext<AnnouncementStateModel>) {
+    const state = getState();
+    let previousFetchParams =
+      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    previousFetchParams = previousFetchParams
+      ? previousFetchParams
+      : startingFetchParams;
+    const pageNumber = previousFetchParams?.currentPage;
+    const previousSearchParams: SearchParams = {
+      pageNumber,
+      pageSize: previousFetchParams?.pageSize,
+      searchQuery: previousFetchParams?.searchQuery,
+      columnFilters: previousFetchParams?.columnFilters,
+    };
     patchState({ fetchPolicy: 'network-only' });
     this.store.dispatch(
-      new FetchAnnouncementsAction({ searchParams: defaultSearchParams })
+      new FetchAnnouncementsAction({ searchParams: previousSearchParams })
     );
   }
 
@@ -141,7 +156,6 @@ export class AnnouncementState {
     { getState, patchState }: StateContext<AnnouncementStateModel>,
     { payload }: FetchAnnouncementsAction
   ) {
-    
     let { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, fetchParamObjects, announcementsSubscribed } = state;
@@ -160,7 +174,7 @@ export class AnnouncementState {
     };
     if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
       patchState({ isFetching: true });
-      
+
       this.apollo
         .watchQuery({
           query: ANNOUNCEMENT_QUERIES.GET_ANNOUNCEMENTS,
@@ -169,7 +183,6 @@ export class AnnouncementState {
         })
         .valueChanges.subscribe(
           ({ data }: any) => {
-            
             const response = data.announcements;
             newFetchParams = { ...newFetchParams };
             let paginatedAnnouncements = state.paginatedAnnouncements;
@@ -244,7 +257,7 @@ export class AnnouncementState {
   ) {
     const { id } = payload;
     patchState({ isFetching: true });
-    
+
     this.apollo
       .watchQuery({
         query: ANNOUNCEMENT_QUERIES.GET_ANNOUNCEMENT,
@@ -280,7 +293,7 @@ export class AnnouncementState {
       formSubmitting = true;
       patchState({ formSubmitting });
       const values = form.value;
-      
+
       const updateForm = values.id == null ? false : true;
       const { id, ...sanitizedValues } = values;
       const variables = updateForm
@@ -303,7 +316,7 @@ export class AnnouncementState {
               ? data.updateAnnouncement
               : data.createAnnouncement;
             patchState({ formSubmitting: false });
-            
+
             if (response.ok) {
               const method = updateForm
                 ? SUBSCRIPTION_METHODS.UPDATE_METHOD
@@ -341,10 +354,8 @@ export class AnnouncementState {
                 })
               );
             }
-            
           },
           (error) => {
-            
             this.store.dispatch(
               new ShowNotificationAction({
                 message: getErrorMessageFromGraphQLResponse(error),
@@ -379,7 +390,7 @@ export class AnnouncementState {
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteAnnouncement;
-          
+
           if (response.ok) {
             this.router.navigateByUrl(AnnouncementFormCloseURL);
             const method = SUBSCRIPTION_METHODS.DELETE_METHOD;

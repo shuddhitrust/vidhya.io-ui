@@ -16,7 +16,7 @@ export class UserRoleSubscriptionAction {
 export class ForceRefetchUserRolesAction {
   static readonly type = '[ROLES] Fetch from network';
 
-  constructor(public payload: { searchParams: SearchParams }) {}
+  constructor() {}
 }
 
 export class GetUserRoleAction {

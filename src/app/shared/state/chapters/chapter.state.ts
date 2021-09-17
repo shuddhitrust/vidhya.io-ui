@@ -139,7 +139,7 @@ export class ChapterState {
     previousFetchParams = previousFetchParams
       ? previousFetchParams
       : startingFetchParams;
-    const pageNumber = previousFetchParams?.currentPage + 1;
+    const pageNumber = previousFetchParams?.currentPage;
     const previousSearchParams: SearchParams = {
       pageNumber,
       pageSize: previousFetchParams?.pageSize,
@@ -212,12 +212,15 @@ export class ChapterState {
 
             newFetchParams = { ...newFetchParams };
             let paginatedChapters = state.paginatedChapters;
+            console.log('paginatedChapter', { paginatedChapters });
             paginatedChapters = {
               ...paginatedChapters,
               [pageNumber]: response,
             };
+            console.log('new paginated chapters', { paginatedChapters });
 
             let chapters = convertPaginatedListToNormalList(paginatedChapters);
+            console.log('chapters from paginated chaptesr', { chapters });
             let lastPage = null;
             if (response.length < newFetchParams.pageSize) {
               lastPage = newFetchParams.currentPage;
@@ -462,6 +465,9 @@ export class ChapterState {
           if (response.ok) {
             const method = SUBSCRIPTION_METHODS.DELETE_METHOD;
             const chapter = response.chapter;
+            this.router.navigateByUrl(
+              uiroutes.COURSE_PROFILE_ROUTE.route + `?id=${chapter?.course?.id}`
+            );
             const state = getState();
             const { newPaginatedItems, newItemsList } =
               paginatedSubscriptionUpdater({

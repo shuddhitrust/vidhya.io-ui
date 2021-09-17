@@ -23,7 +23,7 @@ export class MemberSubscriptionAction {
 export class ForceRefetchMembersAction {
   static readonly type = '[MEMBERS] Fetch from network';
 
-  constructor(public payload: { searchParams: SearchParams }) {}
+  constructor() {}
 }
 
 export class GetMemberAction {

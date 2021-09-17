@@ -19,7 +19,12 @@ import {
 } from './report.actions';
 import { REPORT_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
-import { Report, MatSelectOption, FetchParams } from '../../common/models';
+import {
+  Report,
+  MatSelectOption,
+  FetchParams,
+  startingFetchParams,
+} from '../../common/models';
 import { REPORT_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
@@ -68,7 +73,7 @@ export class ReportState {
       };
       return option;
     });
-    
+
     return options;
   }
 
@@ -93,10 +98,26 @@ export class ReportState {
   }
 
   @Action(ForceRefetchReportsAction)
-  forceRefetchReports({ patchState }: StateContext<ReportStateModel>) {
+  forceRefetchReports({
+    getState,
+    patchState,
+  }: StateContext<ReportStateModel>) {
+    const state = getState();
+    let previousFetchParams =
+      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    previousFetchParams = previousFetchParams
+      ? previousFetchParams
+      : startingFetchParams;
+    const pageNumber = previousFetchParams?.currentPage;
+    const previousSearchParams: SearchParams = {
+      pageNumber,
+      pageSize: previousFetchParams?.pageSize,
+      searchQuery: previousFetchParams?.searchQuery,
+      columnFilters: previousFetchParams?.columnFilters,
+    };
     patchState({ fetchPolicy: 'network-only' });
     this.store.dispatch(
-      new FetchReportsAction({ searchParams: defaultSearchParams })
+      new FetchReportsAction({ searchParams: previousSearchParams })
     );
   }
 
@@ -126,7 +147,6 @@ export class ReportState {
     { getState, patchState }: StateContext<ReportStateModel>,
     { payload }: FetchReportsAction
   ) {
-    
     let { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, fetchParamObjects, reportsSubscribed } = state;
@@ -145,7 +165,7 @@ export class ReportState {
     };
     if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
       patchState({ isFetching: true });
-      
+
       this.apollo
         .watchQuery({
           query: REPORT_QUERIES.GET_REPORTS,
@@ -154,7 +174,6 @@ export class ReportState {
         })
         .valueChanges.subscribe(
           ({ data }: any) => {
-            
             const response = data.reports;
             newFetchParams = { ...newFetchParams };
             let reports = state.reports;
@@ -254,7 +273,7 @@ export class ReportState {
       formSubmitting = true;
       patchState({ formSubmitting });
       const values = form.value;
-      
+
       const updateForm = values.id == null ? false : true;
       const { id, ...sanitizedValues } = values;
       const variables = updateForm
@@ -275,7 +294,7 @@ export class ReportState {
           ({ data }: any) => {
             const response = updateForm ? data.updateReport : data.createReport;
             patchState({ formSubmitting: false });
-            
+
             if (response.ok) {
               this.store.dispatch(
                 new ShowNotificationAction({
@@ -300,10 +319,8 @@ export class ReportState {
                 })
               );
             }
-            
           },
           (error) => {
-            
             this.store.dispatch(
               new ShowNotificationAction({
                 message: getErrorMessageFromGraphQLResponse(error),
@@ -338,7 +355,7 @@ export class ReportState {
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteReport;
-          
+
           if (response.ok) {
             this.router.navigateByUrl(ReportFormCloseURL);
             this.store.dispatch(
@@ -347,11 +364,7 @@ export class ReportState {
                 action: 'success',
               })
             );
-            this.store.dispatch(
-              new ForceRefetchReportsAction({
-                searchParams: defaultSearchParams,
-              })
-            );
+            this.store.dispatch(new ForceRefetchReportsAction());
           } else {
             this.store.dispatch(
               new ShowNotificationAction({

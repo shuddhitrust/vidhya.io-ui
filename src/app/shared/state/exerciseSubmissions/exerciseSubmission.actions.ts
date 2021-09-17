@@ -35,7 +35,7 @@ export class ExerciseSubmissionSubscriptionAction {
 export class ForceRefetchExerciseSubmissionsAction {
   static readonly type = '[EXERCISE_SUBMISSIONS] Fetch from network';
 
-  constructor(public payload: { searchParams: SearchParams }) {}
+  constructor() {}
 }
 
 export class GetExerciseSubmissionAction {

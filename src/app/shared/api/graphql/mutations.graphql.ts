@@ -412,6 +412,9 @@ export const CHAPTER_MUTATIONS = {
         chapter {
           id
           title
+          course {
+            id
+          }
         }
       }
     }

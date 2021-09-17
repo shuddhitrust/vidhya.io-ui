@@ -75,7 +75,7 @@ export class RolesTableComponent implements OnInit {
   }
 
   forceRefetchUserRoles(searchParams: SearchParams) {
-    this.store.dispatch(new ForceRefetchUserRolesAction({ searchParams }));
+    this.store.dispatch(new ForceRefetchUserRolesAction());
   }
 
   createUserRole() {

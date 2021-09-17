@@ -30,26 +30,22 @@ import {
   MatSelectOption,
   FetchParams,
   UserRole,
+  startingFetchParams,
 } from '../../common/models';
 import { USER_ROLE_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   constructPermissions,
   getErrorMessageFromGraphQLResponse,
-  fetchParamsNewOrNot,
   subscriptionUpdater,
   updateFetchParams,
 } from '../../common/functions';
 import { defaultSearchParams } from '../../common/constants';
-import {
-  GetCurrentUserAction,
-  LogoutAction,
-  UpdateCurrentUserInStateAction,
-} from '../auth/auth.actions';
 import { Router } from '@angular/router';
 import { AuthState } from '../auth/auth.state';
 import { Observable } from 'rxjs';
 import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
+import { SearchParams } from '../../abstract/master-grid/table.model';
 
 @State<UserRoleStateModel>({
   name: 'roleState',
@@ -118,10 +114,26 @@ export class UserRoleState {
   }
 
   @Action(ForceRefetchUserRolesAction)
-  forceRefetchRoles({ patchState }: StateContext<UserRoleStateModel>) {
+  forceRefetchRoles({
+    getState,
+    patchState,
+  }: StateContext<UserRoleStateModel>) {
+    const state = getState();
+    let previousFetchParams =
+      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    previousFetchParams = previousFetchParams
+      ? previousFetchParams
+      : startingFetchParams;
+    const pageNumber = previousFetchParams?.currentPage;
+    const previousSearchParams: SearchParams = {
+      pageNumber,
+      pageSize: previousFetchParams?.pageSize,
+      searchQuery: previousFetchParams?.searchQuery,
+      columnFilters: previousFetchParams?.columnFilters,
+    };
     patchState({ fetchPolicy: 'network-only' });
     this.store.dispatch(
-      new FetchUserRolesAction({ searchParams: defaultSearchParams })
+      new FetchUserRolesAction({ searchParams: previousSearchParams })
     );
   }
 
@@ -147,7 +159,7 @@ export class UserRoleState {
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
-    
+
     this.apollo
       .watchQuery({
         query: USER_ROLE_QUERIES.GET_USER_ROLES,
@@ -157,9 +169,7 @@ export class UserRoleState {
       .valueChanges.subscribe(
         ({ data }: any) => {
           const response = data.userRoles.records;
-          const totalCount = data.userRoles.total
-            ? data.userRoles.total
-            : 0;
+          const totalCount = data.userRoles.total ? data.userRoles.total : 0;
           newFetchParams = { ...newFetchParams, totalCount };
           patchState({
             roles: response,
@@ -226,11 +236,11 @@ export class UserRoleState {
       .valueChanges.subscribe(
         ({ data }: any) => {
           let response = data.userRole;
-          
+
           const userRolePermissions = JSON.parse(
             response.permissions.toString()
           );
-          
+
           const permissions = constructPermissions(userRolePermissions);
           const userRoleFormRecord = {
             id: response.id,
@@ -266,7 +276,7 @@ export class UserRoleState {
       formSubmitting = true;
       patchState({ formSubmitting });
       const values = form.value;
-      
+
       const updateForm = values.createdAt == null ? false : true;
       const { createdAt, ...sanitizedValues } = values;
       const variables = updateForm
@@ -289,7 +299,7 @@ export class UserRoleState {
               ? data.updateUserRole
               : data.createUserRole;
             patchState({ formSubmitting: false });
-            
+
             if (response.ok) {
               this.store.dispatch(
                 new ShowNotificationAction({
@@ -314,10 +324,8 @@ export class UserRoleState {
                 })
               );
             }
-            
           },
           (error) => {
-            
             this.store.dispatch(
               new ShowNotificationAction({
                 message: getErrorMessageFromGraphQLResponse(error),
@@ -352,7 +360,7 @@ export class UserRoleState {
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteUserRole;
-          
+
           if (response.ok) {
             this.store.dispatch(
               new ShowNotificationAction({
@@ -360,11 +368,7 @@ export class UserRoleState {
                 action: 'success',
               })
             );
-            this.store.dispatch(
-              new ForceRefetchUserRolesAction({
-                searchParams: defaultSearchParams,
-              })
-            );
+            this.store.dispatch(new ForceRefetchUserRolesAction());
           } else {
             this.store.dispatch(
               new ShowNotificationAction({

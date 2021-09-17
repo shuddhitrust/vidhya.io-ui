@@ -28,7 +28,12 @@ import {
 } from './member.actions';
 import { AUTH_QUERIES, USER_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
-import { User, MatSelectOption, FetchParams } from '../../common/models';
+import {
+  User,
+  MatSelectOption,
+  FetchParams,
+  startingFetchParams,
+} from '../../common/models';
 import { USER_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
@@ -48,6 +53,7 @@ import { AuthState } from '../auth/auth.state';
 import { Observable } from 'rxjs';
 import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
 import { uiroutes } from '../../common/ui-routes';
+import { SearchParams } from '../../abstract/master-grid/table.model';
 
 @State<MemberStateModel>({
   name: 'memberState',
@@ -104,12 +110,26 @@ export class MemberState {
   }
 
   @Action(ForceRefetchMembersAction)
-  forceRefetchMembers({ patchState }: StateContext<MemberStateModel>) {
+  forceRefetchMembers({
+    getState,
+    patchState,
+  }: StateContext<MemberStateModel>) {
+    const state = getState();
+    let previousFetchParams =
+      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    previousFetchParams = previousFetchParams
+      ? previousFetchParams
+      : startingFetchParams;
+    const pageNumber = previousFetchParams?.currentPage;
+    const previousSearchParams: SearchParams = {
+      pageNumber,
+      pageSize: previousFetchParams?.pageSize,
+      searchQuery: previousFetchParams?.searchQuery,
+      columnFilters: previousFetchParams?.columnFilters,
+    };
     patchState({ fetchPolicy: 'network-only' });
     this.store.dispatch(
-      new FetchMembersAction({
-        searchParams: defaultSearchParams,
-      })
+      new FetchMembersAction({ searchParams: previousSearchParams })
     );
   }
 
@@ -138,7 +158,7 @@ export class MemberState {
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
-    
+
     this.apollo
       .watchQuery({
         query: USER_QUERIES.GET_USERS,
@@ -148,9 +168,7 @@ export class MemberState {
       .valueChanges.subscribe(
         ({ data }: any) => {
           const response = data.users.records;
-          const totalCount = data.users.total
-            ? data.users.total
-            : 0;
+          const totalCount = data.users.total ? data.users.total : 0;
           newFetchParams = { ...newFetchParams, totalCount };
           patchState({
             members: response,
@@ -195,7 +213,7 @@ export class MemberState {
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
-    
+
     this.apollo
       .watchQuery({
         query: USER_QUERIES.GET_PUBLIC_USERS,
@@ -204,7 +222,7 @@ export class MemberState {
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
-          const response = data.publicUsers.records
+          const response = data.publicUsers.records;
           const totalCount = data.publicUsers.total
             ? data.publicUsers.total
             : 0;
@@ -295,7 +313,7 @@ export class MemberState {
       formSubmitting = true;
       patchState({ formSubmitting });
       const values = form.value;
-      
+
       const { id, ...sanitizedValues } = values;
       const variables = {
         input: sanitizedValues,
@@ -311,10 +329,10 @@ export class MemberState {
           ({ data }: any) => {
             const response = data.updateUser;
             patchState({ formSubmitting: false });
-            
+
             if (response.ok) {
               const user = response?.user;
-              
+
               this.store.dispatch(new UpdateCurrentUserInStateAction({ user }));
               this.store.dispatch(
                 new ShowNotificationAction({
@@ -335,10 +353,8 @@ export class MemberState {
                 })
               );
             }
-            
           },
           (error) => {
-            
             this.store.dispatch(
               new ShowNotificationAction({
                 message: getErrorMessageFromGraphQLResponse(error),
@@ -373,7 +389,7 @@ export class MemberState {
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteMember;
-          
+
           if (response.ok) {
             this.store.dispatch(
               new ShowNotificationAction({
@@ -420,7 +436,7 @@ export class MemberState {
       .subscribe(
         ({ data }: any) => {
           const response = data.approveUser;
-          
+
           if (response.ok) {
             const state = getState();
             const newMembers = state.members.filter(
@@ -467,7 +483,7 @@ export class MemberState {
       .subscribe(
         ({ data }: any) => {
           const response = data.suspendUser;
-          
+
           if (response.ok) {
             this.store.dispatch(
               new ShowNotificationAction({

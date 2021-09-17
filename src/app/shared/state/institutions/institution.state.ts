@@ -23,6 +23,7 @@ import {
   MatSelectOption,
   FetchParams,
   SUBSCRIPTION_METHODS,
+  startingFetchParams,
 } from '../../common/models';
 import { INSTITUTION_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
@@ -35,6 +36,7 @@ import {
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
 import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
+import { SearchParams } from '../../abstract/master-grid/table.model';
 
 @State<InstitutionStateModel>({
   name: 'institutionState',
@@ -73,7 +75,7 @@ export class InstitutionState {
       };
       return option;
     });
-    
+
     return options;
   }
 
@@ -99,11 +101,25 @@ export class InstitutionState {
 
   @Action(ForceRefetchInstitutionsAction)
   forceRefetchInstitutions({
+    getState,
     patchState,
   }: StateContext<InstitutionStateModel>) {
+    const state = getState();
+    let previousFetchParams =
+      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    previousFetchParams = previousFetchParams
+      ? previousFetchParams
+      : startingFetchParams;
+    const pageNumber = previousFetchParams?.currentPage;
+    const previousSearchParams: SearchParams = {
+      pageNumber,
+      pageSize: previousFetchParams?.pageSize,
+      searchQuery: previousFetchParams?.searchQuery,
+      columnFilters: previousFetchParams?.columnFilters,
+    };
     patchState({ fetchPolicy: 'network-only' });
     this.store.dispatch(
-      new FetchInstitutionsAction({ searchParams: defaultSearchParams })
+      new FetchInstitutionsAction({ searchParams: previousSearchParams })
     );
   }
 
@@ -129,7 +145,7 @@ export class InstitutionState {
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
-    
+
     this.apollo
       .watchQuery({
         query: INSTITUTION_QUERIES.GET_INSTITUTIONS,
@@ -138,13 +154,13 @@ export class InstitutionState {
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
-          const response = data.institutions.records
+          const response = data.institutions.records;
           const totalCount = data.institutions.total
             ? data.institutions.total
             : 0;
 
           newFetchParams = { ...newFetchParams, totalCount };
-          
+
           patchState({
             institutions: response,
             fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
@@ -235,7 +251,7 @@ export class InstitutionState {
       formSubmitting = true;
       patchState({ formSubmitting });
       const values = form.value;
-      
+
       const updateForm = values.id == null ? false : true;
       const { id, ...sanitizedValues } = values;
       const variables = updateForm
@@ -258,7 +274,7 @@ export class InstitutionState {
               ? data.updateInstitution
               : data.createInstitution;
             patchState({ formSubmitting: false });
-            
+
             if (response.ok) {
               this.store.dispatch(
                 new ShowNotificationAction({
@@ -282,10 +298,8 @@ export class InstitutionState {
                 })
               );
             }
-            
           },
           (error) => {
-            
             this.store.dispatch(
               new ShowNotificationAction({
                 message: getErrorMessageFromGraphQLResponse(error),
@@ -320,7 +334,7 @@ export class InstitutionState {
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteInstitution;
-          
+
           if (response.ok) {
             this.store.dispatch(
               new ShowNotificationAction({
@@ -328,11 +342,7 @@ export class InstitutionState {
                 action: 'success',
               })
             );
-            // this.store.dispatch(
-            //   new ForceRefetchInstitutionsAction({
-            //     searchParams: defaultSearchParams,
-            //   })
-            // );
+            this.store.dispatch(new ForceRefetchInstitutionsAction());
           } else {
             this.store.dispatch(
               new ShowNotificationAction({

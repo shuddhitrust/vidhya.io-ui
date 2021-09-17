@@ -39,7 +39,7 @@ export class SearchChatMembersAction {
 export class ForceRefetchChatsAction {
   static readonly type = '[CHATS] Fetch from network';
 
-  constructor(public payload: { searchParams: SearchParams }) {}
+  constructor() {}
 }
 
 export class ClearChatMembers {

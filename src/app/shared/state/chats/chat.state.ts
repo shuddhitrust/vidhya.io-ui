@@ -41,6 +41,7 @@ import {
   MatSelectOption,
   FetchParams,
   User,
+  startingFetchParams,
 } from '../../common/models';
 import {
   CHAT_MUTATIONS,
@@ -133,7 +134,7 @@ export class ChatState {
       };
       return option;
     });
-    
+
     return options;
   }
 
@@ -158,10 +159,23 @@ export class ChatState {
   }
 
   @Action(ForceRefetchChatsAction)
-  forceRefetchChats({ patchState }: StateContext<ChatStateModel>) {
+  forceRefetchChats({ getState, patchState }: StateContext<ChatStateModel>) {
+    const state = getState();
+    let previousFetchParams =
+      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    previousFetchParams = previousFetchParams
+      ? previousFetchParams
+      : startingFetchParams;
+    const pageNumber = previousFetchParams?.currentPage;
+    const previousSearchParams: SearchParams = {
+      pageNumber,
+      pageSize: previousFetchParams?.pageSize,
+      searchQuery: previousFetchParams?.searchQuery,
+      columnFilters: previousFetchParams?.columnFilters,
+    };
     patchState({ fetchPolicy: 'network-only' });
     this.store.dispatch(
-      new FetchChatsAction({ searchParams: defaultSearchParams })
+      new FetchChatsAction({ searchParams: previousSearchParams })
     );
   }
 
@@ -181,7 +195,6 @@ export class ChatState {
       })
       .subscribe(
         ({ data }: any) => {
-          
           const response = data.chatSearch ? data.chatSearch : [];
           let results: ChatSearchResult[] = [];
 
@@ -227,7 +240,7 @@ export class ChatState {
               };
             })
           );
-          
+
           patchState({
             chatSearchResults: results,
             isFetchingChatMembers: false,
@@ -303,7 +316,7 @@ export class ChatState {
         .valueChanges.subscribe(
           ({ data }: any) => {
             const response = data.chats;
-            
+
             newFetchParams = { ...newFetchParams };
             let chats = state.chats;
             let responseChats = response.chats;
@@ -312,7 +325,7 @@ export class ChatState {
             // Parsing the individual chats in to chat objects
             responseChats = responseChats.map((chat) => {
               let member;
-              
+
               if (chat.individualMemberOne?.id == this.currentMember?.id) {
                 member = chat.individualMemberTwo;
               } else if (
@@ -320,7 +333,7 @@ export class ChatState {
               ) {
                 member = chat.individualMemberOne;
               }
-              
+
               const preppedChat = {
                 id: chat.id,
                 name: member.name,
@@ -331,7 +344,7 @@ export class ChatState {
               return preppedChat;
             });
             // Parsing the groups into chat objects
-            
+
             responseGroups = responseGroups.map((group) => {
               const preppedChat = {
                 id: group?.chat?.id,
@@ -342,7 +355,6 @@ export class ChatState {
               };
               return preppedChat;
             });
-            
 
             chats = chats.concat(responseChats).concat(responseGroups);
 
@@ -378,7 +390,7 @@ export class ChatState {
     { payload }: GetChatAction
   ) {
     const { id } = payload;
-    
+
     if (id) {
       const state = getState();
       if (id !== state.chatFormRecord.id) {
@@ -422,7 +434,7 @@ export class ChatState {
       .valueChanges.subscribe(
         ({ data }: any) => {
           const response = data.chat;
-          
+
           const state = getState();
           const chats = [response, ...state.chats];
           patchState({
@@ -499,7 +511,7 @@ export class ChatState {
   //     formSubmitting = true;
   //     patchState({ formSubmitting });
   //     const values = form.value;
-  //     
+  //
   //     const updateForm = values.id == null ? false : true;
   //     const { id, ...sanitizedValues } = values;
   //     const variables = updateForm
@@ -520,7 +532,7 @@ export class ChatState {
   //         ({ data }: any) => {
   //           const response = updateForm ? data.updateChat : data.createChat;
   //           patchState({ formSubmitting: false });
-  //           
+  //
   //           if (response.ok) {
   //             this.store.dispatch(
   //               new ShowNotificationAction({
@@ -545,10 +557,10 @@ export class ChatState {
   //               })
   //             );
   //           }
-  //           
+  //
   //         },
   //         (error) => {
-  //           
+  //
   //           this.store.dispatch(
   //             new ShowNotificationAction({
   //               message: getErrorMessageFromGraphQLResponse(error),
@@ -580,7 +592,7 @@ export class ChatState {
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteChat;
-          
+
           if (response.ok) {
             this.store.dispatch(
               new ShowNotificationAction({
@@ -588,11 +600,7 @@ export class ChatState {
                 action: 'success',
               })
             );
-            this.store.dispatch(
-              new ForceRefetchChatsAction({
-                searchParams: defaultSearchParams,
-              })
-            );
+            this.store.dispatch(new ForceRefetchChatsAction());
           } else {
             this.store.dispatch(
               new ShowNotificationAction({
@@ -676,7 +684,6 @@ export class ChatState {
             newFetchParams = { ...newFetchParams };
             let chat: ChatUIObject = state.chats.find((c) => c.id == chatId);
             if (chat) {
-              
               const chatmessageSet = chat.chatmessageSet.concat(response);
               chat = { ...chat, chatmessageSet };
               let chats = state.chats.filter((c) => c.id != chat.id);
@@ -739,7 +746,7 @@ export class ChatState {
               const chatMessages = chat.chatmessageSet
                 ? chat.chatmessageSet
                 : [];
-              
+
               const { items, fetchParamObjects } = subscriptionUpdater({
                 items: chatMessages,
                 method,
@@ -772,7 +779,7 @@ export class ChatState {
   ) {
     const { id, message } = payload;
     const state = getState();
-    
+
     patchState({ isCreatingNewChatMessage: true });
     this.apollo
       .mutate({
@@ -789,10 +796,9 @@ export class ChatState {
         const response = data.createChatMessage;
         // if (response.ok) {
         //   const chat = response.chatMessage?.chat;
-        //   
+        //
         //   patchState({ chatFormRecord: chat });
         // }
-        
       });
   }
 

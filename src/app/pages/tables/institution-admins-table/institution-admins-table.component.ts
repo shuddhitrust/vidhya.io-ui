@@ -69,11 +69,7 @@ export class InstitutionAdminsTableComponent implements OnInit {
   }
 
   forceRefetchMembers(searchParams: SearchParams) {
-    this.store.dispatch(
-      new ForceRefetchMembersAction({
-        searchParams: { ...searchParams, columnFilters: this.columnFilters },
-      })
-    );
+    this.store.dispatch(new ForceRefetchMembersAction());
   }
 
   openMemberProfile(rowData) {

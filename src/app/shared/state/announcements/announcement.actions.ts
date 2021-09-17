@@ -23,7 +23,7 @@ export class AnnouncementSubscriptionAction {
 export class ForceRefetchAnnouncementsAction {
   static readonly type = '[ANNOUNCEMENTS] Fetch from network';
 
-  constructor(public payload: { searchParams: SearchParams }) {}
+  constructor() {}
 }
 
 export class GetAnnouncementAction {
