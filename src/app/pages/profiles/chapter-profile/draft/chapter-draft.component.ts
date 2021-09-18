@@ -119,6 +119,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   exerciseKey: any = emptyExerciseKeyFormRecord;
   imagesQueuedForUpload: previewImage[] = [];
   formDirective: FormGroupDirective;
+  tempPrompt = '';
   constructor(
     public dialog: MatDialog,
     private location: Location,
@@ -186,6 +187,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
       referenceImages: [exerciseKeyRecord?.referenceImages],
       remarks: [exerciseKeyRecord?.remarks],
     });
+    this.tempPrompt = exerciseKeyRecord?.exercise?.prompt;
     return exerciseForm;
   }
 
@@ -346,6 +348,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     this.imagesQueuedForUpload = [];
     this.exerciseKey = Object.assign({}, emptyExerciseKeyFormRecord);
     this.resetFormOptionErrors();
+    this.tempPrompt = '';
   }
 
   closeExerciseForm() {
@@ -465,6 +468,8 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   }
 
   updateGradingKeyInExerciseForm(form) {
+    // Populating the prompt of the question
+    form.get('prompt').setValue(this.tempPrompt);
     form.get('validOption').setValue(this.exerciseKey.validOption);
     let allValidAnswers = this.exerciseKey?.validAnswers;
     allValidAnswers = allValidAnswers.filter((a) => a?.length > 0); // removing empty answers if any

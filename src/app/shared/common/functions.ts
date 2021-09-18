@@ -467,7 +467,7 @@ export const ChapterSubtitle = (chapter: Chapter): string => {
 export const ExerciseTitle = (chapter: Chapter, exercise: Exercise): string => {
   return `${chapter.section?.index ? `${chapter.section?.index}.` : ''}${
     chapter?.index ? `${chapter?.index}.` : ''
-  }${exercise.index}) ${exercise.prompt}`;
+  }${exercise.index})`;
 };
 
 export const SubmissionStatus = (submission: ExerciseSubmission): string => {

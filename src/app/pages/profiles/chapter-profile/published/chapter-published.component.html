@@ -107,7 +107,8 @@
       <mat-icon>delete</mat-icon>
     </button>
     <p class="form-element-block col-lg-10 col-md-10 col-sm-10">
-      {{ exerciseTitle(question) }}
+      <span style="float: left"> {{ exerciseTitle(question) }}&nbsp;</span>
+      <markdown style="float: left" [data]="question.prompt"></markdown>
     </p>
     <span
       class="form-element-block col-lg-10 col-md-10 col-sm-10"
