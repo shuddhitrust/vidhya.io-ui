@@ -40,6 +40,7 @@
         <mat-label>Username</mat-label>
         <input
           autofocus
+          (keypress)="preventSpaces($event)"
           matInput
           formControlName="username"
           required
@@ -196,7 +197,7 @@
         <input
           matInput
           autofocus
-          autofocus
+          (keypress)="preventSpaces($event)"
           formControlName="username"
           required
           placeholder="Username"
@@ -402,6 +403,7 @@
   <div mat-dialog-content class="email-input-dialog-box">
     <mat-card-header class="form-title">
       <mat-card-title>Resend activation Email</mat-card-title>
+      <br />
       <hr />
       <mat-card-subtitle style="text-align: left"
         ><p>
