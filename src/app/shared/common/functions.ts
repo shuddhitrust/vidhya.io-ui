@@ -461,7 +461,9 @@ export const ChapterTitle = (chapter: Chapter): string => {
 export const ChapterSubtitle = (chapter: Chapter): string => {
   return `${chapter.course?.title} ${
     chapter.section?.title ? ' > ' + chapter.section?.title + '. ' : '. '
-  } ${chapter.dueDate ? `Due on ${parseDateTime(chapter?.dueDate)}` : ''}`;
+  }${chapter.points} points. ${
+    chapter.dueDate ? `Due on ${parseDateTime(chapter?.dueDate)}` : ''
+  }`;
 };
 
 export const ExerciseTitle = (chapter: Chapter, exercise: Exercise): string => {
@@ -492,4 +494,16 @@ export const SubmissionStatus = (submission: ExerciseSubmission): string => {
     }`;
   }
   return result;
+};
+
+export const SubmissionPoints = (
+  submission: ExerciseSubmission,
+  exercise: Exercise
+): string => {
+  console.log('from submission points ', { submission });
+  const submissionPoints = submission.points ? submission.points : '0';
+  const exercisePoints = exercise.points ? exercise.points : '0';
+  return exercise.points
+    ? `${submissionPoints} / ${exercisePoints} points`
+    : '';
 };

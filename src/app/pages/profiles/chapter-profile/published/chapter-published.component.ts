@@ -41,6 +41,7 @@ import {
   getOptionLabel,
   parseDateTime,
   sortByIndex,
+  SubmissionPoints,
   SubmissionStatus,
 } from 'src/app/shared/common/functions';
 import { FormGroupDirective } from '@angular/forms';
@@ -177,6 +178,10 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
   }
   submissionStatus(submission: ExerciseSubmission): string {
     return SubmissionStatus(submission);
+  }
+  exercisePoints(submission: ExerciseSubmission): string {
+    const exercise = this.exercises.find((e) => e.id == submission.exercise);
+    return SubmissionPoints(submission, exercise);
   }
   setupExerciseSubmission(exercise: Exercise): ExerciseSubmission {
     let submission: ExerciseSubmission = Object.assign(
