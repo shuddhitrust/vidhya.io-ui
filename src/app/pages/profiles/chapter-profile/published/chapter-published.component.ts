@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import {
   DeleteChapterAction,
   GetChapterAction,
+  ResetChapterFormAction,
 } from 'src/app/shared/state/chapters/chapter.actions';
 import { ChapterState } from 'src/app/shared/state/chapters/chapter.state';
 import { MatDialog } from '@angular/material/dialog';
@@ -545,6 +546,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.store.dispatch(new ResetExerciseStateAction());
+    this.store.dispatch(new ResetChapterFormAction());
   }
 
   submitExerciseSubmissionForm() {

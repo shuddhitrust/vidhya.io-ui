@@ -7,6 +7,7 @@ import {
   DeleteChapterAction,
   GetChapterAction,
   PublishChapterAction,
+  ResetChapterFormAction,
 } from 'src/app/shared/state/chapters/chapter.actions';
 import { ChapterState } from 'src/app/shared/state/chapters/chapter.state';
 import { MatDialog } from '@angular/material/dialog';
@@ -526,6 +527,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.store.dispatch(new ResetExerciseKeyStateAction());
+    this.store.dispatch(new ResetChapterFormAction());
   }
 
   updateFormBeforeSubmit(form, formDirective) {
