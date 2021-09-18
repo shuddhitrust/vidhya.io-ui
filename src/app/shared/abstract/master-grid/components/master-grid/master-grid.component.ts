@@ -85,7 +85,7 @@ export class MasterGridComponent implements OnInit, OnChanges {
   @Input() rowSelection: string = '';
   @Input() rowDeselection: boolean = true;
   @Input() fetchParams$: Observable<FetchParams>;
-
+  @Input() enableCellTextSelection: boolean = true;
   resourceActions = RESOURCE_ACTIONS;
   totalRecords = 0;
   pageSize = defaultPageSize;

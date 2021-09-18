@@ -38,10 +38,13 @@
     "
     class="title-block"
   >
-    <button  (click)="createRecord()" id="add-button"    mat-icon-button
-    color="primary"
-  >
-   <mat-icon>add_circle</mat-icon>
+    <button
+      (click)="createRecord()"
+      id="add-button"
+      mat-icon-button
+      color="primary"
+    >
+      <mat-icon>add_circle</mat-icon>
     </button>
   </div>
 </div>
@@ -69,6 +72,7 @@
     [isFullWidthCell]="isFullWidthCell"
     [fullWidthCellRenderer]="fullWidthCellRenderer"
     [fullWidthCellRendererParams]="fullWidthCellRendererParams"
+    [enableCellTextSelection]="enableCellTextSelection"
   >
   </ag-grid-angular>
   <app-paginator
