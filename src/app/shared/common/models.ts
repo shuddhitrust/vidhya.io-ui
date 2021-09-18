@@ -259,6 +259,7 @@ export type Exercise = {
   required: boolean;
   options?: string[];
   points?: number;
+  rubric?: any;
   createdAt?: string;
   updatedAt?: string;
 };

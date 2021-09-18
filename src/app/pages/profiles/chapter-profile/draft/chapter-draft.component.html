@@ -471,4 +471,24 @@
       placeholder="Additional guidance for grading"
     />
   </mat-form-field>
+  <hr />
+  <div *ngFor="let criterion of question.rubric; let i = index">
+    <mat-form-field class="col-lg-3 col-md-3 col-sm-3" appearance="outline">
+      <mat-label>Points</mat-label>
+      <input
+        matInput
+        [(ngModel)]="tempRubric[i].points"
+        (change)="updateRubric(question)"
+        placeholder="criterion"
+      />
+    </mat-form-field>
+    <mat-form-field class="col-lg-9 col-md-9 col-sm-9" appearance="outline">
+      <mat-label>Criterion</mat-label>
+      <input
+        matInput
+        [(ngModel)]="tempRubric[i].criterion"
+        placeholder="Criterion"
+      />
+    </mat-form-field>
+  </div>
 </ng-template>

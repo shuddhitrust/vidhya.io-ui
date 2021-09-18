@@ -61,7 +61,14 @@ import {
   MasterConfirmationDialogObject,
 } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 const startingExerciseFormOptions = ['', ''];
-
+export type RubricType = {
+  points: number;
+  criterion: string;
+};
+const startingRubric: RubricType[] = [
+  { points: 0, criterion: '' },
+  { points: 0, criterion: 'Misc' },
+];
 type previewImage = {
   url: string;
   file: any;
@@ -120,6 +127,8 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   imagesQueuedForUpload: previewImage[] = [];
   formDirective: FormGroupDirective;
   tempPrompt = '';
+  tempRubric = Object.assign([], startingRubric);
+  rubricComplete: boolean = false;
   constructor(
     public dialog: MatDialog,
     private location: Location,
@@ -186,6 +195,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
       referenceLink: [exerciseKeyRecord?.referenceLink],
       referenceImages: [exerciseKeyRecord?.referenceImages],
       remarks: [exerciseKeyRecord?.remarks],
+      rubric: [exerciseKeyRecord?.exercise.rubric],
     });
     this.tempPrompt = exerciseKeyRecord?.exercise?.prompt;
     return exerciseForm;
@@ -358,6 +368,13 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
 
   trackByFn(index: any, item: any) {
     return index;
+  }
+  updateRubric(exercise: Exercise) {
+    let pointsAccountedFor = 0;
+    this.tempRubric.forEach((c: RubricType) => {
+      pointsAccountedFor += c.points;
+    });
+    this.rubricComplete = pointsAccountedFor == exercise.points ? true : false;
   }
 
   enableAddNewOption() {
