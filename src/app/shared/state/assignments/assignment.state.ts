@@ -16,7 +16,6 @@ import { Apollo } from 'apollo-angular';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
-  fetchParamsNewOrNot,
   updateFetchParams,
   convertPaginatedListToNormalList,
 } from '../../common/functions';

@@ -31,7 +31,6 @@ import { COURSE_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
-  fetchParamsNewOrNot,
   subscriptionUpdater,
   updateFetchParams,
   convertPaginatedListToNormalList,
@@ -170,51 +169,47 @@ export class CourseState {
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
-    if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
-      patchState({ isFetching: true });
+    patchState({ isFetching: true });
 
-      this.apollo
-        .watchQuery({
-          query: COURSE_QUERIES.GET_COURSES,
-          variables,
-          fetchPolicy,
-        })
-        .valueChanges.subscribe(
-          ({ data }: any) => {
-            const response = data.courses;
+    this.apollo
+      .watchQuery({
+        query: COURSE_QUERIES.GET_COURSES,
+        variables,
+        fetchPolicy,
+      })
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          const response = data.courses;
 
-            newFetchParams = { ...newFetchParams };
-            let paginatedCourses = state.paginatedCourses;
-            paginatedCourses = {
-              ...paginatedCourses,
-              [pageNumber]: response,
-            };
-            let courses = convertPaginatedListToNormalList(paginatedCourses);
-            let lastPage = null;
-            if (response.length < newFetchParams.pageSize) {
-              lastPage = newFetchParams.currentPage;
-            }
-            patchState({
-              courses,
-              paginatedCourses,
-              lastPage,
-              fetchParamObjects: state.fetchParamObjects.concat([
-                newFetchParams,
-              ]),
-              isFetching: false,
-            });
-          },
-          (error) => {
-            this.store.dispatch(
-              new ShowNotificationAction({
-                message: getErrorMessageFromGraphQLResponse(error),
-                action: 'error',
-              })
-            );
-            patchState({ isFetching: false });
+          newFetchParams = { ...newFetchParams };
+          let paginatedCourses = state.paginatedCourses;
+          paginatedCourses = {
+            ...paginatedCourses,
+            [pageNumber]: response,
+          };
+          let courses = convertPaginatedListToNormalList(paginatedCourses);
+          let lastPage = null;
+          if (response.length < newFetchParams.pageSize) {
+            lastPage = newFetchParams.currentPage;
           }
-        );
-    }
+          patchState({
+            courses,
+            paginatedCourses,
+            lastPage,
+            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
+            isFetching: false,
+          });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetching: false });
+        }
+      );
   }
 
   @Action(CourseSubscriptionAction)

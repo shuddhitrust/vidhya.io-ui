@@ -32,7 +32,6 @@ import { CHAPTER_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
-  fetchParamsNewOrNot,
   subscriptionUpdater,
   updateFetchParams,
   convertPaginatedListToNormalList,
@@ -197,55 +196,51 @@ export class ChapterState {
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
-    if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
-      patchState({ isFetching: true });
+    patchState({ isFetching: true });
 
-      this.apollo
-        .watchQuery({
-          query: CHAPTER_QUERIES.GET_CHAPTERS,
-          variables,
-          fetchPolicy,
-        })
-        .valueChanges.subscribe(
-          ({ data }: any) => {
-            const response = data.chapters;
+    this.apollo
+      .watchQuery({
+        query: CHAPTER_QUERIES.GET_CHAPTERS,
+        variables,
+        fetchPolicy,
+      })
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          const response = data.chapters;
 
-            newFetchParams = { ...newFetchParams };
-            let paginatedChapters = state.paginatedChapters;
-            console.log('paginatedChapter', { paginatedChapters });
-            paginatedChapters = {
-              ...paginatedChapters,
-              [pageNumber]: response,
-            };
-            console.log('new paginated chapters', { paginatedChapters });
+          newFetchParams = { ...newFetchParams };
+          let paginatedChapters = state.paginatedChapters;
+          console.log('paginatedChapter', { paginatedChapters });
+          paginatedChapters = {
+            ...paginatedChapters,
+            [pageNumber]: response,
+          };
+          console.log('new paginated chapters', { paginatedChapters });
 
-            let chapters = convertPaginatedListToNormalList(paginatedChapters);
-            console.log('chapters from paginated chaptesr', { chapters });
-            let lastPage = null;
-            if (response.length < newFetchParams.pageSize) {
-              lastPage = newFetchParams.currentPage;
-            }
-            patchState({
-              chapters,
-              paginatedChapters,
-              lastPage,
-              fetchParamObjects: state.fetchParamObjects.concat([
-                newFetchParams,
-              ]),
-              isFetching: false,
-            });
-          },
-          (error) => {
-            this.store.dispatch(
-              new ShowNotificationAction({
-                message: getErrorMessageFromGraphQLResponse(error),
-                action: 'error',
-              })
-            );
-            patchState({ isFetching: false });
+          let chapters = convertPaginatedListToNormalList(paginatedChapters);
+          console.log('chapters from paginated chaptesr', { chapters });
+          let lastPage = null;
+          if (response.length < newFetchParams.pageSize) {
+            lastPage = newFetchParams.currentPage;
           }
-        );
-    }
+          patchState({
+            chapters,
+            paginatedChapters,
+            lastPage,
+            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
+            isFetching: false,
+          });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetching: false });
+        }
+      );
   }
 
   @Action(ChapterSubscriptionAction)
@@ -316,7 +311,7 @@ export class ChapterState {
   ) {
     const state = getState();
     const { form, formDirective } = payload;
-    let { formSubmitting } = state;
+    let { formSubmitting, fetchPolicy } = state;
     if (form.valid) {
       formSubmitting = true;
       patchState({ formSubmitting });
@@ -365,7 +360,7 @@ export class ChapterState {
                 paginatedChapters: newPaginatedItems,
                 chapters: newItemsList,
                 chapterFormRecord: emptyChapterFormRecord,
-                fetchPolicy: 'network-only',
+                fetchPolicy,
               });
               this.store.dispatch(
                 new ShowNotificationAction({

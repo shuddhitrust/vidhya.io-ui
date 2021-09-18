@@ -30,7 +30,6 @@ import { EXERCISE_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
-  fetchParamsNewOrNot,
   subscriptionUpdater,
   updateFetchParams,
   convertPaginatedListToNormalList,

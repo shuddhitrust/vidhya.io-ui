@@ -30,7 +30,6 @@ import { ANNOUNCEMENT_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
-  fetchParamsNewOrNot,
   subscriptionUpdater,
   updateFetchParams,
   convertPaginatedListToNormalList,
@@ -172,52 +171,48 @@ export class AnnouncementState {
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
-    if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
-      patchState({ isFetching: true });
+    patchState({ isFetching: true });
 
-      this.apollo
-        .watchQuery({
-          query: ANNOUNCEMENT_QUERIES.GET_ANNOUNCEMENTS,
-          variables,
-          fetchPolicy,
-        })
-        .valueChanges.subscribe(
-          ({ data }: any) => {
-            const response = data.announcements;
-            newFetchParams = { ...newFetchParams };
-            let paginatedAnnouncements = state.paginatedAnnouncements;
-            paginatedAnnouncements = {
-              ...paginatedAnnouncements,
-              [pageNumber]: response,
-            };
-            let announcements = convertPaginatedListToNormalList(
-              paginatedAnnouncements
-            );
-            let lastPage = null;
-            if (response.length < newFetchParams.pageSize) {
-              lastPage = newFetchParams.currentPage;
-            }
-            patchState({
-              lastPage,
-              announcements,
-              paginatedAnnouncements,
-              fetchParamObjects: state.fetchParamObjects.concat([
-                newFetchParams,
-              ]),
-              isFetching: false,
-            });
-          },
-          (error) => {
-            this.store.dispatch(
-              new ShowNotificationAction({
-                message: getErrorMessageFromGraphQLResponse(error),
-                action: 'error',
-              })
-            );
-            patchState({ isFetching: false });
+    this.apollo
+      .watchQuery({
+        query: ANNOUNCEMENT_QUERIES.GET_ANNOUNCEMENTS,
+        variables,
+        fetchPolicy,
+      })
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          const response = data.announcements;
+          newFetchParams = { ...newFetchParams };
+          let paginatedAnnouncements = state.paginatedAnnouncements;
+          paginatedAnnouncements = {
+            ...paginatedAnnouncements,
+            [pageNumber]: response,
+          };
+          let announcements = convertPaginatedListToNormalList(
+            paginatedAnnouncements
+          );
+          let lastPage = null;
+          if (response.length < newFetchParams.pageSize) {
+            lastPage = newFetchParams.currentPage;
           }
-        );
-    }
+          patchState({
+            lastPage,
+            announcements,
+            paginatedAnnouncements,
+            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
+            isFetching: false,
+          });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetching: false });
+        }
+      );
   }
 
   @Action(AnnouncementSubscriptionAction)
@@ -288,7 +283,7 @@ export class AnnouncementState {
   ) {
     const state = getState();
     const { form, formDirective } = payload;
-    let { formSubmitting } = state;
+    let { formSubmitting, fetchPolicy } = state;
     if (form.valid) {
       formSubmitting = true;
       patchState({ formSubmitting });
@@ -336,7 +331,7 @@ export class AnnouncementState {
                 paginatedAnnouncements: newPaginatedItems,
                 announcements: newItemsList,
                 announcementFormRecord: emptyAnnouncementFormRecord,
-                fetchPolicy: 'network-only',
+                fetchPolicy,
               });
               this.store.dispatch(
                 new ShowNotificationAction({

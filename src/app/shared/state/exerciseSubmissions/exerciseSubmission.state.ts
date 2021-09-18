@@ -37,7 +37,6 @@ import { EXERCISE_SUBMISSION_MUTATIONS } from '../../api/graphql/mutations.graph
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
-  fetchParamsNewOrNot,
   subscriptionUpdater,
   updateFetchParams,
   convertPaginatedListToNormalList,
@@ -210,10 +209,6 @@ export class ExerciseSubmissionState {
       offset: newFetchParams.offset,
     };
     if (
-      fetchParamsNewOrNot({
-        fetchParamObjects: gradingGroupsfetchParamObjects,
-        newFetchParams,
-      }) &&
       columnFilters?.groupBy // This action is only executed when groupBy is valid
     ) {
       patchState({ isFetching: true });
@@ -336,54 +331,49 @@ export class ExerciseSubmissionState {
       participantId: columnFilters?.participantId,
       status: columnFilters?.status,
     };
-    if (fetchParamsNewOrNot({ fetchParamObjects, newFetchParams })) {
-      patchState({ isFetching: true });
+    patchState({ isFetching: true });
 
-      this.apollo
-        .watchQuery({
-          query: EXERCISE_SUBMISSION_QUERIES.GET_EXERCISE_SUBMISSIONS,
-          variables,
-          fetchPolicy,
-        })
-        .valueChanges.subscribe(
-          ({ data }: any) => {
-            const response = data.exerciseSubmissions;
-            newFetchParams = { ...newFetchParams };
-            let paginatedExerciseSubmissions =
-              state.paginatedExerciseSubmissions;
-            paginatedExerciseSubmissions = {
-              ...paginatedExerciseSubmissions,
-              [pageNumber]: response,
-            };
+    this.apollo
+      .watchQuery({
+        query: EXERCISE_SUBMISSION_QUERIES.GET_EXERCISE_SUBMISSIONS,
+        variables,
+        fetchPolicy,
+      })
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          const response = data.exerciseSubmissions;
+          newFetchParams = { ...newFetchParams };
+          let paginatedExerciseSubmissions = state.paginatedExerciseSubmissions;
+          paginatedExerciseSubmissions = {
+            ...paginatedExerciseSubmissions,
+            [pageNumber]: response,
+          };
 
-            let exerciseSubmissions = convertPaginatedListToNormalList(
-              paginatedExerciseSubmissions
-            );
-            let lastPage = null;
-            if (response.length < newFetchParams.pageSize) {
-              lastPage = newFetchParams.currentPage;
-            }
-            patchState({
-              lastPage,
-              exerciseSubmissions,
-              paginatedExerciseSubmissions,
-              fetchParamObjects: state.fetchParamObjects.concat([
-                newFetchParams,
-              ]),
-              isFetching: false,
-            });
-          },
-          (error) => {
-            this.store.dispatch(
-              new ShowNotificationAction({
-                message: getErrorMessageFromGraphQLResponse(error),
-                action: 'error',
-              })
-            );
-            patchState({ isFetching: false });
+          let exerciseSubmissions = convertPaginatedListToNormalList(
+            paginatedExerciseSubmissions
+          );
+          let lastPage = null;
+          if (response.length < newFetchParams.pageSize) {
+            lastPage = newFetchParams.currentPage;
           }
-        );
-    }
+          patchState({
+            lastPage,
+            exerciseSubmissions,
+            paginatedExerciseSubmissions,
+            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
+            isFetching: false,
+          });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetching: false });
+        }
+      );
   }
 
   @Action(ExerciseSubmissionSubscriptionAction)

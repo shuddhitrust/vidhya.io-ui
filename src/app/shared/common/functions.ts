@@ -136,36 +136,36 @@ export const paginatedSubscriptionUpdater = ({
   return { newPaginatedItems, newItemsList };
 };
 
-export const fetchParamsNewOrNot = ({
-  fetchParamObjects,
-  newFetchParams,
-}: {
-  fetchParamObjects: FetchParams[];
-  newFetchParams: FetchParams;
-}): boolean => {
-  let result = true;
-  // if (fetchParamObjects.length < 1) {
-  //   return true;
-  // }
+// export const fetchParamsNewOrNot = ({
+//   fetchParamObjects,
+//   newFetchParams,
+// }: {
+//   fetchParamObjects: FetchParams[];
+//   newFetchParams: FetchParams;
+// }): boolean => {
+//   let result = true;
+//   // if (fetchParamObjects.length < 1) {
+//   //   return true;
+//   // }
 
-  if (fetchParamObjects.length > 0) {
-    const lastFetchParams = fetchParamObjects[fetchParamObjects.length - 1];
-    if (
-      lastFetchParams.currentPage == newFetchParams.currentPage &&
-      lastFetchParams.pageSize == newFetchParams.pageSize &&
-      lastFetchParams.offset == newFetchParams.offset &&
-      lastFetchParams.searchQuery == newFetchParams.searchQuery &&
-      compareObjects(
-        lastFetchParams.columnFilters,
-        newFetchParams.columnFilters
-      )
-    ) {
-      return false;
-    }
-  }
+//   if (fetchParamObjects.length > 0) {
+//     const lastFetchParams = fetchParamObjects[fetchParamObjects.length - 1];
+//     if (
+//       lastFetchParams.currentPage == newFetchParams.currentPage &&
+//       lastFetchParams.pageSize == newFetchParams.pageSize &&
+//       lastFetchParams.offset == newFetchParams.offset &&
+//       lastFetchParams.searchQuery == newFetchParams.searchQuery &&
+//       compareObjects(
+//         lastFetchParams.columnFilters,
+//         newFetchParams.columnFilters
+//       )
+//     ) {
+//       return false;
+//     }
+//   }
 
-  return result;
-};
+//   return result;
+// };
 
 export const columnFiltersChanged = ({
   fetchParamObjects,

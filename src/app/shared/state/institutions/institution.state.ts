@@ -29,7 +29,6 @@ import { INSTITUTION_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
-  fetchParamsNewOrNot,
   subscriptionUpdater,
   updateFetchParams,
 } from '../../common/functions';
@@ -129,7 +128,7 @@ export class InstitutionState {
     { payload }: FetchInstitutionsAction
   ) {
     const state = getState();
-    const { institutionsSubscribed, fetchParamObjects } = state;
+    const { institutionsSubscribed, fetchPolicy, fetchParamObjects } = state;
     const { searchParams } = payload;
     const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({
@@ -150,7 +149,7 @@ export class InstitutionState {
       .watchQuery({
         query: INSTITUTION_QUERIES.GET_INSTITUTIONS,
         variables,
-        fetchPolicy: 'network-only',
+        fetchPolicy,
       })
       .valueChanges.subscribe(
         ({ data }: any) => {

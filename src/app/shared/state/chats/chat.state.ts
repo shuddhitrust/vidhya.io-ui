@@ -50,7 +50,6 @@ import {
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
-  fetchParamsNewOrNot,
   parseDateTime,
   subscriptionUpdater,
   updateFetchParams,
@@ -285,7 +284,7 @@ export class ChatState {
     { payload }: FetchChatsAction
   ) {
     const state = getState();
-    const { fetchParamObjects } = state;
+    const { fetchParamObjects, fetchPolicy } = state;
     const { searchParams } = payload;
     const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({
@@ -295,93 +294,82 @@ export class ChatState {
       newSearchQuery: searchQuery,
       newColumnFilters: columnFilters,
     });
-    if (
-      fetchParamsNewOrNot({
-        fetchParamObjects,
-        newFetchParams,
+    patchState({ isFetching: true });
+    const variables = {
+      searchField: searchQuery,
+      limit: newFetchParams.pageSize,
+      offset: newFetchParams.offset,
+    };
+    this.apollo
+      .watchQuery({
+        query: CHAT_QUERIES.GET_CHATS,
+        variables,
+        fetchPolicy,
       })
-    ) {
-      patchState({ isFetching: true });
-      const variables = {
-        searchField: searchQuery,
-        limit: newFetchParams.pageSize,
-        offset: newFetchParams.offset,
-      };
-      this.apollo
-        .watchQuery({
-          query: CHAT_QUERIES.GET_CHATS,
-          variables,
-          fetchPolicy: 'network-only',
-        })
-        .valueChanges.subscribe(
-          ({ data }: any) => {
-            const response = data.chats;
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          const response = data.chats;
 
-            newFetchParams = { ...newFetchParams };
-            let chats = state.chats;
-            let responseChats = response.chats;
-            let responseGroups = response.groups;
+          newFetchParams = { ...newFetchParams };
+          let chats = state.chats;
+          let responseChats = response.chats;
+          let responseGroups = response.groups;
 
-            // Parsing the individual chats in to chat objects
-            responseChats = responseChats.map((chat) => {
-              let member;
+          // Parsing the individual chats in to chat objects
+          responseChats = responseChats.map((chat) => {
+            let member;
 
-              if (chat.individualMemberOne?.id == this.currentMember?.id) {
-                member = chat.individualMemberTwo;
-              } else if (
-                chat.individualMemberTwo?.id == this.currentMember?.id
-              ) {
-                member = chat.individualMemberOne;
-              }
-
-              const preppedChat = {
-                id: chat.id,
-                name: member.name,
-                subtitle: parseDateTime(member.lastActive),
-                avatar: member.avatar,
-                chatmessageSet: [],
-              };
-              return preppedChat;
-            });
-            // Parsing the groups into chat objects
-
-            responseGroups = responseGroups.map((group) => {
-              const preppedChat = {
-                id: group?.chat?.id,
-                name: group?.name,
-                subtitle: `${group?.members?.length} members`,
-                avatar: group?.avatar ? group?.avatar : defaultLogos.user,
-                chatmessageSet: [],
-              };
-              return preppedChat;
-            });
-
-            chats = chats.concat(responseChats).concat(responseGroups);
-
-            let lastChatPage = null;
-            if (response.length < newFetchParams.pageSize) {
-              lastChatPage = newFetchParams.currentPage;
+            if (chat.individualMemberOne?.id == this.currentMember?.id) {
+              member = chat.individualMemberTwo;
+            } else if (chat.individualMemberTwo?.id == this.currentMember?.id) {
+              member = chat.individualMemberOne;
             }
-            patchState({
-              chats,
-              lastChatPage,
-              fetchParamObjects: state.fetchParamObjects.concat([
-                newFetchParams,
-              ]),
-              isFetching: false,
-            });
-          },
-          (error) => {
-            this.store.dispatch(
-              new ShowNotificationAction({
-                message: getErrorMessageFromGraphQLResponse(error),
-                action: 'error',
-              })
-            );
-            patchState({ isFetching: false });
+
+            const preppedChat = {
+              id: chat.id,
+              name: member.name,
+              subtitle: parseDateTime(member.lastActive),
+              avatar: member.avatar,
+              chatmessageSet: [],
+            };
+            return preppedChat;
+          });
+          // Parsing the groups into chat objects
+
+          responseGroups = responseGroups.map((group) => {
+            const preppedChat = {
+              id: group?.chat?.id,
+              name: group?.name,
+              subtitle: `${group?.members?.length} members`,
+              avatar: group?.avatar ? group?.avatar : defaultLogos.user,
+              chatmessageSet: [],
+            };
+            return preppedChat;
+          });
+
+          chats = chats.concat(responseChats).concat(responseGroups);
+
+          let lastChatPage = null;
+          if (response.length < newFetchParams.pageSize) {
+            lastChatPage = newFetchParams.currentPage;
           }
-        );
-    }
+          patchState({
+            chats,
+            lastChatPage,
+            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
+            isFetching: false,
+          });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetching: false });
+        }
+      );
   }
 
   @Action(SelectChatAction)
@@ -648,7 +636,7 @@ export class ChatState {
     { payload }: FetchChatMessagesAction
   ) {
     const state = getState();
-    const { chatMessagesFetchParamss } = state;
+    const { chatMessagesFetchParamss, fetchPolicy } = state;
     const chatId = state.chatFormRecord.id;
     const { searchParams } = payload;
     const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
@@ -659,68 +647,60 @@ export class ChatState {
       newSearchQuery: searchQuery,
       newColumnFilters: columnFilters,
     });
-    if (
-      fetchParamsNewOrNot({
-        fetchParamObjects: chatMessagesFetchParamss,
-        newFetchParams,
-      })
-    ) {
-      patchState({ isFetchingChatMessages: true });
-      const variables = {
-        chatId,
-        searchField: searchQuery,
-        limit: newFetchParams.pageSize,
-        offset: newFetchParams.offset,
-      };
-      this.apollo
-        .watchQuery({
-          query: CHAT_QUERIES.GET_CHAT_MESSAGES,
-          variables,
-          fetchPolicy: 'network-only',
-        })
-        .valueChanges.subscribe(
-          ({ data }: any) => {
-            const response = data.chatMessages;
-            newFetchParams = { ...newFetchParams };
-            let chat: ChatUIObject = state.chats.find((c) => c.id == chatId);
-            if (chat) {
-              const chatmessageSet = chat.chatmessageSet.concat(response);
-              chat = { ...chat, chatmessageSet };
-              let chats = state.chats.filter((c) => c.id != chat.id);
-              chats = [chat, ...chats];
-              let formRecord =
-                state.chatFormRecord.id == chat.id
-                  ? chat
-                  : state.chatFormRecord;
 
-              //  Checking if the number of chat messages received is less than the limit
-              // if it is less, then we declare that as the last page
-              let lastChatMessagesPage = null;
-              if (response.length < newFetchParams.pageSize) {
-                lastChatMessagesPage = newFetchParams.currentPage;
-              }
-              patchState({
-                chats,
-                lastChatMessagesPage,
-                chatFormRecord: formRecord,
-                chatMessagesFetchParamss: state.fetchParamObjects.concat([
-                  newFetchParams,
-                ]),
-                isFetchingChatMessages: false,
-              });
+    patchState({ isFetchingChatMessages: true });
+    const variables = {
+      chatId,
+      searchField: searchQuery,
+      limit: newFetchParams.pageSize,
+      offset: newFetchParams.offset,
+    };
+    this.apollo
+      .watchQuery({
+        query: CHAT_QUERIES.GET_CHAT_MESSAGES,
+        variables,
+        fetchPolicy,
+      })
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          const response = data.chatMessages;
+          newFetchParams = { ...newFetchParams };
+          let chat: ChatUIObject = state.chats.find((c) => c.id == chatId);
+          if (chat) {
+            const chatmessageSet = chat.chatmessageSet.concat(response);
+            chat = { ...chat, chatmessageSet };
+            let chats = state.chats.filter((c) => c.id != chat.id);
+            chats = [chat, ...chats];
+            let formRecord =
+              state.chatFormRecord.id == chat.id ? chat : state.chatFormRecord;
+
+            //  Checking if the number of chat messages received is less than the limit
+            // if it is less, then we declare that as the last page
+            let lastChatMessagesPage = null;
+            if (response.length < newFetchParams.pageSize) {
+              lastChatMessagesPage = newFetchParams.currentPage;
             }
-          },
-          (error) => {
-            this.store.dispatch(
-              new ShowNotificationAction({
-                message: getErrorMessageFromGraphQLResponse(error),
-                action: 'error',
-              })
-            );
-            patchState({ isFetchingChatMessages: false });
+            patchState({
+              chats,
+              lastChatMessagesPage,
+              chatFormRecord: formRecord,
+              chatMessagesFetchParamss: state.fetchParamObjects.concat([
+                newFetchParams,
+              ]),
+              isFetchingChatMessages: false,
+            });
           }
-        );
-    }
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetchingChatMessages: false });
+        }
+      );
   }
 
   @Action(ChatMessageSubscriptionAction)

@@ -24,7 +24,6 @@ import { ExerciseKey, MatSelectOption, FetchParams } from '../../common/models';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
-  fetchParamsNewOrNot,
   subscriptionUpdater,
   updateFetchParams,
   convertPaginatedListToNormalList,

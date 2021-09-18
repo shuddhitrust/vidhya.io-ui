@@ -28,7 +28,6 @@ import { COURSE_SECTION_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
-  fetchParamsNewOrNot,
   subscriptionUpdater,
   updateFetchParams,
   convertPaginatedListToNormalList,
@@ -79,7 +78,7 @@ export class CourseSectionState {
       };
       return option;
     });
-    
+
     return options;
   }
 
@@ -110,7 +109,6 @@ export class CourseSectionState {
     { getState, patchState }: StateContext<CourseSectionStateModel>,
     { payload }: FetchCourseSectionsAction
   ) {
-    
     let { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, fetchParamObjects } = state;
@@ -126,7 +124,7 @@ export class CourseSectionState {
       courseId: columnFilters.courseId,
     };
     patchState({ isFetching: true });
-    
+
     this.apollo
       .watchQuery({
         query: COURSE_SECTION_QUERIES.GET_COURSE_SECTIONS,
@@ -135,7 +133,6 @@ export class CourseSectionState {
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
-          
           const response = data.courseSections;
           newFetchParams = { ...newFetchParams };
           let paginatedCourseSections = state.paginatedCourseSections;
@@ -250,7 +247,7 @@ export class CourseSectionState {
       formSubmitting = true;
       patchState({ formSubmitting });
       const values = form.value;
-      
+
       const updateForm = values.id == null ? false : true;
       const { id, ...sanitizedValues } = values;
       const variables = updateForm
@@ -273,13 +270,13 @@ export class CourseSectionState {
               ? data.updateCourseSection
               : data.createCourseSection;
             patchState({ formSubmitting: false });
-            
+
             if (response.ok) {
               const method = updateForm
                 ? SUBSCRIPTION_METHODS.UPDATE_METHOD
                 : SUBSCRIPTION_METHODS.CREATE_METHOD;
               const courseSection = response.courseSection;
-              
+
               const { newPaginatedItems, newItemsList } =
                 paginatedSubscriptionUpdater({
                   paginatedItems: state.paginatedCourseSections,
@@ -312,10 +309,8 @@ export class CourseSectionState {
                 })
               );
             }
-            
           },
           (error) => {
-            
             this.store.dispatch(
               new ShowNotificationAction({
                 message: getErrorMessageFromGraphQLResponse(error),
@@ -350,7 +345,7 @@ export class CourseSectionState {
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteCourseSection;
-          
+
           if (response.ok) {
             this.router.navigateByUrl(CourseSectionFormCloseURL);
             const method = SUBSCRIPTION_METHODS.DELETE_METHOD;
@@ -417,7 +412,6 @@ export class CourseSectionState {
       .subscribe(
         ({ data }: any) => {
           const response = data.reorderChapters;
-          
         },
         (error) => {
           this.store.dispatch(
