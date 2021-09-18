@@ -428,8 +428,28 @@ export const sortArrayOfObjectsByString = (array: any[], key: string) => {
   return array.sort(compare);
 };
 
-export const preventSpaces = ($event) => {
-  return $event.code != 'Space';
+export const preventSpaces = (event) => {
+  return event.code != 'Space';
+};
+
+export const preventSymbols = (event) => {
+  return (
+    (event.which >= 48 && event.which <= 57) ||
+    (event.which >= 65 && event.which <= 90) ||
+    (event.which >= 97 && event.which <= 122)
+  );
+};
+
+export const sanitizeUsername = (event) => {
+  const noSymbols = preventSymbols(event);
+  const noSpace = preventSpaces(event);
+  const validEntry = noSpace && noSymbols;
+  if (validEntry) {
+    setTimeout(() => {
+      event.target.value = event.target.value.toLowerCase();
+    }, 0);
+  }
+  return validEntry;
 };
 
 export const ChapterTitle = (chapter: Chapter): string => {
