@@ -446,6 +446,7 @@ export const EXERCISE_QUERIES = {
         required
         options
         points
+        rubric
       }
     }
   `,
@@ -474,6 +475,7 @@ export const EXERCISE_QUERIES = {
           required
           options
           points
+          rubric
         }
         submissions {
           id
@@ -578,6 +580,7 @@ export const EXERCISE_SUBMISSION_QUERIES = {
           prompt
           options
           points
+          rubric
           course {
             id
             title
@@ -666,6 +669,7 @@ export const EXERCISE_KEY_QUERIES = {
           }
           options
           points
+          rubric
         }
         validOption
         validAnswers
@@ -704,6 +708,7 @@ export const EXERCISE_KEY_QUERIES = {
           }
           options
           points
+          rubric
         }
         validOption
         validAnswers

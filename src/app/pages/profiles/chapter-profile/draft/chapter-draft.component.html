@@ -471,8 +471,8 @@
       placeholder="Additional guidance for grading"
     />
   </mat-form-field>
-  <hr />
-  <div *ngFor="let criterion of question.rubric; let i = index">
+
+  <!-- <div *ngFor="let criterion of question.rubric; let i = index">
     <mat-form-field class="col-lg-3 col-md-3 col-sm-3" appearance="outline">
       <mat-label>Points</mat-label>
       <input
@@ -490,5 +490,57 @@
         placeholder="Criterion"
       />
     </mat-form-field>
-  </div>
+  </div> -->
+  <ng-container
+    *ngTemplateOutlet="
+      rubricsTemplate;
+      context: { question: exerciseForm.value }
+    "
+  ></ng-container>
+</ng-template>
+
+<ng-template #rubricsTemplate let-question="question">
+  <span *ngIf="showRubric(question)">
+    <hr />
+    <h2>Rubric</h2>
+    <div
+      *ngFor="
+        let criterion of question.rubric;
+        let i = index;
+        trackBy: trackByFn
+      "
+    >
+      <mat-form-field class="col-lg-2 col-md-2 col-sm-2" appearance="outline">
+        <mat-label>Points</mat-label>
+        <input
+          matInput
+          type="number"
+          [(ngModel)]="tempRubric[i].points"
+          (change)="updateRubric(question, i)"
+          placeholder="Points"
+        />
+      </mat-form-field>
+      <mat-form-field class="col-lg-9 col-md-9 col-sm-9" appearance="outline">
+        <mat-label>Criterion</mat-label>
+        <input
+          matInput
+          [(ngModel)]="tempRubric[i].description"
+          placeholder="Criterion description"
+        />
+      </mat-form-field>
+          <button class="col-lg-1 col-md-1 col-sm-1" type="button" mat-button (click)="removeCriterion(i)">
+            <mat-icon>close</mat-icon>
+          </button>
+    </div>
+    <button
+      type="button"
+      *ngIf="showAddCriterion"
+      (click)="addCriterion()"
+      class="center-button"
+      mat-raised-button
+      color="secondary"
+    >
+      Add criterion
+    </button></span
+  >
 </ng-template>

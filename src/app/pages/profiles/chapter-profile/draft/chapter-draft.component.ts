@@ -61,14 +61,10 @@ import {
   MasterConfirmationDialogObject,
 } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 const startingExerciseFormOptions = ['', ''];
-export type RubricType = {
+export type RubricCriterionType = {
   points: number;
-  criterion: string;
+  description: string;
 };
-const startingRubric: RubricType[] = [
-  { points: 0, criterion: '' },
-  { points: 0, criterion: 'Misc' },
-];
 type previewImage = {
   url: string;
   file: any;
@@ -109,7 +105,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   isFetchingExerciseKeys: boolean;
   @Select(ChapterState.isFetching)
   isFetchingChapter$: Observable<boolean>;
-  exerciseForm: FormGroup = this.setupExerciseForm();
+  exerciseForm: FormGroup;
   showExerciseForm: boolean = false;
   @Select(ExerciseState.formSubmitting)
   formSubmitting$: Observable<boolean>;
@@ -127,8 +123,11 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   imagesQueuedForUpload: previewImage[] = [];
   formDirective: FormGroupDirective;
   tempPrompt = '';
-  tempRubric = Object.assign([], startingRubric);
+  // Rubric related variables
+  tempRubric = Object.assign([], this.startingRubric());
+  pointsAccountedFor: number = 0;
   rubricComplete: boolean = false;
+  showAddCriterion: boolean = false;
   constructor(
     public dialog: MatDialog,
     private location: Location,
@@ -149,7 +148,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     this.chapter$.subscribe((val) => {
       this.chapter = val;
       this.fetchExerciseKeys();
-      this.exerciseForm = this.setupExerciseForm();
+      this.setupExerciseForm();
     });
     this.formSubmitting$.subscribe((val) => {
       this.formSubmitting = val;
@@ -157,6 +156,10 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     this.errorFetching$.subscribe((val) => {
       this.errorFetching = val;
     });
+  }
+
+  startingRubric(): RubricCriterionType[] {
+    return Object.assign([], [{ points: null, description: '' }]);
   }
 
   sanitizeExerciseKeyRecord(exerciseKeyRecord) {
@@ -170,6 +173,19 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     let finalExerciseKeyRecord = { ...exerciseKeyRecord, validAnswers };
     this.exerciseKey = finalExerciseKeyRecord;
     return this.exerciseKey;
+  }
+
+  sanitizeRubric(rubric: any): RubricCriterionType[] {
+    let sanitizedRubric = rubric;
+    console.log('from sanitizeRubric', { rubric });
+    if (typeof rubric == 'string') {
+      sanitizedRubric = JSON.parse(rubric);
+      console.log('the rubric is a string', {
+        afterConversion: sanitizedRubric,
+      });
+    }
+    console.log({ sanitizedRubric });
+    return sanitizedRubric;
   }
 
   setupExerciseForm(
@@ -195,10 +211,31 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
       referenceLink: [exerciseKeyRecord?.referenceLink],
       referenceImages: [exerciseKeyRecord?.referenceImages],
       remarks: [exerciseKeyRecord?.remarks],
-      rubric: [exerciseKeyRecord?.exercise.rubric],
+      rubric: [
+        exerciseKeyRecord?.exercise.rubric
+          ? this.sanitizeRubric(exerciseKeyRecord.exercise.rubric)
+          : this.startingRubric(),
+      ],
     });
-    this.tempPrompt = exerciseKeyRecord?.exercise?.prompt;
-    return exerciseForm;
+    this.tempPrompt = exerciseForm.get('prompt').value;
+    this.tempRubric = exerciseForm.get('rubric').value;
+    this.exerciseForm = exerciseForm;
+    console.log('form after setup', { exerciseForm: this.exerciseForm });
+    this.calibrateRubricVariables();
+  }
+
+  calibrateRubricVariables() {
+    let pointsAccountedFor = 0;
+    console.log('from calibrateRubricVariables', {
+      tempRubric: this.tempRubric,
+    });
+    this.tempRubric?.forEach((c: RubricCriterionType) => {
+      pointsAccountedFor += c?.points;
+    });
+    this.pointsAccountedFor = pointsAccountedFor;
+    const exercisePoints = this.exerciseForm?.get('points').value;
+    this.rubricComplete = pointsAccountedFor == exercisePoints ? true : false;
+    this.showAddCriterion = pointsAccountedFor < exercisePoints;
   }
 
   parseDate(date) {
@@ -295,7 +332,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   editExercise(exerciseKey) {
     const exercise = exerciseKey?.exercise;
     this.resetExerciseForm();
-    this.exerciseForm = this.setupExerciseForm(exerciseKey);
+    this.setupExerciseForm(exerciseKey);
     this.showExerciseForm = true;
   }
   deleteExerciseConfirmation(key) {
@@ -353,7 +390,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     this.showExerciseForm = true;
   }
   resetExerciseForm() {
-    this.exerciseForm = this.setupExerciseForm();
+    this.setupExerciseForm();
     this.exerciseFormOptions = Object.assign([], startingExerciseFormOptions);
     this.imagesQueuedForUpload = [];
     this.exerciseKey = Object.assign({}, emptyExerciseKeyFormRecord);
@@ -369,12 +406,45 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   trackByFn(index: any, item: any) {
     return index;
   }
-  updateRubric(exercise: Exercise) {
-    let pointsAccountedFor = 0;
-    this.tempRubric.forEach((c: RubricType) => {
-      pointsAccountedFor += c.points;
-    });
-    this.rubricComplete = pointsAccountedFor == exercise.points ? true : false;
+  addCriterion() {
+    const currentRubric = Object.assign([], this.tempRubric);
+    const lastCriterion = currentRubric[currentRubric.length - 1];
+    if (this.pointsAccountedFor < this.exerciseForm.get('points').value) {
+      if (lastCriterion.points && lastCriterion.description) {
+        console.log('add criterion', { startingRubric: this.startingRubric() });
+        const newTempRubric = this.tempRubric.concat(this.startingRubric());
+        this.tempRubric = Object.assign([], newTempRubric);
+        this.exerciseForm.get('rubric').setValue(this.tempRubric);
+      } else {
+        this.store.dispatch(
+          new ShowNotificationAction({
+            message: 'Please add a valid criterion description',
+            action: 'error',
+          })
+        );
+      }
+    }
+  }
+  showRubric(question: Exercise): boolean {
+    const typeChosen = question.questionType; // A question type is chosen
+    const optionType = question.questionType == this.questionTypes.options; // The chosen question type is options
+    const points = question.points > 0; // Must have some points
+    return typeChosen && !optionType && points;
+  }
+  updateRubric(exercise: Exercise, index) {
+    this.calibrateRubricVariables();
+    const excessPoints = this.pointsAccountedFor - exercise.points;
+    if (excessPoints > 0) {
+      this.tempRubric[index].points =
+        this.tempRubric[index].points - excessPoints;
+    }
+    this.rubricComplete =
+      this.pointsAccountedFor == exercise.points ? true : false;
+    this.showAddCriterion = this.pointsAccountedFor <= exercise.points;
+  }
+  removeCriterion(index) {
+    this.tempRubric.splice(index, 1);
+    this.exerciseForm.get('rubric').setValue(this.tempRubric);
   }
 
   enableAddNewOption() {
