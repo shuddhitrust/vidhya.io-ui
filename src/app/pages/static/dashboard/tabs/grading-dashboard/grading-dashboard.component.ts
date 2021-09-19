@@ -290,6 +290,22 @@ export class GradingDashboardComponent implements OnInit {
   markIncorrect(exerciseSubmission) {
     this.updatePoints(exerciseSubmission, 0);
   }
+  toggleSubmissionReturn(exerciseSubmission) {
+    this.gradingUpdate(exerciseSubmission);
+    let submission = this.exerciseSubmissions.find((s: ExerciseSubmission) => {
+      return s.id == exerciseSubmission.id;
+    });
+    submission = Object.assign({}, submission);
+    submission.status =
+      submission.status == this.exerciseSubmissionStatusTypes.returned
+        ? this.exerciseSubmissionStatusTypes.graded
+        : this.exerciseSubmissionStatusTypes.returned;
+    this.exerciseSubmissions = this.exerciseSubmissions.map((s) => {
+      if (s.id == submission.id) {
+        return submission;
+      } else return s;
+    });
+  }
   toggleFlaggedSubmission(exerciseSubmission) {
     this.gradingUpdate(exerciseSubmission);
     let submission = this.exerciseSubmissions.find((s: ExerciseSubmission) => {

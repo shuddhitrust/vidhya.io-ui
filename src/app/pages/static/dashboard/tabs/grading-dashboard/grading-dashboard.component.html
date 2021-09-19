@@ -317,6 +317,29 @@
                 >
                   {{ 0 }}
                 </button>
+                <button
+                  *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
+                  type="button"
+                  [color]="
+                    exerciseSubmission.status ==
+                    exerciseSubmissionStatusTypes.returned
+                      ? 'warn'
+                      : 'secondary'
+                  "
+                  class="card-button"
+                  mat-mini-fab
+                  nz-tooltip
+                  nzTooltipPlacement="top"
+                  [nzTooltipTitle]="
+                    exerciseSubmission.status ==
+                    exerciseSubmissionStatusTypes.returned
+                      ? 'Unreturn'
+                      : 'Return'
+                  "
+                  (click)="toggleSubmissionReturn(exerciseSubmission)"
+                >
+                  <mat-icon>close</mat-icon>
+                </button>
               </mat-card-actions>
             </mat-card>
           </div>
