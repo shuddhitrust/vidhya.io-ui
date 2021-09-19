@@ -289,6 +289,7 @@ export type ExerciseSubmission = {
   points?: number;
   percentage?: number;
   status?: ExerciseSubmissionStatus | string;
+  criteriaSatisfied?: string[];
   grader?: any;
   flagged: boolean;
   remarks?: string;

@@ -47,6 +47,12 @@ h2 {
   color: rgba(0, 0, 0, 0.5);
 }
 
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .unsaved-card {
   border: 2px solid var(--shuddhi-color);
 }

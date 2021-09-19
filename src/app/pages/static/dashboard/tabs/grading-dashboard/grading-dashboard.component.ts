@@ -19,6 +19,7 @@ import {
   ExerciseKey,
   ExerciseQuestionTypeOptions,
   ExerciseSubmission,
+  ExerciseSubmissionStatus,
   ExerciseSubmissionStatusOptions,
   MatSelectOption,
   resources,
@@ -277,6 +278,59 @@ export class GradingDashboardComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {});
+  }
+
+  renderRubric(exerciseSubmission: ExerciseSubmission) {
+    return JSON.parse(exerciseSubmission.exercise.rubric);
+  }
+
+  showRubric(exerciseSubmission: ExerciseSubmission) {
+    const rubric = this.renderRubric(exerciseSubmission);
+    return rubric?.length > 0;
+  }
+
+  renderRubricForTable(exerciseSubmission: ExerciseSubmission) {
+    const rubric = this.renderRubric(exerciseSubmission);
+    const tableData = rubric.map((c) => {
+      c['satisfied'] =
+        exerciseSubmission?.criteriaSatisfied?.includes(c.description) == true
+          ? true
+          : false;
+      return c;
+    });
+    return tableData;
+  }
+
+  isCriterionSatisfied(exerciseSubmission: ExerciseSubmission, description) {
+    let submission = this.exerciseSubmissions.find((s: ExerciseSubmission) => {
+      return s.id == exerciseSubmission.id;
+    });
+    return submission.criteriaSatisfied?.includes(description);
+  }
+
+  checkCriterion(exerciseSubmission: ExerciseSubmission, description) {
+    this.gradingUpdate(exerciseSubmission);
+    let submission = this.exerciseSubmissions.find((s: ExerciseSubmission) => {
+      return s.id == exerciseSubmission.id;
+    });
+    submission = Object.assign({}, submission);
+    const criteriaSatisfied = submission.criteriaSatisfied
+      ? submission.criteriaSatisfied
+      : [];
+    submission.criteriaSatisfied = criteriaSatisfied.concat([description]);
+    let points = 0;
+    const rubric = this.renderRubric(submission);
+    rubric.forEach((c) => {
+      if (submission.criteriaSatisfied.includes(c.description)) {
+        points += c.points;
+      }
+    });
+    submission.points = points;
+    this.exerciseSubmissions = this.exerciseSubmissions.map((s) => {
+      if (s.id == submission.id) {
+        return submission;
+      } else return s;
+    });
   }
 
   gradingUpdate(exerciseSubmission: ExerciseSubmission) {

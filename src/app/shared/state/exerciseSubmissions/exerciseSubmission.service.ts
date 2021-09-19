@@ -30,6 +30,7 @@ export class ExerciseSubmissionService {
       submission.remarks = s.remarks;
       submission.flagged = s.flagged;
       submission.grader = s.grader;
+      submission.criteriaSatisfied = s.criteriaSatisfied;
       submission.createdAt = s.createdAt;
       submission.updatedAt = s.updatedAt;
       return submission;
