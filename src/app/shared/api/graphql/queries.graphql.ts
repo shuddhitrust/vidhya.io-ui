@@ -600,6 +600,7 @@ export const EXERCISE_SUBMISSION_QUERIES = {
         points
         percentage
         status
+        criteriaSatisfied
         remarks
         flagged
         grader {

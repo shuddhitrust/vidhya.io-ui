@@ -317,7 +317,10 @@ export class GradingDashboardComponent implements OnInit {
     const criteriaSatisfied = submission.criteriaSatisfied
       ? submission.criteriaSatisfied
       : [];
-    submission.criteriaSatisfied = criteriaSatisfied.concat([description]);
+    submission.criteriaSatisfied = criteriaSatisfied.includes(description)
+      ? criteriaSatisfied.filter((desc) => desc != description)
+      : criteriaSatisfied.concat([description]);
+    submission.status = this.exerciseSubmissionStatusTypes.graded;
     let points = 0;
     const rubric = this.renderRubric(submission);
     rubric.forEach((c) => {
