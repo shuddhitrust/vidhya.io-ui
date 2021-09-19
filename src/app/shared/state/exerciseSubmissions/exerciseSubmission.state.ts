@@ -452,7 +452,7 @@ export class ExerciseSubmissionState {
     formSubmitting = true;
     patchState({ formSubmitting });
     const variables = {
-      exerciseSubmissions: exerciseSubmissions,
+      exerciseSubmissions,
     };
     const update = exerciseSubmissions[0].id ? true : false;
     this.apollo
