@@ -100,7 +100,7 @@ export class GradingDashboardComponent implements OnInit {
 
   @Select(ExerciseSubmissionState.formSubmitting)
   isSubmittingForm$: Observable<boolean>;
-
+  rubricDatatableColumns = ['description', 'points', 'satisfied'];
   constructor(
     private store: Store,
     private router: Router,
