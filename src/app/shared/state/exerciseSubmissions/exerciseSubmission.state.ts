@@ -498,7 +498,7 @@ export class ExerciseSubmissionState {
             // Filtering out submissions that are no longer valid for the current set of filters
             exerciseSubmissions = exerciseSubmissions.filter((e) => {
               const statusValid = previousFetchParams.columnFilters?.status
-                ? previousFetchParams.columnFilters?.status == e.status
+                ? previousFetchParams.columnFilters?.status == e?.status
                 : true;
               return statusValid;
             });

@@ -56,14 +56,13 @@ export class AssignmentDashboardComponent implements OnInit {
     private store: Store,
     private router: Router,
     private auth: AuthorizationService,
-    private route: ActivatedRoute,
+    private route: ActivatedRoute
   ) {
     this.fetchAssignments();
     this.isFetching$.subscribe((val) => {
       this.isFetching = val;
     });
     this.assignments$.subscribe((val) => {
-      
       this.assignments = val ? val : [];
     });
   }
@@ -76,18 +75,19 @@ export class AssignmentDashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-        this.route.queryParams.subscribe((params) => {
+    this.route.queryParams.subscribe((params) => {
       this.params = params;
-      const statusOptions = Object.values(ExerciseSubmissionStatusOptions)
-      const status = params['status']
-      this.submissionStatusFilter =  statusOptions.includes(status) ? status : null;
-      if(this.submissionStatusFilter) {
+      const statusOptions = Object.values(ExerciseSubmissionStatusOptions);
+      const status = params['status'];
+      this.submissionStatusFilter = statusOptions.includes(status)
+        ? status
+        : null;
+      if (this.submissionStatusFilter) {
         this.fetchAssignments();
       }
     });
   }
   onScroll() {
-    
     if (!this.isFetching) {
       this.fetchNextAssignments();
     }
@@ -96,7 +96,7 @@ export class AssignmentDashboardComponent implements OnInit {
   statusIcon(card): { icon: string; iconColor: string } {
     let icon = null;
     let iconColor = null;
-    switch (card.status) {
+    switch (card?.status) {
       case ExerciseSubmissionStatusOptions.pending:
         icon = 'new_releases';
         iconColor = 'var(--orange)';
@@ -113,16 +113,18 @@ export class AssignmentDashboardComponent implements OnInit {
         icon = 'cancel';
         iconColor = 'var(--red)';
         break;
+      default:
+        break;
     }
     return { icon, iconColor };
   }
 
   updateAssignmentFilter() {
-    const status = this.submissionStatusFilter
+    const status = this.submissionStatusFilter;
     this.assignmentColumnFilters = {
       status,
     };
-        this.router.navigate([], {
+    this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { status },
       queryParamsHandling: 'merge',
@@ -131,15 +133,15 @@ export class AssignmentDashboardComponent implements OnInit {
   }
 
   fetchAssignments() {
-      this.updateAssignmentFilter();
-      this.store.dispatch(
-        new FetchAssignmentsAction({
-          searchParams: {
-            ...defaultSearchParams,
-            columnFilters: this.assignmentColumnFilters,
-          },
-        })
-      );
+    this.updateAssignmentFilter();
+    this.store.dispatch(
+      new FetchAssignmentsAction({
+        searchParams: {
+          ...defaultSearchParams,
+          columnFilters: this.assignmentColumnFilters,
+        },
+      })
+    );
   }
 
   fetchNextAssignments() {
