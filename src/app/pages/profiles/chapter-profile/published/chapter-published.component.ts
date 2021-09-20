@@ -55,7 +55,10 @@ import { ShowNotificationAction } from 'src/app/shared/state/notifications/notif
 import { UploadService } from 'src/app/shared/api/upload.service';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { ExerciseSubmissionService } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.service';
-import { DragDropComponent } from 'src/app/shared/components/drag-drop/drag-drop.component';
+import {
+  DragDropComponent,
+  DragDropInput,
+} from 'src/app/shared/components/drag-drop/drag-drop.component';
 import {
   MasterConfirmationDialog,
   MasterConfirmationDialogObject,
@@ -310,15 +313,18 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
   }
 
   reorderExercises() {
-    const exercisesList = this.exercises.map((e) => {
-      return { index: e.id, label: e.prompt };
+    const exercisesList: DragDropInput[] = this.exercises.map((e) => {
+      return { id: e.id, label: e.prompt };
     });
+
+    console.log('from reorderExercises', { exercisesList });
 
     const dialogRef = this.dialog.open(DragDropComponent, {
       data: exercisesList,
     });
 
     dialogRef.afterClosed().subscribe((newIndexArray) => {
+      console.log('after closing the dialog', { newIndexArray });
       let i = 1;
       const reorderedList = newIndexArray.map((index) => {
         let exercise = this.exercises.find((e) => e.id == index);

@@ -217,7 +217,7 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
         return c.section?.id == section.id;
       });
     }
-    const chaptersList = newChapters.map((c) => {
+    const chaptersList: DragDropInput[] = newChapters.map((c) => {
       return { id: c.id, label: c.title };
     });
 

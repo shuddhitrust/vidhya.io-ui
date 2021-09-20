@@ -54,7 +54,10 @@ import {
   ResetExerciseKeyStateAction,
 } from 'src/app/shared/state/exerciseKeys/exerciseKey.actions';
 import { UploadService } from 'src/app/shared/api/upload.service';
-import { DragDropComponent } from 'src/app/shared/components/drag-drop/drag-drop.component';
+import {
+  DragDropComponent,
+  DragDropInput,
+} from 'src/app/shared/components/drag-drop/drag-drop.component';
 import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
 import {
   MasterConfirmationDialog,
@@ -348,7 +351,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     this.store.dispatch(new DeleteExerciseAction({ id: exercise?.id }));
   }
   reorderExercises() {
-    const exercisesList = this.exerciseKeys.map((key) => {
+    const exercisesList: DragDropInput[] = this.exerciseKeys.map((key) => {
       return { id: key.exercise.id, label: key.exercise.prompt };
     });
     const dialogRef = this.dialog.open(DragDropComponent, {
