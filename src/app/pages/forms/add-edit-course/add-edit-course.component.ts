@@ -24,6 +24,7 @@ import { FetchInstitutionsAction } from 'src/app/shared/state/institutions/insti
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { OptionsState } from 'src/app/shared/state/options/options.state';
 import { FetchMemberOptionsByInstitution } from 'src/app/shared/state/options/options.actions';
+import { DefaultColDef } from 'src/app/shared/abstract/master-grid/table.config';
 @Component({
   selector: 'app-add-edit-course',
   templateUrl: './add-edit-course.component.html',
@@ -33,10 +34,12 @@ import { FetchMemberOptionsByInstitution } from 'src/app/shared/state/options/op
   ],
 })
 export class AddEditCourseComponent implements OnInit {
-  selectedParticipantColumns = [
-    { field: 'label', headerName: 'Existing Participants' },
-  ];
-  participantRows: MatSelectOption[] = [];
+  gridApi;
+  gridColumnApi;
+  memberColumns = [{ field: 'label', headerName: 'Members' }];
+  defaultColDef: any = DefaultColDef;
+  memberRows: MatSelectOption[] = [];
+  participantRows = [];
   formSubmitting: boolean = false;
   params: object = {};
   currentDate = new Date();
@@ -82,6 +85,7 @@ export class AddEditCourseComponent implements OnInit {
     });
     this.memberOptions$.subscribe((options) => {
       this.memberOptions = options;
+      this.memberRows = this.memberOptions;
     });
     this.store.dispatch(
       new FetchMemberOptionsByInstitution({
@@ -111,6 +115,18 @@ export class AddEditCourseComponent implements OnInit {
       });
     });
   }
+
+  onGridReady(params) {
+    this.gridApi = params.api;
+    this.gridColumnApi = params.columnApi;
+    // this.autoSizeAllColumns();
+  }
+
+  onSelectionChanged = (event$) => {
+    const participantRows = this.gridApi.getSelectedRows();
+    const participantIds = participantRows.map((row) => row.value);
+    this.courseForm.get('participants').setValue(participantIds);
+  };
 
   setupCourseFormGroup = (
     courseFormRecord: Course = emptyCourseFormRecord
@@ -150,9 +166,22 @@ export class AddEditCourseComponent implements OnInit {
     this.participantRows = this.memberOptions.filter((m) =>
       participantIds.includes(m.value)
     );
+    if (this.gridApi) {
+      this.gridApi.forEachNodeAfterFilter((node) => {
+        // select the node
+        console.log('while setting up form', { node });
+        if (participantIds.includes(node.data.value)) {
+          node.setSelected(true);
+        }
+      });
+    }
 
     return formGroup;
   };
+
+  participantCount() {
+    return this.courseForm.get('participants').value.length;
+  }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
