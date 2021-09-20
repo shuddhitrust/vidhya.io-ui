@@ -177,14 +177,9 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
 
   sanitizeRubric(rubric: any): RubricCriterionType[] {
     let sanitizedRubric = rubric;
-    console.log('from sanitizeRubric', { rubric });
     if (typeof rubric == 'string') {
       sanitizedRubric = JSON.parse(rubric);
-      console.log('the rubric is a string', {
-        afterConversion: sanitizedRubric,
-      });
     }
-    console.log({ sanitizedRubric });
     return sanitizedRubric;
   }
 
@@ -220,15 +215,11 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     this.tempPrompt = exerciseForm.get('prompt').value;
     this.tempRubric = exerciseForm.get('rubric').value;
     this.exerciseForm = exerciseForm;
-    console.log('form after setup', { exerciseForm: this.exerciseForm });
     this.calibrateRubricVariables();
   }
 
   calibrateRubricVariables() {
     let pointsAccountedFor = 0;
-    console.log('from calibrateRubricVariables', {
-      tempRubric: this.tempRubric,
-    });
     this.tempRubric?.forEach((c: RubricCriterionType) => {
       pointsAccountedFor += c?.points;
     });
@@ -410,8 +401,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     const currentRubric = Object.assign([], this.tempRubric);
     const lastCriterion = currentRubric[currentRubric.length - 1];
     if (this.pointsAccountedFor < this.exerciseForm.get('points').value) {
-      if (lastCriterion.points && lastCriterion.description) {
-        console.log('add criterion', { startingRubric: this.startingRubric() });
+      if (lastCriterion?.points && lastCriterion?.description) {
         const newTempRubric = this.tempRubric.concat(this.startingRubric());
         this.tempRubric = Object.assign([], newTempRubric);
         this.exerciseForm.get('rubric').setValue(this.tempRubric);
