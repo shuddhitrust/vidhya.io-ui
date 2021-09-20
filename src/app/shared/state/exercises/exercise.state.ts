@@ -25,6 +25,7 @@ import {
   FetchParams,
   ExerciseSubmission,
   SUBSCRIPTION_METHODS,
+  startingFetchParams,
 } from '../../common/models';
 import { EXERCISE_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
@@ -112,8 +113,11 @@ export class ExerciseState {
   }: StateContext<ExerciseStateModel>) {
     patchState({ fetchPolicy: 'network-only' });
     const state = getState();
-    const previousFetchParams =
+    let previousFetchParams =
       state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    previousFetchParams = previousFetchParams
+      ? previousFetchParams
+      : startingFetchParams;
     const pageNumber = previousFetchParams.currentPage;
     const previousSearchParams: SearchParams = {
       pageNumber,
@@ -130,8 +134,11 @@ export class ExerciseState {
   fetchNextExercises({ getState }: StateContext<ExerciseStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastPage;
-    const previousFetchParams =
+    let previousFetchParams =
       state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    previousFetchParams = previousFetchParams
+      ? previousFetchParams
+      : startingFetchParams;
     const pageNumber = previousFetchParams.currentPage + 1;
     const newSearchParams: SearchParams = {
       pageNumber,

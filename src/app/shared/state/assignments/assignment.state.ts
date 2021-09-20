@@ -22,7 +22,7 @@ import {
 import { Router } from '@angular/router';
 import { SearchParams } from '../../abstract/master-grid/table.model';
 import { Location } from '@angular/common';
-import { FetchParams } from '../../common/models';
+import { FetchParams, startingFetchParams } from '../../common/models';
 
 @State<AssignmentStateModel>({
   name: 'assignmentState',
@@ -64,9 +64,15 @@ export class AssignmentState {
   }: StateContext<AssignmentStateModel>) {
     patchState({ fetchPolicy: 'network-only' });
     const state = getState();
-    const previousFetchParams =
+
+    let previousFetchParams =
       state.fetchParamObjects[state.fetchParamObjects.length - 1];
-    const pageNumber = previousFetchParams.currentPage;
+    previousFetchParams = previousFetchParams
+      ? previousFetchParams
+      : startingFetchParams;
+    const pageNumber = previousFetchParams?.currentPage
+      ? previousFetchParams?.currentPage
+      : 1;
     const previousSearchParams: SearchParams = {
       pageNumber,
       pageSize: previousFetchParams.pageSize,
@@ -82,8 +88,11 @@ export class AssignmentState {
   fetchNextAssignments({ getState }: StateContext<AssignmentStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastPage;
-    const previousFetchParams =
+    let previousFetchParams =
       state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    previousFetchParams = previousFetchParams
+      ? previousFetchParams
+      : startingFetchParams;
     const pageNumber = previousFetchParams.currentPage + 1;
     const newSearchParams: SearchParams = {
       pageNumber,

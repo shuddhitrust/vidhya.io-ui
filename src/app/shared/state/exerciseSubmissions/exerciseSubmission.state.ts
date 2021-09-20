@@ -159,10 +159,13 @@ export class ExerciseSubmissionState {
   }: StateContext<ExerciseSubmissionStateModel>) {
     const state = getState();
     const lastPageNumber = state.gradingGroupLastPage;
-    const previousFetchParams =
+    let previousFetchParams =
       state.gradingGroupsfetchParamObjects[
         state.gradingGroupsfetchParamObjects.length - 1
       ];
+    previousFetchParams = previousFetchParams
+      ? previousFetchParams
+      : startingFetchParams;
     const pageNumber = previousFetchParams.currentPage + 1;
     const newSearchParams: SearchParams = {
       pageNumber,
@@ -285,8 +288,11 @@ export class ExerciseSubmissionState {
   }: StateContext<ExerciseSubmissionStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastPage;
-    const previousFetchParams =
+    let previousFetchParams =
       state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    previousFetchParams = previousFetchParams
+      ? previousFetchParams
+      : startingFetchParams;
     const pageNumber = previousFetchParams.currentPage + 1;
     const newSearchParams: SearchParams = {
       pageNumber,
@@ -484,8 +490,11 @@ export class ExerciseSubmissionState {
               return modifiedSubmission ? { ...e, ...modifiedSubmission } : e;
             });
             // Getting the last used fetch params so that we can check if the returned submissions are applicable to the filters
-            const previousFetchParams =
+            let previousFetchParams =
               state.fetchParamObjects[state.fetchParamObjects.length - 1];
+            previousFetchParams = previousFetchParams
+              ? previousFetchParams
+              : startingFetchParams;
             // Filtering out submissions that are no longer valid for the current set of filters
             exerciseSubmissions = exerciseSubmissions.filter((e) => {
               const statusValid = previousFetchParams.columnFilters?.status

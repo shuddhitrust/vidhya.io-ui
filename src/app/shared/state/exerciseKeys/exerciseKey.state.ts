@@ -20,7 +20,12 @@ import {
 } from './exerciseKey.actions';
 import { EXERCISE_KEY_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
-import { ExerciseKey, MatSelectOption, FetchParams } from '../../common/models';
+import {
+  ExerciseKey,
+  MatSelectOption,
+  FetchParams,
+  startingFetchParams,
+} from '../../common/models';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
@@ -102,8 +107,11 @@ export class ExerciseKeyState {
   }: StateContext<ExerciseKeyStateModel>) {
     patchState({ fetchPolicy: 'network-only' });
     const state = getState();
-    const previousFetchParams =
+    let previousFetchParams =
       state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    previousFetchParams = previousFetchParams
+      ? previousFetchParams
+      : startingFetchParams;
     const pageNumber = previousFetchParams.currentPage;
     const previousSearchParams: SearchParams = {
       pageNumber,
@@ -120,8 +128,11 @@ export class ExerciseKeyState {
   fetchNextExerciseKeys({ getState }: StateContext<ExerciseKeyStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastPage;
-    const previousFetchParams =
+    let previousFetchParams =
       state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    previousFetchParams = previousFetchParams
+      ? previousFetchParams
+      : startingFetchParams;
     const pageNumber = previousFetchParams.currentPage + 1;
     const newSearchParams: SearchParams = {
       pageNumber,

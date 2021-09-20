@@ -155,8 +155,11 @@ export class ChapterState {
   fetchNextChapters({ getState }: StateContext<ChapterStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastPage;
-    const previousFetchParams =
+    let previousFetchParams =
       state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    previousFetchParams = previousFetchParams
+      ? previousFetchParams
+      : startingFetchParams;
     const pageNumber = previousFetchParams.currentPage + 1;
     const newSearchParams: SearchParams = {
       pageNumber,
@@ -210,15 +213,12 @@ export class ChapterState {
 
           newFetchParams = { ...newFetchParams };
           let paginatedChapters = state.paginatedChapters;
-          console.log('paginatedChapter', { paginatedChapters });
           paginatedChapters = {
             ...paginatedChapters,
             [pageNumber]: response,
           };
-          console.log('new paginated chapters', { paginatedChapters });
 
           let chapters = convertPaginatedListToNormalList(paginatedChapters);
-          console.log('chapters from paginated chaptesr', { chapters });
           let lastPage = null;
           if (response.length < newFetchParams.pageSize) {
             lastPage = newFetchParams.currentPage;

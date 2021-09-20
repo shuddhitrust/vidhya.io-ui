@@ -347,6 +347,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
   updateExerciseSubmissionAnswer(event, exercise) {
     event.preventDefault();
     const newAnswer = event.target.value + event.key;
+    event.target.value = newAnswer;
     let newExerciseSubmissions = this.exerciseSubmissions.map((e) => {
       if (e?.exercise == exercise.id) {
         let newSubmission = Object.assign({}, e);
@@ -360,6 +361,8 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
   updateExerciseSubmissionLink(event, exercise) {
     event.preventDefault();
     const newLink = event.target.value + event.key;
+    event.target.value = newLink;
+
     let newExerciseSubmissions = this.exerciseSubmissions.map((e) => {
       if (e?.exercise == exercise.id) {
         let newSubmission = Object.assign({}, e);

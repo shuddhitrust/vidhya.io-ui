@@ -169,7 +169,6 @@ export class AddEditCourseComponent implements OnInit {
     if (this.gridApi) {
       this.gridApi.forEachNodeAfterFilter((node) => {
         // select the node
-        console.log('while setting up form', { node });
         if (participantIds.includes(node.data.value)) {
           node.setSelected(true);
         }

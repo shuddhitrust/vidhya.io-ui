@@ -404,12 +404,14 @@ export class GradingDashboardComponent implements OnInit {
   changePoints(event, exerciseSubmission) {
     event.preventDefault();
     const points = event.target.value + event.key;
+    event.target.value = points;
     this.updatePoints(exerciseSubmission, points);
   }
 
   updateRemarks(event, exerciseSubmission) {
     event.preventDefault();
     const remarks = event.target.value + event.key;
+    event.target.value = remarks;
     this.gradingUpdate(exerciseSubmission);
     let submission = this.exerciseSubmissions.find((s: ExerciseSubmission) => {
       return s.id == exerciseSubmission.id;
