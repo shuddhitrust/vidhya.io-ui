@@ -100,7 +100,7 @@ export class GradingDashboardComponent implements OnInit {
 
   @Select(ExerciseSubmissionState.formSubmitting)
   isSubmittingForm$: Observable<boolean>;
-  rubricDatatableColumns = ['description', 'points', 'satisfied'];
+  rubricDatatableColumns: string[] = ['description', 'points', 'satisfied'];
   constructor(
     private store: Store,
     private router: Router,
@@ -270,7 +270,7 @@ export class GradingDashboardComponent implements OnInit {
       new GetExerciseKeyAction({ exerciseId: exerciseSubmission?.exercise.id })
     );
 
-    const dialogRef = this.dialog.open(ExercicseKeyDialog, {
+    const dialogRef = this.dialog.open(ExerciseKeyDialog, {
       data: {
         exerciseKeyRecord$: this.exerciseKeyRecord$,
         isFetchingExerciseKey$: this.isFetchingExerciseKey$,
@@ -450,19 +450,19 @@ export class GradingDashboardComponent implements OnInit {
 
 @Component({
   selector: 'exercise-key-dialog',
-  templateUrl: './exercise-key-dialog.html',
+  templateUrl: './exercise-key-dialog/exercise-key-dialog.html',
   styleUrls: [
-    './exercise-key-dialog.scss',
+    './exercise-key-dialog/exercise-key-dialog.scss',
     './../../../../../shared/common/shared-styles.css',
   ],
 })
-export class ExercicseKeyDialog {
+export class ExerciseKeyDialog {
   exerciseKey: ExerciseKey;
   isFetchingExerciseKey: boolean = false;
   chapterRoute = '';
   questionTypes: any = ExerciseQuestionTypeOptions;
   constructor(
-    public dialogRef: MatDialogRef<ExercicseKeyDialog>,
+    public dialogRef: MatDialogRef<ExerciseKeyDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     data.exerciseKeyRecord$.subscribe((val) => {

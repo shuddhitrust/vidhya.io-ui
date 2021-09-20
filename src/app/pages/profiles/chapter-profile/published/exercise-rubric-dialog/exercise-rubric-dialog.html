@@ -1,0 +1,33 @@
+<mat-dialog-content class="dialog-box">
+  <p mat-dialog-title>Rubric</p>
+  <table
+    mat-table
+    [dataSource]="renderRubricForTable(submission)"
+    style="width: 100%"
+  >
+    <!-- Description Column -->
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef>Description</th>
+      <td mat-cell *matCellDef="let criterion">{{ criterion.description }}</td>
+    </ng-container>
+
+    <!-- Points Column -->
+    <ng-container matColumnDef="points">
+      <th mat-header-cell *matHeaderCellDef>Points</th>
+      <td mat-cell *matCellDef="let criterion">{{ criterion.points }}</td>
+    </ng-container>
+
+    <!-- Check Column -->
+    <ng-container matColumnDef="satisfied">
+      <th mat-header-cell *matHeaderCellDef><mat-icon>check</mat-icon></th>
+      <td mat-cell *matCellDef="let criterion">
+        <mat-icon style="cursor: pointer"
+          >{{ isCriterionSatisfied(submission, criterion.description) ? "check"
+          : "close" }}</mat-icon
+        >
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="rubricDatatableColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: rubricDatatableColumns"></tr>
+  </table>
+</mat-dialog-content>

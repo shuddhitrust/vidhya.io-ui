@@ -10,10 +10,13 @@ import { AnnouncementDashboardComponent } from './tabs/announcement-dashboard/an
 import { AssignmentDashboardComponent } from './tabs/assignment-dashboard/assignment-dashboard.component';
 import { GroupDashboardComponent } from './tabs/group-dashboard/group-dashboard.component';
 import {
-  ExercicseKeyDialog,
+  ExerciseKeyDialog,
   GradingDashboardComponent,
 } from './tabs/grading-dashboard/grading-dashboard.component';
-import { ChapterPublishedComponent } from '../../profiles/chapter-profile/published/chapter-published.component';
+import {
+  ChapterPublishedComponent,
+  ExerciseRubricDialog,
+} from '../../profiles/chapter-profile/published/chapter-published.component';
 import { ChapterDraftComponent } from '../../profiles/chapter-profile/draft/chapter-draft.component';
 import { ChapterProfileComponent } from '../../profiles/chapter-profile/chapter-profile.component';
 import { CourseProfileComponent } from '../../profiles/course-profile/course-profile.component';
@@ -155,10 +158,11 @@ export function markedOptionsFactory(): MarkedOptions {
     ChapterProfileComponent,
     ChapterDraftComponent,
     ChapterPublishedComponent,
-    ExercicseKeyDialog,
+    ExerciseKeyDialog,
     CourseSectionModalComponent,
     SimpleLoadingSpinnerComponent,
     MasterConfirmationDialog,
+    ExerciseRubricDialog,
   ],
   imports: [
     CommonModule,

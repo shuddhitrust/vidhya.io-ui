@@ -9,7 +9,11 @@ import {
   ResetChapterFormAction,
 } from 'src/app/shared/state/chapters/chapter.actions';
 import { ChapterState } from 'src/app/shared/state/chapters/chapter.state';
-import { MatDialog } from '@angular/material/dialog';
+import {
+  MatDialog,
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+} from '@angular/material/dialog';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   Chapter,
@@ -509,6 +513,27 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     }
   }
 
+  renderRubric(exercise: Exercise) {
+    return JSON.parse(exercise.rubric);
+  }
+
+  showRubric(exercise: Exercise) {
+    const rubric = this.renderRubric(exercise);
+    return rubric?.length > 0;
+  }
+
+  openRubricDialog(exercise: Exercise, submission: ExerciseSubmission) {
+    const dialogRef = this.dialog.open(ExerciseRubricDialog, {
+      data: {
+        exercise,
+        submission,
+        rubric: this.renderRubric(exercise),
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {});
+  }
+
   updateFormBeforeSubmit() {
     this.uploadNewImages();
   }
@@ -574,5 +599,50 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
         })
       );
     }
+  }
+}
+
+@Component({
+  selector: 'exercise-rubric-dialog',
+  templateUrl: './exercise-rubric-dialog/exercise-rubric-dialog.html',
+  styleUrls: [
+    './exercise-rubric-dialog/exercise.rubric.dialog.scss',
+    './../../../../shared/common/shared-styles.css',
+  ],
+})
+export class ExerciseRubricDialog {
+  exercise: Exercise;
+  submission: ExerciseSubmission;
+  rubric: any;
+  rubricDatatableColumns: string[] = ['description', 'points'];
+  constructor(
+    public dialogRef: MatDialogRef<ExerciseRubricDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+    this.exercise = data.exercise;
+    this.submission = data.submission;
+    this.rubric = data.rubric;
+    if (this.submission.status !== ExerciseSubmissionStatusOptions.pending) {
+      // Adding 'satisfied' column only if the submission is already created
+      this.rubricDatatableColumns.push('satisfied');
+    }
+  }
+
+  renderRubricForTable(exerciseSubmission: ExerciseSubmission) {
+    const tableData = this.rubric.map((c) => {
+      c['satisfied'] =
+        exerciseSubmission?.criteriaSatisfied?.includes(c.description) == true
+          ? true
+          : false;
+      return c;
+    });
+    return tableData;
+  }
+
+  isCriterionSatisfied(
+    exerciseSubmission: ExerciseSubmission,
+    description: string
+  ): boolean {
+    return exerciseSubmission.criteriaSatisfied?.includes(description);
   }
 }
