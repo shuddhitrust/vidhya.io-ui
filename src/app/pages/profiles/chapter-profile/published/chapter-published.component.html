@@ -130,8 +130,8 @@
         <input
           matInput
           [disabled]="exerciseSubmitted(question)"
-          [value]="response.answer"
-          (keypress)="updateExerciseSubmissionAnswer($event, question)"
+          [(ngModel)]="tempAnswers[question.id]"
+          (keyup)="updateExerciseSubmissionAnswer(question)"
           placeholder="Specify a possible valid answer"
         />
       </mat-form-field>
@@ -239,8 +239,8 @@
         <input
           matInput
           [disabled]="exerciseSubmitted(question)"
-          [value]="response.link"
-          (keypress)="updateExerciseSubmissionLink($event, question)"
+          [(ngModel)]="tempLinks[question.id]"
+          (keyup)="updateExerciseSubmissionLink(question)"
           placeholder="Link"
         />
       </mat-form-field>

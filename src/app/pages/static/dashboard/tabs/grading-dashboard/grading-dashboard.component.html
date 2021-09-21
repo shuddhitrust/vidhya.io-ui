@@ -248,8 +248,8 @@
                   <input
                     matInput
                     [required]="remarksRequired(exerciseSubmission)"
-                    (keypress)="updateRemarks($event, exerciseSubmission)"
-                    [ngModel]="exerciseSubmission.remarks"
+                    (keyup)="updateRemarks(exerciseSubmission)"
+                    [(ngModel)]="tempRemarks[exerciseSubmission.id]"
                     [placeholder]="
                       remarksRequired(exerciseSubmission)
                         ? 'Remarks required'
@@ -306,7 +306,7 @@
                     <input
                       matInput
                       type="number"
-                      (keypress)="changePoints($event, exerciseSubmission)"
+                      (keyup)="changePoints($event, exerciseSubmission)"
                       [value]="exerciseSubmission.points"
                     />
                     <span matSuffix class="points-suffix"

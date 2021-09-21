@@ -318,7 +318,7 @@
       <mat-label>Option {{ i + 1 }}</mat-label>
       <input
         matInput
-        (keypress)="updateExerciseFormOptions()"
+        (keyup)="updateExerciseFormOptions()"
         [(ngModel)]="exerciseFormOptions[i]"
         placeholder="Enter an option"
       />
@@ -528,9 +528,14 @@
           placeholder="Criterion description"
         />
       </mat-form-field>
-          <button class="col-lg-1 col-md-1 col-sm-1" type="button" mat-button (click)="removeCriterion(i)">
-            <mat-icon>close</mat-icon>
-          </button>
+      <button
+        class="col-lg-1 col-md-1 col-sm-1"
+        type="button"
+        mat-button
+        (click)="removeCriterion(i)"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
     </div>
     <button
       type="button"

@@ -128,6 +128,8 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
   imagesQueuedForUpload: any = {};
   uploadedImages: any = {};
   formDirective: FormGroupDirective;
+  tempAnswers = {};
+  tempLinks = {};
   constructor(
     public dialog: MatDialog,
     private location: Location,
@@ -350,29 +352,22 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     return getOptionLabel(value, this.questionTypeOptions);
   }
 
-  updateExerciseSubmissionAnswer(event, exercise) {
-    event.preventDefault();
-    const newAnswer = event.target.value + event.key;
-    event.target.value = newAnswer;
+  updateExerciseSubmissionAnswer(exercise) {
     let newExerciseSubmissions = this.exerciseSubmissions.map((e) => {
       if (e?.exercise == exercise.id) {
         let newSubmission = Object.assign({}, e);
-        newSubmission.answer = newAnswer;
+        newSubmission.answer = this.tempAnswers[exercise.id];
         return newSubmission;
       } else return e;
     });
     this.exerciseSubmissions = newExerciseSubmissions;
   }
 
-  updateExerciseSubmissionLink(event, exercise) {
-    event.preventDefault();
-    const newLink = event.target.value + event.key;
-    event.target.value = newLink;
-
+  updateExerciseSubmissionLink(exercise) {
     let newExerciseSubmissions = this.exerciseSubmissions.map((e) => {
       if (e?.exercise == exercise.id) {
         let newSubmission = Object.assign({}, e);
-        newSubmission.link = newLink;
+        newSubmission.link = this.tempLinks[exercise.id];
         return newSubmission;
       } else return e;
     });

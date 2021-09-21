@@ -40,7 +40,7 @@
         <mat-label>Username</mat-label>
         <input
           autofocus
-          (keypress)="preventSpaces($event)"
+          (keyup)="preventSpaces($event)"
           matInput
           formControlName="username"
           required
@@ -197,7 +197,7 @@
         <input
           matInput
           autofocus
-          (keypress)="sanitizeUsername($event)"
+          (keyup)="sanitizeUsername($event)"
           formControlName="username"
           required
           placeholder="Username"
@@ -229,7 +229,7 @@
         <input
           matInput
           formControlName="email"
-          (keypress)="preventSpaces($event)"
+          (keyup)="preventSpaces($event)"
           required
           placeholder="Email ID"
         />
@@ -355,7 +355,7 @@
           autofocus
           matInput
           formControlName="email"
-          (keypress)="preventSpaces($event)"
+          (keyup)="preventSpaces($event)"
           required
           placeholder="Email ID"
         />
@@ -428,7 +428,7 @@
           matInput
           autofocus
           formControlName="email"
-          (keypress)="preventSpaces($event)"
+          (keyup)="preventSpaces($event)"
           required
           placeholder="Email ID"
         />

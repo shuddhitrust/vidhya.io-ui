@@ -101,6 +101,7 @@ export class GradingDashboardComponent implements OnInit {
   @Select(ExerciseSubmissionState.formSubmitting)
   isSubmittingForm$: Observable<boolean>;
   rubricDatatableColumns: string[] = ['description', 'points', 'satisfied'];
+  tempRemarks = {};
   constructor(
     private store: Store,
     private router: Router,
@@ -403,22 +404,18 @@ export class GradingDashboardComponent implements OnInit {
   }
   changePoints(event, exerciseSubmission) {
     event.preventDefault();
-    const points = event.target.value + event.key;
-    event.target.value = points;
+    const points = event.target.value;
     this.updatePoints(exerciseSubmission, points);
   }
 
-  updateRemarks(event, exerciseSubmission) {
-    event.preventDefault();
-    const remarks = event.target.value + event.key;
-    event.target.value = remarks;
+  updateRemarks(exerciseSubmission) {
     this.gradingUpdate(exerciseSubmission);
     let submission = this.exerciseSubmissions.find((s: ExerciseSubmission) => {
       return s.id == exerciseSubmission.id;
     });
 
     submission = Object.assign({}, submission);
-    submission.remarks = remarks;
+    submission.remarks = this.tempRemarks[exerciseSubmission.id];
     this.exerciseSubmissions = this.exerciseSubmissions.map((s) => {
       if (s.id == submission.id) {
         return submission;
