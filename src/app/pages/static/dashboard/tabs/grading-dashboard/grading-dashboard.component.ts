@@ -19,8 +19,6 @@ import {
   ExerciseKey,
   ExerciseQuestionTypeOptions,
   ExerciseSubmission,
-  ExerciseSubmissionStatus,
-  ExerciseSubmissionStatusOptions,
   MatSelectOption,
   resources,
   RESOURCE_ACTIONS,
@@ -49,6 +47,12 @@ const groupByTypes = {
   EXERCISE: resources.EXERCISE_SUBMISSION,
 };
 
+const exerciseSubmissionStatusTypes = {
+  submitted: 'SU',
+  graded: 'GR',
+  returned: 'RE',
+};
+
 @Component({
   selector: 'app-grading-dashboard',
   templateUrl: './grading-dashboard.component.html',
@@ -64,7 +68,7 @@ export class GradingDashboardComponent implements OnInit {
   groupBy: string = resources.EXERCISE_SUBMISSION;
   exerciseSubmissionColumnFilters = {};
   showGroupCards: boolean = true;
-  submissionStatusFilter: string = ExerciseSubmissionStatusOptions.submitted;
+  submissionStatusFilter: string = exerciseSubmissionStatusTypes.submitted;
   submissionsParticipantFilter: number = null;
   gradingGroupColumnFilters = {
     groupBy: this.groupBy,
@@ -73,9 +77,9 @@ export class GradingDashboardComponent implements OnInit {
   params: object = {};
   questionTypes: any = ExerciseQuestionTypeOptions;
   modifiedExerciseSubmissionIds: number[] = [];
-  exerciseSubmissionStatusTypes = ExerciseSubmissionStatusOptions;
+  exerciseSubmissionStatusTypes = exerciseSubmissionStatusTypes;
   exerciseSubmissionStatusOptions: MatSelectOption[] = autoGenOptions(
-    ExerciseSubmissionStatusOptions
+    exerciseSubmissionStatusTypes
   );
 
   @Select(ExerciseSubmissionState.listGradingGroups)
@@ -143,14 +147,16 @@ export class GradingDashboardComponent implements OnInit {
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       this.params = params;
-      const statusOptions = Object.values(ExerciseSubmissionStatusOptions);
+      const statusOptions = Object.values(this.exerciseSubmissionStatusTypes);
       const groupByOptions = Object.values(groupByTypes);
       const status = params['gradingStatus'];
       const groupBy = params['groupBy'];
       this.submissionStatusFilter = statusOptions.includes(status)
         ? status
-        : null;
-      this.groupBy = groupByOptions.includes(groupBy) ? groupBy : null;
+        : exerciseSubmissionStatusTypes.submitted;
+      this.groupBy = groupByOptions.includes(groupBy)
+        ? groupBy
+        : groupByTypes.CHAPTER;
       if (this.groupBy && this.submissionStatusFilter) {
         this.fetchGradingGroups();
       }
