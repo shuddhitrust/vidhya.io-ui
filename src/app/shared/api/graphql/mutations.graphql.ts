@@ -21,6 +21,7 @@ export const USER_MUTATIONS = {
           username
           firstName
           lastName
+          name
           avatar
           invitecode
           email
@@ -681,7 +682,7 @@ export const CHAT_MESSAGE_MUTATIONS = {
               }
               createdAt
               seenBy {
-                firstName
+                name
               }
             }
           }
