@@ -37,7 +37,7 @@ export class InstitutionAdminsTableComponent implements OnInit {
   fetchParams$: Observable<FetchParams>;
 
   columnFilters = {
-    roleName: USER_ROLES_NAMES.INSTITUTION_ADMIN,
+    roles: [USER_ROLES_NAMES.INSTITUTION_ADMIN],
   };
   defaultColDef = {
     resizable: true,

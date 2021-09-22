@@ -36,7 +36,7 @@ export class LearnersTableComponent implements OnInit {
   fetchParams$: Observable<FetchParams>;
 
   columnFilters = {
-    roleName: USER_ROLES_NAMES.LEARNER,
+    roles: [USER_ROLES_NAMES.LEARNER, USER_ROLES_NAMES.CLASS_ADMIN_LEARNER],
   };
   defaultColDef = {
     resizable: true,

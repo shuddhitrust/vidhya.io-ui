@@ -36,7 +36,7 @@ export class ClassAdminsTableComponent implements OnInit {
   @Select(MemberState.fetchParams)
   fetchParams$: Observable<FetchParams>;
   columnFilters = {
-    roleName: USER_ROLES_NAMES.CLASS_ADMIN,
+    roles: [USER_ROLES_NAMES.CLASS_ADMIN, USER_ROLES_NAMES.CLASS_ADMIN_LEARNER],
   };
   defaultColDef = {
     resizable: true,

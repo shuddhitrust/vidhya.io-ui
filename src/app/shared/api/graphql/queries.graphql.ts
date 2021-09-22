@@ -61,7 +61,7 @@ export const USER_QUERIES = {
       $searchField: String
       $membershipStatusNot: [String]
       $membershipStatusIs: [String]
-      $roleName: String
+      $roles: [String]
       $limit: Int
       $offset: Int
     ) {
@@ -69,7 +69,7 @@ export const USER_QUERIES = {
         searchField: $searchField
         membershipStatusNot: $membershipStatusNot
         membershipStatusIs: $membershipStatusIs
-        roleName: $roleName
+        roles: $roles
         limit: $limit
         offset: $offset
       ) {
@@ -100,7 +100,7 @@ export const USER_QUERIES = {
       $searchField: String
       $membershipStatusNot: [String]
       $membershipStatusIs: [String]
-      $roleName: String
+      $roles: [String]
       $limit: Int
       $offset: Int
     ) {
@@ -108,7 +108,7 @@ export const USER_QUERIES = {
         searchField: $searchField
         membershipStatusNot: $membershipStatusNot
         membershipStatusIs: $membershipStatusIs
-        roleName: $roleName
+        roles: $roles
         limit: $limit
         offset: $offset
       ) {

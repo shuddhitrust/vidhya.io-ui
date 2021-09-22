@@ -1943,7 +1943,7 @@ export class HomeComponent implements OnInit {
   learners: any[] = [];
   isFetching: boolean = false;
   columnFilters = {
-    roleName: USER_ROLES_NAMES.LEARNER,
+    roles: [USER_ROLES_NAMES.LEARNER],
     membershipStatusIs: [MembershipStatusOptions.APPROVED],
   };
   constructor(
@@ -2018,15 +2018,13 @@ export class HomeComponent implements OnInit {
   }
 
   closeAnnouncements() {
-    
     this.showAnnouncements = false;
   }
 
   activateAccount() {
     this.url = window.location.href;
-    
+
     if (this.url.includes(uiroutes.ACTIVATE_ACCOUNT_ROUTE.route)) {
-      
       const token = this.url.split(
         uiroutes.ACTIVATE_ACCOUNT_ROUTE.route + '/'
       )[1];
@@ -2036,7 +2034,6 @@ export class HomeComponent implements OnInit {
     }
     if (this.url.includes(uiroutes.REGISTER_ROUTE.route)) {
       this.dialog.open(LoginModalComponent);
-      
     }
   }
 

@@ -153,7 +153,7 @@ export class MemberState {
       searchField: searchQuery,
       membershipStatusNot: columnFilters.membershipStatusNot,
       membershipStatusIs: columnFilters.membershipStatusIs,
-      roleName: columnFilters.roleName,
+      roles: columnFilters.roles,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
@@ -208,7 +208,7 @@ export class MemberState {
       searchField: searchQuery,
       membershipStatusNot: columnFilters.membershipStatusNot,
       membershipStatusIs: columnFilters.membershipStatusIs,
-      roleName: columnFilters.roleName,
+      roles: columnFilters.roles,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
