@@ -319,14 +319,11 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
       return { id: e.id, label: e.prompt };
     });
 
-    console.log('from reorderExercises', { exercisesList });
-
     const dialogRef = this.dialog.open(DragDropComponent, {
       data: exercisesList,
     });
 
     dialogRef.afterClosed().subscribe((newIndexArray) => {
-      console.log('after closing the dialog', { newIndexArray });
       let i = 1;
       const reorderedList = newIndexArray.map((index) => {
         let exercise = this.exercises.find((e) => e.id == index);
