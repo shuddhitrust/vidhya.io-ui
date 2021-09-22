@@ -63,6 +63,7 @@ import {
   MasterConfirmationDialog,
   MasterConfirmationDialogObject,
 } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import { ImageDisplayDialog } from 'src/app/shared/components/image-display/image-display-dialog.component';
 
 const startingExerciseFormOptions = ['', ''];
 
@@ -212,6 +213,16 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     return index >= 0
       ? this.exerciseSubmissions[index]
       : emptyExerciseSubmissionFormRecord;
+  }
+
+  showExpandedImage(image) {
+    const dialogRef = this.dialog.open(ImageDisplayDialog, {
+      data: {
+        image,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {});
   }
 
   parseDate(date) {

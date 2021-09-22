@@ -180,9 +180,7 @@
               [src]="image"
               alt="Exercise submission"
               class="logo-upload-preview"
-              [ngStyle]="
-                exerciseSubmitted(question) ? { cursor: 'default' } : null
-              "
+              (click)="showExpandedImage(image)"
             />
           </span>
         </div>
