@@ -127,7 +127,7 @@ export class GradingDashboardComponent implements OnInit {
     });
     this.updateGradingGroupByFilter();
 
-    this.fetchGradingGroups();
+    this.getFiltersFromParams();
     this.isFetching$.subscribe((val) => {
       this.isFetching = val;
     });
@@ -145,6 +145,10 @@ export class GradingDashboardComponent implements OnInit {
     }`;
   }
   ngOnInit(): void {
+    this.getFiltersFromParams();
+  }
+
+  getFiltersFromParams() {
     this.route.queryParams.subscribe((params) => {
       this.params = params;
       const statusOptions = Object.values(this.exerciseSubmissionStatusTypes);
