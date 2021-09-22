@@ -124,6 +124,7 @@ export class GradingDashboardComponent implements OnInit {
     this.exerciseSubmissions$.subscribe((val) => {
       this.resetUnsavedSubmissions();
       this.exerciseSubmissions = sortByIndex(val, 'exercise.index');
+      this.setupTempVariables();
     });
     this.updateGradingGroupByFilter();
 
@@ -132,6 +133,12 @@ export class GradingDashboardComponent implements OnInit {
       this.isFetching = val;
     });
   }
+  setupTempVariables = () => {
+    this.tempRemarks = {};
+    this.exerciseSubmissions.forEach((s) => {
+      this.tempRemarks[s.id] = s.remarks;
+    });
+  };
 
   submissionSubtitle(submission) {
     return `${submission?.exercise?.course?.title}${
