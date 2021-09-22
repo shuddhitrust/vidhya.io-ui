@@ -148,34 +148,50 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     this.isFetchingExercises$.subscribe((val) => {
       this.isFetchingExercises = val;
     });
-    this.exercises$.subscribe((val) => {
-      this.exercises = sortByIndex(val.exercises);
-      this.exerciseSubmissions = this.exercises.map(
-        (e: Exercise): ExerciseSubmission => {
-          const submission = val.submissions.find((sub) => {
-            return sub.exercise?.id == e.id;
-          });
-          if (submission) {
-            return this.exerciseSubmissionService.sanitizeExerciseSubmissions([
-              submission,
-            ])[0];
-          } else {
-            return this.setupExerciseSubmission(e);
-          }
-        }
-      );
-    });
     this.chapter$.subscribe((val) => {
       this.chapter = val;
 
       this.fetchExercises();
     });
+    this.exercises$.subscribe((val) => {
+      this.exercises = sortByIndex(val.exercises);
+      this.setupExerciseSubmissions(val.submissions);
+    });
+
     this.formSubmitting$.subscribe((val) => {
       this.formSubmitting = val;
     });
     this.errorFetching$.subscribe((val) => {
       this.errorFetching = val;
     });
+  }
+
+  // This is to load up the tempAnswers and tempLinks
+  setupTempVariables = () => {
+    this.tempAnswers = {};
+    this.tempLinks = {};
+    this.exerciseSubmissions.forEach((s) => {
+      this.tempAnswers[s.exercise] = s.answer;
+      this.tempLinks[s.exercise] = s.link;
+    });
+  };
+
+  setupExerciseSubmissions(submissions) {
+    this.exerciseSubmissions = this.exercises.map(
+      (e: Exercise): ExerciseSubmission => {
+        const submission = submissions.find((sub) => {
+          return sub.exercise?.id == e.id;
+        });
+        if (submission) {
+          return this.exerciseSubmissionService.sanitizeExerciseSubmissions([
+            submission,
+          ])[0];
+        } else {
+          return this.setupExerciseSubmission(e);
+        }
+      }
+    );
+    this.setupTempVariables();
   }
   chapterTitle(chapter) {
     return ChapterTitle(chapter);
@@ -200,8 +216,8 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
       emptyExerciseSubmissionFormRecord
     );
     submission.exercise = exercise?.id;
-    submission.chapter = this.chapter.id;
-    submission.course = this.chapter?.course?.id;
+    submission.chapter = exercise.chapter?.id;
+    submission.course = exercise.chapter?.course?.id;
     submission.participant = this.currentMember?.id;
 
     return submission;
@@ -259,11 +275,12 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     );
   }
 
-  exerciseGraded(exercise) {
+  disableExerciseModification(exercise) {
     const submission = this.exerciseSubmissions.find(
       (sub) => sub.exercise == exercise.id
     );
-    return submission?.status == ExerciseSubmissionStatusOptions.graded
+    return submission?.status == ExerciseSubmissionStatusOptions.graded ||
+      submission?.status == ExerciseSubmissionStatusOptions.submitted
       ? true
       : false;
   }
@@ -606,11 +623,19 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
   }
 
   submitExerciseSubmissionForm() {
-    const newSubmissions = this.exerciseSubmissions.filter((s) => {
-      return s.id == null;
+    let newSubmissions = this.exerciseSubmissions.filter((s) => {
+      return (
+        s.status !== ExerciseSubmissionStatusOptions.graded &&
+        s.status !== ExerciseSubmissionStatusOptions.submitted
+      );
+    });
+    newSubmissions = newSubmissions.map((s) => {
+      const newS = { ...s, status: ExerciseSubmissionStatusOptions.submitted };
+      return newS;
     });
     const validationResult = this.validateExerciseSubmissions();
-    if (validationResult) {
+    console.log('before submit ', { validationResult, newSubmissions });
+    if (validationResult && newSubmissions.length) {
       this.store.dispatch(
         new CreateUpdateExerciseSubmissionsAction({
           exerciseSubmissions: newSubmissions,

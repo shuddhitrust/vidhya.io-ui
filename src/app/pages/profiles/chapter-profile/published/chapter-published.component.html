@@ -129,7 +129,7 @@
         <mat-label>Answer</mat-label>
         <input
           matInput
-          [disabled]="exerciseGraded(question)"
+          [disabled]="disableExerciseModification(question)"
           [(ngModel)]="tempAnswers[question.id]"
           (keyup)="updateExerciseSubmissionAnswer(question)"
           placeholder="Specify a possible valid answer"
@@ -147,7 +147,7 @@
       >
         <li
           (click)="
-            exerciseGraded(question)
+            disableExerciseModification(question)
               ? null
               : updateExerciseSubmissionOption(option, question)
           "
@@ -156,7 +156,9 @@
               ? 'exercise-submission-option highlighted-option'
               : 'exercise-submission-option'
           "
-          [ngStyle]="exerciseGraded(question) ? { cursor: 'default' } : null"
+          [ngStyle]="
+            disableExerciseModification(question) ? { cursor: 'default' } : null
+          "
         >
           {{ option }}
         </li>
@@ -168,7 +170,7 @@
       *ngIf="question.questionType == questionTypes.image_upload"
     >
       <div
-        *ngIf="exerciseGraded(question)"
+        *ngIf="disableExerciseModification(question)"
         class="col-lg-3 col-md-4 col-sm-12 floating-logo"
       >
         <div
@@ -188,7 +190,7 @@
         <br />
       </div>
       <div
-        *ngIf="!exerciseGraded(question)"
+        *ngIf="!disableExerciseModification(question)"
         class="col-lg-3 col-md-4 col-sm-12 floating-logo"
       >
         <div
@@ -236,14 +238,14 @@
         <mat-label>Link</mat-label>
         <input
           matInput
-          [disabled]="exerciseGraded(question)"
+          [disabled]="disableExerciseModification(question)"
           [(ngModel)]="tempLinks[question.id]"
           (keyup)="updateExerciseSubmissionLink(question)"
           placeholder="Link"
         />
       </mat-form-field>
     </span>
-    <span *ngIf="exerciseGraded(question) && response.remarks">
+    <span *ngIf="response.remarks">
       <p>Remarks - {{ response.remarks }}</p>
     </span>
     <hr />

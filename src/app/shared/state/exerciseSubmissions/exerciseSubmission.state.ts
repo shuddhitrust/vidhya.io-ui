@@ -460,7 +460,7 @@ export class ExerciseSubmissionState {
     const variables = {
       exerciseSubmissions,
     };
-    const update = exerciseSubmissions[0].id ? true : false;
+    const update = exerciseSubmissions[0]?.id ? true : false;
     this.apollo
       .mutate({
         mutation:

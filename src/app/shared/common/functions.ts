@@ -498,9 +498,9 @@ export const SubmissionPoints = (
   submission: ExerciseSubmission,
   exercise: Exercise
 ): string => {
-  const submissionPoints = submission.points ? submission.points : '0';
-  const exercisePoints = exercise.points ? exercise.points : '0';
-  return exercise.points
+  const submissionPoints = submission?.points ? submission?.points : '0';
+  const exercisePoints = exercise?.points ? exercise?.points : '0';
+  return exercise?.points
     ? `${submissionPoints} / ${exercisePoints} points`
     : '';
 };

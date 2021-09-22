@@ -470,6 +470,9 @@ export const EXERCISE_QUERIES = {
           chapter {
             id
             title
+            course {
+              id
+            }
           }
           questionType
           required
@@ -479,17 +482,17 @@ export const EXERCISE_QUERIES = {
         }
         submissions {
           id
-          course {
-            id
-          }
-          chapter {
-            id
-          }
           participant {
             id
           }
           exercise {
             id
+            chapter {
+              id
+            }
+            course {
+              id
+            }
           }
           option
           answer
@@ -499,6 +502,7 @@ export const EXERCISE_QUERIES = {
           status
           remarks
           flagged
+          criteriaSatisfied
           grader {
             name
           }
