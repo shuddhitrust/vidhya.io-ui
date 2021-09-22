@@ -2,12 +2,21 @@
   <mat-card>
     <mat-card-header>
       <mat-card-title>{{ profileData.name }}</mat-card-title>
-      <mat-card-subtitle>{{ profileData.title }}</mat-card-subtitle>
+
+      <mat-card-subtitle>
+        <span *ngIf="profileData?.role?.name">{{
+          profileData?.role?.name + ","
+        }}</span>
+        <span *ngIf="profileData?.institution?.name">{{
+          profileData?.institution?.name
+        }}</span>
+      </mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       <div>
         <img [src]="profileData.avatar" class="avatar" alt="profile pic" />
       </div>
+      <p>{{ profileData.title }}</p>
       <p>
         {{ profileData.bio }}
       </p>
