@@ -33,10 +33,7 @@ import { RolesTableComponent } from '../../tables/roles-table/roles-table.compon
 import { InstitutionModalComponent } from '../../modals/institution-modal/institution-modal.component';
 import { PaginatorComponent } from 'src/app/shared/abstract/master-grid/components/paginator/paginator.component';
 import { LoginModalComponent } from '../../modals/login/login-modal.component';
-import {
-  AddEditGroupComponent,
-  GroupMemberReviewDialog,
-} from '../../forms/add-edit-group/add-edit-group.component';
+import { AddEditGroupComponent } from '../../forms/add-edit-group/add-edit-group.component';
 import { OwnProfileComponent } from '../../profiles/own-user-profile/own-profile.component';
 import { AddEditChapterComponent } from '../../forms/add-edit-chapter/add-edit-chapter.component';
 import { AddEditCourseComponent } from '../../forms/add-edit-course/add-edit-course.component';
@@ -141,7 +138,6 @@ export function markedOptionsFactory(): MarkedOptions {
     AddEditCourseComponent,
     AddEditChapterComponent,
     OwnProfileComponent,
-    GroupMemberReviewDialog,
     LoginModalComponent,
     PaginatorComponent,
     InstitutionModalComponent,

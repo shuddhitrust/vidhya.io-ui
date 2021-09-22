@@ -28,11 +28,6 @@ import {
 import { FetchInstitutionsAction } from 'src/app/shared/state/institutions/institution.actions';
 import { OptionsState } from 'src/app/shared/state/options/options.state';
 import {
-  MatDialog,
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
-import {
   defaultSearchParams,
   USER_ROLES_NAMES,
 } from 'src/app/shared/common/constants';
@@ -86,7 +81,6 @@ export class AddEditGroupComponent implements OnInit {
   memberInstitutionId: number;
   showInstitutionField: boolean = false;
   constructor(
-    public dialog: MatDialog,
     private location: Location,
     private store: Store,
     private route: ActivatedRoute,
@@ -259,27 +253,5 @@ export class AddEditGroupComponent implements OnInit {
         })
       );
     }
-  }
-}
-
-@Component({
-  selector: 'group-member-review-dialog',
-  styleUrls: ['./add-edit-group.component.scss'],
-  templateUrl: './group-member-review-dialog.html',
-})
-export class GroupMemberReviewDialog {
-  membersToAddColumns = [{ field: 'label', headerName: 'Members to Add' }];
-  membersToRemoveColumns = [
-    { field: 'label', headerName: 'Members to Remove' },
-  ];
-  membersToAdd = [];
-  membersToRemove = [];
-  constructor(
-    public dialogRef: MatDialogRef<GroupMemberReviewDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {
-    const { columns, membersToAdd, membersToRemove } = this.data;
-    this.membersToAdd = membersToAdd;
-    this.membersToRemove = membersToRemove;
   }
 }
