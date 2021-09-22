@@ -259,11 +259,13 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     );
   }
 
-  exerciseSubmitted(exercise) {
+  exerciseGraded(exercise) {
     const submission = this.exerciseSubmissions.find(
       (sub) => sub.exercise == exercise.id
     );
-    return submission?.id ? true : false;
+    return submission?.status == ExerciseSubmissionStatusOptions.graded
+      ? true
+      : false;
   }
 
   ngOnInit(): void {
