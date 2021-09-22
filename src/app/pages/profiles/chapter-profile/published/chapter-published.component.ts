@@ -64,6 +64,7 @@ import {
   MasterConfirmationDialogObject,
 } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { ImageDisplayDialog } from 'src/app/shared/components/image-display/image-display-dialog.component';
+import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
 
 const startingExerciseFormOptions = ['', ''];
 
@@ -434,10 +435,21 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
       'file',
       this.imagesQueuedForUpload[exerciseId][imageIndex].file
     );
+    this.store.dispatch(
+      new ToggleLoadingScreen({
+        showLoadingScreen: true,
+        message: 'Uploading file',
+      })
+    );
     this.uploadService.upload(formData).subscribe(
       (res) => {
         const url = res.secure_url;
-
+        this.store.dispatch(
+          new ToggleLoadingScreen({
+            showLoadingScreen: false,
+            message: '',
+          })
+        );
         // We update the referenceImages field in the form with the new url
         this.uploadedImages[exerciseId] =
           this.uploadedImages[exerciseId].concat(url);
