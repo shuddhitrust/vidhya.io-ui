@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import {
   GraphQLModule,
-  TokenUpdater,
+  // TokenUpdater,
 } from './shared/api/graphql/graphql.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Styling } from './styling.imports';
@@ -97,7 +97,7 @@ import { AddEditMemberComponent } from './pages/forms/add-edit-member/add-edit-m
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
-    TokenUpdater,
+    // TokenUpdater,
     ScullyLibModule,
   ],
   providers: [
