@@ -75,7 +75,13 @@
               {{ card.pointsScored }} / {{ card.totalPoints }} points
             </small>
           </p>
-          <button type="button" class="card-button" mat-icon-button>
+          <button
+            type="button"
+            class="card-button"
+            nzTooltipPlacement="left"
+            [nz-tooltip]="statusIcon(card).tooltip"
+            mat-icon-button
+          >
             <mat-icon [ngStyle]="{ color: statusIcon(card).iconColor }">{{
               statusIcon(card).icon
             }}</mat-icon>

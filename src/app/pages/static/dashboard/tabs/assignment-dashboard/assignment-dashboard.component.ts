@@ -93,30 +93,37 @@ export class AssignmentDashboardComponent implements OnInit {
     }
   }
 
-  statusIcon(card): { icon: string; iconColor: string } {
+  statusIcon(card): { icon: string; iconColor: string; tooltip: string } {
     let icon = null;
     let iconColor = null;
+    let tooltip = '';
     switch (card?.status) {
       case ExerciseSubmissionStatusOptions.pending:
         icon = 'new_releases';
         iconColor = 'var(--orange)';
+        tooltip = 'This chapter contains new exercises!';
         break;
       case ExerciseSubmissionStatusOptions.submitted:
         icon = 'done';
         iconColor = 'var(--green)';
+        tooltip =
+          'You have submitted this chapter. Some exercises in this chapter may be awaiting grading.';
         break;
       case ExerciseSubmissionStatusOptions.graded:
         icon = 'done_all';
         iconColor = 'var(--green)';
+        tooltip = 'This chapter is fully graded!';
         break;
       case ExerciseSubmissionStatusOptions.returned:
         icon = 'cancel';
         iconColor = 'var(--red)';
+        tooltip =
+          'Some exercises in this chapter have been returned. Please follow the remarks and resubmit this chapter.';
         break;
       default:
         break;
     }
-    return { icon, iconColor };
+    return { icon, iconColor, tooltip };
   }
 
   updateAssignmentFilter() {
