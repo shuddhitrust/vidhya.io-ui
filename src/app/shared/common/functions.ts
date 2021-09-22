@@ -445,9 +445,7 @@ export const sanitizeUsername = (event) => {
   const noSpace = preventSpaces(event);
   const validEntry = noSpace && noSymbols;
   if (validEntry) {
-    setTimeout(() => {
-      event.target.value = event.target.value.toLowerCase();
-    }, 0);
+    event.target.value = event.target.value.toLowerCase();
   }
   return validEntry;
 };
