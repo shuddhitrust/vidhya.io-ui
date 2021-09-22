@@ -639,6 +639,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
       this.store.dispatch(
         new CreateUpdateExerciseSubmissionsAction({
           exerciseSubmissions: newSubmissions,
+          grading: false,
         })
       );
     } else {

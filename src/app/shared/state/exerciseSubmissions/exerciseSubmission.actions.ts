@@ -50,6 +50,7 @@ export class CreateUpdateExerciseSubmissionsAction {
   constructor(
     public payload: {
       exerciseSubmissions: ExerciseSubmission[];
+      grading: boolean;
     }
   ) {}
 }

@@ -506,9 +506,11 @@ export const EXERCISE_SUBMISSION_MUTATIONS = {
   CREATE_UPDATE_EXERCISE_SUBMISSIONS: gql`
     mutation createUpdateExerciseSubmissions(
       $exerciseSubmissions: [ExerciseSubmissionInput]!
+      $grading: Boolean!
     ) {
       createUpdateExerciseSubmissions(
         exerciseSubmissions: $exerciseSubmissions
+        grading: $grading
       ) {
         ok
         exerciseSubmissions {

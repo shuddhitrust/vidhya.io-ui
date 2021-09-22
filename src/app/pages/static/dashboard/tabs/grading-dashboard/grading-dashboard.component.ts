@@ -468,6 +468,7 @@ export class GradingDashboardComponent implements OnInit {
     this.store.dispatch(
       new CreateUpdateExerciseSubmissionsAction({
         exerciseSubmissions: sanitizedSubmissions,
+        grading: true,
       })
     );
   }
