@@ -41,6 +41,7 @@ import {
 } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.model';
 import { ExerciseSubmissionService } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.service';
 import { ExerciseSubmissionState } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.state';
+import { ImageDisplayDialog } from 'src/app/shared/components/image-display/image-display-dialog.component';
 
 const groupByTypes = {
   [resources.COURSE]: resources.COURSE,
@@ -258,7 +259,15 @@ export class GradingDashboardComponent implements OnInit {
   createExerciseSubmission() {
     this.router.navigateByUrl(uiroutes.GRADING_FORM_ROUTE.route);
   }
-  showExpandedImage(image) {}
+  showExpandedImage(image) {
+    const dialogRef = this.dialog.open(ImageDisplayDialog, {
+      data: {
+        image,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {});
+  }
 
   openExerciseSubmission(exerciseSubmission) {
     this.router.navigate([uiroutes.GRADING_PROFILE_ROUTE.route], {

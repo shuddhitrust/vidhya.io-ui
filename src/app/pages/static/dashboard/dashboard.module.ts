@@ -84,6 +84,7 @@ import { SubscriptionsState } from 'src/app/shared/state/subscriptions/subscript
 import { environment } from 'src/environments/environment';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { MasterConfirmationDialog } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import { ImageDisplayDialog } from 'src/app/shared/components/image-display/image-display-dialog.component';
 
 export function markedOptionsFactory(): MarkedOptions {
   const renderer = new MarkedRenderer();
@@ -159,6 +160,7 @@ export function markedOptionsFactory(): MarkedOptions {
     SimpleLoadingSpinnerComponent,
     MasterConfirmationDialog,
     ExerciseRubricDialog,
+    ImageDisplayDialog,
   ],
   imports: [
     CommonModule,
