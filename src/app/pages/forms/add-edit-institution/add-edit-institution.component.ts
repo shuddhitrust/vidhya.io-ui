@@ -18,7 +18,6 @@ import { Observable } from 'rxjs';
 import { emptyInstitutionFormRecord } from 'src/app/shared/state/institutions/institution.model';
 import { Institution } from 'src/app/shared/common/models';
 import { UploadService } from 'src/app/shared/api/upload.service';
-import { environment } from 'src/environments/environment';
 import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 @Component({
@@ -130,7 +129,7 @@ export class AddEditInstitutionComponent implements OnInit {
           );
         },
         (err) => {
-                    this.store.dispatch(
+          this.store.dispatch(
             new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
           );
           this.store.dispatch(
