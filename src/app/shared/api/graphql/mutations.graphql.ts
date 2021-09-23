@@ -507,10 +507,12 @@ export const EXERCISE_SUBMISSION_MUTATIONS = {
     mutation createUpdateExerciseSubmissions(
       $exerciseSubmissions: [ExerciseSubmissionInput]!
       $grading: Boolean!
+      $bulkauto: Boolean
     ) {
       createUpdateExerciseSubmissions(
         exerciseSubmissions: $exerciseSubmissions
         grading: $grading
+        bulkauto: $bulkauto
       ) {
         ok
         exerciseSubmissions {

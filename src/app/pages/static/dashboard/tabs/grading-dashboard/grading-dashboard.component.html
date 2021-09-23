@@ -46,6 +46,8 @@
       mat-mini-fab
       [matMenuTriggerFor]="menu"
       aria-label="Filter the Grading"
+      nzTooltipPlacement="left"
+      nz-tooltip="Change the filters to adjust which type of submissions you wish to view"
     >
       <mat-icon>filter_list</mat-icon>
     </button>
@@ -58,11 +60,30 @@
       class="floating-header"
       [class.button-loading]="isSubmittingForm$ | async"
       (click)="submitExerciseSubmissionForm()"
+      nzTooltipPlacement="left"
+      [nz-tooltip]="
+        showSaveButton()
+          ? 'Save modified submissions'
+          : 'Please modify a submission to enable the option to save your work'
+      "
       [disabled]="!showSaveButton()"
     >
       <mat-icon>save</mat-icon>
     </button>
   </div>
+  <button
+    *ngIf="showBulkAutoOption()"
+    type="button"
+    mat-mini-fab
+    color="secondary"
+    class="bulkauto"
+    nzTooltipPlacement="left"
+    nz-tooltip="This will automatically grade all Submitted work that can be automatically graded. Backup database before going forth!"
+    [class.button-loading]="isSubmittingForm$ | async"
+    (click)="initiateBulkAutoGrading()"
+  >
+    <mat-icon>autorenew</mat-icon>
+  </button>
   <span *ngIf="showGroupCards; else submissionsTemplate">
     <span *ngIf="gradingGroups.length > 0; else feedEmpty">
       <div

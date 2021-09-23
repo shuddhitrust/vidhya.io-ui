@@ -9,13 +9,17 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
-import { defaultSearchParams } from 'src/app/shared/common/constants';
+import {
+  defaultSearchParams,
+  USER_ROLES_NAMES,
+} from 'src/app/shared/common/constants';
 import {
   autoGenOptions,
   parseDateTime,
   sortByIndex,
 } from 'src/app/shared/common/functions';
 import {
+  CurrentMember,
   ExerciseKey,
   ExerciseQuestionTypeOptions,
   ExerciseSubmission,
@@ -40,6 +44,7 @@ import {
 import { ExerciseSubmissionService } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.service';
 import { ExerciseSubmissionState } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.state';
 import { ImageDisplayDialog } from 'src/app/shared/components/image-display/image-display-dialog.component';
+import { AuthState } from 'src/app/shared/state/auth/auth.state';
 
 const groupByTypes = {
   [resources.COURSE]: resources.COURSE,
@@ -105,6 +110,9 @@ export class GradingDashboardComponent implements OnInit {
 
   @Select(ExerciseSubmissionState.formSubmitting)
   isSubmittingForm$: Observable<boolean>;
+  @Select(AuthState.getCurrentMember)
+  currentMember$: Observable<CurrentMember>;
+  currentMember: CurrentMember;
   rubricDatatableColumns: string[] = ['description', 'points', 'satisfied'];
   tempRemarks = {};
   constructor(
@@ -115,6 +123,9 @@ export class GradingDashboardComponent implements OnInit {
     private route: ActivatedRoute,
     private exerciseSubmissionService: ExerciseSubmissionService
   ) {
+    this.currentMember$.subscribe((val) => {
+      this.currentMember = val;
+    });
     this.gradingGroups$.subscribe((val) => {
       this.gradingGroups = val;
     });
@@ -455,6 +466,23 @@ export class GradingDashboardComponent implements OnInit {
 
   resetUnsavedSubmissions() {
     this.modifiedExerciseSubmissionIds = [];
+  }
+
+  showBulkAutoOption() {
+    return (
+      this.currentMember.role.name == USER_ROLES_NAMES.SUPER_ADMIN &&
+      this.authorizeResourceMethod(this.resourceActions.UPDATE)
+    );
+  }
+
+  initiateBulkAutoGrading() {
+    this.store.dispatch(
+      new CreateUpdateExerciseSubmissionsAction({
+        exerciseSubmissions: [],
+        grading: true,
+        bulkauto: true,
+      })
+    );
   }
 
   submitExerciseSubmissionForm() {

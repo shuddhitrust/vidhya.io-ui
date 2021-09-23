@@ -453,13 +453,14 @@ export class ExerciseSubmissionState {
     { payload }: CreateUpdateExerciseSubmissionsAction
   ) {
     const state = getState();
-    const { exerciseSubmissions, grading } = payload;
+    const { exerciseSubmissions, grading, bulkauto } = payload;
     let { formSubmitting } = state;
     formSubmitting = true;
     patchState({ formSubmitting });
     const variables = {
       exerciseSubmissions,
       grading,
+      bulkauto: bulkauto ? bulkauto : false,
     };
     const update = exerciseSubmissions[0]?.id ? true : false;
     this.apollo

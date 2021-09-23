@@ -51,6 +51,7 @@ export class CreateUpdateExerciseSubmissionsAction {
     public payload: {
       exerciseSubmissions: ExerciseSubmission[];
       grading: boolean;
+      bulkauto?: boolean;
     }
   ) {}
 }
