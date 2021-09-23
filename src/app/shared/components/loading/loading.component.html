@@ -6,5 +6,7 @@
     id="loader"
   >
   </mat-progress-spinner>
-  <p id="loading-message">{{ loadingMessage$ | async }}</p>
+  <p id="loading-message">
+    {{ loadingMessage ? loadingMessage : (loadingMessage$ | async) }}
+  </p>
 </div>

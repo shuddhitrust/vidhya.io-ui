@@ -1,0 +1,13 @@
+<div *ngIf="overlay; else block">
+  <app-loading [loadingMessage]="loadingMessage"></app-loading>
+</div>
+<ng-template #block>
+  <mat-progress-spinner
+    class="sync-spinner"
+    mode="indeterminate"
+    color="primary"
+    id="loader"
+  >
+  </mat-progress-spinner>
+  <p id="loading-message">{{ loadingMessage }}</p>
+</ng-template>

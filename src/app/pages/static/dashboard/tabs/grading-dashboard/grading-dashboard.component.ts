@@ -137,9 +137,16 @@ export class GradingDashboardComponent implements OnInit {
       this.isFetchingGradingGroup = val;
     });
     this.exerciseSubmissions$.subscribe((val) => {
-      this.resetUnsavedSubmissions();
+      // this.resetUnsavedSubmissions();
+      const existingSubmissions = this.exerciseSubmissions;
       this.exerciseSubmissions = sortByIndex(val, 'exercise.index');
       this.setupTempVariables();
+      this.exerciseSubmissions = this.exerciseSubmissions.map((e) => {
+        const modifiedSubmission = existingSubmissions.find(
+          (sub) => sub.id == e.id
+        );
+        return modifiedSubmission ? modifiedSubmission : e;
+      });
     });
     this.updateGradingGroupByFilter();
 

@@ -2,10 +2,12 @@ import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-simple-loading-spinner',
-  templateUrl: './simple-loading-spinner.html',
-  styleUrls: ['./simple-loading-spinner.scss'],
+  templateUrl: './simple-loading-spinner.component.html',
+  styleUrls: ['./simple-loading-spinner.component.scss'],
 })
 export class SimpleLoadingSpinnerComponent implements OnInit {
+  @Input()
+  overlay = true;
   @Input()
   loadingMessage = 'Loading...';
 

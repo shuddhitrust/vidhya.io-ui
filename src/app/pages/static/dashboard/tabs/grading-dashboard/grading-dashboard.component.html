@@ -112,7 +112,7 @@
     </span>
   </span>
   <ng-template #submissionsTemplate>
-    <div *ngIf="!(isFetching$ | async); else loading">
+    <div>
       <span *ngIf="exerciseSubmissions.length > 0; else feedEmpty">
         <div
           class="scroll-feed"
@@ -123,6 +123,7 @@
           [fromRoot]="true"
           (scrolled)="onScroll()"
         >
+          <div *ngIf="false; else loading"></div>
           <div
             *ngFor="
               let exerciseSubmission of exerciseSubmissions;
@@ -384,7 +385,7 @@
   </ng-template>
 
   <ng-template #loading>
-    <app-simple-loading-spinner></app-simple-loading-spinner>
+    <app-simple-loading-spinner [overlay]="true"></app-simple-loading-spinner>
   </ng-template>
 </div>
 

@@ -20,7 +20,6 @@ import {
   RegistrationFormAuthGuard,
 } from './shared/api/authentication.guard';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
-import { LoadingComponent } from './shared/components/loading/loading.component';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import * as _moment from 'moment';
@@ -75,7 +74,6 @@ import { AddEditMemberComponent } from './pages/forms/add-edit-member/add-edit-m
   declarations: [
     AppComponent,
     NavbarComponent,
-    LoadingComponent,
     HomeComponent,
     ProfileComponent,
     AccountComponent,
