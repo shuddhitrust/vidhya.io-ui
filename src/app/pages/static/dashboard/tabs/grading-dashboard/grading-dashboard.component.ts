@@ -45,6 +45,10 @@ import { ExerciseSubmissionService } from 'src/app/shared/state/exerciseSubmissi
 import { ExerciseSubmissionState } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.state';
 import { ImageDisplayDialog } from 'src/app/shared/components/image-display/image-display-dialog.component';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
+import {
+  MasterConfirmationDialog,
+  MasterConfirmationDialogObject,
+} from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 
 const groupByTypes = {
   [resources.COURSE]: resources.COURSE,
@@ -476,13 +480,27 @@ export class GradingDashboardComponent implements OnInit {
   }
 
   initiateBulkAutoGrading() {
-    this.store.dispatch(
-      new CreateUpdateExerciseSubmissionsAction({
-        exerciseSubmissions: [],
-        grading: true,
-        bulkauto: true,
-      })
-    );
+    const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
+      title: 'Confirm bulk auto grade?',
+      message: `If you don't know what this is, please press cancel! Are you sure you want to automatically grade all eligible submissions? Make sure to backup database before confirming!"`,
+      confirmButtonText: 'Initiate Automatic Grading',
+      denyButtonText: 'Cancel',
+    };
+    const dialogRef = this.dialog.open(MasterConfirmationDialog, {
+      data: masterDialogConfirmationObject,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result == true) {
+        this.store.dispatch(
+          new CreateUpdateExerciseSubmissionsAction({
+            exerciseSubmissions: [],
+            grading: true,
+            bulkauto: true,
+          })
+        );
+      }
+    });
   }
 
   submitExerciseSubmissionForm() {
