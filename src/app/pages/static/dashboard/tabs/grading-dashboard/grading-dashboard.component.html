@@ -75,14 +75,14 @@
     *ngIf="showBulkAutoOption()"
     type="button"
     mat-mini-fab
-    color="secondary"
+    color="warn"
     class="bulkauto"
     nzTooltipPlacement="left"
     nz-tooltip="This will automatically grade all submitted work that are eligible for automatic grading. Backup database before proceeding!"
     [class.button-loading]="isSubmittingForm$ | async"
     (click)="initiateBulkAutoGrading()"
   >
-    <mat-icon>autorenew</mat-icon>
+    <mat-icon>brightness_auto</mat-icon>
   </button>
   <span *ngIf="showGroupCards; else submissionsTemplate">
     <span *ngIf="gradingGroups.length > 0; else feedEmpty">
