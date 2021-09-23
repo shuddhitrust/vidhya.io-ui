@@ -78,7 +78,7 @@
     color="secondary"
     class="bulkauto"
     nzTooltipPlacement="left"
-    nz-tooltip="This will automatically grade all Submitted work that can be automatically graded. Backup database before going forth!"
+    nz-tooltip="This will automatically grade all submitted work that are eligible for automatic grading. Backup database before proceeding!"
     [class.button-loading]="isSubmittingForm$ | async"
     (click)="initiateBulkAutoGrading()"
   >
