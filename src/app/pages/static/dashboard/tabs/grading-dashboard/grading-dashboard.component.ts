@@ -475,6 +475,7 @@ export class GradingDashboardComponent implements OnInit {
 
   resetUnsavedSubmissions() {
     this.modifiedExerciseSubmissionIds = [];
+    this.tempRemarks = {};
   }
 
   showBulkAutoOption() {
