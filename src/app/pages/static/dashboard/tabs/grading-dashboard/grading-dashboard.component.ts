@@ -137,13 +137,14 @@ export class GradingDashboardComponent implements OnInit {
       this.isFetchingGradingGroup = val;
     });
     this.exerciseSubmissions$.subscribe((val) => {
-      // this.resetUnsavedSubmissions();
-      const existingSubmissions = this.exerciseSubmissions;
-      this.exerciseSubmissions = sortByIndex(val, 'exercise.index');
+      const existingSubmissions = this.exerciseSubmissions; // This stores any unsaved existing submissions in a temp variable
+      this.exerciseSubmissions = sortByIndex(val, 'exercise.index'); // Sorting the submissions
       this.exerciseSubmissions = this.exerciseSubmissions.map((e) => {
+        // Checking if unsaved submissions are part of incoming submissions
         const modifiedSubmission = existingSubmissions.find(
           (sub) => sub.id == e.id
         );
+        // Overwriting the incoming submission with the latest unsaved work
         return modifiedSubmission ? modifiedSubmission : e;
       });
       this.setupTempVariables();
