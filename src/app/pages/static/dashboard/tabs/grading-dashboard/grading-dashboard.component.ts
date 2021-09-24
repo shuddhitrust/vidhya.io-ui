@@ -452,7 +452,12 @@ export class GradingDashboardComponent implements OnInit {
   }
   changePoints(event, exerciseSubmission) {
     event.preventDefault();
-    const points = event.target.value;
+
+    const points =
+      exerciseSubmission.exercise.points >= event.target.value
+        ? event.target.value
+        : exerciseSubmission.exercise.points;
+    event.target.value = points;
     this.updatePoints(exerciseSubmission, points);
   }
 
@@ -477,6 +482,7 @@ export class GradingDashboardComponent implements OnInit {
 
   resetUnsavedSubmissions() {
     this.modifiedExerciseSubmissionIds = [];
+    this.tempRemarks = {};
   }
 
   showBulkAutoOption() {

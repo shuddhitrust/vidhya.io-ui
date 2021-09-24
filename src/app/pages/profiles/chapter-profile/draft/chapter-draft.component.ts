@@ -584,16 +584,27 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     if (event.target.files.length > 0) {
       let previewImageObject: previewImage = { file: null, url: null };
       const file = event.target.files[0];
-      previewImageObject.file = file;
+      const fileValid = file.type.startsWith('image/');
+      if (fileValid) {
+        previewImageObject.file = file;
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        const url = reader.result as string;
-        previewImageObject.url = url;
-      };
-      reader.readAsDataURL(file);
+        const reader = new FileReader();
+        reader.onload = () => {
+          const url = reader.result as string;
+          previewImageObject.url = url;
+        };
+        reader.readAsDataURL(file);
 
-      this.imagesQueuedForUpload.push(previewImageObject);
+        this.imagesQueuedForUpload.push(previewImageObject);
+      } else {
+        event.target.value = null;
+        this.store.dispatch(
+          new ShowNotificationAction({
+            message: 'Please upload only images',
+            action: 'error',
+          })
+        );
+      }
     }
   }
 

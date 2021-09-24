@@ -101,14 +101,14 @@ export class AddEditCourseComponent implements OnInit {
     this.currentUserId$.subscribe((val) => {
       this.currentUserId = val;
     });
-    this.courseForm = this.setupCourseFormGroup();
+    this.setupCourseFormGroup();
     this.courseOptions$.subscribe((val) => {
       this.courseOptions = val;
     });
 
     this.courseFormRecord$.subscribe((val) => {
       this.courseFormRecord = val;
-      this.courseForm = this.setupCourseFormGroup(this.courseFormRecord);
+      this.setupCourseFormGroup(this.courseFormRecord);
       // Filtering out the current coursee from the options
       this.courseOptions = this.courseOptions.filter((o) => {
         return o.value !== this.courseFormRecord?.id;
@@ -119,6 +119,7 @@ export class AddEditCourseComponent implements OnInit {
   onGridReady(params) {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
+    this.updateSelectedRowsInParticipantTable();
     // this.autoSizeAllColumns();
   }
 
@@ -128,9 +129,7 @@ export class AddEditCourseComponent implements OnInit {
     this.courseForm.get('participants').setValue(participantIds);
   };
 
-  setupCourseFormGroup = (
-    courseFormRecord: Course = emptyCourseFormRecord
-  ): FormGroup => {
+  setupCourseFormGroup = (courseFormRecord: Course = emptyCourseFormRecord) => {
     const participantIds = courseFormRecord?.participants?.map((p) => p.id);
     const formGroup = this.fb.group({
       id: [courseFormRecord?.id],
@@ -166,20 +165,24 @@ export class AddEditCourseComponent implements OnInit {
     this.participantRows = this.memberOptions.filter((m) =>
       participantIds.includes(m.value)
     );
-    if (this.gridApi) {
-      this.gridApi.forEachNodeAfterFilter((node) => {
-        // select the node
-        if (participantIds.includes(node.data.value)) {
-          node.setSelected(true);
-        }
-      });
-    }
-
-    return formGroup;
+    this.courseForm = formGroup;
+    this.updateSelectedRowsInParticipantTable();
   };
 
+  updateSelectedRowsInParticipantTable() {
+    const participantIds = this.courseForm?.get('participants').value
+      ? this.courseForm?.get('participants').value
+      : [];
+    this.gridApi?.forEachNodeAfterFilter((node) => {
+      // select the node
+      if (participantIds.includes(node.data.value)) {
+        node.setSelected(true);
+      }
+    });
+  }
+
   participantCount() {
-    return this.courseForm.get('participants').value.length;
+    return this.courseForm.get('participants').value?.length;
   }
 
   ngOnInit(): void {

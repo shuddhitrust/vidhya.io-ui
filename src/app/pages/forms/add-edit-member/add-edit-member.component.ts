@@ -178,12 +178,22 @@ export class AddEditMemberComponent implements OnInit {
   onAvatarChange(event) {
     if (event.target.files.length > 0) {
       this.avatarFile = event.target.files[0];
-
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.previewPath = reader.result as string;
-      };
-      reader.readAsDataURL(this.avatarFile);
+      const fileValid = this.avatarFile.type.startsWith('image/');
+      if (fileValid) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.previewPath = reader.result as string;
+        };
+        reader.readAsDataURL(this.avatarFile);
+      } else {
+        event.target.value = null;
+        this.store.dispatch(
+          new ShowNotificationAction({
+            message: 'Please upload only images',
+            action: 'error',
+          })
+        );
+      }
     } else {
       this.avatarFile = null;
       this.previewPath = this.memberForm.get('avatar').value;
