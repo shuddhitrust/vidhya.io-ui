@@ -167,12 +167,23 @@ export class AddEditGroupComponent implements OnInit {
   onLogoChange(event) {
     if (event.target.files.length > 0) {
       this.logoFile = event.target.files[0];
+      const fileValid = this.logoFile.type.startsWith('image/');
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.previewPath = reader.result as string;
-      };
-      reader.readAsDataURL(this.logoFile);
+      if (fileValid) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.previewPath = reader.result as string;
+        };
+        reader.readAsDataURL(this.logoFile);
+      } else {
+        event.target.value = null;
+        this.store.dispatch(
+          new ShowNotificationAction({
+            message: 'Please upload only images',
+            action: 'error',
+          })
+        );
+      }
     } else {
       this.logoFile = null;
       this.previewPath = this.groupForm.get('avatar').value;

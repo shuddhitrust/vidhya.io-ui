@@ -283,7 +283,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     const submitted =
       submission?.status == ExerciseSubmissionStatusOptions.submitted;
     const exerciseLocked = graded || submitted; // Exercise is locked if it is submitted or graded
-    const submissionDisabled = this.allowSubmissionCreation(); // When the user does not have the permissions to submit
+    const submissionDisabled = !this.allowSubmissionCreation(); // When the user does not have the permissions to submit
     return submissionDisabled || exerciseLocked; // Disabling exercise modification if the submission is disabled or exercise is locked
   }
 
@@ -539,22 +539,33 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     if (event.target.files.length > 0) {
       let previewImageObject: previewImage = { file: null, url: null };
       const file = event.target.files[0];
-      previewImageObject.file = file;
+      const fileValid = file.type.startsWith('image/');
+      if (fileValid) {
+        previewImageObject.file = file;
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        const url = reader.result as string;
-        previewImageObject.url = url;
-      };
-      reader.readAsDataURL(file);
-      let imagesQueuedForExercise = Object.assign(
-        [],
-        this.imagesQueuedForUpload[exercise.id]
-      );
-      imagesQueuedForExercise = imagesQueuedForExercise.concat([
-        previewImageObject,
-      ]);
-      this.imagesQueuedForUpload[exercise.id] = imagesQueuedForExercise;
+        const reader = new FileReader();
+        reader.onload = () => {
+          const url = reader.result as string;
+          previewImageObject.url = url;
+        };
+        reader.readAsDataURL(file);
+        let imagesQueuedForExercise = Object.assign(
+          [],
+          this.imagesQueuedForUpload[exercise.id]
+        );
+        imagesQueuedForExercise = imagesQueuedForExercise.concat([
+          previewImageObject,
+        ]);
+        this.imagesQueuedForUpload[exercise.id] = imagesQueuedForExercise;
+      } else {
+        event.target.value = null;
+        this.store.dispatch(
+          new ShowNotificationAction({
+            message: 'Please upload only images',
+            action: 'error',
+          })
+        );
+      }
     }
   }
 
