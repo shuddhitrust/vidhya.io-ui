@@ -7,8 +7,6 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class SimpleLoadingSpinnerComponent implements OnInit {
   @Input()
-  overlay = true;
-  @Input()
   loadingMessage = 'Loading...';
 
   constructor() {}

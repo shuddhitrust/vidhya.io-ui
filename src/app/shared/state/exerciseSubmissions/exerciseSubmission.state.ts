@@ -51,6 +51,7 @@ import { ForceRefetchChaptersAction } from '../chapters/chapter.actions';
 import { ForceRefetchExercisesAction } from '../exercises/exercise.actions';
 import { AuthorizationService } from '../../api/authorization/authorization.service';
 import { ForceRefetchAssignmentsAction } from '../assignments/assignment.actions';
+import { ToggleLoadingScreen } from '../loading/loading.actions';
 
 @State<ExerciseSubmissionStateModel>({
   name: 'exerciseSubmissionState',
@@ -188,7 +189,7 @@ export class ExerciseSubmissionState {
   @Action(FetchGradingGroupsAction)
   fetchExerciseSubmissionGroups(
     { getState, patchState }: StateContext<ExerciseSubmissionStateModel>,
-    { payload }: FetchExerciseSubmissionsAction
+    { payload }: FetchGradingGroupsAction
   ) {
     let { searchParams } = payload;
     let state = getState();
@@ -338,7 +339,12 @@ export class ExerciseSubmissionState {
       status: columnFilters?.status,
     };
     patchState({ isFetching: true });
-
+    this.store.dispatch(
+      new ToggleLoadingScreen({
+        message: 'Fetching submissions...',
+        showLoadingScreen: true,
+      })
+    );
     this.apollo
       .watchQuery({
         query: EXERCISE_SUBMISSION_QUERIES.GET_EXERCISE_SUBMISSIONS,
@@ -347,6 +353,13 @@ export class ExerciseSubmissionState {
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
+          this.store.dispatch(
+            new ToggleLoadingScreen({
+              message: 'Fetching submissions...',
+              showLoadingScreen: false,
+            })
+          );
+
           const response = data.exerciseSubmissions;
           newFetchParams = { ...newFetchParams };
           let paginatedExerciseSubmissions = state.paginatedExerciseSubmissions;

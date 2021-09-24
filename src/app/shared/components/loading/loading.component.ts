@@ -8,7 +8,7 @@ import { LoadingState } from '../../state/loading/loading.state';
   templateUrl: './loading.component.html',
   styleUrls: ['./loading.component.scss'],
 })
-export class LoadingOverlayComponent implements OnInit {
+export class AppLoadingOverlayComponent implements OnInit {
   @Select(LoadingState.getShowLoading)
   showLoading$: Observable<Boolean>;
   @Select(LoadingState.getLoadingMessage)

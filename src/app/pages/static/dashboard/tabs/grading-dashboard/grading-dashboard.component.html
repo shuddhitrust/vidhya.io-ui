@@ -123,7 +123,6 @@
           [fromRoot]="true"
           (scrolled)="onScroll()"
         >
-          <div *ngIf="false; else loading"></div>
           <div
             *ngFor="
               let exerciseSubmission of exerciseSubmissions;
@@ -385,7 +384,7 @@
   </ng-template>
 
   <ng-template #loading>
-    <app-simple-loading-spinner [overlay]="true"></app-simple-loading-spinner>
+    <app-simple-loading-spinner></app-simple-loading-spinner>
   </ng-template>
 </div>
 
