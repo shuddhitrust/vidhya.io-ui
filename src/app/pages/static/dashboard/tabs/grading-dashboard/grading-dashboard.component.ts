@@ -74,14 +74,17 @@ export class GradingDashboardComponent implements OnInit {
   resource: string = resources.GRADING;
   resourceActions = RESOURCE_ACTIONS;
   groupByOptions: MatSelectOption[] = autoGenOptions(groupByTypes);
-  groupBy: string = resources.EXERCISE_SUBMISSION;
+  groupByFilter: string = resources.EXERCISE_SUBMISSION;
   exerciseSubmissionColumnFilters = {};
   showGroupCards: boolean = true;
   submissionStatusFilter: string = exerciseSubmissionStatusTypes.submitted;
   submissionsParticipantFilter: number = null;
+  searchQueryFilter: string = null;
+  lastUsedSearchQuery: string = null;
   gradingGroupColumnFilters = {
-    groupBy: this.groupBy,
+    groupBy: this.groupByFilter,
     status: this.submissionStatusFilter,
+    searchQuery: this.searchQueryFilter,
   };
   params: object = {};
   questionTypes: any = ExerciseQuestionTypeOptions;
@@ -184,13 +187,14 @@ export class GradingDashboardComponent implements OnInit {
       const groupByOptions = Object.values(groupByTypes);
       const status = params['gradingStatus'];
       const groupBy = params['groupBy'];
+      const searchQuery = params['searchQuery'];
       this.submissionStatusFilter = statusOptions.includes(status)
         ? status
         : exerciseSubmissionStatusTypes.submitted;
-      this.groupBy = groupByOptions.includes(groupBy)
+      this.groupByFilter = groupByOptions.includes(groupBy)
         ? groupBy
         : groupByTypes.CHAPTER;
-      if (this.groupBy && this.submissionStatusFilter) {
+      if (this.groupByFilter && this.submissionStatusFilter) {
         this.fetchGradingGroups();
       }
     });
@@ -205,14 +209,16 @@ export class GradingDashboardComponent implements OnInit {
 
   updateGradingGroupByFilter() {
     const gradingStatus = this.submissionStatusFilter;
-    const groupBy = this.groupBy;
+    const groupBy = this.groupByFilter;
+    const searchQuery = this.searchQueryFilter;
     this.gradingGroupColumnFilters = {
-      groupBy: this.groupBy,
+      groupBy: this.groupByFilter,
       status: gradingStatus,
+      searchQuery,
     };
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { gradingStatus, groupBy },
+      queryParams: { gradingStatus, groupBy, searchQuery },
       queryParamsHandling: 'merge',
       skipLocationChange: false,
     });
@@ -223,6 +229,7 @@ export class GradingDashboardComponent implements OnInit {
       ...this.exerciseSubmissionColumnFilters,
       status: this.submissionStatusFilter,
       participantId: this.submissionsParticipantFilter,
+      searchQuery: this.searchQueryFilter,
     };
   }
 
@@ -234,6 +241,7 @@ export class GradingDashboardComponent implements OnInit {
       courseId: card.type == resources.COURSE ? card.id : null,
       participantId: this.submissionsParticipantFilter,
       status: this.submissionStatusFilter,
+      searchQuery: this.searchQueryFilter,
     };
     this.fetchExerciseSubmissions();
   }
@@ -265,9 +273,18 @@ export class GradingDashboardComponent implements OnInit {
     return this.auth.authorizeResource(this.resource, action);
   }
 
+  clearSearchQueryFilter() {
+    this.searchQueryFilter = null;
+    this.fetchGradingGroups();
+  }
+
   fetchGradingGroups() {
     this.updateGradingGroupByFilter();
     this.showGroupCards = true;
+    console.log('fetching grading groups', {
+      filters: this.gradingGroupColumnFilters,
+    });
+    this.lastUsedSearchQuery = this.searchQueryFilter;
     this.store.dispatch(
       new FetchGradingGroupsAction({
         searchParams: {

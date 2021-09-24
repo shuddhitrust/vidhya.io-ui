@@ -193,11 +193,7 @@ export class ExerciseSubmissionState {
   ) {
     let { searchParams } = payload;
     let state = getState();
-    const {
-      fetchPolicy,
-      exerciseSubmissionsSubscribed,
-      gradingGroupsfetchParamObjects,
-    } = state;
+    const { fetchPolicy, gradingGroupsfetchParamObjects } = state;
     const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({
       fetchParamObjects: gradingGroupsfetchParamObjects,
@@ -209,9 +205,11 @@ export class ExerciseSubmissionState {
     const variables = {
       groupBy: columnFilters?.groupBy,
       status: columnFilters?.status,
+      searchField: columnFilters?.searchQuery,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
+    console.log('variables from fetchGradinggroups', { variables });
     if (
       columnFilters?.groupBy // This action is only executed when groupBy is valid
     ) {
@@ -339,7 +337,6 @@ export class ExerciseSubmissionState {
       newColumnFilters: columnFilters,
     });
     const variables = {
-      searchField: searchQuery,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
       exerciseId: columnFilters?.exerciseId,
@@ -347,6 +344,7 @@ export class ExerciseSubmissionState {
       courseId: columnFilters?.courseId,
       participantId: columnFilters?.participantId,
       status: columnFilters?.status,
+      searchField: columnFilters?.searchQuery,
     };
     patchState({ isFetching: true });
     this.store.dispatch(

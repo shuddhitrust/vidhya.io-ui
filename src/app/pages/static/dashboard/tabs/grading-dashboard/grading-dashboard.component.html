@@ -9,13 +9,38 @@
   </button>
   <div class="feed-header-block">
     <!-- <h2>Grading</h2> -->
+    <small style="text-align: left" *ngIf="lastUsedSearchQuery"
+      >Showing results that match "{{ lastUsedSearchQuery }}"</small
+    >
   </div>
   <div class="floating-header-button-container">
+    <mat-form-field
+      appearance="outline"
+      class="floating-header"
+      style="margin: 5px 20px"
+    >
+      <mat-label>Search</mat-label>
+      <input
+        matInput
+        [(ngModel)]="searchQueryFilter"
+        (keyup.enter)="fetchGradingGroups()"
+      />
+      <mat-icon
+        (click)="
+          searchQueryFilter?.length
+            ? clearSearchQueryFilter()
+            : fetchGradingGroups()
+        "
+        style="cursor: pointer"
+        matSuffix
+        >{{ searchQueryFilter?.length ? "close" : "search" }}</mat-icon
+      >
+    </mat-form-field>
     <mat-menu #menu="matMenu">
       <mat-form-field class="menu-item" appearance="outline">
         <mat-label>Group By</mat-label>
         <mat-select
-          [(ngModel)]="groupBy"
+          [(ngModel)]="groupByFilter"
           (ngModelChange)="fetchGradingGroups()"
         >
           <mat-option
@@ -70,20 +95,23 @@
     >
       <mat-icon>save</mat-icon>
     </button>
+    <button
+      *ngIf="showBulkAutoOption()"
+      type="button"
+      mat-mini-fab
+      color="warn"
+      class="floating-header"
+      nzTooltipPlacement="left"
+      nz-tooltip="This will automatically grade all submitted work that are eligible for automatic grading. Backup database before proceeding!"
+      [class.button-loading]="isSubmittingForm$ | async"
+      (click)="initiateBulkAutoGrading()"
+    >
+      <mat-icon>brightness_auto</mat-icon>
+    </button>
   </div>
-  <button
-    *ngIf="showBulkAutoOption()"
-    type="button"
-    mat-mini-fab
-    color="warn"
-    class="bulkauto"
-    nzTooltipPlacement="left"
-    nz-tooltip="This will automatically grade all submitted work that are eligible for automatic grading. Backup database before proceeding!"
-    [class.button-loading]="isSubmittingForm$ | async"
-    (click)="initiateBulkAutoGrading()"
-  >
-    <mat-icon>brightness_auto</mat-icon>
-  </button>
+  <br />
+  <br />
+
   <span *ngIf="showGroupCards; else submissionsTemplate">
     <span *ngIf="gradingGroups.length > 0; else feedEmpty">
       <div

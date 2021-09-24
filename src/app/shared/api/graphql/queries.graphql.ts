@@ -619,12 +619,14 @@ export const EXERCISE_SUBMISSION_QUERIES = {
     query exerciseSubmissionGroups(
       $groupBy: String!
       $status: String!
+      $searchField: String
       $limit: Int
       $offset: Int
     ) {
       exerciseSubmissionGroups(
         groupBy: $groupBy
         status: $status
+        searchField: $searchField
         limit: $limit
         offset: $offset
       ) {
