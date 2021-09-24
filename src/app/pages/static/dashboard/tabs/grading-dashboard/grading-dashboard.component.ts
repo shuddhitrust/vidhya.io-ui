@@ -140,13 +140,13 @@ export class GradingDashboardComponent implements OnInit {
       // this.resetUnsavedSubmissions();
       const existingSubmissions = this.exerciseSubmissions;
       this.exerciseSubmissions = sortByIndex(val, 'exercise.index');
-      this.setupTempVariables();
       this.exerciseSubmissions = this.exerciseSubmissions.map((e) => {
         const modifiedSubmission = existingSubmissions.find(
           (sub) => sub.id == e.id
         );
         return modifiedSubmission ? modifiedSubmission : e;
       });
+      this.setupTempVariables();
     });
     this.updateGradingGroupByFilter();
 
@@ -156,7 +156,6 @@ export class GradingDashboardComponent implements OnInit {
     });
   }
   setupTempVariables = () => {
-    this.tempRemarks = {};
     this.exerciseSubmissions.forEach((s) => {
       this.tempRemarks[s.id] = s.remarks;
     });
@@ -238,9 +237,21 @@ export class GradingDashboardComponent implements OnInit {
     this.fetchExerciseSubmissions();
   }
   preventLossOfUnsavedWork() {
-    window.alert(
-      'You have unsaved submission! Click on save all to save them before moving from this screen.'
-    );
+    const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
+      title: 'Lose unsaved work?',
+      message: `This could cause all unsaved work to be lost. Continue? `,
+      confirmButtonText: 'Yes',
+      denyButtonText: 'Cancel',
+    };
+    const dialogRef = this.dialog.open(MasterConfirmationDialog, {
+      data: masterDialogConfirmationObject,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result == true) {
+        this.showGroupCards = true;
+      }
+    });
   }
   goToGroupScreen() {
     if (this.modifiedExerciseSubmissionIds.length) {

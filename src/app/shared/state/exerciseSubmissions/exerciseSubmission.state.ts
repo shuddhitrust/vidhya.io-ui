@@ -216,7 +216,12 @@ export class ExerciseSubmissionState {
       columnFilters?.groupBy // This action is only executed when groupBy is valid
     ) {
       patchState({ isFetching: true });
-
+      this.store.dispatch(
+        new ToggleLoadingScreen({
+          message: 'Fetching grading groups...',
+          showLoadingScreen: true,
+        })
+      );
       this.apollo
         .watchQuery({
           query: EXERCISE_SUBMISSION_QUERIES.GET_EXERCISE_SUBMISSION_GROUPS,
@@ -225,6 +230,11 @@ export class ExerciseSubmissionState {
         })
         .valueChanges.subscribe(
           ({ data }: any) => {
+            this.store.dispatch(
+              new ToggleLoadingScreen({
+                showLoadingScreen: false,
+              })
+            );
             const response = data.exerciseSubmissionGroups;
             newFetchParams = { ...newFetchParams };
 
@@ -324,7 +334,7 @@ export class ExerciseSubmissionState {
     let newFetchParams = updateFetchParams({
       fetchParamObjects,
       newPageNumber: pageNumber,
-      newPageSize: pageSize,
+      newPageSize: 2,
       newSearchQuery: searchQuery,
       newColumnFilters: columnFilters,
     });
