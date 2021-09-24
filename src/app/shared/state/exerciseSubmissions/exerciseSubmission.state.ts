@@ -334,7 +334,7 @@ export class ExerciseSubmissionState {
     let newFetchParams = updateFetchParams({
       fetchParamObjects,
       newPageNumber: pageNumber,
-      newPageSize: 2,
+      newPageSize: pageSize,
       newSearchQuery: searchQuery,
       newColumnFilters: columnFilters,
     });
