@@ -647,7 +647,6 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
       return newS;
     });
     const validationResult = this.validateExerciseSubmissions();
-    console.log('before submit ', { validationResult, newSubmissions });
     if (validationResult && newSubmissions.length) {
       this.store.dispatch(
         new CreateUpdateExerciseSubmissionsAction({

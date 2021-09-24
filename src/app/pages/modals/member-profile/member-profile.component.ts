@@ -40,7 +40,6 @@ export class MemberProfileComponent {
     private auth: AuthorizationService
   ) {
     this.profileData = data;
-    console.log('profileData from modal', { profileData: this.data });
   }
 
   closeDialog(): void {
