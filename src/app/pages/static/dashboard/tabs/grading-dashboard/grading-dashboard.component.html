@@ -10,7 +10,7 @@
   <div class="feed-header-block">
     <!-- <h2>Grading</h2> -->
     <small style="text-align: left" *ngIf="lastUsedSearchQuery"
-      >Showing results that match "{{ lastUsedSearchQuery }}"</small
+      >{{lastSearchQueryText()}}</small
     >
   </div>
   <div class="floating-header-button-container">

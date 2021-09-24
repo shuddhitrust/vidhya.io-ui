@@ -310,14 +310,16 @@ export const humanReadableTime = (time) => {
   } else return '';
 };
 
-export const convertKeyToLabel = (key: string): string => {
+export const convertKeyToLabel = (key: string = ''): string => {
   return key
     .replace('_', ' ')
     .split(' ')
     .map((word) => word.toLowerCase())
     .map((word) => {
-      const capLetter = word[0].toUpperCase();
+      let capLetter = word[0]?.toUpperCase();
+      capLetter = capLetter ? capLetter : '';
       word = word.substring(1);
+      word = word ? word : '';
       return capLetter + word;
     })
     .join(' ');
@@ -503,4 +505,18 @@ export const SubmissionPoints = (
   return exercise?.points
     ? `${submissionPoints} / ${exercisePoints} points`
     : '';
+};
+
+export const getKeyForValue = (
+  object: any,
+  value: string,
+  capitalize: boolean = true
+): string => {
+  const keys = Object.keys(object);
+  const values = Object.values(object);
+  const keyExists = values.indexOf(value);
+  if (keyExists >= 0) {
+    const key = keys[keyExists];
+    return capitalize ? convertKeyToLabel(key) : key;
+  } else return null;
 };

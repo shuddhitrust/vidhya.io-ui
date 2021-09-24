@@ -15,6 +15,7 @@ import {
 } from 'src/app/shared/common/constants';
 import {
   autoGenOptions,
+  getKeyForValue,
   parseDateTime,
   sortByIndex,
 } from 'src/app/shared/common/functions';
@@ -49,6 +50,7 @@ import {
   MasterConfirmationDialog,
   MasterConfirmationDialogObject,
 } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import { groupTypeOptions } from 'src/app/shared/state/groups/group.model';
 
 const groupByTypes = {
   [resources.COURSE]: resources.COURSE,
@@ -278,12 +280,26 @@ export class GradingDashboardComponent implements OnInit {
     this.fetchGradingGroups();
   }
 
+  lastSearchQueryText() {
+    const statusTypeText = getKeyForValue(
+      exerciseSubmissionStatusTypes,
+      this.submissionStatusFilter,
+      false
+    );
+    let itemTypeText = getKeyForValue(
+      groupByTypes,
+      this.groupByFilter
+    ).toLowerCase();
+    itemTypeText = itemTypeText ? itemTypeText + 's' : 'results';
+    const items = this.showGroupCards
+      ? `${itemTypeText} with ${statusTypeText} `
+      : `${statusTypeText} `;
+    return `Showing ${items}submissions containing "${this.lastUsedSearchQuery}"`;
+  }
+
   fetchGradingGroups() {
     this.updateGradingGroupByFilter();
     this.showGroupCards = true;
-    console.log('fetching grading groups', {
-      filters: this.gradingGroupColumnFilters,
-    });
     this.lastUsedSearchQuery = this.searchQueryFilter;
     this.store.dispatch(
       new FetchGradingGroupsAction({
