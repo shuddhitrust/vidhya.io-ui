@@ -279,10 +279,12 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     const submission = this.exerciseSubmissions.find(
       (sub) => sub.exercise == exercise.id
     );
-    return submission?.status == ExerciseSubmissionStatusOptions.graded ||
-      submission?.status == ExerciseSubmissionStatusOptions.submitted
-      ? true
-      : false;
+    const graded = submission?.status == ExerciseSubmissionStatusOptions.graded;
+    const submitted =
+      submission?.status == ExerciseSubmissionStatusOptions.submitted;
+    const exerciseLocked = graded || submitted; // Exercise is locked if it is submitted or graded
+    const submissionDisabled = this.allowSubmissionCreation(); // When the user does not have the permissions to submit
+    return submissionDisabled || exerciseLocked; // Disabling exercise modification if the submission is disabled or exercise is locked
   }
 
   ngOnInit(): void {
