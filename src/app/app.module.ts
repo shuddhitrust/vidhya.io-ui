@@ -67,6 +67,7 @@ import { ScullyLibModule } from '@scullyio/ng-lib';
 import { DragDropComponent } from './shared/components/drag-drop/drag-drop.component';
 import { DashboardModule } from './pages/static/dashboard/dashboard.module';
 import { AddEditMemberComponent } from './pages/forms/add-edit-member/add-edit-member.component';
+import { AppLoadingOverlayComponent } from './shared/components/loading/loading.component';
 
 // function that returns `MarkedOptions` with renderer override
 
@@ -82,6 +83,7 @@ import { AddEditMemberComponent } from './pages/forms/add-edit-member/add-edit-m
     PrivacyComponent,
     DragDropComponent,
     AddEditMemberComponent,
+    AppLoadingOverlayComponent,
   ],
   // exports: [SimpleLoadingSpinnerComponent],
   imports: [
