@@ -289,7 +289,7 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
     } else {
       this.store.dispatch(
         new ShowNotificationAction({
-          message: 'This course is locked for your at the moment',
+          message: 'This chapter is locked for your at the moment',
           action: 'error',
         })
       );
