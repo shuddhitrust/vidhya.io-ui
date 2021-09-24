@@ -355,7 +355,6 @@ export class ExerciseSubmissionState {
         ({ data }: any) => {
           this.store.dispatch(
             new ToggleLoadingScreen({
-              message: 'Fetching submissions...',
               showLoadingScreen: false,
             })
           );

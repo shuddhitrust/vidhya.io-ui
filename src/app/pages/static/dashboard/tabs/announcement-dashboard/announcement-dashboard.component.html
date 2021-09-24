@@ -11,35 +11,33 @@
   </button>
 </div>
 <span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
-  <span *ngIf="!(isFetching$ | async); else loading">
-    <span *ngIf="(announcements$ | async).length > 0; else feedEmpty">
-      <div
-        class="scroll-feed"
-        infiniteScroll
-        [infiniteScrollDistance]="2"
-        [infiniteScrollThrottle]="50"
-        infiniteScrollContainer=".scroll-feed"
-        [fromRoot]="true"
-        (scrolled)="onScroll()"
-      >
-        <div *ngFor="let announcement of announcements$ | async">
-          <mat-card class="feed-card" (click)="openAnnouncement(announcement)">
-            <h2>{{ announcement.title }}</h2>
-            <p>
-              {{ clip(announcement.message) }}
-            </p>
+  <span *ngIf="(announcements$ | async).length > 0; else feedEmpty">
+    <div
+      class="scroll-feed"
+      infiniteScroll
+      [infiniteScrollDistance]="2"
+      [infiniteScrollThrottle]="50"
+      infiniteScrollContainer=".scroll-feed"
+      [fromRoot]="true"
+      (scrolled)="onScroll()"
+    >
+      <div *ngFor="let announcement of announcements$ | async">
+        <mat-card class="feed-card" (click)="openAnnouncement(announcement)">
+          <h2>{{ announcement.title }}</h2>
+          <p>
+            {{ clip(announcement.message) }}
+          </p>
 
-            <mat-card-actions>
-              <small style="font-style: italic"
-                >Posted by {{ announcement?.author?.name }}
-                at
-                {{ parseDate(announcement.createdAt) }}</small
-              >
-            </mat-card-actions>
-          </mat-card>
-        </div>
+          <mat-card-actions>
+            <small style="font-style: italic"
+              >Posted by {{ announcement?.author?.name }}
+              at
+              {{ parseDate(announcement.createdAt) }}</small
+            >
+          </mat-card-actions>
+        </mat-card>
       </div>
-    </span>
+    </div>
   </span>
 
   <ng-template #feedEmpty>

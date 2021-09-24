@@ -39,6 +39,7 @@ import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
 import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
 import { SearchParams } from '../../abstract/master-grid/table.model';
+import { ToggleLoadingScreen } from '../loading/loading.actions';
 
 @State<GroupStateModel>({
   name: 'groupState',
@@ -167,7 +168,12 @@ export class GroupState {
       offset: newFetchParams.offset,
     };
     patchState({ isFetching: true });
-
+    this.store.dispatch(
+      new ToggleLoadingScreen({
+        message: 'Fetching groups...',
+        showLoadingScreen: true,
+      })
+    );
     this.apollo
       .watchQuery({
         query: GROUP_QUERIES.GET_GROUPS,
@@ -176,6 +182,11 @@ export class GroupState {
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
+          this.store.dispatch(
+            new ToggleLoadingScreen({
+              showLoadingScreen: false,
+            })
+          );
           const response = data.groups;
           newFetchParams = { ...newFetchParams };
           let paginatedGroups = state.paginatedGroups;

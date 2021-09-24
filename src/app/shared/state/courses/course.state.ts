@@ -42,6 +42,7 @@ import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
 import { SearchParams } from '../../abstract/master-grid/table.model';
 import { StateContextFactory } from '@ngxs/store/src/internal/state-context-factory';
 import { uiroutes } from '../../common/ui-routes';
+import { ToggleLoadingScreen } from '../loading/loading.actions';
 
 @State<CourseStateModel>({
   name: 'courseState',
@@ -173,7 +174,12 @@ export class CourseState {
       offset: newFetchParams.offset,
     };
     patchState({ isFetching: true });
-
+    this.store.dispatch(
+      new ToggleLoadingScreen({
+        message: 'Fetching courses...',
+        showLoadingScreen: true,
+      })
+    );
     this.apollo
       .watchQuery({
         query: COURSE_QUERIES.GET_COURSES,
@@ -182,6 +188,11 @@ export class CourseState {
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
+          this.store.dispatch(
+            new ToggleLoadingScreen({
+              showLoadingScreen: false,
+            })
+          );
           const response = data.courses;
 
           newFetchParams = { ...newFetchParams };

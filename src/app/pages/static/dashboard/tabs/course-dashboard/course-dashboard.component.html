@@ -7,45 +7,42 @@
     mat-icon-button
     color="primary"
   >
-   <mat-icon>add_circle</mat-icon>
+    <mat-icon>add_circle</mat-icon>
   </button>
 </div>
 <span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
-  <span *ngIf="!(isFetching$ | async); else loading">
-    <span *ngIf="(courses$ | async).length > 0; else feedEmpty">
-      <div
-        class="scroll-feed"
-        infiniteScroll
-        [infiniteScrollDistance]="2"
-        [infiniteScrollThrottle]="50"
-        infiniteScrollContainer=".scroll-feed"
-        [fromRoot]="true"
-        (scrolled)="onScroll()"
-      >
-        <div *ngFor="let course of courses$ | async">
-          <mat-card
-            [ngClass]="course.locked ? 'feed-card locked-content' : 'feed-card'"
-            (click)="openCourse(course)"
-          >
-            <h2 style="display: inline">
-              {{ course.title }}
-            </h2>
-            <span *ngIf="course.locked" class="prerequisites">
-              <mat-icon class="info-icon">info</mat-icon>
-              {{ coursePrerequisites(course) }}
-            </span>
-            <p>{{ course.blurb }}</p>
+  <span *ngIf="(courses$ | async).length > 0; else feedEmpty">
+    <div
+      class="scroll-feed"
+      infiniteScroll
+      [infiniteScrollDistance]="2"
+      [infiniteScrollThrottle]="50"
+      infiniteScrollContainer=".scroll-feed"
+      [fromRoot]="true"
+      (scrolled)="onScroll()"
+    >
+      <div *ngFor="let course of courses$ | async">
+        <mat-card
+          [ngClass]="course.locked ? 'feed-card locked-content' : 'feed-card'"
+          (click)="openCourse(course)"
+        >
+          <h2 style="display: inline">
+            {{ course.title }}
+          </h2>
+          <span *ngIf="course.locked" class="prerequisites">
+            <mat-icon class="info-icon">info</mat-icon>
+            {{ coursePrerequisites(course) }}
+          </span>
+          <p>{{ course.blurb }}</p>
 
-            <mat-card-actions
-              ><small
-                >This course is instructed by
-                {{ course.instructor?.name }}</small
-              ></mat-card-actions
-            >
-          </mat-card>
-        </div>
+          <mat-card-actions
+            ><small
+              >This course is instructed by {{ course.instructor?.name }}</small
+            ></mat-card-actions
+          >
+        </mat-card>
       </div>
-    </span>
+    </div>
   </span>
 
   <ng-template #feedEmpty>

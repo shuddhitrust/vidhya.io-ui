@@ -39,6 +39,7 @@ import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../common/constants';
 import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
 import { SearchParams } from '../../abstract/master-grid/table.model';
+import { ToggleLoadingScreen } from '../loading/loading.actions';
 
 @State<AnnouncementStateModel>({
   name: 'announcementState',
@@ -175,7 +176,12 @@ export class AnnouncementState {
       offset: newFetchParams.offset,
     };
     patchState({ isFetching: true });
-
+    this.store.dispatch(
+      new ToggleLoadingScreen({
+        message: 'Fetching announcements...',
+        showLoadingScreen: true,
+      })
+    );
     this.apollo
       .watchQuery({
         query: ANNOUNCEMENT_QUERIES.GET_ANNOUNCEMENTS,
@@ -184,6 +190,11 @@ export class AnnouncementState {
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
+          this.store.dispatch(
+            new ToggleLoadingScreen({
+              showLoadingScreen: false,
+            })
+          );
           const response = data.announcements;
           newFetchParams = { ...newFetchParams };
           let paginatedAnnouncements = state.paginatedAnnouncements;

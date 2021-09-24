@@ -23,6 +23,7 @@ import { Router } from '@angular/router';
 import { SearchParams } from '../../abstract/master-grid/table.model';
 import { Location } from '@angular/common';
 import { FetchParams, startingFetchParams } from '../../common/models';
+import { ToggleLoadingScreen } from '../loading/loading.actions';
 
 @State<AssignmentStateModel>({
   name: 'assignmentState',
@@ -132,7 +133,12 @@ export class AssignmentState {
       offset: newFetchParams.offset,
     };
     patchState({ isFetching: true });
-
+    this.store.dispatch(
+      new ToggleLoadingScreen({
+        message: 'Fetching assignments...',
+        showLoadingScreen: true,
+      })
+    );
     this.apollo
       .watchQuery({
         query: ASSIGNMENT_QUERIES.GET_ASSIGNMENTS,
@@ -141,6 +147,11 @@ export class AssignmentState {
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
+          this.store.dispatch(
+            new ToggleLoadingScreen({
+              showLoadingScreen: false,
+            })
+          );
           const response = data.assignments;
 
           newFetchParams = { ...newFetchParams };
