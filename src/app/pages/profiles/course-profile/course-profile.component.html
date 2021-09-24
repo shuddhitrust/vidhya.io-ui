@@ -59,6 +59,7 @@
     mat-icon-button
     [matMenuTriggerFor]="menu"
     class="floating-header-button-top right-button"
+    *ngIf="authorizeResourceMethod(resourceActions.CREATE)"
   >
     <mat-icon>add_circle</mat-icon>
   </button>
