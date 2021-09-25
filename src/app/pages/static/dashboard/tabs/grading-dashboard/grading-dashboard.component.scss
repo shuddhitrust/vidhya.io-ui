@@ -1,6 +1,6 @@
 .scroll-feed {
   overflow: auto;
-  height: calc(100vh - 190px);
+  height: calc(100vh - 230px);
 }
 h2 {
   text-align: center;
@@ -62,5 +62,8 @@ h2 {
   }
   .left-header-item {
     margin-left: 5px;
+  }
+  #searchfield {
+    width: 30%;
   }
 }

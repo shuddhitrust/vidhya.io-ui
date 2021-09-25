@@ -9,15 +9,16 @@
   </button>
   <div class="feed-header-block">
     <!-- <h2>Grading</h2> -->
-    <small style="text-align: left" *ngIf="lastUsedSearchQuery"
-      >{{lastSearchQueryText()}}</small
-    >
+    <small style="text-align: left" *ngIf="lastUsedSearchQuery">{{
+      lastSearchQueryText()
+    }}</small>
   </div>
   <div class="floating-header-button-container">
     <mat-form-field
       appearance="outline"
       class="floating-header"
       style="margin: 5px 20px"
+      id="searchfield"
     >
       <mat-label>Search</mat-label>
       <input
@@ -109,6 +110,7 @@
       <mat-icon>brightness_auto</mat-icon>
     </button>
   </div>
+  <br />
   <br />
   <br />
 

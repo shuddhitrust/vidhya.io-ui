@@ -105,7 +105,7 @@ export class GradingDashboardComponent implements OnInit {
   isFetchingGradingGroup: boolean;
   @Select(ExerciseSubmissionState.listExerciseSubmissions)
   exerciseSubmissions$: Observable<ExerciseSubmission[]>;
-  exerciseSubmissions: ExerciseSubmission[];
+  exerciseSubmissions: ExerciseSubmission[] = [];
 
   @Select(ExerciseSubmissionState.isFetching)
   isFetching$: Observable<boolean>;
@@ -146,7 +146,7 @@ export class GradingDashboardComponent implements OnInit {
       this.exerciseSubmissions = sortByIndex(val, 'exercise.index'); // Sorting the submissions
       this.exerciseSubmissions = this.exerciseSubmissions.map((e) => {
         // Checking if unsaved submissions are part of incoming submissions
-        const modifiedSubmission = existingSubmissions.find(
+        const modifiedSubmission = existingSubmissions?.find(
           (sub) => sub.id == e.id
         );
         // Overwriting the incoming submission with the latest unsaved work

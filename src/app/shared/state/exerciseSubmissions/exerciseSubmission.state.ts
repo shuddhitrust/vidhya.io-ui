@@ -209,7 +209,6 @@ export class ExerciseSubmissionState {
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
-    console.log('variables from fetchGradinggroups', { variables });
     if (
       columnFilters?.groupBy // This action is only executed when groupBy is valid
     ) {
