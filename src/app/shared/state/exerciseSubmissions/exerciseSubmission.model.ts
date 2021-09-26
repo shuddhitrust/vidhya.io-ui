@@ -6,10 +6,7 @@ import {
   FetchPolicy,
   ExerciseSubmission,
   FetchParams,
-  startingFetchParams,
 } from '../../common/models';
-import { uiroutes } from '../../common/ui-routes';
-import { emptyExerciseFormRecord } from '../exercises/exercise.model';
 
 export type GradingGroup = {
   id: number;
