@@ -159,7 +159,7 @@ export class CourseState {
   ) {
     let { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, fetchParamObjects, coursesSubscribed } = state;
+    const { fetchPolicy, fetchParamObjects } = state;
     const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({
       fetchParamObjects,

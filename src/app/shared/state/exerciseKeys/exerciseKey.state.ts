@@ -157,7 +157,7 @@ export class ExerciseKeyState {
   ) {
     let { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, fetchParamObjects, exerciseKeysSubscribed } = state;
+    const { fetchPolicy, fetchParamObjects } = state;
     const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({
       fetchParamObjects,
