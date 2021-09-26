@@ -671,6 +671,9 @@ export const EXERCISE_KEY_QUERIES = {
           prompt
           questionType
           required
+          course {
+            id
+          }
           chapter {
             id
           }
