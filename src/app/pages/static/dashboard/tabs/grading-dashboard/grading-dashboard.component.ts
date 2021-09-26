@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewEncapsulation } from '@angular/core';
 import { Location } from '@angular/common';
 import {
   MatDialog,
@@ -15,6 +15,7 @@ import {
 } from 'src/app/shared/common/constants';
 import {
   autoGenOptions,
+  convertKeyToLabel,
   getKeyForValue,
   parseDateTime,
   sortByIndex,
@@ -39,8 +40,8 @@ import {
   FetchNextGradingGroupsAction,
 } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.actions';
 import {
-  emptyExerciseSubmissionFormRecord,
   GradingGroup,
+  emptyGradingGroup,
 } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.model';
 import { ExerciseSubmissionService } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.service';
 import { ExerciseSubmissionState } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.state';
@@ -50,16 +51,22 @@ import {
   MasterConfirmationDialog,
   MasterConfirmationDialogObject,
 } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
-import { groupTypeOptions } from 'src/app/shared/state/groups/group.model';
 
+/**
+ * If you wish to change how it shows in the UI, just change the key.
+ * Never change the value unless it changes in the db
+ */
 const groupByTypes = {
   [resources.COURSE]: resources.COURSE,
   [resources.CHAPTER]: resources.CHAPTER,
   EXERCISE: resources.EXERCISE_SUBMISSION,
 };
-
+/**
+ * If you wish to change how it shows in the UI, just change the key.
+ * Never change the value unless it changes in the db
+ */
 const exerciseSubmissionStatusTypes = {
-  submitted: 'SU',
+  ungraded: 'SU',
   graded: 'GR',
   returned: 'RE',
 };
@@ -71,6 +78,7 @@ const exerciseSubmissionStatusTypes = {
     './grading-dashboard.component.scss',
     './../../../../../shared/common/shared-styles.css',
   ],
+  encapsulation: ViewEncapsulation.None,
 })
 export class GradingDashboardComponent implements OnInit {
   resource: string = resources.GRADING;
@@ -79,7 +87,8 @@ export class GradingDashboardComponent implements OnInit {
   groupByFilter: string = resources.EXERCISE_SUBMISSION;
   exerciseSubmissionColumnFilters = {};
   showGroupCards: boolean = true;
-  submissionStatusFilter: string = exerciseSubmissionStatusTypes.submitted;
+  currentCard: GradingGroup = emptyGradingGroup;
+  submissionStatusFilter: string = exerciseSubmissionStatusTypes.ungraded;
   submissionsParticipantFilter: number = null;
   searchQueryFilter: string = null;
   lastUsedSearchQuery: string = null;
@@ -137,6 +146,7 @@ export class GradingDashboardComponent implements OnInit {
     });
     this.gradingGroups$.subscribe((val) => {
       this.gradingGroups = val;
+      this.currentCard = emptyGradingGroup;
     });
     this.isFetchingGradingGroup$.subscribe((val) => {
       this.isFetchingGradingGroup = val;
@@ -160,6 +170,9 @@ export class GradingDashboardComponent implements OnInit {
     this.isFetching$.subscribe((val) => {
       this.isFetching = val;
     });
+  }
+  keyToLabel(key) {
+    return convertKeyToLabel(key);
   }
   setupTempVariables = () => {
     this.exerciseSubmissions.forEach((s) => {
@@ -192,7 +205,7 @@ export class GradingDashboardComponent implements OnInit {
       const searchQuery = params['searchQuery'];
       this.submissionStatusFilter = statusOptions.includes(status)
         ? status
-        : exerciseSubmissionStatusTypes.submitted;
+        : exerciseSubmissionStatusTypes.ungraded;
       this.groupByFilter = groupByOptions.includes(groupBy)
         ? groupBy
         : groupByTypes.CHAPTER;
@@ -236,6 +249,7 @@ export class GradingDashboardComponent implements OnInit {
   }
 
   openGroupedCard(card) {
+    this.currentCard = card;
     this.showGroupCards = false;
     this.exerciseSubmissionColumnFilters = {
       exerciseId: card.type == resources.EXERCISE_SUBMISSION ? card.id : null,
@@ -280,21 +294,35 @@ export class GradingDashboardComponent implements OnInit {
     this.fetchGradingGroups();
   }
 
-  lastSearchQueryText() {
+  pageTitle() {
+    let title = '<span class="page-title">';
     const statusTypeText = getKeyForValue(
       exerciseSubmissionStatusTypes,
       this.submissionStatusFilter,
       false
     );
-    let itemTypeText = getKeyForValue(
-      groupByTypes,
-      this.groupByFilter
-    ).toLowerCase();
+    let itemTypeText = getKeyForValue(groupByTypes, this.groupByFilter);
     itemTypeText = itemTypeText ? itemTypeText + 's' : 'results';
+    const searchDescription = this.lastUsedSearchQuery
+      ? ` containing "${this.lastUsedSearchQuery}"`
+      : '';
     const items = this.showGroupCards
       ? `${itemTypeText} with ${statusTypeText} `
       : `${statusTypeText} `;
-    return `Showing ${items}submissions containing "${this.lastUsedSearchQuery}"`;
+    if (this.showGroupCards) {
+      title += `${items}submissions`;
+    } else {
+      title += `${
+        this.currentCard?.title
+      } <span class="group-type-subtitle">(${this.keyToLabel(
+        this.currentCard?.type
+      )})</span>`;
+    }
+    return (
+      title +
+      `<span class="title-search-description">${searchDescription}</span>` +
+      '</span>'
+    );
   }
 
   fetchGradingGroups() {

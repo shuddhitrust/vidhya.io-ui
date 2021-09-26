@@ -8,10 +8,7 @@
     <mat-icon>keyboard_backspace</mat-icon>
   </button>
   <div class="feed-header-block">
-    <!-- <h2>Grading</h2> -->
-    <small style="text-align: left" *ngIf="lastUsedSearchQuery">{{
-      lastSearchQueryText()
-    }}</small>
+    <span [innerHtml]="pageTitle()"></span>
   </div>
   <div class="floating-header-button-container">
     <mat-form-field

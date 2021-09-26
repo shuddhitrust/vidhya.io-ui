@@ -1,6 +1,6 @@
 .scroll-feed {
   overflow: auto;
-  height: calc(100vh - 230px);
+  height: calc(100vh - 260px);
 }
 h2 {
   text-align: center;
@@ -55,6 +55,23 @@ h2 {
 }
 .unsaved-card {
   border: 2px solid var(--shuddhi-color);
+}
+.page-title {
+  float: left;
+  margin-left: 100px;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+.group-type-subtitle {
+  color: gray;
+  font-weight: lighter;
+  font-size: 0.8em;
+}
+.title-search-description {
+  font-style: italic;
+  color: gray;
+  font-weight: lighter;
+  font-size: 0.8em;
 }
 @media screen and (max-width: 1000px) {
   #drawer-puller {
