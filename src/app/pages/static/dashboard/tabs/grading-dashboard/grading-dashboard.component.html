@@ -330,7 +330,7 @@
                   *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
                   mat-mini-fab
                   type="button"
-                  color="primary"
+                  [color]="fullPointsButtonColor(exerciseSubmission)"
                   class="card-button"
                   (click)="markCorrect(exerciseSubmission)"
                   nz-tooltip
@@ -356,6 +356,14 @@
                       type="number"
                       (keyup)="changePoints($event, exerciseSubmission)"
                       [value]="exerciseSubmission.points"
+                      [ngStyle]="{
+                        'font-weight': partialScore(exerciseSubmission)
+                          ? 'bold'
+                          : '',
+                        color: partialScore(exerciseSubmission)
+                          ? 'var(--shuddhi-color-dark)'
+                          : '#000'
+                      }"
                     />
                     <span matSuffix class="points-suffix"
                       >/ {{ exerciseSubmission.exercise?.points }} points</span
@@ -365,7 +373,7 @@
                 <button
                   *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
                   type="button"
-                  color="secondary"
+                  [color]="zeroButtonColor(exerciseSubmission)"
                   class="card-button"
                   mat-mini-fab
                   nz-tooltip
@@ -378,12 +386,7 @@
                 <button
                   *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
                   type="button"
-                  [color]="
-                    exerciseSubmission.status ==
-                    exerciseSubmissionStatusTypes.returned
-                      ? 'warn'
-                      : 'secondary'
-                  "
+                  [color]="returnButtonColor(exerciseSubmission)"
                   class="card-button"
                   mat-mini-fab
                   nz-tooltip
