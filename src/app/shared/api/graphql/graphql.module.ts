@@ -11,13 +11,13 @@ import { HttpLink } from 'apollo-angular/http';
 import { environment } from 'src/environments/environment';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
-import { AUTH_TOKEN_KEY } from '../../common/constants';
 import { Select } from '@ngxs/store';
 import { AuthState } from '../../state/auth/auth.state';
 import { Observable } from 'rxjs';
+import { localStorageKeys } from '../../common/constants';
 
 const uri = environment.graphql_endpoint;
-let token = sessionStorage.getItem(AUTH_TOKEN_KEY);
+let token = sessionStorage.getItem(localStorageKeys.AUTH_TOKEN_KEY);
 
 // let ws = new WebSocketLink({
 //   uri: `${environment.websocket_graphql_endpoint}?token=${token}`,

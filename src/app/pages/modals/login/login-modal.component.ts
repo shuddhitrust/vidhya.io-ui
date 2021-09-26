@@ -23,6 +23,7 @@ import {
   RegisterAction,
   ResendActivationEmailAction,
   SendPasswordResetEmailAction,
+  SetAuthStorage,
   VerifyInvitecodeAction,
 } from 'src/app/shared/state/auth/auth.actions';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
@@ -34,6 +35,7 @@ import {
   preventSpaces,
   sanitizeUsername,
 } from 'src/app/shared/common/functions';
+import { localStorageKeys } from 'src/app/shared/common/constants';
 
 const INVITECODE = 'INVITECODE';
 const REGISTER = 'REGISTER';
@@ -68,6 +70,9 @@ export class LoginModalComponent implements OnInit {
   isLoggedIn: boolean = false;
   isSubmittingForm: boolean = false;
   closeLoginForm: boolean = false;
+  rememberMe: boolean = JSON.parse(
+    localStorage.getItem(localStorageKeys.REMEMBER_ME_KEY)
+  );
   constructor(
     private store: Store,
     public dialog: MatDialog,
@@ -127,6 +132,9 @@ export class LoginModalComponent implements OnInit {
     this.emailForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
     });
+  }
+  toggleAuthStorage(event) {
+    this.store.dispatch(new SetAuthStorage({ remember: event.checked }));
   }
   setupLoginForm() {
     this.loginForm = this.fb.group({

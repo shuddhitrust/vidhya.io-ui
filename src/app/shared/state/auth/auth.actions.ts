@@ -125,3 +125,15 @@ export class OpenLoginFormAction {
 
   constructor() {}
 }
+
+export class SetAuthStorage {
+  static readonly type = '[AUTH] Set Auth Storage';
+
+  constructor(public payload: { remember: boolean }) {}
+}
+
+export class GetAuthStorage {
+  static readonly type = '[AUTH] Get Auth Storage';
+
+  constructor() {}
+}

@@ -4,7 +4,14 @@ import {
   UserPermissions,
 } from '../../common/models';
 
+export const AuthStorageOptions = {
+  session: 'sessionStorage',
+  local: 'localStorage',
+  default: 'sessionStorage',
+};
+
 export interface AuthStateModel {
+  authStorage: string;
   token: string;
   expiresAt: number;
   refreshToken: string;
@@ -22,6 +29,7 @@ export interface AuthStateModel {
 }
 
 export const defaultAuthState: AuthStateModel = {
+  authStorage: AuthStorageOptions.default,
   token: null,
   expiresAt: null,
   refreshToken: null,

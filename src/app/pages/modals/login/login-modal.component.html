@@ -88,6 +88,15 @@
           Password is required
         </small>
       </mat-form-field>
+      <mat-checkbox
+        nz-tooltip="Check this box only if you are using your own computer/phone. Remember to log off!"
+        nzTooltipPlacement="right"
+        color="primary"
+        [checked]="rememberMe"
+        (change)="toggleAuthStorage($event)"
+      >
+        Remember me on this device
+      </mat-checkbox>
       <button
         type="submit"
         class="submit-button"

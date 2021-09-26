@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { uiroutes } from './shared/common/ui-routes';
-import { AuthenticationCheckAction } from './shared/state/auth/auth.actions';
+import { GetAuthStorage } from './shared/state/auth/auth.actions';
 import { AuthState } from './shared/state/auth/auth.state';
 
 @Component({
@@ -69,7 +69,7 @@ export class AppComponent {
     this.checkAuthentication();
   }
   checkAuthentication() {
-    this.store.dispatch(new AuthenticationCheckAction());
+    this.store.dispatch(new GetAuthStorage());
   }
 
   ngOnDestroy() {}

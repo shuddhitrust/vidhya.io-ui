@@ -6,7 +6,11 @@ import {
   Store,
   Select,
 } from '@ngxs/store';
-import { AuthStateModel, defaultAuthState } from './auth.model';
+import {
+  AuthStateModel,
+  AuthStorageOptions,
+  defaultAuthState,
+} from './auth.model';
 import {
   CurrentMember,
   MembershipStatusOptions,
@@ -38,6 +42,8 @@ import {
   UpdateCurrentUserInStateAction,
   OpenLoginFormAction,
   UpdateTokenAction,
+  SetAuthStorage,
+  GetAuthStorage,
 } from './auth.actions';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import { Apollo } from 'apollo-angular';
@@ -47,11 +53,7 @@ import {
   constructPermissions,
   getErrorMessageFromGraphQLResponse,
 } from '../../common/functions';
-import {
-  AUTH_TOKEN_KEY,
-  AUTH_REFRESH_TOKEN_KEY,
-  minute,
-} from '../../common/constants';
+import { localStorageKeys, minute } from '../../common/constants';
 import jwtDecode from 'jwt-decode';
 import { Observable } from 'rxjs';
 import { ToggleLoadingScreen } from '../loading/loading.actions';
@@ -60,7 +62,9 @@ import { Router } from '@angular/router';
 
 /**
  * Auth flow steps:-
- * - When the application loads, it runs the AuthenticationCheckAction which looks for the token and refreshToken in localStorage
+ * - When the application loads, it runs the AuthenticationCheckAction which checks for what kind of storage is used.
+ * - If no storage type is set in localStorage, we set the default (check the auth.model for what the default is)
+ * - Once the storage is determined, we look for the token and refreshToken in authStorage
  * - If the token and refreshToken exist, it sets them both to state and calls the VerifyTokenAction to see if that token is valid.
  * - If the token is invalid, then it calls the RefreshTokenAction to see if the refreshToken is valid
  * - If the refreshToken is valid, it will store the token and the refreshToken in the state along with the expiryAt
@@ -74,9 +78,9 @@ import { Router } from '@angular/router';
  * the RefreshTokenAction a set time (say 1 minute, configurable) just before the token is set to expire.
  * - When the new refreshToken and token are sent from the backend, it is stored in the state,
  * once again expiryAt is extracted from the decoded token and stored in the state, triggering the startAutoRefreshTokenTimeout method and the cycle continues
- * indefinitely, as long as the user doesn't leave a gap of over 7 days between sessions, at which point the refreshToken expires.
+ * indefinitely, as long as the user doesn't leave a gap of over 7 days (this is set in the API, 7 days is the default) between sessions, at which point the refreshToken expires.
  * - When the user logs out, the RevokeTokenAction is initiated and when that is complete,
- * the token and refreshToken are removed from the localstorage, the state is set to default state, forcing the app to show the logged out state in the UI.
+ * the token and refreshToken are removed from the authStorage, the state is set to default state, forcing the app to show the logged out state in the UI.
  */
 @State<AuthStateModel>({
   name: 'authState',
@@ -87,11 +91,18 @@ export class AuthState {
   refreshTokenTimeout; // Variable that stores the timeout method for the next RefreshToken call
   @Select(AuthState.getExpiresAt)
   expiresAt$: Observable<string>;
+  @Select(AuthState.getAuthStorageFromState)
+  authStorage$: Observable<string>;
+  authStorage: any = AuthStorage(AuthStorageOptions.default);
   constructor(
     private store: Store,
     private apollo: Apollo,
     private router: Router
   ) {
+    // Fetching authStorage option i.e. local storage or session storage
+    this.authStorage$.subscribe((val) => {
+      this.authStorage = AuthStorage(val);
+    });
     // Looking for updates in the expiresAt value...
     this.expiresAt$.subscribe((val) => {
       // Calling the startAutoRefreshTokenTimeout method the moment a new expiresAt value is detected
@@ -114,6 +125,11 @@ export class AuthState {
       timeout
     );
   };
+
+  @Selector()
+  static getAuthStorageFromState(state: AuthStateModel): string {
+    return state.authStorage;
+  }
 
   @Selector()
   static getExpiresAt(state: AuthStateModel): number {
@@ -167,6 +183,44 @@ export class AuthState {
     return state.currentMember?.id;
   }
 
+  @Action(GetAuthStorage)
+  getAuthStorage({ patchState }: StateContext<AuthStateModel>) {
+    let remember = JSON.parse(
+      localStorage.getItem(localStorageKeys.REMEMBER_ME_KEY)
+    );
+    if (typeof remember != 'boolean') {
+      remember = false;
+    }
+    const authStorage = remember
+      ? AuthStorageOptions.local
+      : AuthStorageOptions.session;
+    patchState({
+      authStorage,
+    });
+    this.store.dispatch(new AuthenticationCheckAction());
+  }
+
+  @Action(SetAuthStorage)
+  setAuthStorage(
+    { patchState }: StateContext<AuthStateModel>,
+    { payload }: SetAuthStorage
+  ) {
+    const { remember } = payload;
+    if (remember) {
+      sessionStorage.clear();
+    } else {
+      localStorage.clear();
+    }
+    localStorage.setItem(
+      localStorageKeys.REMEMBER_ME_KEY,
+      JSON.stringify(remember)
+    );
+    patchState({
+      authStorage: remember
+        ? AuthStorageOptions.local
+        : AuthStorageOptions.session,
+    });
+  }
   @Action(UpdateTokenAction)
   updateToken(
     { getState, patchState }: StateContext<AuthStateModel>,
@@ -194,14 +248,16 @@ export class AuthState {
         message: 'Checking authentication status...',
       })
     );
-    const localStorageToken = sessionStorage.getItem(AUTH_TOKEN_KEY);
-    const localStorageRefreshToken = sessionStorage.getItem(
-      AUTH_REFRESH_TOKEN_KEY
+    const authStorageToken = this.authStorage.getItem(
+      localStorageKeys.AUTH_TOKEN_KEY
     );
-    if (localStorageToken && localStorageRefreshToken) {
+    const authStorageRefreshToken = this.authStorage.getItem(
+      localStorageKeys.AUTH_REFRESH_TOKEN_KEY
+    );
+    if (authStorageToken && authStorageRefreshToken) {
       patchState({
-        token: localStorageToken,
-        refreshToken: localStorageRefreshToken,
+        token: authStorageToken,
+        refreshToken: authStorageRefreshToken,
       });
       this.store.dispatch(new VerifyTokenAction());
     } else {
@@ -325,6 +381,8 @@ export class AuthState {
     );
     // Marking user as logged out
     patchState(defaultAuthState);
+    localStorage.clear();
+    sessionStorage.clear();
     this.store.dispatch(new SetAuthSessionAction());
   }
 
@@ -334,14 +392,17 @@ export class AuthState {
     const { token, refreshToken } = state;
 
     if (token) {
-      sessionStorage.setItem(AUTH_TOKEN_KEY, token);
+      this.authStorage.setItem(localStorageKeys.AUTH_TOKEN_KEY, token);
     } else {
-      sessionStorage.removeItem(AUTH_TOKEN_KEY);
+      this.authStorage.removeItem(localStorageKeys.AUTH_TOKEN_KEY);
     }
     if (refreshToken) {
-      sessionStorage.setItem(AUTH_REFRESH_TOKEN_KEY, refreshToken);
+      this.authStorage.setItem(
+        localStorageKeys.AUTH_REFRESH_TOKEN_KEY,
+        refreshToken
+      );
     } else {
-      sessionStorage.removeItem(AUTH_REFRESH_TOKEN_KEY);
+      this.authStorage.removeItem(localStorageKeys.AUTH_REFRESH_TOKEN_KEY);
     }
   }
 
@@ -1247,4 +1308,17 @@ const calculateFirstTiimeSetup = (currentMember: CurrentMember): boolean => {
     currentMember?.membershipStatus == MembershipStatusOptions.UNINITIALIZED;
 
   return firstTimeSetup;
+};
+
+const AuthStorage = (type: string): any => {
+  switch (type) {
+    case AuthStorageOptions.session:
+      return sessionStorage;
+    case AuthStorageOptions.local:
+      return localStorage;
+    default:
+      return AuthStorageOptions.default == AuthStorageOptions.local
+        ? localStorage
+        : sessionStorage;
+  }
 };
