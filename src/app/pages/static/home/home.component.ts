@@ -7,7 +7,7 @@ import {
   defaultSearchParams,
   USER_ROLES_NAMES,
 } from 'src/app/shared/common/constants';
-import { sortByIndex } from 'src/app/shared/common/functions';
+import { generateMemberSubtitle, sortByIndex } from 'src/app/shared/common/functions';
 import { MembershipStatusOptions, User } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { VerifyAccountAction } from 'src/app/shared/state/auth/auth.actions';
@@ -1986,11 +1986,7 @@ export class HomeComponent implements OnInit {
   }
 
   generateSubtitle(user) {
-    return user.title
-      ? user.title + ', '
-      : '' + user.institution?.name
-      ? user.institution?.name
-      : '';
+   return generateMemberSubtitle(user)
   }
 
   fetchMembers() {

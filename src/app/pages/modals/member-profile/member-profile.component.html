@@ -4,12 +4,7 @@
       <mat-card-title>{{ profileData.name }}</mat-card-title>
 
       <mat-card-subtitle>
-        <span *ngIf="profileData?.role?.name">{{
-          profileData?.role?.name + ", "
-        }}</span>
-        <span *ngIf="profileData?.institution?.name">{{
-          profileData?.institution?.name
-        }}</span>
+        {{ generateSubtitle() }}
       </mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>

@@ -7,6 +7,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
+import { generateMemberSubtitle } from 'src/app/shared/common/functions';
 import {
   resources,
   RESOURCE_ACTIONS,
@@ -44,6 +45,10 @@ export class MemberProfileComponent {
 
   closeDialog(): void {
     this.dialogRef.close();
+  }
+
+  generateSubtitle(user = this.profileData) {
+    return generateMemberSubtitle(user);
   }
 
   authorizeResourceMethod(action) {

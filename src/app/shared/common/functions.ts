@@ -525,3 +525,9 @@ export const getKeyForValue = (
     return capitalize ? convertKeyToLabel(key) : key;
   } else return null;
 };
+
+export const generateMemberSubtitle = (user) => {
+  const title = user.title ? user.title + ', ' : '';
+  const institution = user.institution?.name ? user.institution?.name : '';
+  return title + institution;
+};
