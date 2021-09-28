@@ -182,8 +182,8 @@ export class GradingDashboardComponent implements OnInit {
 
   submissionSubtitle(submission) {
     return `${submission?.exercise?.course?.title}${
-      submission?.chapter?.section?.title
-        ? ' > ' + submission?.chapter?.section?.title
+      submission?.exercise?.chapter?.section?.title
+        ? ' > ' + submission?.exercise?.chapter?.section?.title
         : ''
     }${
       submission.exercise?.chapter?.dueDate
