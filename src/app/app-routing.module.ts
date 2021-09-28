@@ -25,7 +25,8 @@ import { PasswordResetComponent } from './pages/forms/password-reset/password-re
 import { CourseProfileComponent } from './pages/profiles/course-profile/course-profile.component';
 import { ChapterProfileComponent } from './pages/profiles/chapter-profile/chapter-profile.component';
 import { PrivacyComponent } from './pages/static/privacy/privacy.component';
-import { LoginModalComponent } from './pages/modals/login/login-modal.component';
+import { PublicUserProfileComponent } from './pages/profiles/public-user-profile/public-user-profile.component';
+
 // import { InstitutionProfileComponent } from './pages/modals/institution-profile/institution-profile.component';
 
 const routes: Routes = [
@@ -139,6 +140,13 @@ const routes: Routes = [
     component: OwnProfileComponent,
     canActivate: [AuthenticationGuard],
     data: uiroutes.OWN_PROFILE_ROUTE.auth,
+    pathMatch: 'full',
+  },
+  {
+    path: `${uiroutes.MEMBER_PROFILE_ROUTE.route}/:username`,
+    component: PublicUserProfileComponent,
+    canActivate: [AuthenticationGuard],
+    data: uiroutes.MEMBER_PROFILE_ROUTE.auth,
     pathMatch: 'full',
   },
   {

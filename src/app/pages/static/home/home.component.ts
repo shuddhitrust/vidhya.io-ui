@@ -3,17 +3,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
 import {
   defaultSearchParams,
   USER_ROLES_NAMES,
 } from 'src/app/shared/common/constants';
 import { MembershipStatusOptions, User } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
-import {
-  OpenLoginFormAction,
-  VerifyAccountAction,
-} from 'src/app/shared/state/auth/auth.actions';
+import { VerifyAccountAction } from 'src/app/shared/state/auth/auth.actions';
 import { AuthStateModel } from 'src/app/shared/state/auth/auth.model';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { FetchPublicMembersAction } from 'src/app/shared/state/members/member.actions';
@@ -2035,6 +2031,12 @@ export class HomeComponent implements OnInit {
     if (this.url.includes(uiroutes.REGISTER_ROUTE.route)) {
       this.dialog.open(LoginModalComponent);
     }
+  }
+
+  onClickCard(learner) {
+    this.router.navigate([
+      `${uiroutes.MEMBER_PROFILE_ROUTE.route}/${learner.username}`,
+    ]);
   }
 
   ngOnInit(): void {

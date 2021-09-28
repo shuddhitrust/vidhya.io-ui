@@ -32,6 +32,12 @@ export class GetMemberAction {
   constructor(public payload: idPayload) {}
 }
 
+export class GetMemberByUsernameAction {
+  static readonly type = '[MEMBER] Get by username';
+
+  constructor(public payload: { username: string }) {}
+}
+
 export class CreateUpdateMemberAction {
   static readonly type = '[MEMBER] Create';
 

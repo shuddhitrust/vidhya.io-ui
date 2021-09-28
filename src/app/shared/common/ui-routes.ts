@@ -42,7 +42,7 @@ export const uiroutes = {
     auth: { resource: resources.OWN_PROFILE, actions: [RESOURCE_ACTIONS.GET] },
   },
   MEMBER_PROFILE_ROUTE: {
-    route: 'member-profile',
+    route: 'u',
     auth: { resource: resources.MEMBER, actions: [RESOURCE_ACTIONS.GET] },
   },
   MEMBER_FORM_ROUTE: {

@@ -1,12 +1,12 @@
-<div id="hero-block">
+<!-- <div id="hero-block">
   <h2>Welcome to</h2>
   <img id="hero-logo" src="assets/images/logo.svg" />
-</div>
+</div> -->
 
-<!-- <div *ngIf="learners.length; else emptyLearnersListTemplate">
+<div *ngIf="learners.length; else emptyLearnersListTemplate">
   <div class="cards">
     <div *ngFor="let learner of learners">
-      <mat-card class="card">
+      <mat-card class="card" (click)="onClickCard(learner)">
         <mat-card-header>
           <img
             mat-card-avatar
@@ -26,7 +26,7 @@
 </div>
 <ng-template #emptyLearnersListTemplate>
   <h2>No students to display!</h2>
-</ng-template> -->
+</ng-template>
 <div class="footer">
   <small
     >Copyright &copy; {{ currentYear }} Shuddhi Vidhaya Initiative, Shuddhi

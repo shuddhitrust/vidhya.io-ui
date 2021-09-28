@@ -68,6 +68,7 @@ import { DragDropComponent } from './shared/components/drag-drop/drag-drop.compo
 import { DashboardModule } from './pages/static/dashboard/dashboard.module';
 import { AddEditMemberComponent } from './pages/forms/add-edit-member/add-edit-member.component';
 import { AppLoadingOverlayComponent } from './shared/components/loading/loading.component';
+import { PublicUserProfileComponent } from './pages/profiles/public-user-profile/public-user-profile.component';
 
 // function that returns `MarkedOptions` with renderer override
 
@@ -84,6 +85,7 @@ import { AppLoadingOverlayComponent } from './shared/components/loading/loading.
     DragDropComponent,
     AddEditMemberComponent,
     AppLoadingOverlayComponent,
+    PublicUserProfileComponent,
   ],
   // exports: [SimpleLoadingSpinnerComponent],
   imports: [

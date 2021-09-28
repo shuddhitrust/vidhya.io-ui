@@ -22,6 +22,7 @@ import {
   FetchPublicMembersAction,
   ForceRefetchMembersAction,
   GetMemberAction,
+  GetMemberByUsernameAction,
   MemberSubscriptionAction,
   ResetMemberFormAction,
   SuspendMemberAction,
@@ -300,6 +301,35 @@ export class MemberState {
       );
   }
 
+  @Action(GetMemberByUsernameAction)
+  getMemberByUsername(
+    { patchState }: StateContext<MemberStateModel>,
+    { payload }: GetMemberByUsernameAction
+  ) {
+    const { username } = payload;
+    patchState({ isFetching: true });
+    this.apollo
+      .watchQuery({
+        query: USER_QUERIES.GET_USER_BY_USERNAME,
+        variables: { username },
+        fetchPolicy: 'network-only',
+      })
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          const response = data.userByUsername;
+          patchState({ memberFormRecord: response, isFetching: false });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetching: false });
+        }
+      );
+  }
   @Action(CreateUpdateMemberAction)
   createUpdateMember(
     { getState, patchState }: StateContext<MemberStateModel>,

@@ -43,7 +43,6 @@ export const USER_QUERIES = {
         name
         avatar
         invitecode
-        email
         institution {
           id
           name
@@ -53,6 +52,27 @@ export const USER_QUERIES = {
           permissions
         }
         membershipStatus
+      }
+    }
+  `,
+  GET_USER_BY_USERNAME: gql`
+    query userByUsername($username: String!) {
+      userByUsername(username: $username) {
+        username
+        name
+        avatar
+        institution {
+          id
+          name
+        }
+        courses {
+          course {
+            title
+          }
+          percentage
+          completed
+          updatedAt
+        }
       }
     }
   `,
@@ -114,11 +134,15 @@ export const USER_QUERIES = {
       ) {
         records {
           id
+          username
           name
           title
           bio
           avatar
-          institution
+          institution {
+            id
+            name
+          }
         }
         total
       }

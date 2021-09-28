@@ -1,0 +1,85 @@
+h2 {
+  text-align: center;
+}
+
+.member-card {
+  text-align: center;
+  display: block;
+  margin: 10px auto;
+  padding: 20px;
+  border: 1px solid grey;
+  border-radius: 5px;
+  width: 80%;
+}
+
+#user-not-found {
+  margin: 100px;
+  text-align: center;
+}
+
+.announcement-card p {
+  text-align: left;
+}
+
+.profile-button {
+  float: right;
+  margin: 5px 10px;
+}
+
+.title-link {
+  cursor: pointer;
+  display: inline;
+}
+
+.card-percentage,
+.card-completed {
+  display: block;
+  float: right;
+  margin: 10px auto;
+  max-width: 100px;
+  max-height: 100px;
+}
+
+.completed-circle,
+.percentage-circle {
+  stroke: var(--shuddhi-color);
+  fill: none;
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  animation: progress 1s ease-out forwards;
+}
+
+.percentage-circle {
+  stroke: var(--orange);
+}
+
+.percentage,
+.completed {
+  fill: #666;
+  font-family: sans-serif;
+  font-size: 0.5em;
+  text-anchor: middle;
+}
+
+.color-legend-circle-completed,
+.color-legend-circle-percentage {
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  display: inline-block;
+  text-align: right;
+}
+
+.color-legend-circle-completed {
+  background: var(--shuddhi-color);
+}
+
+.color-legend-circle-percentage {
+  background: var(--orange);
+}
+
+@keyframes progress {
+  0% {
+    stroke-dasharray: 0 100;
+  }
+}
