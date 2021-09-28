@@ -3,13 +3,13 @@ h2 {
 }
 
 .member-card {
-  text-align: center;
+  text-align: center !important;
   display: block;
   margin: 10px auto;
   padding: 20px;
-  border: 1px solid grey;
   border-radius: 5px;
   width: 80%;
+  min-height: 200px;
 }
 
 #user-not-found {
@@ -17,8 +17,12 @@ h2 {
   text-align: center;
 }
 
-.announcement-card p {
-  text-align: left;
+.avatar {
+  float: left;
+  display: block;
+  height: 150px;
+  width: auto;
+  margin-bottom: 20px;
 }
 
 .profile-button {
