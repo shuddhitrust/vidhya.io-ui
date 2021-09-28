@@ -143,6 +143,7 @@ export const USER_QUERIES = {
             id
             name
           }
+          score
         }
         total
       }

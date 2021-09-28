@@ -7,6 +7,7 @@ import {
   defaultSearchParams,
   USER_ROLES_NAMES,
 } from 'src/app/shared/common/constants';
+import { sortByIndex } from 'src/app/shared/common/functions';
 import { MembershipStatusOptions, User } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { VerifyAccountAction } from 'src/app/shared/state/auth/auth.actions';
@@ -1949,7 +1950,7 @@ export class HomeComponent implements OnInit {
   ) {
     this.fetchMembers();
     this.learners$.subscribe((val) => {
-      this.learners = val;
+      this.learners = sortByIndex(val, 'score', 'DESC');
       // this.learners = tempUsers;
     });
     this.isFetching$.subscribe((val) => {

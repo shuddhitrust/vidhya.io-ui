@@ -393,12 +393,17 @@ export const compareObjects = (o1, o2) => {
   return true;
 };
 
-export const sortByIndex = (list: any[], indexPath: string = 'index') => {
+export const sortByIndex = (
+  list: any[],
+  indexPath: string = 'index',
+  direction = 'ASC'
+) => {
+  const directionCoefficient = direction == 'ASC' ? 1 : -1;
   let newList = Object.assign([], list);
   return newList.sort(function (a, b) {
     const objectA = deepFind(a, indexPath);
     const objectB = deepFind(b, indexPath);
-    return objectA - objectB;
+    return (objectA - objectB) * directionCoefficient;
   });
 };
 
