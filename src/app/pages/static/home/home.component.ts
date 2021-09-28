@@ -1940,7 +1940,11 @@ export class HomeComponent implements OnInit {
   learners: any[] = [];
   isFetching: boolean = false;
   columnFilters = {
-    roles: [USER_ROLES_NAMES.LEARNER],
+    roles: [
+      USER_ROLES_NAMES.LEARNER,
+      USER_ROLES_NAMES.CLASS_ADMIN_LEARNER,
+      USER_ROLES_NAMES.INSTITUTION_ADMIN,
+    ],
     membershipStatusIs: [MembershipStatusOptions.APPROVED],
   };
   constructor(
