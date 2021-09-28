@@ -536,9 +536,10 @@ export class GradingDashboardComponent implements OnInit {
 
     submission = Object.assign({}, submission);
     submission.points = points;
-    submission.status == this.exerciseSubmissionStatusTypes.ungraded
-      ? this.exerciseSubmissionStatusTypes.graded
-      : submission.status;
+    submission.status =
+      submission.status == this.exerciseSubmissionStatusTypes.ungraded
+        ? this.exerciseSubmissionStatusTypes.graded
+        : submission.status;
     this.exerciseSubmissions = this.exerciseSubmissions.map((s) => {
       if (s.id == submission.id) {
         return submission;
