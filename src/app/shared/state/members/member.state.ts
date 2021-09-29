@@ -20,7 +20,7 @@ import {
   DeleteMemberAction,
   FetchMembersAction,
   FetchPublicMembersAction,
-  FetchNextMembersAction,
+  FetchNextPublicMembersAction,
   ForceRefetchMembersAction,
   GetMemberAction,
   GetMemberByUsernameAction,
@@ -190,7 +190,7 @@ export class MemberState {
       );
   }
 
-  @Action(FetchNextMembersAction)
+  @Action(FetchNextPublicMembersAction)
   fetchNextAssignments({ getState }: StateContext<MemberStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastPagePublicMembers;
@@ -211,7 +211,7 @@ export class MemberState {
       (lastPageNumber != null && pageNumber <= lastPageNumber)
     ) {
       this.store.dispatch(
-        new FetchMembersAction({ searchParams: newSearchParams })
+        new FetchPublicMembersAction({ searchParams: newSearchParams })
       );
     }
   }
@@ -265,10 +265,6 @@ export class MemberState {
           if (response.length < newFetchParams.pageSize) {
             lastPagePublicMembers = newFetchParams.currentPage;
           }
-          const totalCount = data.publicUsers.total
-            ? data.publicUsers.total
-            : 0;
-          newFetchParams = { ...newFetchParams, totalCount };
           patchState({
             members,
             paginatedPublicMembers,

@@ -1,43 +1,48 @@
-<!-- <div id="hero-block">
-  <h2>Welcome to</h2>
-  <img id="hero-logo" src="assets/images/logo.svg" />
-</div> -->
-
-<div *ngIf="learners.length; else emptyLearnersListTemplate">
-  <div
-    class="scroll-feed"
-    infiniteScroll
-    [infiniteScrollDistance]="2"
-    [infiniteScrollThrottle]="50"
-    infiniteScrollContainer=".scroll-feed"
-    [fromRoot]="true"
-    (scrolled)="onScroll()"
-  >
-    <div class="cards">
-      <div *ngFor="let learner of learners">
-        <mat-card class="card" (click)="onClickCard(learner)">
-          <mat-card-header>
-            <img
-              mat-card-avatar
-              [src]="learner.avatar"
-              [alt]="learner.firstName"
-            />
-            <mat-card-title>{{ learner.name }}</mat-card-title>
-            <mat-card-subtitle>{{
-              generateSubtitle(learner)
-            }}</mat-card-subtitle>
-          </mat-card-header>
-
-          <mat-card-content>
-            {{ learner.bio }}
-          </mat-card-content>
-        </mat-card>
-      </div>
-    </div>
+<div
+  class="scroll-feed"
+  infiniteScroll
+  [infiniteScrollDistance]="2"
+  [infiniteScrollThrottle]="50"
+  infiniteScrollContainer=".scroll-feed"
+  [fromRoot]="true"
+  (scrolled)="onScroll()"
+>
+  <div *ngIf="learners.length; else emptyLearnersListTemplate">
+    <ng-container *ngTemplateOutlet="learnersList"></ng-container>
   </div>
 </div>
+
+<ng-template #learnersList>
+  <div class="cards">
+    <div *ngFor="let learner of learners">
+      <mat-card class="card" (click)="onClickCard(learner)">
+        <mat-card-header>
+          <img
+            mat-card-avatar
+            [src]="learner.avatar"
+            [alt]="learner.firstName"
+          />
+          <mat-card-title>{{ learner.name }}</mat-card-title>
+          <mat-card-subtitle>{{ generateSubtitle(learner) }}</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          {{ learner.bio }}
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+  <ng-container *ngTemplateOutlet="loading"></ng-container>
+</ng-template>
+
+<ng-template #loading>
+  <app-simple-loading-spinner *ngIf="isFetching"></app-simple-loading-spinner
+></ng-template>
 <ng-template #emptyLearnersListTemplate>
-  <h2>No students to display!</h2>
+  <div id="hero-block">
+    <h2>Welcome to</h2>
+    <img id="hero-logo" src="assets/images/logo.svg" />
+  </div>
 </ng-template>
 <div class="footer">
   <small

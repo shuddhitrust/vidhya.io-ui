@@ -60,6 +60,8 @@ export const USER_QUERIES = {
       userByUsername(username: $username) {
         username
         name
+        title
+        bio
         avatar
         institution {
           id

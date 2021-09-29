@@ -31,6 +31,8 @@ export class PublicUserProfileComponent implements OnInit, OnDestroy {
   member: any;
   courses: any = [];
   username: string = null;
+  @Select(MemberState.isFetching)
+  isFetching$: Observable<boolean>;
 
   constructor(
     private location: Location,

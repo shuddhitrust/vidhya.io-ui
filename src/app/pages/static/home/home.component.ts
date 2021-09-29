@@ -17,8 +17,8 @@ import { VerifyAccountAction } from 'src/app/shared/state/auth/auth.actions';
 import { AuthStateModel } from 'src/app/shared/state/auth/auth.model';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import {
-  FetchNextMembersAction,
   FetchPublicMembersAction,
+  FetchNextPublicMembersAction,
 } from 'src/app/shared/state/members/member.actions';
 import { MemberState } from 'src/app/shared/state/members/member.state';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
@@ -2090,6 +2090,7 @@ export class HomeComponent implements OnInit {
       new FetchPublicMembersAction({
         searchParams: {
           ...defaultSearchParams,
+          pageSize: 36,
           columnFilters: this.columnFilters,
         },
       })
@@ -2098,7 +2099,7 @@ export class HomeComponent implements OnInit {
 
   onScroll() {
     console.log('scroll');
-    this.store.dispatch(new FetchNextMembersAction());
+    this.store.dispatch(new FetchNextPublicMembersAction());
   }
 
   processMembershipStatusOptions() {

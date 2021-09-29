@@ -162,6 +162,7 @@ export function markedOptionsFactory(): MarkedOptions {
     ExerciseRubricDialog,
     ImageDisplayDialog,
   ],
+  exports: [SimpleLoadingSpinnerComponent],
   imports: [
     CommonModule,
     FormsModule,

@@ -14,7 +14,7 @@ export class FetchPublicMembersAction {
   constructor(public payload: { searchParams: SearchParams }) {}
 }
 
-export class FetchNextMembersAction {
+export class FetchNextPublicMembersAction {
   static readonly type = '[MEMBERS] Fetch Next';
 
   constructor() {}

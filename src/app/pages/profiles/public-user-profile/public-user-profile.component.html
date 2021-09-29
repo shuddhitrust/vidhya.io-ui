@@ -28,35 +28,37 @@
   <span *ngIf="courses.length > 0; else noCourses">
     <div *ngFor="let card of courses">
       <mat-card class="feed-card">
-        <svg viewBox="0 0 36 36" class="card-percentage">
-          <path
-            class="percentage-circle"
-            attr.stroke-dasharray="{{ card.percentage }}, 100"
-            d="M18 2.0845
-      a 15.9155 15.9155 0 0 1 0 31.831
-      a 15.9155 15.9155 0 0 1 0 -31.831"
-          />
-          <text x="18" y="20.35" class="percentage">
-            {{ card.percentage }}%
-          </text>
-        </svg>
-        <svg viewBox="0 0 36 36" class="card-completed">
-          <path
-            class="completed-circle"
-            attr.stroke-dasharray="{{ card.completed }}, 100"
-            d="M18 2.0845
-      a 15.9155 15.9155 0 0 1 0 31.831
-      a 15.9155 15.9155 0 0 1 0 -31.831"
-          />
-          <text x="18" y="20.35" class="completed">{{ card.completed }}%</text>
-        </svg>
         <h2 style="text-align: left">{{ card.course?.title }}</h2>
-        <p style="text-align: right">
-          <span class="color-legend-circle-completed"></span> Completed
-        </p>
-        <p style="text-align: right">
-          <span class="color-legend-circle-percentage"></span> Percentage
-        </p>
+        <div style="display: inline">
+          <div class="color-legend">
+            <p><span class="color-legend-circle-completed"></span> Completed</p>
+            <p><span class="color-legend-circle-percentage"></span> Score</p>
+          </div>
+          <svg viewBox="0 0 36 36" class="card-percentage">
+            <path
+              class="percentage-circle"
+              attr.stroke-dasharray="{{ card.percentage }}, 100"
+              d="M18 2.0845
+      a 15.9155 15.9155 0 0 1 0 31.831
+      a 15.9155 15.9155 0 0 1 0 -31.831"
+            />
+            <text x="18" y="20.35" class="percentage">
+              {{ card.percentage }}%
+            </text>
+          </svg>
+          <svg viewBox="0 0 36 36" class="card-completed">
+            <path
+              class="completed-circle"
+              attr.stroke-dasharray="{{ card.completed }}, 100"
+              d="M18 2.0845
+      a 15.9155 15.9155 0 0 1 0 31.831
+      a 15.9155 15.9155 0 0 1 0 -31.831"
+            />
+            <text x="18" y="20.35" class="completed">
+              {{ card.completed }}%
+            </text>
+          </svg>
+        </div>
         <p>
           <small *ngIf="card.updatedAt"
             >Last active on
@@ -73,7 +75,13 @@
 </ng-template> -->
 
 <ng-template #userDoesNotExistTemplate>
+  <div *ngIf="!(isFetching$ | async); else loading">
   <h2 id="user-not-found">User not found!</h2>
+  </div>
+</ng-template>
+
+<ng-template #loading>
+  <app-simple-loading-spinner></app-simple-loading-spinner>
 </ng-template>
 
 <ng-template #noCourses>
