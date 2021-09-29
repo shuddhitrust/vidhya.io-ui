@@ -39,7 +39,6 @@ export class PublicUserProfileComponent implements OnInit, OnDestroy {
   ) {
     this.member$.subscribe((val) => {
       this.member = val;
-      console.log('member ', { member: this.member });
       this.courses = this.member?.courses;
       if (!this.member.name) {
         this.userDoesNotExist = true;

@@ -58,7 +58,6 @@ export class AppComponent {
    * @returns
    */
   showUnprotectedPage(route) {
-    console.log('this.router.url', this.router.url);
     switch (route) {
       case uiroutes.PASSWORD_RESET_ROUTE.route:
         if (this.router.url.includes(uiroutes.PASSWORD_RESET_ROUTE.route)) {

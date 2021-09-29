@@ -4,16 +4,16 @@
 </div> -->
 
 <div *ngIf="learners.length; else emptyLearnersListTemplate">
-  <div class="cards">
-    <div
-      class="scroll-feed"
-      infiniteScroll
-      [infiniteScrollDistance]="2"
-      [infiniteScrollThrottle]="50"
-      infiniteScrollContainer=".scroll-feed"
-      [fromRoot]="true"
-      (scrolled)="onScroll()"
-    >
+  <div
+    class="scroll-feed"
+    infiniteScroll
+    [infiniteScrollDistance]="2"
+    [infiniteScrollThrottle]="50"
+    infiniteScrollContainer=".scroll-feed"
+    [fromRoot]="true"
+    (scrolled)="onScroll()"
+  >
+    <div class="cards">
       <div *ngFor="let learner of learners">
         <mat-card class="card" (click)="onClickCard(learner)">
           <mat-card-header>
