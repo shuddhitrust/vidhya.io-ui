@@ -40,6 +40,8 @@ export const emptyMemberFormRecord: User = {
 export interface MemberStateModel {
   members: User[];
   membersSubscribed: boolean;
+  lastPagePublicMembers: number;
+  paginatedPublicMembers: any[];
   fetchPolicy: FetchPolicy;
   fetchParamObjects: FetchParams[];
   memberFormId: string;
@@ -54,6 +56,8 @@ export interface MemberStateModel {
 export const defaultMemberState: MemberStateModel = {
   members: [],
   membersSubscribed: false,
+  lastPagePublicMembers: null,
+  paginatedPublicMembers: [],
   fetchPolicy: null,
   fetchParamObjects: [],
   memberFormId: null,
@@ -77,7 +81,6 @@ export const memberColumns: any[] = [
   {
     field: 'role',
     cellRenderer: (params) => {
-      
       return params?.data?.role?.name;
     },
   },

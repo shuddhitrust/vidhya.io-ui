@@ -14,6 +14,12 @@
     *ngIf="showUnprotectedPage(uiroutes.MEMBER_FORM_ROUTE.route)"
   >
   </app-add-edit-member>
+  <app-public-user-profile
+    *ngIf="showUnprotectedPage(uiroutes.MEMBER_PROFILE_ROUTE.route)"
+  >
+  </app-public-user-profile>
+  <app-privacy *ngIf="showUnprotectedPage(uiroutes.PRIVACY_ROUTE.route)">
+  </app-privacy>
   <app-home *ngIf="showHomePage()"></app-home>
 </ng-template>
 

@@ -7,13 +7,19 @@ import {
   defaultSearchParams,
   USER_ROLES_NAMES,
 } from 'src/app/shared/common/constants';
-import { generateMemberSubtitle, sortByIndex } from 'src/app/shared/common/functions';
+import {
+  generateMemberSubtitle,
+  sortByIndex,
+} from 'src/app/shared/common/functions';
 import { MembershipStatusOptions, User } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { VerifyAccountAction } from 'src/app/shared/state/auth/auth.actions';
 import { AuthStateModel } from 'src/app/shared/state/auth/auth.model';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
-import { FetchPublicMembersAction } from 'src/app/shared/state/members/member.actions';
+import {
+  FetchNextMembersAction,
+  FetchPublicMembersAction,
+} from 'src/app/shared/state/members/member.actions';
 import { MemberState } from 'src/app/shared/state/members/member.state';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { LoginModalComponent } from '../../modals/login/login-modal.component';
@@ -1986,7 +1992,7 @@ export class HomeComponent implements OnInit {
   }
 
   generateSubtitle(user) {
-   return generateMemberSubtitle(user)
+    return generateMemberSubtitle(user);
   }
 
   fetchMembers() {
@@ -1998,6 +2004,10 @@ export class HomeComponent implements OnInit {
         },
       })
     );
+  }
+
+  onScroll() {
+    this.store.dispatch(new FetchNextMembersAction());
   }
 
   processMembershipStatusOptions() {

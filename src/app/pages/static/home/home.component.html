@@ -5,22 +5,34 @@
 
 <div *ngIf="learners.length; else emptyLearnersListTemplate">
   <div class="cards">
-    <div *ngFor="let learner of learners">
-      <mat-card class="card" (click)="onClickCard(learner)">
-        <mat-card-header>
-          <img
-            mat-card-avatar
-            [src]="learner.avatar"
-            [alt]="learner.firstName"
-          />
-          <mat-card-title>{{ learner.name }}</mat-card-title>
-          <mat-card-subtitle>{{ generateSubtitle(learner) }}</mat-card-subtitle>
-        </mat-card-header>
+    <div
+      class="scroll-feed"
+      infiniteScroll
+      [infiniteScrollDistance]="2"
+      [infiniteScrollThrottle]="50"
+      infiniteScrollContainer=".scroll-feed"
+      [fromRoot]="true"
+      (scrolled)="onScroll()"
+    >
+      <div *ngFor="let learner of learners">
+        <mat-card class="card" (click)="onClickCard(learner)">
+          <mat-card-header>
+            <img
+              mat-card-avatar
+              [src]="learner.avatar"
+              [alt]="learner.firstName"
+            />
+            <mat-card-title>{{ learner.name }}</mat-card-title>
+            <mat-card-subtitle>{{
+              generateSubtitle(learner)
+            }}</mat-card-subtitle>
+          </mat-card-header>
 
-        <mat-card-content>
-          {{ learner.bio }}
-        </mat-card-content>
-      </mat-card>
+          <mat-card-content>
+            {{ learner.bio }}
+          </mat-card-content>
+        </mat-card>
+      </div>
     </div>
   </div>
 </div>

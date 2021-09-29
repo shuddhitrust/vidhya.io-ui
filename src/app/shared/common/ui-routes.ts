@@ -43,7 +43,7 @@ export const uiroutes = {
   },
   MEMBER_PROFILE_ROUTE: {
     route: 'u',
-    auth: { resource: resources.MEMBER, actions: [RESOURCE_ACTIONS.GET] },
+    auth: { resource: null, actions: [] },
   },
   MEMBER_FORM_ROUTE: {
     route: 'member-form',

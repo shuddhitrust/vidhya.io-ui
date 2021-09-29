@@ -39,6 +39,7 @@ const routes: Routes = [
     canActivate: [AuthenticationGuard],
     data: uiroutes.DASHBOARD_ROUTE.auth,
   },
+
   {
     path: uiroutes.PROFILE_ROUTE.route,
     component: ProfileComponent,
@@ -51,13 +52,7 @@ const routes: Routes = [
     data: uiroutes.ACCOUNT_ROUTE.auth,
     pathMatch: 'full',
   },
-  {
-    path: uiroutes.PRIVACY_ROUTE.route,
-    component: PrivacyComponent,
-    canActivate: [AuthenticationGuard],
-    data: uiroutes.PRIVACY_ROUTE.auth,
-    pathMatch: 'full',
-  },
+
   // {
   //   path: uiroutes.SUPPORT_ROUTE.route,
   //   component: SupportComponent,
@@ -142,13 +137,7 @@ const routes: Routes = [
     data: uiroutes.OWN_PROFILE_ROUTE.auth,
     pathMatch: 'full',
   },
-  {
-    path: `${uiroutes.MEMBER_PROFILE_ROUTE.route}/:username`,
-    component: PublicUserProfileComponent,
-    canActivate: [AuthenticationGuard],
-    data: uiroutes.MEMBER_PROFILE_ROUTE.auth,
-    pathMatch: 'full',
-  },
+
   {
     path: uiroutes.INSTITUTION_PROFILE_ROUTE.route,
     component: InstitutionProfileComponent,
@@ -170,6 +159,26 @@ const routes: Routes = [
   //   data: uiroutes.CHAT_ROUTE.auth,
   //   pathMatch: 'full',
   // },
+  /**
+   * Public routes
+   *  ***NOTE*** - In order for routes to be available without logging in,
+   * special provisions need to be made on app.component.html and the corresponding .ts file.
+   * Without making these changes the route would not show.
+   */
+  {
+    path: `${uiroutes.MEMBER_PROFILE_ROUTE.route}/:username`,
+    component: PublicUserProfileComponent,
+    canActivate: [AuthenticationGuard],
+    data: uiroutes.MEMBER_PROFILE_ROUTE.auth,
+    pathMatch: 'full',
+  },
+  {
+    path: uiroutes.PRIVACY_ROUTE.route,
+    component: PrivacyComponent,
+    canActivate: [AuthenticationGuard],
+    data: uiroutes.PRIVACY_ROUTE.auth,
+    pathMatch: 'full',
+  },
   {
     path: `${uiroutes.ACTIVATE_ACCOUNT_ROUTE.route}/:token`,
     component: HomeComponent,
@@ -185,6 +194,7 @@ const routes: Routes = [
     component: HomeComponent,
     pathMatch: 'full',
   },
+  // End of public routes
   { path: '', component: HomeComponent },
   { path: '**', redirectTo: '' },
 ];

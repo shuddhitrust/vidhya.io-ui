@@ -20,6 +20,7 @@ import {
   DeleteMemberAction,
   FetchMembersAction,
   FetchPublicMembersAction,
+  FetchNextMembersAction,
   ForceRefetchMembersAction,
   GetMemberAction,
   GetMemberByUsernameAction,
@@ -38,6 +39,7 @@ import {
 import { USER_MUTATIONS } from '../../api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import {
+  convertPaginatedListToNormalList,
   getErrorMessageFromGraphQLResponse,
   subscriptionUpdater,
   updateFetchParams,
@@ -188,6 +190,32 @@ export class MemberState {
       );
   }
 
+  @Action(FetchNextMembersAction)
+  fetchNextAssignments({ getState }: StateContext<MemberStateModel>) {
+    const state = getState();
+    const lastPageNumber = state.lastPagePublicMembers;
+    let previousFetchParams =
+      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    previousFetchParams = previousFetchParams
+      ? previousFetchParams
+      : startingFetchParams;
+    const pageNumber = previousFetchParams.currentPage + 1;
+    const newSearchParams: SearchParams = {
+      pageNumber,
+      pageSize: previousFetchParams.pageSize,
+      searchQuery: previousFetchParams.searchQuery,
+      columnFilters: previousFetchParams.columnFilters,
+    };
+    if (
+      !lastPageNumber ||
+      (lastPageNumber != null && pageNumber <= lastPageNumber)
+    ) {
+      this.store.dispatch(
+        new FetchMembersAction({ searchParams: newSearchParams })
+      );
+    }
+  }
+
   @Action(FetchPublicMembersAction)
   fetchPublicMembers(
     { getState, patchState }: StateContext<MemberStateModel>,
@@ -195,7 +223,7 @@ export class MemberState {
   ) {
     const state = getState();
     const { searchParams } = payload;
-    const { fetchPolicy, fetchParamObjects, membersSubscribed } = state;
+    const { fetchPolicy, fetchParamObjects } = state;
     const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({
       fetchParamObjects,
@@ -223,12 +251,28 @@ export class MemberState {
       .valueChanges.subscribe(
         ({ data }: any) => {
           const response = data.publicUsers.records;
+
+          newFetchParams = { ...newFetchParams };
+          let paginatedPublicMembers = state.paginatedPublicMembers;
+          paginatedPublicMembers = {
+            ...paginatedPublicMembers,
+            [pageNumber]: response,
+          };
+          let members = convertPaginatedListToNormalList(
+            paginatedPublicMembers
+          );
+          let lastPagePublicMembers = null;
+          if (response.length < newFetchParams.pageSize) {
+            lastPagePublicMembers = newFetchParams.currentPage;
+          }
           const totalCount = data.publicUsers.total
             ? data.publicUsers.total
             : 0;
           newFetchParams = { ...newFetchParams, totalCount };
           patchState({
-            members: response,
+            members,
+            paginatedPublicMembers,
+            lastPagePublicMembers,
             fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
             isFetching: false,
           });

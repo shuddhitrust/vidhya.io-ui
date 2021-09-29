@@ -33,21 +33,45 @@ export class AppComponent {
   currentRoute(): string {
     return this.location.path().substring(1);
   }
+  currentRouteNoteEquals(routes: string[]): boolean {
+    let result = true;
+    routes.forEach((r) => {
+      result = result && !this.currentRoute().toString().includes(r);
+    });
+    return result;
+  }
 
   showHomePage() {
     // Make sure to add the routes of other components that are allowed to be shown when not logged in fully
-    return (
-      this.currentRoute() != uiroutes.MEMBER_FORM_ROUTE.route &&
-      !this.currentRoute()
-        .toString()
-        .includes(uiroutes.PASSWORD_RESET_ROUTE.route)
-    );
+    const routes = [
+      uiroutes.PRIVACY_ROUTE.route,
+      uiroutes.MEMBER_FORM_ROUTE.route,
+      uiroutes.PASSWORD_RESET_ROUTE.route,
+      uiroutes.MEMBER_PROFILE_ROUTE.route,
+    ];
+    return this.currentRouteNoteEquals(routes);
   }
 
+  /**
+   * This method ensures that we get to show select components to the user when not logged in
+   * @param route
+   * @returns
+   */
   showUnprotectedPage(route) {
+    console.log('this.router.url', this.router.url);
     switch (route) {
       case uiroutes.PASSWORD_RESET_ROUTE.route:
         if (this.router.url.includes(uiroutes.PASSWORD_RESET_ROUTE.route)) {
+          return true;
+        }
+        break;
+      case uiroutes.MEMBER_PROFILE_ROUTE.route:
+        if (this.router.url.includes(uiroutes.MEMBER_PROFILE_ROUTE.route)) {
+          return true;
+        }
+        break;
+      case uiroutes.PRIVACY_ROUTE.route:
+        if (this.router.url.includes(uiroutes.PRIVACY_ROUTE.route)) {
           return true;
         }
         break;

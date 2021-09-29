@@ -69,6 +69,7 @@ import { DashboardModule } from './pages/static/dashboard/dashboard.module';
 import { AddEditMemberComponent } from './pages/forms/add-edit-member/add-edit-member.component';
 import { AppLoadingOverlayComponent } from './shared/components/loading/loading.component';
 import { PublicUserProfileComponent } from './pages/profiles/public-user-profile/public-user-profile.component';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 // function that returns `MarkedOptions` with renderer override
 
@@ -99,6 +100,7 @@ import { PublicUserProfileComponent } from './pages/profiles/public-user-profile
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
+    InfiniteScrollModule,
     // TokenUpdater,
     ScullyLibModule,
   ],
