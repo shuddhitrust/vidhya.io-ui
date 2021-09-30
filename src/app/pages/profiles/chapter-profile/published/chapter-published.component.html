@@ -117,15 +117,15 @@
     >
       <mat-icon>info</mat-icon>
     </button>
-    <p class="form-element-block col-lg-10 col-md-10 col-sm-10">
+    <p class="form-element-block col-lg-12 col-md-12 col-sm-12">
       <span style="float: left"> {{ exerciseTitle(question) }}&nbsp;</span>
       <markdown style="float: left" [data]="question.prompt"></markdown>
     </p>
     <span
-      class="form-element-block col-lg-10 col-md-10 col-sm-10"
+      class="col-lg-12 col-md-12 col-sm-12"
       *ngIf="question.questionType == questionTypes.descriptive_answer"
     >
-      <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
+      <mat-form-field class="form-field-in-card" appearance="outline">
         <mat-label>Answer</mat-label>
         <input
           matInput
@@ -138,7 +138,7 @@
     </span>
 
     <span
-      class="form-element-block col-lg-10 col-md-10 col-sm-10"
+      class="col-lg-12 col-md-12 col-sm-12"
       *ngIf="question.questionType == questionTypes.options"
     >
       <ul
@@ -166,7 +166,7 @@
     </span>
 
     <span
-      class="form-element-block col-lg-10 col-md-10 col-sm-10"
+      class="col-lg-10 col-md-10 col-sm-10"
       *ngIf="question.questionType == questionTypes.image_upload"
     >
       <div
@@ -231,10 +231,10 @@
     </span>
 
     <span
-      class="form-element-block col-lg-10 col-md-10 col-sm-10"
+      class="col-lg-10 col-md-12 col-sm-12"
       *ngIf="question.questionType == questionTypes.link"
     >
-      <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
+      <mat-form-field class="form-field-in-card" appearance="outline">
         <mat-label>Link</mat-label>
         <input
           matInput
