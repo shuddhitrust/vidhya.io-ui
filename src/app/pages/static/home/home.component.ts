@@ -2098,6 +2098,7 @@ export class HomeComponent implements OnInit {
   }
 
   onScroll() {
+    console.log('scroll');
     this.store.dispatch(new FetchNextPublicMembersAction());
   }
 

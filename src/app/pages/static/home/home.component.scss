@@ -18,8 +18,8 @@ h2 {
 }
 
 .scroll-feed {
-  overflow-y: auto;
-  height: calc(100vh - 140px);
+  overflow: auto;
+  height: calc(100vh - 80px);
 }
 
 .cards {
