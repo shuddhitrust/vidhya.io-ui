@@ -181,15 +181,23 @@ export class GradingDashboardComponent implements OnInit {
   };
 
   submissionSubtitle(submission) {
-    return `${submission?.exercise?.course?.title}${
-      submission?.exercise?.chapter?.section?.title
-        ? ' > ' + submission?.exercise?.chapter?.section?.title
-        : ''
-    }${
-      submission.exercise?.chapter?.dueDate
-        ? `, due on ${parseDateTime(submission.exercise?.chapter?.dueDate)}`
-        : ''
-    }`;
+    const courseTitle = submission?.exercise?.course?.title;
+    const sectionTitle = submission?.exercise?.chapter?.section?.title
+      ? ' > ' + submission?.exercise?.chapter?.section?.title
+      : '';
+    const chapterTitle = submission?.exercise?.chapter?.title
+      ? ' > ' + submission?.exercise?.chapter?.title
+      : '';
+    const dueDate = submission.exercise?.chapter?.dueDate
+      ? `, due on ${parseDateTime(submission.exercise?.chapter?.dueDate)}`
+      : '';
+    console.log('from submissionSubtitle => ', {
+      sectionTitle,
+      courseTitle,
+      chapterTitle,
+      dueDate,
+    });
+    return `${courseTitle}${sectionTitle}${chapterTitle}${dueDate}`;
   }
   ngOnInit(): void {
     this.getFiltersFromParams();

@@ -618,6 +618,7 @@ export const EXERCISE_SUBMISSION_QUERIES = {
           }
           chapter {
             id
+            title
             dueDate
             section {
               title
