@@ -8,104 +8,104 @@
     <mat-icon>keyboard_backspace</mat-icon>
   </button>
   <div class="feed-header-block">
-    <span [innerHtml]="pageTitle()"></span>
-  </div>
-  <div class="floating-header-button-container">
-    <mat-form-field
-      appearance="outline"
-      class="floating-header"
-      style="margin: 5px 20px"
-      id="searchfield"
-    >
-      <mat-label>Search</mat-label>
-      <input
-        matInput
-        [(ngModel)]="searchQueryFilter"
-        (keyup.enter)="fetchGradingGroups()"
-      />
-      <mat-icon
-        (click)="
-          searchQueryFilter?.length
-            ? clearSearchQueryFilter()
-            : fetchGradingGroups()
-        "
-        style="cursor: pointer"
-        matSuffix
-        >{{ searchQueryFilter?.length ? "close" : "search" }}</mat-icon
+    <div class="floating-header-button-container">
+      <mat-form-field
+        appearance="outline"
+        class="floating-header"
+        style="margin: 5px 10px"
+        id="searchfield"
       >
-    </mat-form-field>
-    <mat-menu #menu="matMenu">
-      <mat-form-field class="menu-item" appearance="outline">
-        <mat-label>Group By</mat-label>
-        <mat-select
-          [(ngModel)]="groupByFilter"
-          (ngModelChange)="fetchGradingGroups()"
+        <mat-label>Search</mat-label>
+        <input
+          matInput
+          [(ngModel)]="searchQueryFilter"
+          (keyup.enter)="fetchGradingGroups()"
+        />
+        <mat-icon
+          (click)="
+            searchQueryFilter?.length
+              ? clearSearchQueryFilter()
+              : fetchGradingGroups()
+          "
+          style="cursor: pointer"
+          matSuffix
+          >{{ searchQueryFilter?.length ? "close" : "search" }}</mat-icon
         >
-          <mat-option
-            *ngFor="let groupBy of groupByOptions"
-            [value]="groupBy.value"
-          >
-            {{ groupBy.label }}
-          </mat-option>
-        </mat-select>
       </mat-form-field>
-      <mat-form-field class="menu-item" appearance="outline">
-        <mat-label>Status</mat-label>
-        <mat-select
-          [(ngModel)]="submissionStatusFilter"
-          (ngModelChange)="fetchGradingGroups()"
-        >
-          <mat-option
-            *ngFor="let status of exerciseSubmissionStatusOptions"
-            [value]="status.value"
+      <mat-menu #menu="matMenu">
+        <mat-form-field class="menu-item" appearance="outline">
+          <mat-label>Group By</mat-label>
+          <mat-select
+            [(ngModel)]="groupByFilter"
+            (ngModelChange)="fetchGradingGroups()"
           >
-            {{ status.label }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </mat-menu>
-    <button
-      type="button"
-      mat-mini-fab
-      [matMenuTriggerFor]="menu"
-      aria-label="Filter the Grading"
-      nzTooltipPlacement="left"
-      nz-tooltip="Change the filters to adjust which type of submissions you wish to view"
-    >
-      <mat-icon>filter_list</mat-icon>
-    </button>
+            <mat-option
+              *ngFor="let groupBy of groupByOptions"
+              [value]="groupBy.value"
+            >
+              {{ groupBy.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="menu-item" appearance="outline">
+          <mat-label>Status</mat-label>
+          <mat-select
+            [(ngModel)]="submissionStatusFilter"
+            (ngModelChange)="fetchGradingGroups()"
+          >
+            <mat-option
+              *ngFor="let status of exerciseSubmissionStatusOptions"
+              [value]="status.value"
+            >
+              {{ status.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-menu>
+      <button
+        type="button"
+        mat-mini-fab
+        [matMenuTriggerFor]="menu"
+        aria-label="Filter the Grading"
+        nzTooltipPlacement="left"
+        nz-tooltip="Change the filters to adjust which type of submissions you wish to view"
+      >
+        <mat-icon>filter_list</mat-icon>
+      </button>
 
-    <button
-      *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
-      type="button"
-      mat-mini-fab
-      color="primary"
-      class="floating-header"
-      [class.button-loading]="isSubmittingForm$ | async"
-      (click)="submitExerciseSubmissionForm()"
-      nzTooltipPlacement="left"
-      [nz-tooltip]="
-        showSaveButton()
-          ? 'Save modified submissions'
-          : 'Please modify a submission to enable the option to save your work'
-      "
-      [disabled]="!showSaveButton()"
-    >
-      <mat-icon>save</mat-icon>
-    </button>
-    <button
-      *ngIf="showBulkAutoOption()"
-      type="button"
-      mat-mini-fab
-      color="warn"
-      class="floating-header"
-      nzTooltipPlacement="left"
-      nz-tooltip="This will automatically grade all submitted work that are eligible for automatic grading. Backup database before proceeding!"
-      [class.button-loading]="isSubmittingForm$ | async"
-      (click)="initiateBulkAutoGrading()"
-    >
-      <mat-icon>brightness_auto</mat-icon>
-    </button>
+      <button
+        *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
+        type="button"
+        mat-mini-fab
+        color="primary"
+        class="floating-header"
+        [class.button-loading]="isSubmittingForm$ | async"
+        (click)="submitExerciseSubmissionForm()"
+        nzTooltipPlacement="left"
+        [nz-tooltip]="
+          showSaveButton()
+            ? 'Save modified submissions'
+            : 'Please modify a submission to enable the option to save your work'
+        "
+        [disabled]="!showSaveButton()"
+      >
+        <mat-icon>save</mat-icon>
+      </button>
+      <button
+        *ngIf="showBulkAutoOption()"
+        type="button"
+        mat-mini-fab
+        color="warn"
+        class="floating-header"
+        nzTooltipPlacement="left"
+        nz-tooltip="This will automatically grade all submitted work that are eligible for automatic grading. Backup database before proceeding!"
+        [class.button-loading]="isSubmittingForm$ | async"
+        (click)="initiateBulkAutoGrading()"
+      >
+        <mat-icon>brightness_auto</mat-icon>
+      </button>
+    </div>
+    <span [innerHtml]="pageTitle()"></span>
   </div>
   <br />
   <br />

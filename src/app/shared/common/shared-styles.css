@@ -174,4 +174,14 @@
   .feed-card {
     overflow-x: auto;
   }
+
+  .floating-header-button-container {
+    float: none;
+    display: block;
+    margin-right: 5px;
+    margin-top: -25px;
+  }
+  .floating-header-button-container > button {
+    margin-right: 5px;
+  }
 }
