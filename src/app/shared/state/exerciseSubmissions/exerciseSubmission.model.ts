@@ -53,6 +53,8 @@ export interface ExerciseSubmissionStateModel {
   fetchParamObjects: FetchParams[];
   exerciseSubmissionFormId: number;
   exerciseSubmissionFormRecord: ExerciseSubmission;
+  submissionHistory: ExerciseSubmission[];
+  isFetchingSubmissionHistory: boolean;
   isFetching: boolean;
   isFetchingGradingGroups: boolean;
   errorFetching: boolean;
@@ -73,6 +75,8 @@ export const defaultExerciseSubmissionState: ExerciseSubmissionStateModel = {
   fetchParamObjects: [],
   exerciseSubmissionFormId: null,
   exerciseSubmissionFormRecord: emptyExerciseSubmissionFormRecord,
+  submissionHistory: [],
+  isFetchingSubmissionHistory: false,
   isFetching: false,
   isFetchingGradingGroups: false,
   errorFetching: false,

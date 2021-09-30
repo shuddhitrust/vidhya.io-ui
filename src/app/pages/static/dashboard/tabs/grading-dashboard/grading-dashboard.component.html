@@ -330,6 +330,19 @@
                   *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
                   mat-mini-fab
                   type="button"
+                  style="margin-left: 10px"
+                  color="secondary"
+                  (click)="showHistory(exerciseSubmission)"
+                  nz-tooltip
+                  nzTooltipPlacement="top"
+                  nzTooltipTitle="View submission history"
+                >
+                  <mat-icon>history</mat-icon>
+                </button>
+                <button
+                  *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
+                  mat-mini-fab
+                  type="button"
                   [color]="fullPointsButtonColor(exerciseSubmission)"
                   class="card-button"
                   (click)="markCorrect(exerciseSubmission)"

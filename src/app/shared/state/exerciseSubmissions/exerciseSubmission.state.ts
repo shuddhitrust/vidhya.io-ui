@@ -20,6 +20,7 @@ import {
   ResetExerciseSubmissionFormAction,
   FetchNextGradingGroupsAction,
   FetchGradingGroupsAction,
+  ShowSubmissionHistory,
 } from './exerciseSubmission.actions';
 import { EXERCISE_SUBMISSION_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
@@ -87,6 +88,20 @@ export class ExerciseSubmissionState {
   @Selector()
   static isFetching(state: ExerciseSubmissionStateModel): boolean {
     return state.isFetching;
+  }
+
+  @Selector()
+  static isFetchingSubmissionHistory(
+    state: ExerciseSubmissionStateModel
+  ): boolean {
+    return state.isFetchingSubmissionHistory;
+  }
+
+  @Selector()
+  static submissionHistory(
+    state: ExerciseSubmissionStateModel
+  ): ExerciseSubmission[] {
+    return state.submissionHistory;
   }
 
   @Selector()
@@ -183,6 +198,50 @@ export class ExerciseSubmissionState {
           searchParams: newSearchParams,
         })
       );
+    }
+  }
+
+  @Action(ShowSubmissionHistory)
+  showSubmissionHistory(
+    { getState, patchState }: StateContext<ExerciseSubmissionStateModel>,
+    { payload }: ShowSubmissionHistory
+  ) {
+    const { exerciseId, participantId } = payload;
+
+    const variables = {
+      exerciseId,
+      participantId,
+    };
+    if (
+      exerciseId &&
+      participantId // This action is only executed when both exerciseId and participantId are valid
+    ) {
+      patchState({ isFetchingSubmissionHistory: true });
+      this.apollo
+        .watchQuery({
+          query: EXERCISE_SUBMISSION_QUERIES.GET_SUBMISSION_HISTORY,
+          variables,
+          fetchPolicy: 'network-only',
+        })
+        .valueChanges.subscribe(
+          ({ data }: any) => {
+            const response = data.submissionHistory;
+
+            patchState({
+              submissionHistory: response,
+              isFetchingSubmissionHistory: false,
+            });
+          },
+          (error) => {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(error),
+                action: 'error',
+              })
+            );
+            patchState({ isFetchingSubmissionHistory: false });
+          }
+        );
     }
   }
 

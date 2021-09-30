@@ -643,6 +643,58 @@ export const EXERCISE_SUBMISSION_QUERIES = {
       }
     }
   `,
+  GET_SUBMISSION_HISTORY: gql`
+    query submissionHistory($exerciseId: ID, $participantId: ID) {
+      submissionHistory(
+        exerciseId: $exerciseId
+        participantId: $participantId
+      ) {
+        id
+        participant {
+          id
+          name
+          institution {
+            id
+            name
+          }
+        }
+        exercise {
+          id
+          index
+          questionType
+          prompt
+          options
+          points
+          rubric
+          course {
+            id
+            title
+          }
+          chapter {
+            id
+            title
+            dueDate
+            section {
+              title
+            }
+          }
+        }
+        option
+        answer
+        link
+        images
+        status
+        criteriaSatisfied
+        remarks
+        flagged
+        grader {
+          name
+        }
+        createdAt
+        updatedAt
+      }
+    }
+  `,
   GET_EXERCISE_SUBMISSION_GROUPS: gql`
     query exerciseSubmissionGroups(
       $groupBy: String!

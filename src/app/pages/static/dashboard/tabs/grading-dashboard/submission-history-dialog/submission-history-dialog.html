@@ -1,0 +1,130 @@
+<mat-dialog-content
+  *ngIf="!isFetchingSubmissionHistory; else loadingTemplate"
+  class="dialog-box"
+>
+  <div>
+    <span *ngIf="history.length > 0; else feedEmpty">
+      <div
+        class="scroll-feed"
+        infiniteScroll
+        [infiniteScrollDistance]="2"
+        [infiniteScrollThrottle]="50"
+        infiniteScrollContainer=".scroll-feed"
+        [fromRoot]="true"
+      >
+        <div
+          *ngFor="
+              let exerciseSubmission of history;
+              trackBy: trackByFn
+            "
+        >
+          <mat-card class="submission-feed-card">
+            <mat-card-header>
+              <mat-card-title>
+                {{ "This change happened at " +
+                parseDateTime(exerciseSubmission.createdAt) }}</mat-card-title
+              >
+              <mat-card-subtitle>
+                <p>
+                  This status at the time was
+                  {{keyToLabel(exerciseSubmission.status)}} and the points were
+                  {{exerciseSubmission.points ? exerciseSubmission.points :
+                  '0'}}/{{ exerciseSubmission.exercise?.points }}
+                </p>
+              </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <mat-form-field
+                *ngIf="
+                    exerciseSubmission.exercise?.questionType ==
+                    questionTypes.descriptive_answer
+                  "
+                class="col-lg-12 col-md-12 col-sm-12"
+                appearance="outline"
+              >
+                <mat-label>Answer</mat-label>
+                <input
+                  matInput
+                  disabled
+                  [value]="exerciseSubmission?.answer"
+                  placeholder="Specify a possible valid answer"
+                />
+              </mat-form-field>
+
+              <span
+                class="col-lg-12 col-md-12 col-sm-12"
+                *ngIf="
+                    exerciseSubmission.exercise?.questionType ==
+                    questionTypes.options
+                  "
+              >
+                <p>{{ exerciseSubmission?.option }}</p>
+                <br />
+              </span>
+
+              <span
+                class="col-lg-12 col-md-12 col-sm-12"
+                *ngIf="
+                    exerciseSubmission.exercise.questionType ==
+                    questionTypes.image_upload
+                  "
+              >
+                <div
+                  *ngIf="exerciseSubmission.images?.length"
+                  class="col-lg-12 col-md-12 col-sm-12"
+                >
+                  <span
+                    *ngFor="
+                        let image of exerciseSubmission.images;
+                        let i = index
+                      "
+                  >
+                    <img
+                      [src]="image"
+                      alt="Exercise submission"
+                      class="thumbnail"
+                      (click)="showExpandedImage(image)"
+                    />
+                  </span>
+                </div>
+                <br />
+                <br />
+              </span>
+
+              <mat-form-field
+                *ngIf="
+                    exerciseSubmission.exercise?.questionType ==
+                    questionTypes.link
+                  "
+                class="col-lg-12 col-md-12 col-sm-12"
+                appearance="outline"
+              >
+                <mat-label>Link</mat-label>
+                <input
+                  matInput
+                  disabled
+                  [value]="exerciseSubmission.link"
+                  placeholder="Link"
+                />
+              </mat-form-field>
+
+              <mat-form-field
+                class="col-lg-12 col-md-12 col-sm-12"
+                appearance="outline"
+              >
+                <mat-label>Remarks</mat-label>
+                <input matInput disabled [value]="exerciseSubmission.remarks" />
+              </mat-form-field>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </span>
+  </div>
+</mat-dialog-content>
+<ng-template #loadingTemplate>
+  <app-simple-loading-spinner></app-simple-loading-spinner>
+</ng-template>
+<ng-template #feedEmpty>
+  <p class="center-title">There is no history for this submission!</p>
+</ng-template>

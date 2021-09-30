@@ -38,6 +38,7 @@ import {
   FetchGradingGroupsAction,
   FetchNextExerciseSubmissionsAction,
   FetchNextGradingGroupsAction,
+  ShowSubmissionHistory,
 } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.actions';
 import {
   GradingGroup,
@@ -104,6 +105,12 @@ export class GradingDashboardComponent implements OnInit {
   exerciseSubmissionStatusOptions: MatSelectOption[] = autoGenOptions(
     exerciseSubmissionStatusTypes
   );
+
+  @Select(ExerciseSubmissionState.isFetchingSubmissionHistory)
+  isFetchingSubmissionHistory$: Observable<boolean>;
+
+  @Select(ExerciseSubmissionState.submissionHistory)
+  submissionHistory$: Observable<ExerciseSubmission[]>;
 
   @Select(ExerciseSubmissionState.listGradingGroups)
   gradingGroups$: Observable<GradingGroup[]>;
@@ -404,6 +411,24 @@ export class GradingDashboardComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {});
   }
 
+  showHistory(exerciseSubmission) {
+    this.store.dispatch(
+      new ShowSubmissionHistory({
+        exerciseId: exerciseSubmission?.exercise.id,
+        participantId: exerciseSubmission?.participant?.id,
+      })
+    );
+
+    const dialogRef = this.dialog.open(SubmissionHistoryDialog, {
+      data: {
+        submissionHistory$: this.submissionHistory$,
+        isFetchingSubmissionHistory$: this.isFetchingSubmissionHistory$,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {});
+  }
+
   renderRubric(exerciseSubmission: ExerciseSubmission) {
     return JSON.parse(exerciseSubmission.exercise.rubric);
   }
@@ -658,5 +683,54 @@ export class ExerciseKeyDialog {
   }
   trackByFn(index: any, item: any) {
     return index;
+  }
+}
+
+@Component({
+  selector: 'submission-history-dialog',
+  templateUrl: './submission-history-dialog/submission-history-dialog.html',
+  styleUrls: [
+    './submission-history-dialog/submission-history-dialog.scss',
+    './../../../../../shared/common/shared-styles.css',
+  ],
+})
+export class SubmissionHistoryDialog {
+  history: any[];
+  isFetchingSubmissionHistory: boolean = false;
+  questionTypes: any = ExerciseQuestionTypeOptions;
+  constructor(
+    public dialog: MatDialog,
+    public dialogRef: MatDialogRef<ExerciseKeyDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+    data.submissionHistory$.subscribe((val) => {
+      this.history = val;
+    });
+    data.isFetchingSubmissionHistory$.subscribe((val) => {
+      this.isFetchingSubmissionHistory = val;
+    });
+  }
+  trackByFn(index: any, item: any) {
+    return index;
+  }
+  parseDateTime(date) {
+    return parseDateTime(date);
+  }
+  showExpandedImage(image) {
+    const dialogRef = this.dialog.open(ImageDisplayDialog, {
+      data: {
+        image,
+      },
+    });
+  }
+
+  keyToLabel(key) {
+    const exerciseSubmissionStatusTypes = {
+      submitted: 'SU',
+      graded: 'GR',
+      returned: 'RE',
+    };
+    key = getKeyForValue(exerciseSubmissionStatusTypes, key, false);
+    return convertKeyToLabel(key);
   }
 }

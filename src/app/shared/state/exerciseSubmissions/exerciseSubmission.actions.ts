@@ -67,3 +67,9 @@ export class DeleteExerciseSubmissionAction {
 
   constructor(public payload: idPayload) {}
 }
+
+export class ShowSubmissionHistory {
+  static readonly type = '[EXERCISE_SUBMISSION] Show history';
+
+  constructor(public payload: { exerciseId: number; participantId: number }) {}
+}

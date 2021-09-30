@@ -12,6 +12,7 @@ import { GroupDashboardComponent } from './tabs/group-dashboard/group-dashboard.
 import {
   ExerciseKeyDialog,
   GradingDashboardComponent,
+  SubmissionHistoryDialog,
 } from './tabs/grading-dashboard/grading-dashboard.component';
 import {
   ChapterPublishedComponent,
@@ -161,6 +162,7 @@ export function markedOptionsFactory(): MarkedOptions {
     MasterConfirmationDialog,
     ExerciseRubricDialog,
     ImageDisplayDialog,
+    SubmissionHistoryDialog,
   ],
   exports: [SimpleLoadingSpinnerComponent],
   imports: [
