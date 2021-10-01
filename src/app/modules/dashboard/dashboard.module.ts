@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { DashboardComponent } from './dashboard.component';
 import { Styling } from 'src/app/styling.imports';
@@ -17,56 +16,46 @@ import {
 import {
   ChapterPublishedComponent,
   ExerciseRubricDialog,
-} from '../../profiles/chapter-profile/published/chapter-published.component';
-import { ChapterDraftComponent } from '../../profiles/chapter-profile/draft/chapter-draft.component';
-import { ChapterProfileComponent } from '../../profiles/chapter-profile/chapter-profile.component';
-import { CourseProfileComponent } from '../../profiles/course-profile/course-profile.component';
+} from '../../pages/profiles/chapter-profile/published/chapter-published.component';
+import { ChapterDraftComponent } from '../../pages/profiles/chapter-profile/draft/chapter-draft.component';
+import { ChapterProfileComponent } from '../../pages/profiles/chapter-profile/chapter-profile.component';
+import { CourseProfileComponent } from '../../pages/profiles/course-profile/course-profile.component';
 import {
   UserApprovalConfirmationDialog,
   UserDenialConfirmationDialog,
   UserModerationProfileComponent,
-} from '../../modals/moderate-user/user-moderation.component';
+} from '../../pages/modals/moderate-user/user-moderation.component';
 import { UserModerationRendererComponent } from 'src/app/shared/cell-renderers/user-moderation/user-moderation-renderer.component';
-import { ChatComponent } from '../chat/chat.component';
-import { AddEditUserRoleComponent } from '../../forms/add-edit-user-role/add-edit-user-role.component';
-import { RoleProfileComponent } from '../../modals/role-profile/role-profile.component';
-import { RolesTableComponent } from '../../tables/roles-table/roles-table.component';
-import { InstitutionModalComponent } from '../../modals/institution-modal/institution-modal.component';
-import { PaginatorComponent } from 'src/app/shared/abstract/master-grid/components/paginator/paginator.component';
-import { LoginModalComponent } from '../../modals/login/login-modal.component';
-import { AddEditGroupComponent } from '../../forms/add-edit-group/add-edit-group.component';
-import { OwnProfileComponent } from '../../profiles/own-user-profile/own-profile.component';
-import { AddEditChapterComponent } from '../../forms/add-edit-chapter/add-edit-chapter.component';
-import { AddEditCourseComponent } from '../../forms/add-edit-course/add-edit-course.component';
-import { MemberProfileComponent } from '../../modals/member-profile/member-profile.component';
-import { GroupProfileComponent } from '../../profiles/group-profile/group-profile.component';
-import { AnnouncementProfileComponent } from '../../profiles/announcement-profile/announcement-profile.component';
-import { AddEditAnnouncementComponent } from '../../forms/add-edit-announcement/add-edit-announcement.component';
-import { InstitutionProfileComponent } from '../../profiles/institution-profile/institution-profile.component';
+import { ChatComponent } from '../../pages/static/chat/chat.component';
+import { AddEditUserRoleComponent } from '../../pages/forms/add-edit-user-role/add-edit-user-role.component';
+import { RoleProfileComponent } from '../../pages/modals/role-profile/role-profile.component';
+import { RolesTableComponent } from '../../pages/tables/roles-table/roles-table.component';
+import { LoginModalComponent } from '../../pages/modals/login/login-modal.component';
+import { AddEditGroupComponent } from '../../pages/forms/add-edit-group/add-edit-group.component';
+import { OwnProfileComponent } from '../../pages/profiles/own-user-profile/own-profile.component';
+import { AddEditChapterComponent } from '../../pages/forms/add-edit-chapter/add-edit-chapter.component';
+import { AddEditCourseComponent } from '../../pages/forms/add-edit-course/add-edit-course.component';
+import { MemberProfileComponent } from '../../pages/modals/member-profile/member-profile.component';
+import { GroupProfileComponent } from '../../pages/profiles/group-profile/group-profile.component';
+import { AnnouncementProfileComponent } from '../../pages/profiles/announcement-profile/announcement-profile.component';
+import { AddEditAnnouncementComponent } from '../../pages/forms/add-edit-announcement/add-edit-announcement.component';
 import { MemberProfileRendererComponent } from 'src/app/shared/cell-renderers/member-profile/member-profile-renderer.component';
-import { LearnersTableComponent } from '../../tables/learners-table/learners-table.component';
-import { ClassAdminsTableComponent } from '../../tables/class-admin-table/class-admins-table.component';
-import { InstitutionAdminsTableComponent } from '../../tables/institution-admins-table/institution-admins-table.component';
-import { MembersTableComponent } from '../../tables/members-table/members-table.component';
-import { AwaitingModerationTableComponent } from '../../tables/awaiting-moderation-table/awaiting-moderation-table.component';
-import { InstitutionsTableComponent } from '../../tables/institutions-table/institutions-table.component';
+import { LearnersTableComponent } from '../../pages/tables/learners-table/learners-table.component';
+import { ClassAdminsTableComponent } from '../../pages/tables/class-admin-table/class-admins-table.component';
+import { MembersTableComponent } from '../../pages/tables/members-table/members-table.component';
+import { AwaitingModerationTableComponent } from '../../pages/tables/awaiting-moderation-table/awaiting-moderation-table.component';
 import { MasterGridComponent } from 'src/app/shared/abstract/master-grid/components/master-grid/master-grid.component';
-import { InstitutionProfileRendererComponent } from 'src/app/shared/cell-renderers/institution-profile/institution-profile-renderer.component';
-import { AddEditInstitutionComponent } from '../../forms/add-edit-institution/add-edit-institution.component';
 import { AgGridModule } from 'ag-grid-angular';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LMarkdownEditorModule } from 'ngx-markdown-editor';
 import { MarkdownModule, MarkedOptions, MarkedRenderer } from 'ngx-markdown';
 import { HttpClient } from '@angular/common/http';
-import { SimpleLoadingSpinnerComponent } from 'src/app/shared/components/loading/simple-spinner/simple-loading-spinner.component';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
-import { CourseSectionModalComponent } from '../../modals/course-section-modal/course-section-modal.component';
+import { CourseSectionModalComponent } from '../../pages/modals/course-section-modal/course-section-modal.component';
 import { NgxsModule } from '@ngxs/store';
 import { HotToastModule } from '@ngneat/hot-toast';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { NotificationState } from 'src/app/shared/state/notifications/notification.state';
 import { LoadingState } from 'src/app/shared/state/loading/loading.state';
-import { InstitutionState } from 'src/app/shared/state/institutions/institution.state';
 import { MemberState } from 'src/app/shared/state/members/member.state';
 import { GroupState } from 'src/app/shared/state/groups/group.state';
 import { AnnouncementState } from 'src/app/shared/state/announcements/announcement.state';
@@ -86,6 +75,10 @@ import { environment } from 'src/environments/environment';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { MasterConfirmationDialog } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { ImageDisplayDialog } from 'src/app/shared/components/image-display/image-display-dialog.component';
+import { SharedModule } from 'src/app/shared/modules/shared.module';
+import { InstitutionModule } from '../institution/institution.module';
+import { MasterGridModule } from 'src/app/shared/abstract/master-grid/master-grid.module';
+import { InstitutionAdminsTableComponent } from 'src/app/pages/tables/institution-admins-table/institution-admins-table.component';
 
 export function markedOptionsFactory(): MarkedOptions {
   const renderer = new MarkedRenderer();
@@ -120,19 +113,16 @@ export function markedOptionsFactory(): MarkedOptions {
     GroupDashboardComponent,
     GradingDashboardComponent,
     ReportDashboardComponent,
-    AddEditInstitutionComponent,
-    InstitutionProfileRendererComponent,
-    MasterGridComponent,
-    InstitutionsTableComponent,
+    // MasterGridComponent,
     AwaitingModerationTableComponent,
     MembersTableComponent,
     InstitutionAdminsTableComponent,
+
     ClassAdminsTableComponent,
     LearnersTableComponent,
     MemberProfileRendererComponent,
     MemberProfileComponent,
     AddEditGroupComponent,
-    InstitutionProfileComponent,
     GroupProfileComponent,
     AddEditAnnouncementComponent,
     AnnouncementProfileComponent,
@@ -141,8 +131,6 @@ export function markedOptionsFactory(): MarkedOptions {
     AddEditChapterComponent,
     OwnProfileComponent,
     LoginModalComponent,
-    PaginatorComponent,
-    InstitutionModalComponent,
     RolesTableComponent,
     RoleProfileComponent,
     AddEditUserRoleComponent,
@@ -158,18 +146,16 @@ export function markedOptionsFactory(): MarkedOptions {
     ChapterPublishedComponent,
     ExerciseKeyDialog,
     CourseSectionModalComponent,
-    SimpleLoadingSpinnerComponent,
     MasterConfirmationDialog,
     ExerciseRubricDialog,
     ImageDisplayDialog,
     SubmissionHistoryDialog,
   ],
-  exports: [SimpleLoadingSpinnerComponent],
+  exports: [MasterGridComponent],
   imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    AgGridModule.withComponents([]),
+    SharedModule,
+    MasterGridModule,
+    InstitutionModule,
     InfiniteScrollModule,
     LMarkdownEditorModule,
     HotToastModule.forRoot(),
@@ -179,7 +165,6 @@ export function markedOptionsFactory(): MarkedOptions {
           AuthState,
           NotificationState,
           LoadingState,
-          InstitutionState,
           MemberState,
           GroupState,
           AnnouncementState,

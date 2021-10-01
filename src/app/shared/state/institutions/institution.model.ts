@@ -1,4 +1,4 @@
-import { INSTITUTIONS_LABEL } from 'src/app/pages/static/dashboard/tabs/admin-dashboard/admin-dashboard.component';
+import { INSTITUTIONS_LABEL } from 'src/app/modules/dashboard/tabs/admin-dashboard/admin-dashboard.component';
 import { defaultLogos } from '../../common/constants';
 import {
   FetchPolicy,

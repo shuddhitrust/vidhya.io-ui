@@ -1,20 +1,24 @@
 <h2 mat-dialog-title>Review the changes in group members</h2>
 <mat-dialog-content class="mat-typography" style="min-width: 500px">
   <div *ngIf="membersToAdd.length">
+    {% comment %}
     <ag-grid-angular
       class="ag-theme-alpine group-member-table"
       [rowData]="membersToAdd"
       [columnDefs]="membersToAddColumns"
     >
     </ag-grid-angular>
+    {% endcomment %}
   </div>
   <div *ngIf="membersToRemove.length">
+    {% comment %}
     <ag-grid-angular
       class="ag-theme-alpine group-member-table"
       [rowData]="membersToRemove"
       [columnDefs]="membersToRemoveColumns"
     >
     </ag-grid-angular>
+    {% endcomment %}
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

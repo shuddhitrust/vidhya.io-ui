@@ -9,7 +9,7 @@ import {
   UserPermissions,
 } from 'src/app/shared/common/models';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
-import { uiroutes } from '../../../shared/common/ui-routes';
+import { uiroutes } from '../../shared/common/ui-routes';
 import {
   CLASS_ADMINS_LABEL,
   INSTITUTIONS_LABEL,

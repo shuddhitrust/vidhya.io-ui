@@ -9,7 +9,7 @@ import { HomeComponent } from './pages/static/home/home.component';
 import { ProfileComponent } from './pages/static/profile/profile.component';
 import { SupportComponent } from './pages/static/support/support.component';
 import { uiroutes } from './shared/common/ui-routes';
-import { AddEditInstitutionComponent } from './pages/forms/add-edit-institution/add-edit-institution.component';
+import { AddEditInstitutionComponent } from './modules/institution/components/add-edit-institution/add-edit-institution.component';
 import { AddEditMemberComponent } from './pages/forms/add-edit-member/add-edit-member.component';
 import { AddEditGroupComponent } from './pages/forms/add-edit-group/add-edit-group.component';
 import { GroupProfileComponent } from './pages/profiles/group-profile/group-profile.component';
@@ -18,7 +18,7 @@ import { AddEditAnnouncementComponent } from './pages/forms/add-edit-announcemen
 import { OwnProfileComponent } from './pages/profiles/own-user-profile/own-profile.component';
 import { AddEditCourseComponent } from './pages/forms/add-edit-course/add-edit-course.component';
 import { AddEditChapterComponent } from './pages/forms/add-edit-chapter/add-edit-chapter.component';
-import { InstitutionProfileComponent } from './pages/profiles/institution-profile/institution-profile.component';
+import { InstitutionProfileComponent } from './modules/institution/components/institution-profile/institution-profile.component';
 import { AddEditUserRoleComponent } from './pages/forms/add-edit-user-role/add-edit-user-role.component';
 import { ChatComponent } from './pages/static/chat/chat.component';
 import { PasswordResetComponent } from './pages/forms/password-reset/password-reset.component';
@@ -33,7 +33,7 @@ const routes: Routes = [
   {
     path: uiroutes.DASHBOARD_ROUTE.route,
     loadChildren: () =>
-      import('./pages/static/dashboard/dashboard.module').then(
+      import('./modules/dashboard/dashboard.module').then(
         (m) => m.DashboardModule
       ),
     canActivate: [AuthenticationGuard],

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { GridOptions } from 'ag-grid-community';
 import { Observable } from 'rxjs';
+import { USER_ROLES_LABEL } from 'src/app/modules/dashboard/tabs/admin-dashboard/admin-dashboard.component';
 import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
 import { RoleProfileRendererComponent } from 'src/app/shared/cell-renderers/role-profile/role-profile-renderer.component';
 import { FetchParams, resources, User } from 'src/app/shared/common/models';
@@ -15,7 +16,6 @@ import {
 } from 'src/app/shared/state/userRoles/userRole.actions';
 import { UserRoleState } from 'src/app/shared/state/userRoles/userRole.state';
 import { RoleProfileComponent } from '../../modals/role-profile/role-profile.component';
-import { USER_ROLES_LABEL } from '../../static/dashboard/tabs/admin-dashboard/admin-dashboard.component';
 
 @Component({
   selector: 'app-roles-table',

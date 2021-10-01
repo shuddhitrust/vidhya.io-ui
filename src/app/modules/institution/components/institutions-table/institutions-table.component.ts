@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { GridOptions } from 'ag-grid-community';
 import { Observable } from 'rxjs';
+import { INSTITUTIONS_LABEL } from 'src/app/modules/dashboard/tabs/admin-dashboard/admin-dashboard.component';
 import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
 import { InstitutionProfileRendererComponent } from 'src/app/shared/cell-renderers/institution-profile/institution-profile-renderer.component';
 import {
@@ -18,8 +19,7 @@ import {
   ResetInstitutionFormAction,
 } from 'src/app/shared/state/institutions/institution.actions';
 import { InstitutionState } from 'src/app/shared/state/institutions/institution.state';
-import { InstitutionModalComponent } from '../../modals/institution-modal/institution-modal.component';
-import { INSTITUTIONS_LABEL } from '../../static/dashboard/tabs/admin-dashboard/admin-dashboard.component';
+import { InstitutionModalComponent } from '../institution-modal/institution-modal.component';
 
 @Component({
   selector: 'app-institutions-table',

@@ -1,16 +1,8 @@
-import { USER_ROLES_LABEL } from 'src/app/pages/static/dashboard/tabs/admin-dashboard/admin-dashboard.component';
-import {
-  autoGenOptions,
-  getOptionLabel,
-  parseDateTime,
-} from '../../common/functions';
 import {
   defaultResourcePermissions,
   FetchPolicy,
-  MatSelectOption,
   FetchParams,
   resources,
-  startingFetchParams,
   UserRole,
 } from '../../common/models';
 import { uiroutes } from '../../common/ui-routes';

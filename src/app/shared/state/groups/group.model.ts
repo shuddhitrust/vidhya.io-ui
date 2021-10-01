@@ -1,3 +1,4 @@
+import { GROUPS } from 'src/app/modules/dashboard/dashboard.component';
 import { defaultLogos } from '../../common/constants';
 import { autoGenOptions } from '../../common/functions';
 import {
@@ -6,10 +7,8 @@ import {
   GroupTypeOptions,
   MatSelectOption,
   FetchParams,
-  startingFetchParams,
 } from '../../common/models';
 import { uiroutes } from '../../common/ui-routes';
-import { GROUPS } from './../../../pages/static/dashboard/dashboard.component';
 
 export const emptyGroupFormRecord: Group = {
   id: null,

@@ -1,7 +1,7 @@
 import {
   ASSIGNMENTS,
   GRADING,
-} from 'src/app/pages/static/dashboard/dashboard.component';
+} from 'src/app/modules/dashboard/dashboard.component';
 import {
   FetchPolicy,
   ExerciseSubmission,

@@ -1,10 +1,5 @@
-import { COURSES } from 'src/app/pages/static/dashboard/dashboard.component';
-import {
-  FetchPolicy,
-  CourseSection,
-  FetchParams,
-  startingFetchParams,
-} from '../../common/models';
+import { COURSES } from 'src/app/modules/dashboard/dashboard.component';
+import { FetchPolicy, CourseSection, FetchParams } from '../../common/models';
 import { uiroutes } from '../../common/ui-routes';
 
 export const emptyCourseSectionFormRecord: CourseSection = {
