@@ -31,7 +31,7 @@ import {
   templateUrl: './institution-profile.component.html',
   styleUrls: [
     './institution-profile.component.scss',
-    './../../../shared/common/shared-styles.css',
+    './../../../../shared/common/shared-styles.css',
   ],
 })
 export class InstitutionProfileComponent implements OnInit {
