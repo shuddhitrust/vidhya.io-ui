@@ -5,9 +5,7 @@ import {
   AuthenticationGuard,
   RegistrationFormAuthGuard,
 } from './shared/api/authentication.guard';
-import { HomeComponent } from './pages/static/home/home.component';
 import { ProfileComponent } from './pages/static/profile/profile.component';
-import { SupportComponent } from './pages/static/support/support.component';
 import { uiroutes } from './shared/common/ui-routes';
 import { AddEditInstitutionComponent } from './modules/institution/components/add-edit-institution/add-edit-institution.component';
 import { AddEditMemberComponent } from './pages/forms/add-edit-member/add-edit-member.component';
@@ -21,11 +19,9 @@ import { AddEditChapterComponent } from './pages/forms/add-edit-chapter/add-edit
 import { InstitutionProfileComponent } from './modules/institution/components/institution-profile/institution-profile.component';
 import { AddEditUserRoleComponent } from './pages/forms/add-edit-user-role/add-edit-user-role.component';
 import { ChatComponent } from './pages/static/chat/chat.component';
-import { PasswordResetComponent } from './pages/forms/password-reset/password-reset.component';
 import { CourseProfileComponent } from './pages/profiles/course-profile/course-profile.component';
 import { ChapterProfileComponent } from './pages/profiles/chapter-profile/chapter-profile.component';
-import { PrivacyComponent } from './pages/static/privacy/privacy.component';
-import { PublicUserProfileComponent } from './pages/profiles/public-user-profile/public-user-profile.component';
+import { PublicUserProfileComponent } from './modules/public/components/public-user-profile/public-user-profile.component';
 
 // import { InstitutionProfileComponent } from './pages/modals/institution-profile/institution-profile.component';
 
@@ -39,7 +35,13 @@ const routes: Routes = [
     canActivate: [AuthenticationGuard],
     data: uiroutes.DASHBOARD_ROUTE.auth,
   },
-
+  {
+    path: '',
+    loadChildren: () =>
+      import('./modules/public/public.module').then((m) => m.PublicModule),
+    canActivate: [AuthenticationGuard],
+    data: null,
+  },
   {
     path: uiroutes.PROFILE_ROUTE.route,
     component: ProfileComponent,
@@ -159,12 +161,6 @@ const routes: Routes = [
   //   data: uiroutes.CHAT_ROUTE.auth,
   //   pathMatch: 'full',
   // },
-  /**
-   * Public routes
-   *  ***NOTE*** - In order for routes to be available without logging in,
-   * special provisions need to be made on app.component.html and the corresponding .ts file.
-   * Without making these changes the route would not show.
-   */
   {
     path: `${uiroutes.MEMBER_PROFILE_ROUTE.route}/:username`,
     component: PublicUserProfileComponent,
@@ -172,30 +168,6 @@ const routes: Routes = [
     data: uiroutes.MEMBER_PROFILE_ROUTE.auth,
     pathMatch: 'full',
   },
-  {
-    path: uiroutes.PRIVACY_ROUTE.route,
-    component: PrivacyComponent,
-    canActivate: [AuthenticationGuard],
-    data: uiroutes.PRIVACY_ROUTE.auth,
-    pathMatch: 'full',
-  },
-  {
-    path: `${uiroutes.ACTIVATE_ACCOUNT_ROUTE.route}/:token`,
-    component: HomeComponent,
-    pathMatch: 'full',
-  },
-  {
-    path: `${uiroutes.PASSWORD_RESET_ROUTE.route}/:token`,
-    component: PasswordResetComponent,
-    pathMatch: 'full',
-  },
-  {
-    path: `${uiroutes.REGISTER_ROUTE.route}`,
-    component: HomeComponent,
-    pathMatch: 'full',
-  },
-  // End of public routes
-  { path: '', component: HomeComponent },
   { path: '**', redirectTo: '' },
 ];
 

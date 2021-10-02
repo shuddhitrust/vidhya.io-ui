@@ -82,15 +82,15 @@ export class AddEditMemberComponent implements OnInit {
   ) {
     this.authState$.subscribe((val) => {
       this.authState = val;
-      this.isFullyAuthenticated = this.authState.isFullyAuthenticated;
-      this.currentMember = this.authState.currentMember;
-      this.firstTimeSetup = this.authState.firstTimeSetup;
+      this.isFullyAuthenticated = this.authState?.isFullyAuthenticated;
+      this.currentMember = this.authState?.currentMember;
+      this.firstTimeSetup = this.authState?.firstTimeSetup;
       this.currentMember = {
-        username: this.currentMember.username,
-        firstName: this.currentMember.firstName,
-        lastName: this.currentMember.lastName,
-        email: this.currentMember.email,
-        avatar: this.currentMember.avatar,
+        username: this.currentMember?.username,
+        firstName: this.currentMember?.firstName,
+        lastName: this.currentMember?.lastName,
+        email: this.currentMember?.email,
+        avatar: this.currentMember?.avatar,
         institution: {
           id: this.currentMember?.institution?.id,
           name: this.currentMember?.institution?.name,

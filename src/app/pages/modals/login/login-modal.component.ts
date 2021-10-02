@@ -88,14 +88,14 @@ export class LoginModalComponent implements OnInit {
     this.authState$.subscribe((val) => {
       this.authState = val;
       this.invited = this.authState?.currentMember?.invitecode;
-      this.isLoggedIn = this.authState.isLoggedIn;
+      this.isLoggedIn = this.authState?.isLoggedIn;
       if (this.isLoggedIn) {
         this.closeDialog();
       }
-      this.isSubmittingForm = this.authState.isSubmittingForm;
+      this.isSubmittingForm = this.authState?.isSubmittingForm;
       if (
-        this.closeLoginForm != this.authState.closeLoginForm &&
-        this.authState.closeLoginForm
+        this.closeLoginForm != this.authState?.closeLoginForm &&
+        this.authState?.closeLoginForm
       ) {
         this.closeDialog();
       }

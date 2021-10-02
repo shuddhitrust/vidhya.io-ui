@@ -22,7 +22,7 @@ import {
 } from 'src/app/shared/state/members/member.actions';
 import { MemberState } from 'src/app/shared/state/members/member.state';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
-import { LoginModalComponent } from '../../modals/login/login-modal.component';
+import { LoginModalComponent } from '../../../../pages/modals/login/login-modal.component';
 
 // const tempUsers = [
 //   {

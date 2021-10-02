@@ -18,7 +18,7 @@ import { parseDateTime } from 'src/app/shared/common/functions';
   templateUrl: './public-user-profile.component.html',
   styleUrls: [
     './public-user-profile.component.scss',
-    './../../../shared/common/shared-styles.css',
+    './../../../../shared/common/shared-styles.css',
   ],
 })
 export class PublicUserProfileComponent implements OnInit, OnDestroy {

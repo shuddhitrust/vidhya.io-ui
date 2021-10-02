@@ -38,9 +38,9 @@ export class NavbarComponent implements OnInit {
   ) {
     this.authState$.subscribe((val) => {
       this.authState = val;
-      this.isLoggedIn = this.authState.isLoggedIn;
-      this.isFullyAuthenticated = this.authState.isFullyAuthenticated;
-      this.currentMember = this.authState.currentMember;
+      this.isLoggedIn = this.authState?.isLoggedIn;
+      this.isFullyAuthenticated = this.authState?.isFullyAuthenticated;
+      this.currentMember = this.authState?.currentMember;
     });
   }
 
@@ -55,9 +55,7 @@ export class NavbarComponent implements OnInit {
   login() {
     this.store.dispatch(new OpenLoginFormAction());
     const dialogRef = this.dialog.open(LoginModalComponent);
-    dialogRef.afterClosed().subscribe((result) => {
-      
-    });
+    dialogRef.afterClosed().subscribe((result) => {});
   }
 
   logout() {

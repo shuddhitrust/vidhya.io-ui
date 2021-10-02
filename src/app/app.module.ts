@@ -1,26 +1,20 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
 
-import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import {
   GraphQLModule,
   // TokenUpdater,
 } from './shared/api/graphql/graphql.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { Styling } from './styling.imports';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HomeComponent } from './pages/static/home/home.component';
 import { ProfileComponent } from './pages/static/profile/profile.component';
 import { AccountComponent } from './pages/static/account/account.component';
-import { SupportComponent } from './pages/static/support/support.component';
 import {
   AuthenticationGuard,
   AuthInterceptor,
   RegistrationFormAuthGuard,
 } from './shared/api/authentication.guard';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
-import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 
 import * as _moment from 'moment';
 // tslint:disable-next-line:no-duplicate-imports
@@ -51,8 +45,6 @@ registerLocaleData(en);
 /** config ng-zorro-antd i18n **/
 import { NZ_I18N, en_US } from 'ng-zorro-antd/i18n';
 
-import { PasswordResetComponent } from './pages/forms/password-reset/password-reset.component';
-import { PrivacyComponent } from './pages/static/privacy/privacy.component';
 import {
   MomentDateAdapter,
   MAT_MOMENT_DATE_ADAPTER_OPTIONS,
@@ -68,49 +60,36 @@ import { DragDropComponent } from './shared/components/drag-drop/drag-drop.compo
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { AddEditMemberComponent } from './pages/forms/add-edit-member/add-edit-member.component';
 import { AppLoadingOverlayComponent } from './shared/components/loading/loading.component';
-import { PublicUserProfileComponent } from './pages/profiles/public-user-profile/public-user-profile.component';
-import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { SharedModule } from './shared/modules/shared.module';
+import { PublicModule } from './modules/public/public.module';
+import { AppRoutingModule } from './app-routing.module';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // function that returns `MarkedOptions` with renderer override
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
-    HomeComponent,
     ProfileComponent,
     AccountComponent,
-    SupportComponent,
-    PasswordResetComponent,
-    PrivacyComponent,
     DragDropComponent,
     AddEditMemberComponent,
     AppLoadingOverlayComponent,
-    PublicUserProfileComponent,
   ],
   imports: [
-    SharedModule,
-    DashboardModule,
     BrowserModule,
-    AppRoutingModule,
-    GraphQLModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    Styling,
-    BrowserAnimationsModule,
-    InfiniteScrollModule,
+    SharedModule,
+    PublicModule,
+    AppRoutingModule,
+    DashboardModule,
+    GraphQLModule,
     // TokenUpdater,
     ScullyLibModule,
   ],
   providers: [
-    AuthenticationGuard,
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true,
-    },
-    { provide: NZ_I18N, useValue: en_US },
-    RegistrationFormAuthGuard,
     FormBuilder,
     {
       provide: DateAdapter,

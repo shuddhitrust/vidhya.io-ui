@@ -34,9 +34,9 @@ export class AuthenticationGuard implements CanActivate {
   ) {
     this.authState$.subscribe((val) => {
       this.authState = val;
-      // this.membershipStatus = this.authState.membershipStatus;
-      this.isFullyAuthenticated = this.authState.isFullyAuthenticated;
-      this.isLoggedIn = this.authState.isLoggedIn;
+      // this.membershipStatus = this.authState?.membershipStatus;
+      this.isFullyAuthenticated = this.authState?.isFullyAuthenticated;
+      this.isLoggedIn = this.authState?.isLoggedIn;
       // this.activeMember = this.membershipStatus == MembershipStatusOptions.ACTIVE;
     });
   }
@@ -145,7 +145,7 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor() {
     this.authState$.subscribe((val) => {
       this.authState = val;
-      this.token = this.authState.token;
+      this.token = this.authState?.token;
     });
   }
 
@@ -155,12 +155,11 @@ export class AuthInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<unknown>> {
     // add JWT auth header if a user is logged in for API requests
     const isApiUrl = request.url.startsWith(environment.graphql_endpoint);
-    
+
     if (this.token && isApiUrl) {
       request = request.clone({
         setHeaders: { Authorization: `JWT ${this.token}` },
       });
-      
     }
 
     return next.handle(request);

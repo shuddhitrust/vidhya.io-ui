@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { DashboardComponent } from './dashboard.component';
-import { Styling } from 'src/app/styling.imports';
 import { ReportDashboardComponent } from './tabs/report-dashboard/report-dashboard.component';
 import { CourseDashboardComponent } from './tabs/course-dashboard/course-dashboard.component';
 import { AnnouncementDashboardComponent } from './tabs/announcement-dashboard/announcement-dashboard.component';
@@ -159,7 +158,6 @@ export function markedOptionsFactory(): MarkedOptions {
     [
       NgxsModule.forRoot(
         [
-          AuthState,
           NotificationState,
           LoadingState,
           MemberState,
@@ -192,7 +190,6 @@ export function markedOptionsFactory(): MarkedOptions {
       },
     }),
     DashboardRoutingModule,
-    Styling,
   ],
 })
 export class DashboardModule {}

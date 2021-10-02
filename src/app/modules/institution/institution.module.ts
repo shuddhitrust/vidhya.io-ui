@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { Styling } from 'src/app/styling.imports';
 import { InstitutionModalComponent } from './components/institution-modal/institution-modal.component';
 import { InstitutionsTableComponent } from './components/institutions-table/institutions-table.component';
 import { InstitutionProfileComponent } from './components/institution-profile/institution-profile.component';
@@ -29,7 +28,6 @@ const declarations = [
     SharedModule,
     InstitutionRoutingModule,
     MasterGridModule,
-    Styling,
     [
       NgxsModule.forRoot([InstitutionState], {
         developmentMode: !environment.production,
