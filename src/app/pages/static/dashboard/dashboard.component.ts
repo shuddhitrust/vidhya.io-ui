@@ -118,7 +118,10 @@ export class DashboardComponent implements OnInit {
         case GRADING:
           return this.authorizeResourceMethod(resources.GRADING);
         case REPORTS:
-          return this.authorizeResourceMethod(resources.REPORT);
+          return this.authorizeResourceMethod(
+            resources.REPORT,
+            RESOURCE_ACTIONS.LIST
+          );
         default:
           return false;
       }
