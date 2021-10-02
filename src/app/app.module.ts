@@ -65,6 +65,10 @@ import { PublicModule } from './modules/public/public.module';
 import { AppRoutingModule } from './app-routing.module';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AuthState } from './shared/state/auth/auth.state';
+import { environment } from 'src/environments/environment';
+import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
+import { NgxsModule } from '@ngxs/store';
 // function that returns `MarkedOptions` with renderer override
 
 @NgModule({
@@ -88,6 +92,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     GraphQLModule,
     // TokenUpdater,
     ScullyLibModule,
+    [
+      NgxsModule.forRoot([AuthState], {
+        developmentMode: !environment.production,
+      }),
+      NgxsReduxDevtoolsPluginModule.forRoot(),
+    ],
   ],
   providers: [
     FormBuilder,
@@ -97,6 +107,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
       deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
     },
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+    AuthenticationGuard,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    },
+    { provide: NZ_I18N, useValue: en_US },
+    RegistrationFormAuthGuard,
   ],
   bootstrap: [AppComponent],
 })

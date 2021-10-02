@@ -28,25 +28,6 @@ const declarations = [
 @NgModule({
   declarations,
   exports: [...declarations],
-  imports: [
-    SharedModule,
-    PublicRoutingModule,
-    [
-      NgxsModule.forRoot([AuthState], {
-        developmentMode: !environment.production,
-      }),
-      NgxsReduxDevtoolsPluginModule.forRoot(),
-    ],
-  ],
-  providers: [
-    AuthenticationGuard,
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true,
-    },
-    { provide: NZ_I18N, useValue: en_US },
-    RegistrationFormAuthGuard,
-  ],
+  imports: [SharedModule, PublicRoutingModule],
 })
 export class PublicModule {}

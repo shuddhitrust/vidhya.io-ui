@@ -28,7 +28,7 @@ export class LoadingState {
   ) {
     const state = getState();
     let { showLoadingScreen, message } = payload;
-    message = payload.message ? payload.message : state.message;
+    message = payload?.message ? payload?.message : state?.message;
     patchState({ showLoadingScreen, message });
   }
 }

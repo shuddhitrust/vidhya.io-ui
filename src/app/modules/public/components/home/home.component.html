@@ -7,7 +7,7 @@
   [fromRoot]="true"
   (scrolled)="onScroll()"
 >
-  <div *ngIf="learners.length; else emptyLearnersListTemplate">
+  <div *ngIf="learners?.length; else emptyLearnersListTemplate">
     <ng-container *ngTemplateOutlet="learnersList"></ng-container>
   </div>
 </div>

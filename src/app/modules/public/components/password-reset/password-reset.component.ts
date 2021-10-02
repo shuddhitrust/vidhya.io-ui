@@ -18,7 +18,7 @@ import { Router } from '@angular/router';
   templateUrl: './password-reset.component.html',
   styleUrls: [
     './password-reset.component.scss',
-    './../../../shared/common/shared-styles.css',
+    './../../../../shared/common/shared-styles.css',
   ],
 })
 export class PasswordResetComponent implements OnInit {
