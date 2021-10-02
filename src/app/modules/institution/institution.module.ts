@@ -12,6 +12,7 @@ import { environment } from 'src/environments/environment';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsModule } from '@ngxs/store';
 import { InstitutionRoutingModule } from './institution-routing.module';
+import { MasterGridModule } from 'src/app/shared/abstract/master-grid/master-grid.module';
 
 const declarations = [
   AddEditInstitutionComponent,
@@ -27,6 +28,7 @@ const declarations = [
   imports: [
     SharedModule,
     InstitutionRoutingModule,
+    MasterGridModule,
     Styling,
     [
       NgxsModule.forRoot([InstitutionState], {

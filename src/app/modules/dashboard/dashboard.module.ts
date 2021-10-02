@@ -4,7 +4,6 @@ import { DashboardComponent } from './dashboard.component';
 import { Styling } from 'src/app/styling.imports';
 import { ReportDashboardComponent } from './tabs/report-dashboard/report-dashboard.component';
 import { CourseDashboardComponent } from './tabs/course-dashboard/course-dashboard.component';
-import { AdminDashboardComponent } from './tabs/admin-dashboard/admin-dashboard.component';
 import { AnnouncementDashboardComponent } from './tabs/announcement-dashboard/announcement-dashboard.component';
 import { AssignmentDashboardComponent } from './tabs/assignment-dashboard/assignment-dashboard.component';
 import { GroupDashboardComponent } from './tabs/group-dashboard/group-dashboard.component';
@@ -79,6 +78,7 @@ import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { InstitutionModule } from '../institution/institution.module';
 import { MasterGridModule } from 'src/app/shared/abstract/master-grid/master-grid.module';
 import { InstitutionAdminsTableComponent } from 'src/app/pages/tables/institution-admins-table/institution-admins-table.component';
+import { AdminDashboardComponent } from './tabs/admin-dashboard/admin-dashboard.component';
 
 export function markedOptionsFactory(): MarkedOptions {
   const renderer = new MarkedRenderer();
@@ -107,19 +107,17 @@ export function markedOptionsFactory(): MarkedOptions {
   declarations: [
     DashboardComponent,
     AdminDashboardComponent,
+    AwaitingModerationTableComponent,
+    MembersTableComponent,
+    InstitutionAdminsTableComponent,
+    ClassAdminsTableComponent,
+    LearnersTableComponent,
     AnnouncementDashboardComponent,
     AssignmentDashboardComponent,
     CourseDashboardComponent,
     GroupDashboardComponent,
     GradingDashboardComponent,
     ReportDashboardComponent,
-    // MasterGridComponent,
-    AwaitingModerationTableComponent,
-    MembersTableComponent,
-    InstitutionAdminsTableComponent,
-
-    ClassAdminsTableComponent,
-    LearnersTableComponent,
     MemberProfileRendererComponent,
     MemberProfileComponent,
     AddEditGroupComponent,
@@ -151,7 +149,6 @@ export function markedOptionsFactory(): MarkedOptions {
     ImageDisplayDialog,
     SubmissionHistoryDialog,
   ],
-  exports: [MasterGridComponent],
   imports: [
     SharedModule,
     MasterGridModule,

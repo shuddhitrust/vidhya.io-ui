@@ -8,9 +8,16 @@ import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+
 @NgModule({
   declarations: [MasterGridComponent, PaginatorComponent],
-  exports: [MasterGridComponent, PaginatorComponent],
+  exports: [
+    MasterGridComponent,
+    PaginatorComponent,
+    MatFormFieldModule,
+    MatInputModule,
+  ],
   imports: [
     CommonModule,
     FormsModule,
@@ -18,6 +25,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     AgGridModule.withComponents([]),
     NzPaginationModule,
     MatIconModule,
+    MatInputModule,
     MatFormFieldModule,
   ],
 })
