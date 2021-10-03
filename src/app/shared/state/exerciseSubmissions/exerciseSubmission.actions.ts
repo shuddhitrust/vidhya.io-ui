@@ -73,3 +73,9 @@ export class ShowSubmissionHistory {
 
   constructor(public payload: { exerciseId: number; participantId: number }) {}
 }
+
+export class ResetSubmissionHistory {
+  static readonly type = '[EXERCISE_SUBMISSION] Reset history';
+
+  constructor() {}
+}

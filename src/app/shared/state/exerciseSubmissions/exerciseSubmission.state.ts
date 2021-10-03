@@ -21,6 +21,7 @@ import {
   FetchNextGradingGroupsAction,
   FetchGradingGroupsAction,
   ShowSubmissionHistory,
+  ResetSubmissionHistory,
 } from './exerciseSubmission.actions';
 import { EXERCISE_SUBMISSION_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
@@ -245,6 +246,15 @@ export class ExerciseSubmissionState {
     }
   }
 
+  @Action(ResetSubmissionHistory)
+  resetSubmissionHistory({
+    patchState,
+  }: StateContext<ExerciseSubmissionStateModel>) {
+    patchState({
+      submissionHistory: defaultExerciseSubmissionState.submissionHistory,
+      isFetchingSubmissionHistory: false,
+    });
+  }
   @Action(FetchGradingGroupsAction)
   fetchExerciseSubmissionGroups(
     { getState, patchState }: StateContext<ExerciseSubmissionStateModel>,
