@@ -275,8 +275,12 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     });
   }
 
-  goBack() {
-    this.location.back();
+  goToCourse() {
+    this.router.navigate([uiroutes.COURSE_PROFILE_ROUTE.route], {
+      queryParams: { id: this.chapter?.course?.id },
+      queryParamsHandling: 'merge',
+      skipLocationChange: false,
+    });
   }
 
   editChapter() {

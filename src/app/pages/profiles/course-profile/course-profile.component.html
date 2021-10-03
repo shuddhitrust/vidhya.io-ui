@@ -3,7 +3,7 @@
 </button>
 
 <span *ngIf="!(isFetchingCourse$ | async)">
-  <mat-card class="feed-card">
+  <mat-card class="feed-card" style="cursor: default">
     <h2>{{ course?.title }}</h2>
     <p>{{ course?.description }}</p>
     <mat-card-actions>

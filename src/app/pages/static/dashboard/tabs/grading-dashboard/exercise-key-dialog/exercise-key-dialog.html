@@ -42,8 +42,9 @@
         <span *ngFor="let image of exerciseKey.referenceImages; let i = index">
           <img
             [src]="image"
+            (click)="showExpandedImage(image)"
             alt="Exercise key reference image"
-            class="reference-image"
+            class="thumbnail"
           />
         </span>
       </div>

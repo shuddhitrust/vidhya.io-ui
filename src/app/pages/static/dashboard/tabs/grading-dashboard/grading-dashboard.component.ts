@@ -670,6 +670,7 @@ export class ExerciseKeyDialog {
   chapterRoute = '';
   questionTypes: any = ExerciseQuestionTypeOptions;
   constructor(
+    public dialog: MatDialog,
     public dialogRef: MatDialogRef<ExerciseKeyDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
@@ -680,6 +681,16 @@ export class ExerciseKeyDialog {
     data.isFetchingExerciseKey$.subscribe((val) => {
       this.isFetchingExerciseKey = val;
     });
+  }
+
+  showExpandedImage(image) {
+    const dialogRef = this.dialog.open(ImageDisplayDialog, {
+      data: {
+        image,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {});
   }
   trackByFn(index: any, item: any) {
     return index;
