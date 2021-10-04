@@ -849,21 +849,24 @@ export const REPORT_QUERIES = {
         limit: $limit
         offset: $offset
       ) {
-        id
-        participant {
+        records {
           id
-          name
+          participant {
+            id
+            name
+          }
+          course {
+            id
+            title
+          }
+          institution {
+            id
+            name
+          }
+          completed
+          percentage
         }
-        course {
-          id
-          title
-        }
-        institution {
-          id
-          name
-        }
-        completed
-        percentage
+        total
       }
     }
   `,

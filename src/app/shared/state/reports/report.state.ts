@@ -172,17 +172,12 @@ export class ReportState {
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
-          const response = data.reports;
-          newFetchParams = { ...newFetchParams };
-          let reports = state.reports;
-          reports = reports.concat(response);
-          let lastPage = null;
-          if (response.length < newFetchParams.pageSize) {
-            lastPage = newFetchParams.currentPage;
-          }
+          const response = data.reports.records;
+          const totalCount = data.reports?.total;
+          newFetchParams = { ...newFetchParams, totalCount };
+
           patchState({
-            lastPage,
-            reports,
+            reports: response,
             fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
             isFetching: false,
           });

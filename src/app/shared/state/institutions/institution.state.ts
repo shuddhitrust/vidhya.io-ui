@@ -128,7 +128,7 @@ export class InstitutionState {
     { payload }: FetchInstitutionsAction
   ) {
     const state = getState();
-    const { institutionsSubscribed, fetchPolicy, fetchParamObjects } = state;
+    const { fetchPolicy, fetchParamObjects } = state;
     const { searchParams } = payload;
     const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({

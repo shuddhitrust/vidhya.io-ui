@@ -65,6 +65,7 @@ import {
 } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { ImageDisplayDialog } from 'src/app/shared/components/image-display/image-display-dialog.component';
 import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
+import { ExerciseSubmissionState } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.state';
 
 const startingExerciseFormOptions = ['', ''];
 
@@ -114,7 +115,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
   isFetchingExercises: boolean;
   @Select(ChapterState.isFetching)
   isFetchingChapter$: Observable<boolean>;
-  @Select(ExerciseState.formSubmitting)
+  @Select(ExerciseSubmissionState.formSubmitting)
   formSubmitting$: Observable<boolean>;
   formSubmitting: boolean;
   @Select(ExerciseState.errorFetching)
@@ -269,10 +270,12 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
   }
 
   allowSubmissionCreation() {
-    return this.auth.authorizeResource(
+    const authorized = this.auth.authorizeResource(
       resources.EXERCISE_SUBMISSION,
       this.resourceActions.CREATE
     );
+    const submissionAllowed = this.getSubmittableExercises().length;
+    return authorized && submissionAllowed;
   }
 
   disableExerciseModification(exercise) {
@@ -294,8 +297,12 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     });
   }
 
-  goBack() {
-    this.location.back();
+  goToCourse() {
+    this.router.navigate([uiroutes.COURSE_PROFILE_ROUTE.route], {
+      queryParams: { id: this.chapter?.course?.id },
+      queryParamsHandling: 'merge',
+      skipLocationChange: false,
+    });
   }
 
   editChapter() {
@@ -591,7 +598,9 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
   }
 
   updateFormBeforeSubmit() {
-    this.uploadNewImages();
+    if (!this.formSubmitting) {
+      this.uploadNewImages();
+    }
   }
 
   validateExerciseSubmissions() {
@@ -635,13 +644,17 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     this.store.dispatch(new ResetChapterFormAction());
   }
 
-  submitExerciseSubmissionForm() {
-    let newSubmissions = this.exerciseSubmissions.filter((s) => {
+  getSubmittableExercises(): ExerciseSubmission[] {
+    return this.exerciseSubmissions.filter((s) => {
       return (
         s.status !== ExerciseSubmissionStatusOptions.graded &&
         s.status !== ExerciseSubmissionStatusOptions.submitted
       );
     });
+  }
+
+  submitExerciseSubmissionForm() {
+    let newSubmissions = this.getSubmittableExercises();
     newSubmissions = newSubmissions.map((s) => {
       const newS = { ...s, status: ExerciseSubmissionStatusOptions.submitted };
       return newS;

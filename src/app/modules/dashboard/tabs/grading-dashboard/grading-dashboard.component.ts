@@ -1,4 +1,10 @@
-import { Component, Inject, OnInit, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  Inject,
+  OnDestroy,
+  OnInit,
+  ViewEncapsulation,
+} from '@angular/core';
 import { Location } from '@angular/common';
 import {
   MatDialog,
@@ -38,6 +44,7 @@ import {
   FetchGradingGroupsAction,
   FetchNextExerciseSubmissionsAction,
   FetchNextGradingGroupsAction,
+  ResetSubmissionHistory,
   ShowSubmissionHistory,
 } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.actions';
 import {
@@ -670,6 +677,7 @@ export class ExerciseKeyDialog {
   chapterRoute = '';
   questionTypes: any = ExerciseQuestionTypeOptions;
   constructor(
+    public dialog: MatDialog,
     public dialogRef: MatDialogRef<ExerciseKeyDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
@@ -680,6 +688,16 @@ export class ExerciseKeyDialog {
     data.isFetchingExerciseKey$.subscribe((val) => {
       this.isFetchingExerciseKey = val;
     });
+  }
+
+  showExpandedImage(image) {
+    const dialogRef = this.dialog.open(ImageDisplayDialog, {
+      data: {
+        image,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {});
   }
   trackByFn(index: any, item: any) {
     return index;
@@ -694,11 +712,12 @@ export class ExerciseKeyDialog {
     './../../../../../shared/common/shared-styles.css',
   ],
 })
-export class SubmissionHistoryDialog {
+export class SubmissionHistoryDialog implements OnDestroy {
   history: any[];
   isFetchingSubmissionHistory: boolean = false;
   questionTypes: any = ExerciseQuestionTypeOptions;
   constructor(
+    private store: Store,
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<ExerciseKeyDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any
@@ -732,5 +751,9 @@ export class SubmissionHistoryDialog {
     };
     key = getKeyForValue(exerciseSubmissionStatusTypes, key, false);
     return convertKeyToLabel(key);
+  }
+
+  ngOnDestroy() {
+    this.store.dispatch(new ResetSubmissionHistory());
   }
 }

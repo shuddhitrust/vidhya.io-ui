@@ -78,6 +78,7 @@ import { InstitutionModule } from '../institution/institution.module';
 import { MasterGridModule } from 'src/app/shared/abstract/master-grid/master-grid.module';
 import { InstitutionAdminsTableComponent } from 'src/app/pages/tables/institution-admins-table/institution-admins-table.component';
 import { AdminDashboardComponent } from './tabs/admin-dashboard/admin-dashboard.component';
+import { ReportsTableComponent } from './../../pages/tables/reports-table/reports-table.component';
 
 export function markedOptionsFactory(): MarkedOptions {
   const renderer = new MarkedRenderer();
@@ -147,6 +148,7 @@ export function markedOptionsFactory(): MarkedOptions {
     ExerciseRubricDialog,
     ImageDisplayDialog,
     SubmissionHistoryDialog,
+    ReportsTableComponent,
   ],
   imports: [
     SharedModule,

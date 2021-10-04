@@ -1,9 +1,9 @@
-<button mat-icon-button (click)="goBack()" class="floating-back-button">
+<button mat-icon-button (click)="goToCourse()" class="floating-back-button">
   <mat-icon>keyboard_backspace</mat-icon>
 </button>
 
 <span *ngIf="!(isFetchingChapter$ | async)">
-  <mat-card class="feed-card">
+  <mat-card class="feed-card" style="cursor: default">
     <button
       *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
       mat-mini-fab
