@@ -55,6 +55,7 @@ import {
   MasterConfirmationDialog,
   MasterConfirmationDialogObject,
 } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import { COURSES } from 'src/app/pages/static/dashboard/dashboard.component';
 
 @Component({
   selector: 'app-course-profile',
@@ -154,7 +155,11 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
   }
 
   goBack() {
-    this.location.back();
+    this.router.navigate([uiroutes.DASHBOARD_ROUTE.route], {
+      queryParams: { tab: COURSES },
+      queryParamsHandling: 'merge',
+      skipLocationChange: false,
+    });
   }
 
   editCourse() {
