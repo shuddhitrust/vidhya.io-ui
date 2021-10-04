@@ -25,7 +25,7 @@ import { Assignment } from 'src/app/shared/state/assignments/assignment.model';
   templateUrl: './assignment-dashboard.component.html',
   styleUrls: [
     './assignment-dashboard.component.scss',
-    './../../../../../../../shared/common/shared-styles.css',
+    './../../../../shared/common/shared-styles.css',
   ],
 })
 export class AssignmentDashboardComponent implements OnInit {

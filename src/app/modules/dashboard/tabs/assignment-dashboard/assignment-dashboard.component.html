@@ -30,7 +30,7 @@
       <mat-icon>filter_list</mat-icon>
     </button>
   </div>
-  <span *ngIf="assignments.length > 0; else feedEmpty">
+  <span *ngIf="assignments?.length > 0; else feedEmpty">
     <div
       class="scroll-feed"
       infiniteScroll

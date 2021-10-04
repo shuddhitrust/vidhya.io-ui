@@ -112,7 +112,7 @@
   <br />
 
   <span *ngIf="showGroupCards; else submissionsTemplate">
-    <span *ngIf="gradingGroups.length > 0; else feedEmpty">
+    <span *ngIf="gradingGroups?.length > 0; else feedEmpty">
       <div
         class="scroll-feed"
         infiniteScroll

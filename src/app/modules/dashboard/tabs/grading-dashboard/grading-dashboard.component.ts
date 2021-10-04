@@ -84,7 +84,7 @@ const exerciseSubmissionStatusTypes = {
   templateUrl: './grading-dashboard.component.html',
   styleUrls: [
     './grading-dashboard.component.scss',
-    './../../../../../../../shared/common/shared-styles.css',
+    './../../../../shared/common/shared-styles.css',
   ],
   encapsulation: ViewEncapsulation.None,
 })
@@ -668,7 +668,7 @@ export class GradingDashboardComponent implements OnInit {
   templateUrl: './exercise-key-dialog/exercise-key-dialog.html',
   styleUrls: [
     './exercise-key-dialog/exercise-key-dialog.scss',
-    './../../../../../../../shared/common/shared-styles.css',
+    './../../../../shared/common/shared-styles.css',
   ],
 })
 export class ExerciseKeyDialog {
@@ -709,7 +709,7 @@ export class ExerciseKeyDialog {
   templateUrl: './submission-history-dialog/submission-history-dialog.html',
   styleUrls: [
     './submission-history-dialog/submission-history-dialog.scss',
-    './../../../../../../../shared/common/shared-styles.css',
+    './../../../../shared/common/shared-styles.css',
   ],
 })
 export class SubmissionHistoryDialog implements OnDestroy {

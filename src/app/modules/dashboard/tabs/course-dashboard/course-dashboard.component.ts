@@ -22,7 +22,7 @@ import { ShowNotificationAction } from 'src/app/shared/state/notifications/notif
   templateUrl: './course-dashboard.component.html',
   styleUrls: [
     './course-dashboard.component.scss',
-    './../../../../../../../shared/common/shared-styles.css',
+    './../../../../shared/common/shared-styles.css',
   ],
 })
 export class CourseDashboardComponent implements OnInit {
