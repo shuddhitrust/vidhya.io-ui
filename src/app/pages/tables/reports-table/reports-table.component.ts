@@ -5,6 +5,7 @@ import { Select, Store } from '@ngxs/store';
 import { GridOptions } from 'ag-grid-community';
 import { Observable } from 'rxjs';
 import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
+import { MemberProfileRendererComponent } from 'src/app/shared/cell-renderers/member-profile/member-profile-renderer.component';
 import { Report, FetchParams, resources } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
@@ -39,7 +40,6 @@ export class ReportsTableComponent implements OnInit {
     {
       field: 'name',
       cellRenderer: (params) => {
-        console.log({ params });
         return params.data?.participant?.name;
       },
     },
