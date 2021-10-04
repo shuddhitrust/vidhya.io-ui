@@ -19,11 +19,8 @@ import {
   CreateUpdateMemberAction,
   DeleteMemberAction,
   FetchMembersAction,
-  FetchPublicMembersAction,
-  FetchNextPublicMembersAction,
   ForceRefetchMembersAction,
   GetMemberAction,
-  GetMemberByUsernameAction,
   MemberSubscriptionAction,
   ResetMemberFormAction,
   SuspendMemberAction,
@@ -190,100 +187,6 @@ export class MemberState {
       );
   }
 
-  @Action(FetchNextPublicMembersAction)
-  fetchNextAssignments({ getState }: StateContext<MemberStateModel>) {
-    const state = getState();
-    const lastPageNumber = state.lastPagePublicMembers;
-    let previousFetchParams =
-      state.fetchParamObjects[state.fetchParamObjects.length - 1];
-    previousFetchParams = previousFetchParams
-      ? previousFetchParams
-      : startingFetchParams;
-    const pageNumber = previousFetchParams.currentPage + 1;
-    const newSearchParams: SearchParams = {
-      pageNumber,
-      pageSize: previousFetchParams.pageSize,
-      searchQuery: previousFetchParams.searchQuery,
-      columnFilters: previousFetchParams.columnFilters,
-    };
-    if (
-      !lastPageNumber ||
-      (lastPageNumber != null && pageNumber <= lastPageNumber)
-    ) {
-      this.store.dispatch(
-        new FetchPublicMembersAction({ searchParams: newSearchParams })
-      );
-    }
-  }
-
-  @Action(FetchPublicMembersAction)
-  fetchPublicMembers(
-    { getState, patchState }: StateContext<MemberStateModel>,
-    { payload }: FetchMembersAction
-  ) {
-    const state = getState();
-    const { searchParams } = payload;
-    const { fetchPolicy, fetchParamObjects } = state;
-    const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
-    let newFetchParams = updateFetchParams({
-      fetchParamObjects,
-      newPageNumber: pageNumber,
-      newPageSize: pageSize,
-      newSearchQuery: searchQuery,
-      newColumnFilters: columnFilters,
-    });
-    patchState({ isFetching: true });
-    const variables = {
-      searchField: searchQuery,
-      membershipStatusNot: columnFilters.membershipStatusNot,
-      membershipStatusIs: columnFilters.membershipStatusIs,
-      roles: columnFilters.roles,
-      limit: newFetchParams.pageSize,
-      offset: newFetchParams.offset,
-    };
-
-    this.apollo
-      .watchQuery({
-        query: USER_QUERIES.GET_PUBLIC_USERS,
-        variables,
-        fetchPolicy,
-      })
-      .valueChanges.subscribe(
-        ({ data }: any) => {
-          const response = data.publicUsers.records;
-
-          newFetchParams = { ...newFetchParams };
-          let paginatedPublicMembers = state.paginatedPublicMembers;
-          paginatedPublicMembers = {
-            ...paginatedPublicMembers,
-            [pageNumber]: response,
-          };
-          let members = convertPaginatedListToNormalList(
-            paginatedPublicMembers
-          );
-          let lastPagePublicMembers = null;
-          if (response.length < newFetchParams.pageSize) {
-            lastPagePublicMembers = newFetchParams.currentPage;
-          }
-          patchState({
-            members,
-            paginatedPublicMembers,
-            lastPagePublicMembers,
-            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
-            isFetching: false,
-          });
-        },
-        (error) => {
-          this.store.dispatch(
-            new ShowNotificationAction({
-              message: getErrorMessageFromGraphQLResponse(error),
-              action: 'error',
-            })
-          );
-          patchState({ isFetching: false });
-        }
-      );
-  }
   @Action(MemberSubscriptionAction)
   subscribeToMembers({ getState, patchState }: StateContext<MemberStateModel>) {
     const state = getState();
@@ -341,35 +244,6 @@ export class MemberState {
       );
   }
 
-  @Action(GetMemberByUsernameAction)
-  getMemberByUsername(
-    { patchState }: StateContext<MemberStateModel>,
-    { payload }: GetMemberByUsernameAction
-  ) {
-    const { username } = payload;
-    patchState({ isFetching: true });
-    this.apollo
-      .watchQuery({
-        query: USER_QUERIES.GET_USER_BY_USERNAME,
-        variables: { username },
-        fetchPolicy: 'network-only',
-      })
-      .valueChanges.subscribe(
-        ({ data }: any) => {
-          const response = data.userByUsername;
-          patchState({ memberFormRecord: response, isFetching: false });
-        },
-        (error) => {
-          this.store.dispatch(
-            new ShowNotificationAction({
-              message: getErrorMessageFromGraphQLResponse(error),
-              action: 'error',
-            })
-          );
-          patchState({ isFetching: false });
-        }
-      );
-  }
   @Action(CreateUpdateMemberAction)
   createUpdateMember(
     { getState, patchState }: StateContext<MemberStateModel>,

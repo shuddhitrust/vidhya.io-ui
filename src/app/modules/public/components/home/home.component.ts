@@ -16,13 +16,13 @@ import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { VerifyAccountAction } from 'src/app/shared/state/auth/auth.actions';
 import { AuthStateModel } from 'src/app/shared/state/auth/auth.model';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
-import {
-  FetchPublicMembersAction,
-  FetchNextPublicMembersAction,
-} from 'src/app/shared/state/members/member.actions';
-import { MemberState } from 'src/app/shared/state/members/member.state';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { LoginModalComponent } from '../../../../pages/modals/login/login-modal.component';
+import {
+  FetchNextPublicMembersAction,
+  FetchPublicMembersAction,
+} from '../../state/public/public.actions';
+import { PublicState } from '../../state/public/public.state';
 
 // const tempUsers = [
 //   {
@@ -2029,9 +2029,9 @@ export class HomeComponent implements OnInit {
   isLoggedIn: boolean = false;
   firstTimeSetup: boolean = false;
   showUnverifiedNotification: boolean = false;
-  @Select(MemberState.listMembers)
+  @Select(PublicState.listMembers)
   learners$: Observable<User[]>;
-  @Select(MemberState.isFetching)
+  @Select(PublicState.isFetching)
   isFetching$: Observable<boolean>;
   learners: any[] = [];
   isFetching: boolean = false;
@@ -2086,6 +2086,7 @@ export class HomeComponent implements OnInit {
   }
 
   fetchMembers() {
+    console.log('Fetching members from home component');
     this.store.dispatch(
       new FetchPublicMembersAction({
         searchParams: {

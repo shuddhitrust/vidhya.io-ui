@@ -55,7 +55,7 @@ import {
   MasterConfirmationDialog,
   MasterConfirmationDialogObject,
 } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
-import { COURSES } from 'src/app/pages/static/dashboard/dashboard.component';
+import { COURSES } from 'src/app/modules/dashboard/dashboard.component';
 
 @Component({
   selector: 'app-course-profile',

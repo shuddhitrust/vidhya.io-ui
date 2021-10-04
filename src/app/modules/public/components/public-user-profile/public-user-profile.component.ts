@@ -9,9 +9,10 @@ import {
   RESOURCE_ACTIONS,
   User,
 } from 'src/app/shared/common/models';
-import { GetMemberByUsernameAction } from 'src/app/shared/state/members/member.actions';
+
 import { MemberState } from 'src/app/shared/state/members/member.state';
 import { parseDateTime } from 'src/app/shared/common/functions';
+import { GetMemberByUsernameAction } from '../../state/public/public.actions';
 
 @Component({
   selector: 'app-public-user-profile',

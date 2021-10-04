@@ -8,18 +8,6 @@ export class FetchMembersAction {
   constructor(public payload: { searchParams: SearchParams }) {}
 }
 
-export class FetchPublicMembersAction {
-  static readonly type = '[MEMBERS] Public Fetch';
-
-  constructor(public payload: { searchParams: SearchParams }) {}
-}
-
-export class FetchNextPublicMembersAction {
-  static readonly type = '[MEMBERS] Fetch Next';
-
-  constructor() {}
-}
-
 export class MemberSubscriptionAction {
   static readonly type = '[MEMBER] Subscribe';
 
@@ -36,12 +24,6 @@ export class GetMemberAction {
   static readonly type = '[MEMBER] Get';
 
   constructor(public payload: idPayload) {}
-}
-
-export class GetMemberByUsernameAction {
-  static readonly type = '[MEMBER] Get by username';
-
-  constructor(public payload: { username: string }) {}
 }
 
 export class CreateUpdateMemberAction {

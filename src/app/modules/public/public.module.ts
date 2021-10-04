@@ -5,17 +5,10 @@ import { SharedModule } from './../../shared/modules/shared.module';
 import { PublicUserProfileComponent } from './components/public-user-profile/public-user-profile.component';
 import { PasswordResetComponent } from './components/password-reset/password-reset.component';
 import { PublicRoutingModule } from './public-routing.module';
-import {
-  AuthenticationGuard,
-  AuthInterceptor,
-  RegistrationFormAuthGuard,
-} from 'src/app/shared/api/authentication.guard';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { en_US, NZ_I18N } from 'ng-zorro-antd/i18n';
 import { environment } from 'src/environments/environment';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsModule } from '@ngxs/store';
-import { AuthState } from 'src/app/shared/state/auth/auth.state';
+import { PublicState } from './state/public/public.state';
 // function that returns `MarkedOptions` with renderer override
 
 const declarations = [
@@ -28,6 +21,10 @@ const declarations = [
 @NgModule({
   declarations,
   exports: [...declarations],
-  imports: [SharedModule, PublicRoutingModule],
+  imports: [
+    SharedModule,
+    PublicRoutingModule,
+    NgxsModule.forFeature([PublicState]),
+  ],
 })
 export class PublicModule {}

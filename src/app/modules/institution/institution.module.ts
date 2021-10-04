@@ -7,10 +7,7 @@ import { AddEditInstitutionComponent } from './components/add-edit-institution/a
 
 import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { InstitutionState } from 'src/app/shared/state/institutions/institution.state';
-import { environment } from 'src/environments/environment';
-import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsModule } from '@ngxs/store';
-import { InstitutionRoutingModule } from './institution-routing.module';
 import { MasterGridModule } from 'src/app/shared/abstract/master-grid/master-grid.module';
 
 const declarations = [
@@ -21,19 +18,15 @@ const declarations = [
   InstitutionModalComponent,
 ];
 
+const imports = [
+  SharedModule,
+  MasterGridModule,
+  NgxsModule.forFeature([InstitutionState]),
+];
+
 @NgModule({
   declarations,
-  exports: declarations,
-  imports: [
-    SharedModule,
-    InstitutionRoutingModule,
-    MasterGridModule,
-    [
-      NgxsModule.forRoot([InstitutionState], {
-        developmentMode: !environment.production,
-      }),
-      NgxsReduxDevtoolsPluginModule.forRoot(),
-    ],
-  ],
+  exports: [...declarations],
+  imports,
 })
 export class InstitutionModule {}

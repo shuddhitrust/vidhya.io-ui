@@ -87,7 +87,6 @@ import { NgxsModule } from '@ngxs/store';
     BrowserAnimationsModule,
     SharedModule,
     PublicModule,
-    AppRoutingModule,
     DashboardModule,
     GraphQLModule,
     // TokenUpdater,
@@ -98,6 +97,7 @@ import { NgxsModule } from '@ngxs/store';
       }),
       NgxsReduxDevtoolsPluginModule.forRoot(),
     ],
+    AppRoutingModule,
   ],
   providers: [
     FormBuilder,
