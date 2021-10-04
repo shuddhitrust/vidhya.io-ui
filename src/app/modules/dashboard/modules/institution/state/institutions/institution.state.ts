@@ -16,7 +16,7 @@ import {
   InstitutionSubscriptionAction,
   ResetInstitutionFormAction,
 } from './institution.actions';
-import { INSTITUTION_QUERIES } from './../../api/graphql/queries.graphql';
+import { INSTITUTION_QUERIES } from '../../../../../../shared/api/graphql/queries.graphql';
 import { Apollo, Subscription } from 'apollo-angular';
 import {
   Institution,
@@ -24,18 +24,18 @@ import {
   FetchParams,
   SUBSCRIPTION_METHODS,
   startingFetchParams,
-} from '../../common/models';
-import { INSTITUTION_MUTATIONS } from '../../api/graphql/mutations.graphql';
-import { ShowNotificationAction } from '../notifications/notification.actions';
+} from '../../../../../../shared/common/models';
+import { INSTITUTION_MUTATIONS } from '../../../../../../shared/api/graphql/mutations.graphql';
+import { ShowNotificationAction } from '../../../../../../shared/state/notifications/notification.actions';
 import {
   getErrorMessageFromGraphQLResponse,
   subscriptionUpdater,
   updateFetchParams,
-} from '../../common/functions';
+} from '../../../../../../shared/common/functions';
 import { Router } from '@angular/router';
-import { defaultSearchParams } from '../../common/constants';
-import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
-import { SearchParams } from '../../abstract/master-grid/table.model';
+import { defaultSearchParams } from '../../../../../../shared/common/constants';
+import { SUBSCRIPTIONS } from '../../../../../../shared/api/graphql/subscriptions.graphql';
+import { SearchParams } from '../../../../../../shared/abstract/master-grid/table.model';
 
 @State<InstitutionStateModel>({
   name: 'institutionState',

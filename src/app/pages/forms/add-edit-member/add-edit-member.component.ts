@@ -16,7 +16,7 @@ import {
 import { MemberState } from 'src/app/shared/state/members/member.state';
 import { Observable } from 'rxjs';
 import { emptyMemberFormRecord } from 'src/app/shared/state/members/member.model';
-import { InstitutionState } from 'src/app/shared/state/institutions/institution.state';
+import { InstitutionState } from 'src/app/modules/dashboard/modules/institution/state/institutions/institution.state';
 import { MatSelectOption, User } from 'src/app/shared/common/models';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { AuthStateModel } from 'src/app/shared/state/auth/auth.model';

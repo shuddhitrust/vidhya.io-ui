@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Select } from '@ngxs/store';
 import { ICellRendererParams } from 'ag-grid-community';
 import { Observable } from 'rxjs';
-import { InstitutionModalComponent } from 'src/app/modules/institution/components/institution-modal/institution-modal.component';
+import { InstitutionModalComponent } from 'src/app/modules/dashboard/modules/institution/components/institution-modal/institution-modal.component';
 import { AuthorizationService } from '../../api/authorization/authorization.service';
 import {
   CurrentMember,

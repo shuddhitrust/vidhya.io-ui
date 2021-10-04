@@ -10,7 +10,7 @@ import { AuthState } from './shared/state/auth/auth.state';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+  styleUrls: ['./app.component.scss', './shared/common/shared-styles.scss'],
 })
 export class AppComponent {
   title = 'vidhya-ui';

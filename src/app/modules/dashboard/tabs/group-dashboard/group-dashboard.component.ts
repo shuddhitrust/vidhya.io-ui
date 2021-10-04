@@ -23,7 +23,7 @@ import { GroupState } from 'src/app/shared/state/groups/group.state';
   templateUrl: './group-dashboard.component.html',
   styleUrls: [
     './group-dashboard.component.scss',
-    './../../../../../shared/common/shared-styles.css',
+    './../../../../shared/common/shared-styles.css',
   ],
 })
 export class GroupDashboardComponent implements OnInit {
@@ -54,7 +54,6 @@ export class GroupDashboardComponent implements OnInit {
 
   ngOnInit(): void {}
   onScroll() {
-    
     if (!this.isFetching) {
       this.store.dispatch(new FetchNextGroupsAction());
     }

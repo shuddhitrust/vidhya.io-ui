@@ -9,11 +9,11 @@ import {
   resources,
   RESOURCE_ACTIONS,
 } from 'src/app/shared/common/models';
-import { InstitutionState } from 'src/app/shared/state/institutions/institution.state';
+import { InstitutionState } from 'src/app/modules/dashboard/modules/institution/state/institutions/institution.state';
 import {
   DeleteInstitutionAction,
   GetInstitutionAction,
-} from 'src/app/shared/state/institutions/institution.actions';
+} from 'src/app/modules/dashboard/modules/institution/state/institutions/institution.actions';
 import {
   MatDialog,
   MatDialogRef,
@@ -31,7 +31,7 @@ import {
   templateUrl: './institution-profile.component.html',
   styleUrls: [
     './institution-profile.component.scss',
-    './../../../../shared/common/shared-styles.css',
+    './../../../../../../shared/common/shared-styles.css',
   ],
 })
 export class InstitutionProfileComponent implements OnInit {

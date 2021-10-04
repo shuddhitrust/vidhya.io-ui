@@ -1,12 +1,12 @@
 import { INSTITUTIONS_LABEL } from 'src/app/modules/dashboard/tabs/admin-dashboard/admin-dashboard.component';
-import { defaultLogos } from '../../common/constants';
+import { defaultLogos } from '../../../../../../shared/common/constants';
 import {
   FetchPolicy,
   Institution,
   FetchParams,
   startingFetchParams,
-} from '../../common/models';
-import { uiroutes } from '../../common/ui-routes';
+} from '../../../../../../shared/common/models';
+import { uiroutes } from '../../../../../../shared/common/ui-routes';
 
 export const emptyInstitutionFormRecord: Institution = {
   id: null,

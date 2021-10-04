@@ -11,7 +11,7 @@
   </button>
 </div>
 <span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
-  <span *ngIf="(announcements$ | async).length > 0; else feedEmpty">
+  <span *ngIf="(announcements$ | async)?.length > 0; else feedEmpty">
     <div
       class="scroll-feed"
       infiniteScroll

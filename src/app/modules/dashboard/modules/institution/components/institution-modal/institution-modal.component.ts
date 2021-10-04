@@ -17,7 +17,7 @@ import {
   MasterConfirmationDialog,
   MasterConfirmationDialogObject,
 } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
-import { DeleteInstitutionAction } from 'src/app/shared/state/institutions/institution.actions';
+import { DeleteInstitutionAction } from 'src/app/modules/dashboard/modules/institution/state/institutions/institution.actions';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 @Component({
   selector: 'app-institution-modal',

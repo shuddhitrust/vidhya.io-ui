@@ -74,7 +74,7 @@ import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { MasterConfirmationDialog } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { ImageDisplayDialog } from 'src/app/shared/components/image-display/image-display-dialog.component';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
-import { InstitutionModule } from '../institution/institution.module';
+import { InstitutionModule } from './modules/institution/institution.module';
 import { MasterGridModule } from 'src/app/shared/abstract/master-grid/master-grid.module';
 import { InstitutionAdminsTableComponent } from 'src/app/pages/tables/institution-admins-table/institution-admins-table.component';
 import { AdminDashboardComponent } from './tabs/admin-dashboard/admin-dashboard.component';

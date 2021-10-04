@@ -7,7 +7,7 @@ import {
 } from './shared/api/authentication.guard';
 import { ProfileComponent } from './pages/static/profile/profile.component';
 import { uiroutes } from './shared/common/ui-routes';
-import { AddEditInstitutionComponent } from './modules/institution/components/add-edit-institution/add-edit-institution.component';
+import { AddEditInstitutionComponent } from './modules/dashboard/modules/institution/components/add-edit-institution/add-edit-institution.component';
 import { AddEditMemberComponent } from './pages/forms/add-edit-member/add-edit-member.component';
 import { AddEditGroupComponent } from './pages/forms/add-edit-group/add-edit-group.component';
 import { GroupProfileComponent } from './pages/profiles/group-profile/group-profile.component';
@@ -16,7 +16,7 @@ import { AddEditAnnouncementComponent } from './pages/forms/add-edit-announcemen
 import { OwnProfileComponent } from './pages/profiles/own-user-profile/own-profile.component';
 import { AddEditCourseComponent } from './pages/forms/add-edit-course/add-edit-course.component';
 import { AddEditChapterComponent } from './pages/forms/add-edit-chapter/add-edit-chapter.component';
-import { InstitutionProfileComponent } from './modules/institution/components/institution-profile/institution-profile.component';
+import { InstitutionProfileComponent } from './modules/dashboard/modules/institution/components/institution-profile/institution-profile.component';
 import { AddEditUserRoleComponent } from './pages/forms/add-edit-user-role/add-edit-user-role.component';
 import { ChatComponent } from './pages/static/chat/chat.component';
 import { CourseProfileComponent } from './pages/profiles/course-profile/course-profile.component';
