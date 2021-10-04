@@ -1,0 +1,12 @@
+<app-master-grid
+  [defaultColDef]="defaultColDef"
+  [columns]="columns"
+  [rows]="rows$ | async"
+  [isFetching]="isFetching$ | async"
+  [tableTitle]="tableTitle"
+  [gridOptions]="gridOptions"
+  [fetchParams$]="fetchParams$"
+  (fetchMethod)="fetchReports($event[0])"
+  (refreshData)="forceRefetchReports($event[0])"
+  [resource]="resource"
+></app-master-grid>

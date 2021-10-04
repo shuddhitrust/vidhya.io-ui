@@ -86,6 +86,7 @@ import { environment } from 'src/environments/environment';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { MasterConfirmationDialog } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { ImageDisplayDialog } from 'src/app/shared/components/image-display/image-display-dialog.component';
+import { ReportsTableComponent } from '../../tables/reports-table/reports-table.component';
 
 export function markedOptionsFactory(): MarkedOptions {
   const renderer = new MarkedRenderer();
@@ -163,6 +164,7 @@ export function markedOptionsFactory(): MarkedOptions {
     ExerciseRubricDialog,
     ImageDisplayDialog,
     SubmissionHistoryDialog,
+    ReportsTableComponent,
   ],
   exports: [SimpleLoadingSpinnerComponent],
   imports: [
