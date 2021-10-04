@@ -550,7 +550,6 @@ export class ExerciseSubmissionState {
       grading,
       bulkauto: bulkauto ? bulkauto : false,
     };
-    const update = exerciseSubmissions[0]?.id ? true : false;
     this.apollo
       .mutate({
         mutation:
@@ -563,7 +562,7 @@ export class ExerciseSubmissionState {
           patchState({ formSubmitting: false });
 
           if (response.ok) {
-            if (update) {
+            if (grading) {
               this.router.navigateByUrl(GradingUrl);
             } else {
               this.store.dispatch(new ForceRefetchChaptersAction());
