@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './privacy.component.html',
   styleUrls: [
     './privacy.component.scss',
-    './../../../shared/common/shared-styles.css',
+    './../../../../../../src/app/shared/common/shared-styles.css',
   ],
 })
 export class PrivacyComponent implements OnInit {

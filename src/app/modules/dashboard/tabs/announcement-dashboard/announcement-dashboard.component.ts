@@ -24,7 +24,7 @@ import { OptionsState } from 'src/app/shared/state/options/options.state';
   templateUrl: './announcement-dashboard.component.html',
   styleUrls: [
     './announcement-dashboard.component.scss',
-    './../../../../shared/common/shared-styles.css',
+    '../../../../../../src/app/shared/common/shared-styles.css',
   ],
 })
 export class AnnouncementDashboardComponent implements OnInit {
