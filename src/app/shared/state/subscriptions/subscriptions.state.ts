@@ -10,7 +10,7 @@ import { InitiateSubscriptionsAction } from './subscriptions.actions';
 import { AnnouncementSubscriptionAction } from '../announcements/announcement.actions';
 import { ChapterSubscriptionAction } from '../chapters/chapter.actions';
 import { ReportSubscriptionAction } from '../reports/report.actions';
-import { MemberSubscriptionAction } from '../members/member.actions';
+import { MemberSubscriptionAction } from '../../../modules/dashboard/modules/admin/modules/member/state/member.actions';
 import { InstitutionSubscriptionAction } from '../../../modules/dashboard/modules/admin/modules/institution/state/institutions/institution.actions';
 import { GroupSubscriptionAction } from '../groups/group.actions';
 import { ExerciseSubmissionSubscriptionAction } from '../exerciseSubmissions/exerciseSubmission.actions';

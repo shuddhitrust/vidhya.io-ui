@@ -10,7 +10,7 @@ import {
   User,
 } from 'src/app/shared/common/models';
 
-import { MemberState } from 'src/app/shared/state/members/member.state';
+import { MemberState } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.state';
 import { parseDateTime } from 'src/app/shared/common/functions';
 import { GetMemberByUsernameAction } from '../../state/public/public.actions';
 

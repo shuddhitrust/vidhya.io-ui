@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { GridOptions } from 'ag-grid-community';
 import { Observable } from 'rxjs';
-import { INSTITUTIONS_LABEL } from 'src/app/modules/dashboard/tabs/admin-dashboard/admin-dashboard.component';
+
 import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
 import { InstitutionProfileRendererComponent } from 'src/app/shared/cell-renderers/institution-profile/institution-profile-renderer.component';
 import {
@@ -20,6 +20,7 @@ import {
 } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.actions';
 import { InstitutionState } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.state';
 import { InstitutionModalComponent } from '../institution-modal/institution-modal.component';
+import { ADMIN_SECTION_LABELS } from 'src/app/shared/common/constants';
 
 @Component({
   selector: 'app-institutions-table',
@@ -27,7 +28,7 @@ import { InstitutionModalComponent } from '../institution-modal/institution-moda
   styleUrls: ['./institutions-table.component.scss'],
 })
 export class InstitutionsTableComponent implements OnInit {
-  tableTitle: string = INSTITUTIONS_LABEL;
+  tableTitle: string = ADMIN_SECTION_LABELS.INSTITUTIONS;
   resource: string = resources.INSTITUTION;
   institutions: object[];
   @Select(InstitutionState.listInstitutions)

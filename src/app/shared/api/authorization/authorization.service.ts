@@ -7,10 +7,10 @@ import {
   RESOURCE_ACTIONS,
   UserPermissions,
 } from '../../common/models';
-import { Observable } from '@apollo/client/utilities';
 import { AuthState } from '../../state/auth/auth.state';
 import { Select } from '@ngxs/store';
 import { USER_ROLES_NAMES } from '../../common/constants';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',

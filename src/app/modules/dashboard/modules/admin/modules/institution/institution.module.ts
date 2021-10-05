@@ -19,16 +19,11 @@ const declarations = [
   InstitutionModalComponent,
 ];
 
-const imports = [
-  SharedModule,
-  MasterGridModule,
-  NgxsModule.forFeature([InstitutionState]),
-  InstitutionRoutingModule,
-];
+const imports = [SharedModule, MasterGridModule, InstitutionRoutingModule];
 
 @NgModule({
   declarations,
   exports: [...declarations],
-  imports,
+  imports: [...imports, NgxsModule.forFeature([InstitutionState])],
 })
 export class InstitutionModule {}

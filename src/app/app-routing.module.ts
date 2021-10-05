@@ -7,15 +7,14 @@ import {
 } from './shared/api/authentication.guard';
 import { ProfileComponent } from './pages/static/profile/profile.component';
 import { uiroutes } from './shared/common/ui-routes';
-import { AddEditMemberComponent } from './pages/forms/add-edit-member/add-edit-member.component';
+import { AddEditMemberComponent } from './modules/auth/components/add-edit-member/add-edit-member.component';
 import { AddEditGroupComponent } from './pages/forms/add-edit-group/add-edit-group.component';
 import { GroupProfileComponent } from './pages/profiles/group-profile/group-profile.component';
 import { AnnouncementProfileComponent } from './pages/profiles/announcement-profile/announcement-profile.component';
 import { AddEditAnnouncementComponent } from './pages/forms/add-edit-announcement/add-edit-announcement.component';
-import { OwnProfileComponent } from './pages/profiles/own-user-profile/own-profile.component';
 import { AddEditCourseComponent } from './pages/forms/add-edit-course/add-edit-course.component';
 import { AddEditChapterComponent } from './pages/forms/add-edit-chapter/add-edit-chapter.component';
-import { AddEditUserRoleComponent } from './pages/forms/add-edit-user-role/add-edit-user-role.component';
+import { AddEditUserRoleComponent } from './modules/dashboard/modules/admin/modules/user-role/components/forms/add-edit-user-role/add-edit-user-role.component';
 import { ChatComponent } from './pages/static/chat/chat.component';
 import { CourseProfileComponent } from './pages/profiles/course-profile/course-profile.component';
 import { ChapterProfileComponent } from './pages/profiles/chapter-profile/chapter-profile.component';
@@ -68,6 +67,7 @@ const routes: Routes = [
     data: uiroutes.MEMBER_FORM_ROUTE.auth,
     pathMatch: 'full',
   },
+
   {
     path: uiroutes.GROUP_FORM_ROUTE.route,
     component: AddEditGroupComponent,
@@ -124,13 +124,7 @@ const routes: Routes = [
     data: uiroutes.CHAPTER_PROFILE_ROUTE.auth,
     pathMatch: 'full',
   },
-  {
-    path: uiroutes.OWN_PROFILE_ROUTE.route,
-    component: OwnProfileComponent,
-    canActivate: [AuthenticationGuard],
-    data: uiroutes.OWN_PROFILE_ROUTE.auth,
-    pathMatch: 'full',
-  },
+
   {
     path: uiroutes.USER_ROLE_FORM_ROUTE.route,
     component: AddEditUserRoleComponent,
@@ -145,13 +139,7 @@ const routes: Routes = [
   //   data: uiroutes.CHAT_ROUTE.auth,
   //   pathMatch: 'full',
   // },
-  {
-    path: `${uiroutes.MEMBER_PROFILE_ROUTE.route}/:username`,
-    component: PublicUserProfileComponent,
-    canActivate: [AuthenticationGuard],
-    data: uiroutes.MEMBER_PROFILE_ROUTE.auth,
-    pathMatch: 'full',
-  },
+
   { path: '**', redirectTo: '' },
 ];
 

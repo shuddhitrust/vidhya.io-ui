@@ -33,3 +33,13 @@ export const USER_ROLES_NAMES = {
   CLASS_ADMIN_LEARNER: 'Class Admin Learner',
   LEARNER: 'Learner',
 };
+
+export const ADMIN_SECTION_LABELS = {
+  CLASS_ADMINS: 'Class Admins',
+  INSTITUTIONS: 'Institutions',
+  INSTITUTION_ADMINS: 'Institution Admins',
+  LEARNERS: 'Learners',
+  MEMBERS: 'Members',
+  MODERATION: 'Moderation',
+  USER_ROLES: 'User Roles',
+};

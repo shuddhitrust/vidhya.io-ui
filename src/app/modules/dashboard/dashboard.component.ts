@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from '@apollo/client/utilities';
 import { Select } from '@ngxs/store';
+import { Observable } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
+import { ADMIN_SECTION_LABELS } from 'src/app/shared/common/constants';
 import {
   resources,
   RESOURCE_ACTIONS,
@@ -10,15 +11,6 @@ import {
 } from 'src/app/shared/common/models';
 import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { uiroutes } from '../../shared/common/ui-routes';
-import {
-  CLASS_ADMINS_LABEL,
-  INSTITUTIONS_LABEL,
-  INSTITUTION_ADMINS_LABEL,
-  LEARNERS_LABEL,
-  MEMBERS_LABEL,
-  MODERATION_LABEL,
-  USER_ROLES_LABEL,
-} from './tabs/admin-dashboard/admin-dashboard.component';
 
 export const ADMIN = 'Admin';
 export const ANNOUNCEMENTS = 'Announcements';
@@ -39,13 +31,16 @@ const tabIndexList = {
 };
 
 const adminEntities = [
-  { value: resources.MODERATION, label: MODERATION_LABEL },
-  { value: resources.USER_ROLE, label: USER_ROLES_LABEL },
-  { value: resources.INSTITUTION, label: INSTITUTIONS_LABEL },
-  { value: resources.MEMBER, label: MEMBERS_LABEL },
-  { value: resources.INSTITUTION_ADMIN, label: INSTITUTION_ADMINS_LABEL },
-  { value: resources.CLASS_ADMIN, label: CLASS_ADMINS_LABEL },
-  { value: resources.LEARNER, label: LEARNERS_LABEL },
+  { value: resources.MODERATION, label: ADMIN_SECTION_LABELS.MODERATION },
+  { value: resources.USER_ROLE, label: ADMIN_SECTION_LABELS.USER_ROLES },
+  { value: resources.INSTITUTION, label: ADMIN_SECTION_LABELS.INSTITUTIONS },
+  { value: resources.MEMBER, label: ADMIN_SECTION_LABELS.MEMBERS },
+  {
+    value: resources.INSTITUTION_ADMIN,
+    label: ADMIN_SECTION_LABELS.INSTITUTION_ADMINS,
+  },
+  { value: resources.CLASS_ADMIN, label: ADMIN_SECTION_LABELS.CLASS_ADMINS },
+  { value: resources.LEARNER, label: ADMIN_SECTION_LABELS.LEARNERS },
 ];
 
 @Component({

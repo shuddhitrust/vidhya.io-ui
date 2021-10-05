@@ -33,8 +33,6 @@ import {
 } from 'src/app/shared/state/courseSections/courseSection.actions';
 import { emptyCourseSectionFormRecord } from 'src/app/shared/state/courseSections/courseSection.model';
 import { CourseSectionState } from 'src/app/shared/state/courseSections/courseSection.state';
-import { DeleteMemberAction } from 'src/app/shared/state/members/member.actions';
-import { UserModerationProfileComponent } from '../moderate-user/user-moderation.component';
 
 @Component({
   selector: 'course-section-modal',

@@ -61,7 +61,7 @@ import { Observable } from 'rxjs';
 import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
 import { state } from '@angular/animations';
 import { SearchParams } from '../../abstract/master-grid/table.model';
-import { memberColumns } from '../members/member.model';
+import { memberColumns } from '../../../modules/dashboard/modules/admin/modules/member/state/member.model';
 
 @State<ChatStateModel>({
   name: 'chatState',
