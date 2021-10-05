@@ -9,9 +9,9 @@ import { Location } from '@angular/common';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
-import { PasswordResetAction } from 'src/app/shared/state/auth/auth.actions';
-import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { Router } from '@angular/router';
+import { AuthState } from 'src/app/modules/auth/state/auth.state';
+import { PasswordResetAction } from 'src/app/modules/auth/state/auth.actions';
 
 @Component({
   selector: 'app-password-reset',

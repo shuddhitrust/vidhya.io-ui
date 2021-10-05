@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Select } from '@ngxs/store';
 import { ICellRendererParams } from 'ag-grid-community';
 import { Observable } from 'rxjs';
+import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { InstitutionModalComponent } from 'src/app/modules/dashboard/modules/admin/modules/institution/components/institution-modal/institution-modal.component';
 import { AuthorizationService } from '../../api/authorization/authorization.service';
 import {
@@ -10,7 +11,6 @@ import {
   resources,
   RESOURCE_ACTIONS,
 } from '../../common/models';
-import { AuthState } from '../../state/auth/auth.state';
 
 @Component({
   selector: 'app-institution-profile',

@@ -4,20 +4,20 @@ import { Router } from '@angular/router';
 import { Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
-import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import {
   resources,
   RESOURCE_ACTIONS,
   User,
 } from 'src/app/shared/common/models';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
+import { AuthState } from '../../state/auth.state';
 
 @Component({
   selector: 'app-own-profile',
   templateUrl: './own-profile.component.html',
   styleUrls: [
     './own-profile.component.scss',
-    './../../../shared/common/shared-styles.css',
+    './../../../../shared/common/shared-styles.css',
   ],
 })
 export class OwnProfileComponent implements OnInit, OnDestroy {

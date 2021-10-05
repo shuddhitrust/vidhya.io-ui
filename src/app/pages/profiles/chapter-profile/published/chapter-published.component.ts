@@ -53,7 +53,6 @@ import { CreateUpdateExerciseSubmissionsAction } from 'src/app/shared/state/exer
 import { emptyExerciseSubmissionFormRecord } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.model';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { UploadService } from 'src/app/shared/api/upload.service';
-import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { ExerciseSubmissionService } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.service';
 import {
   DragDropComponent,
@@ -66,6 +65,7 @@ import {
 import { ImageDisplayDialog } from 'src/app/shared/components/image-display/image-display-dialog.component';
 import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
 import { ExerciseSubmissionState } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.state';
+import { AuthState } from 'src/app/modules/auth/state/auth.state';
 
 const startingExerciseFormOptions = ['', ''];
 

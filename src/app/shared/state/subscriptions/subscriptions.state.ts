@@ -21,7 +21,7 @@ import { CourseSubscriptionAction } from '../courses/course.actions';
 import { ChatMessageSubscriptionAction } from '../chats/chat.actions';
 import { resources, RESOURCE_ACTIONS } from '../../common/models';
 import { Observable } from 'rxjs';
-import { AuthState } from '../auth/auth.state';
+import { AuthState } from 'src/app/modules/auth/state/auth.state';
 
 @State<SubscriptionsStateModel>({
   name: 'subscriptionState',

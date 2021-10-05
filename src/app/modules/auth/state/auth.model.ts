@@ -2,7 +2,7 @@ import {
   CurrentMember,
   defaultResourcePermissions,
   UserPermissions,
-} from '../../common/models';
+} from '../../../shared/common/models';
 
 export const AuthStorageOptions = {
   session: 'sessionStorage',

@@ -27,7 +27,6 @@ import { Apollo } from 'apollo-angular';
 
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import {
   FetchParams,
   MatSelectOption,
@@ -45,6 +44,7 @@ import { USER_ROLE_QUERIES } from 'src/app/shared/api/graphql/queries.graphql';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { SUBSCRIPTIONS } from 'src/app/shared/api/graphql/subscriptions.graphql';
 import { USER_ROLE_MUTATIONS } from 'src/app/shared/api/graphql/mutations.graphql';
+import { AuthState } from 'src/app/modules/auth/state/auth.state';
 
 @State<UserRoleStateModel>({
   name: 'roleState',

@@ -11,14 +11,6 @@ import {
   AuthStorageOptions,
   defaultAuthState,
 } from './auth.model';
-import {
-  CurrentMember,
-  MembershipStatusOptions,
-  resources,
-  RESOURCE_ACTIONS,
-  User,
-  UserPermissions,
-} from '../../common/models';
 
 import { Injectable, OnInit } from '@angular/core';
 import {
@@ -45,20 +37,26 @@ import {
   SetAuthStorage,
   GetAuthStorage,
 } from './auth.actions';
-import { ShowNotificationAction } from '../notifications/notification.actions';
 import { Apollo } from 'apollo-angular';
-import { AUTH_MUTATIONS } from '../../api/graphql/mutations.graphql';
-import { AUTH_QUERIES } from '../../api/graphql/queries.graphql';
+
+import jwtDecode from 'jwt-decode';
+import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
+import { localStorageKeys, minute } from 'src/app/shared/common/constants';
+import {
+  CurrentMember,
+  MembershipStatusOptions,
+  UserPermissions,
+} from 'src/app/shared/common/models';
+import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
+import { AUTH_MUTATIONS } from 'src/app/shared/api/graphql/mutations.graphql';
+import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import {
   constructPermissions,
   getErrorMessageFromGraphQLResponse,
-} from '../../common/functions';
-import { localStorageKeys, minute } from '../../common/constants';
-import jwtDecode from 'jwt-decode';
-import { Observable } from 'rxjs';
-import { ToggleLoadingScreen } from '../loading/loading.actions';
-import { uiroutes } from '../../common/ui-routes';
-import { Router } from '@angular/router';
+} from 'src/app/shared/common/functions';
+import { AUTH_QUERIES } from 'src/app/shared/api/graphql/queries.graphql';
+import { uiroutes } from 'src/app/shared/common/ui-routes';
 
 /**
  * Auth flow steps:-

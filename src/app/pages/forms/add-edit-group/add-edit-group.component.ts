@@ -36,7 +36,7 @@ import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.action
 import { environment } from 'src/environments/environment';
 import { UploadService } from 'src/app/shared/api/upload.service';
 import { FetchMemberOptionsByInstitution } from 'src/app/shared/state/options/options.actions';
-import { AuthState } from 'src/app/shared/state/auth/auth.state';
+import { AuthState } from 'src/app/modules/auth/state/auth.state';
 
 @Component({
   selector: 'app-add-edit-group',

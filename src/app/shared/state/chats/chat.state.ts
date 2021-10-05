@@ -56,12 +56,10 @@ import {
 } from '../../common/functions';
 import { Router } from '@angular/router';
 import { defaultLogos, defaultSearchParams } from '../../common/constants';
-import { AuthState } from '../auth/auth.state';
 import { Observable } from 'rxjs';
 import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
-import { state } from '@angular/animations';
 import { SearchParams } from '../../abstract/master-grid/table.model';
-import { memberColumns } from '../../../modules/dashboard/modules/admin/modules/member/state/member.model';
+import { AuthState } from 'src/app/modules/auth/state/auth.state';
 
 @State<ChatStateModel>({
   name: 'chatState',

@@ -1,5 +1,5 @@
 import { FormGroup, FormGroupDirective } from '@angular/forms';
-import { CurrentMember, User } from '../../common/models';
+import { CurrentMember } from '../../../shared/common/models';
 
 export class SetAuthSessionAction {
   static readonly type = '[AUTH] Set Auth Session';

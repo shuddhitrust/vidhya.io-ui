@@ -7,10 +7,10 @@ import {
   RESOURCE_ACTIONS,
   UserPermissions,
 } from '../../common/models';
-import { AuthState } from '../../state/auth/auth.state';
 import { Select } from '@ngxs/store';
 import { USER_ROLES_NAMES } from '../../common/constants';
 import { Observable } from 'rxjs';
+import { AuthState } from 'src/app/modules/auth/state/auth.state';
 
 @Injectable({
   providedIn: 'root',

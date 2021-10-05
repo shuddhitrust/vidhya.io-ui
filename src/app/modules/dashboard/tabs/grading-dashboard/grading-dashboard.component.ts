@@ -5,7 +5,6 @@ import {
   OnInit,
   ViewEncapsulation,
 } from '@angular/core';
-import { Location } from '@angular/common';
 import {
   MatDialog,
   MatDialogRef,
@@ -54,11 +53,11 @@ import {
 import { ExerciseSubmissionService } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.service';
 import { ExerciseSubmissionState } from 'src/app/shared/state/exerciseSubmissions/exerciseSubmission.state';
 import { ImageDisplayDialog } from 'src/app/shared/components/image-display/image-display-dialog.component';
-import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import {
   MasterConfirmationDialog,
   MasterConfirmationDialogObject,
 } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import { AuthState } from 'src/app/modules/auth/state/auth.state';
 
 /**
  * If you wish to change how it shows in the UI, just change the key.

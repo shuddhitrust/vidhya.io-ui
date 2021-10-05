@@ -1,34 +1,18 @@
 import { Location } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
-import { GetAuthStorage } from './modules/auth/state/auth.actions';
-import { AuthState } from './modules/auth/state/auth.state';
-import { uiroutes } from './shared/common/ui-routes';
+import { uiroutes } from 'src/app/shared/common/ui-routes';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+  selector: 'app-public-component',
+  templateUrl: './public.component.html',
+  styleUrls: ['./public.component.scss'],
 })
-export class AppComponent {
+export class PublicComponent {
   title = 'vidhya-ui';
   uiroutes = uiroutes;
-  @Select(AuthState.getIsFullyAuthenticated)
-  isFullyAuthenticated$: Observable<boolean>;
-  @Select(AuthState.getFirstTimeSetup)
-  firstTimeSetup$: Observable<boolean>;
-  firstTimeSetup;
-  constructor(
-    private store: Store,
-    private router: Router,
-    private readonly location: Location
-  ) {
-    this.firstTimeSetup$.subscribe((val) => {
-      this.firstTimeSetup = val;
-    });
-  }
+  @Input() firstTimeSetup;
+  constructor(private router: Router, private readonly location: Location) {}
 
   currentRoute(): string {
     return this.location.path().substring(1);
@@ -87,13 +71,4 @@ export class AppComponent {
     }
     return false;
   }
-
-  ngOnInit(): void {
-    this.checkAuthentication();
-  }
-  checkAuthentication() {
-    this.store.dispatch(new GetAuthStorage());
-  }
-
-  ngOnDestroy() {}
 }

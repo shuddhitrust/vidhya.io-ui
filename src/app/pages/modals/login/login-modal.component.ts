@@ -18,17 +18,7 @@ import {
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { Select, Store } from '@ngxs/store';
-import {
-  LoginAction,
-  RegisterAction,
-  ResendActivationEmailAction,
-  SendPasswordResetEmailAction,
-  SetAuthStorage,
-  VerifyInvitecodeAction,
-} from 'src/app/shared/state/auth/auth.actions';
-import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { Observable } from 'rxjs';
-import { AuthStateModel } from 'src/app/shared/state/auth/auth.model';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { ActivatedRoute } from '@angular/router';
 import {
@@ -36,6 +26,16 @@ import {
   sanitizeUsername,
 } from 'src/app/shared/common/functions';
 import { localStorageKeys } from 'src/app/shared/common/constants';
+import { AuthState } from 'src/app/modules/auth/state/auth.state';
+import { AuthStateModel } from 'src/app/modules/auth/state/auth.model';
+import {
+  LoginAction,
+  RegisterAction,
+  ResendActivationEmailAction,
+  SendPasswordResetEmailAction,
+  SetAuthStorage,
+  VerifyInvitecodeAction,
+} from 'src/app/modules/auth/state/auth.actions';
 
 const INVITECODE = 'INVITECODE';
 const REGISTER = 'REGISTER';

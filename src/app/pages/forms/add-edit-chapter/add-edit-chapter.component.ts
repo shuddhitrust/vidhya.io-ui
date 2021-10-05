@@ -23,7 +23,6 @@ import {
   Course,
   MatSelectOption,
 } from 'src/app/shared/common/models';
-import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { GroupState } from 'src/app/shared/state/groups/group.state';
 import { FetchCoursesAction } from 'src/app/shared/state/courses/course.actions';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
@@ -33,6 +32,7 @@ import {
   FetchCourseSectionsAction,
   GetCourseSectionAction,
 } from 'src/app/shared/state/courseSections/courseSection.actions';
+import { AuthState } from 'src/app/modules/auth/state/auth.state';
 @Component({
   selector: 'app-add-edit-chapter',
   templateUrl: './add-edit-chapter.component.html',

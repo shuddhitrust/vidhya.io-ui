@@ -58,17 +58,16 @@ import {
 import { ScullyLibModule } from '@scullyio/ng-lib';
 import { DragDropComponent } from './shared/components/drag-drop/drag-drop.component';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
-import { AddEditMemberComponent } from './modules/auth/components/add-edit-member/add-edit-member.component';
 import { AppLoadingOverlayComponent } from './shared/components/loading/loading.component';
 import { SharedModule } from './shared/modules/shared.module';
 import { PublicModule } from './modules/public/public.module';
 import { AppRoutingModule } from './app-routing.module';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AuthState } from './shared/state/auth/auth.state';
 import { environment } from 'src/environments/environment';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsModule } from '@ngxs/store';
+import { AuthModule } from './modules/auth/auth.module';
 // function that returns `MarkedOptions` with renderer override
 
 @NgModule({
@@ -78,7 +77,6 @@ import { NgxsModule } from '@ngxs/store';
     ProfileComponent,
     AccountComponent,
     DragDropComponent,
-    AddEditMemberComponent,
     AppLoadingOverlayComponent,
   ],
   imports: [
@@ -86,13 +84,14 @@ import { NgxsModule } from '@ngxs/store';
     HttpClientModule,
     BrowserAnimationsModule,
     SharedModule,
+    AuthModule,
     PublicModule,
     DashboardModule,
     GraphQLModule,
     // TokenUpdater,
     ScullyLibModule,
     [
-      NgxsModule.forRoot([AuthState], {
+      NgxsModule.forRoot([], {
         developmentMode: !environment.production,
       }),
       NgxsReduxDevtoolsPluginModule.forRoot(),

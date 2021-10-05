@@ -12,9 +12,9 @@ import { environment } from 'src/environments/environment';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { Select } from '@ngxs/store';
-import { AuthState } from '../../state/auth/auth.state';
 import { Observable } from 'rxjs';
 import { localStorageKeys } from '../../common/constants';
+import { AuthState } from 'src/app/modules/auth/state/auth.state';
 
 const uri = environment.graphql_endpoint;
 let token = sessionStorage.getItem(localStorageKeys.AUTH_TOKEN_KEY);

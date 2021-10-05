@@ -9,8 +9,8 @@ import {
   RESOURCE_ACTIONS,
   UserPermissions,
 } from 'src/app/shared/common/models';
-import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { uiroutes } from '../../shared/common/ui-routes';
+import { AuthState } from '../auth/state/auth.state';
 
 export const ADMIN = 'Admin';
 export const ANNOUNCEMENTS = 'Announcements';

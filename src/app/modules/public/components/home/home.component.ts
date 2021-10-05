@@ -3,6 +3,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
+import { VerifyAccountAction } from 'src/app/modules/auth/state/auth.actions';
+import { AuthStateModel } from 'src/app/modules/auth/state/auth.model';
+import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import {
   defaultSearchParams,
   USER_ROLES_NAMES,
@@ -13,9 +16,6 @@ import {
 } from 'src/app/shared/common/functions';
 import { MembershipStatusOptions, User } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
-import { VerifyAccountAction } from 'src/app/shared/state/auth/auth.actions';
-import { AuthStateModel } from 'src/app/shared/state/auth/auth.model';
-import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { LoginModalComponent } from '../../../../pages/modals/login/login-modal.component';
 import {

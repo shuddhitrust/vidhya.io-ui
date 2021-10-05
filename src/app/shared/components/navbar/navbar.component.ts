@@ -3,16 +3,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Store, Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
+import {
+  LogoutAction,
+  OpenLoginFormAction,
+} from 'src/app/modules/auth/state/auth.actions';
+import { AuthStateModel } from 'src/app/modules/auth/state/auth.model';
+import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { LoginModalComponent } from 'src/app/pages/modals/login/login-modal.component';
 import { CurrentMember } from '../../common/models';
 import { uiroutes } from '../../common/ui-routes';
-import {
-  LoginAction,
-  LogoutAction,
-  OpenLoginFormAction,
-} from '../../state/auth/auth.actions';
-import { AuthStateModel } from '../../state/auth/auth.model';
-import { AuthState } from '../../state/auth/auth.state';
 
 @Component({
   selector: 'app-navbar',

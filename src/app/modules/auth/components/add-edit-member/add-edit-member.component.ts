@@ -18,20 +18,20 @@ import { Observable } from 'rxjs';
 import { emptyMemberFormRecord } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.model';
 import { InstitutionState } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.state';
 import { MatSelectOption, User } from 'src/app/shared/common/models';
-import { AuthState } from 'src/app/shared/state/auth/auth.state';
-import { AuthStateModel } from 'src/app/shared/state/auth/auth.model';
 import { OptionsState } from 'src/app/shared/state/options/options.state';
 import { OptionsStateModel } from 'src/app/shared/state/options/options.model';
 import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
 import { UploadService } from 'src/app/shared/api/upload.service';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
+import { AuthState } from '../../state/auth.state';
+import { AuthStateModel } from '../../state/auth.model';
 
 @Component({
   selector: 'app-add-edit-member',
   templateUrl: './add-edit-member.component.html',
   styleUrls: [
     './add-edit-member.component.scss',
-    './../../../shared/common/shared-styles.css',
+    './../../../../shared/common/shared-styles.css',
   ],
 })
 export class AddEditMemberComponent implements OnInit {

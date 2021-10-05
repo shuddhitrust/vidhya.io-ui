@@ -18,13 +18,13 @@ import { CourseState } from 'src/app/shared/state/courses/course.state';
 import { Observable } from 'rxjs';
 import { emptyCourseFormRecord } from 'src/app/shared/state/courses/course.model';
 import { Course, MatSelectOption } from 'src/app/shared/common/models';
-import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { InstitutionState } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.state';
 import { FetchInstitutionsAction } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.actions';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { OptionsState } from 'src/app/shared/state/options/options.state';
 import { FetchMemberOptionsByInstitution } from 'src/app/shared/state/options/options.actions';
 import { DefaultColDef } from 'src/app/shared/abstract/master-grid/table.config';
+import { AuthState } from 'src/app/modules/auth/state/auth.state';
 @Component({
   selector: 'app-add-edit-course',
   templateUrl: './add-edit-course.component.html',

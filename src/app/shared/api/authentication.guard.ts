@@ -8,8 +8,6 @@ import {
 import { Observable } from 'rxjs';
 import { Select, Store } from '@ngxs/store';
 import { ShowNotificationAction } from '../state/notifications/notification.actions';
-import { AuthState } from '../state/auth/auth.state';
-import { AuthStateModel } from '../state/auth/auth.model';
 import {
   HttpEvent,
   HttpHandler,
@@ -18,6 +16,8 @@ import {
 } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { AuthorizationService } from './authorization/authorization.service';
+import { AuthState } from 'src/app/modules/auth/state/auth.state';
+import { AuthStateModel } from 'src/app/modules/auth/state/auth.model';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {

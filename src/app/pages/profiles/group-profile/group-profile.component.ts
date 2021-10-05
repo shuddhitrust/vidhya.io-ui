@@ -23,7 +23,6 @@ import {
   RESOURCE_ACTIONS,
 } from 'src/app/shared/common/models';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
-import { AuthState } from 'src/app/shared/state/auth/auth.state';
 import { OptionsState } from 'src/app/shared/state/options/options.state';
 import { FetchMemberOptionsByInstitution } from 'src/app/shared/state/options/options.actions';
 import { groupTypeOptions } from 'src/app/shared/state/groups/group.model';
@@ -31,6 +30,7 @@ import {
   MasterConfirmationDialog,
   MasterConfirmationDialogObject,
 } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import { AuthState } from 'src/app/modules/auth/state/auth.state';
 
 @Component({
   selector: 'app-group-profile',

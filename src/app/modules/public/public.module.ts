@@ -9,6 +9,8 @@ import { environment } from 'src/environments/environment';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsModule } from '@ngxs/store';
 import { PublicState } from './state/public/public.state';
+import { PublicComponent } from './components/public/public.component';
+import { AuthModule } from '../auth/auth.module';
 // function that returns `MarkedOptions` with renderer override
 
 const declarations = [
@@ -16,6 +18,7 @@ const declarations = [
   PasswordResetComponent,
   PrivacyComponent,
   PublicUserProfileComponent,
+  PublicComponent,
 ];
 
 @NgModule({
@@ -23,6 +26,7 @@ const declarations = [
   exports: [...declarations],
   imports: [
     SharedModule,
+    AuthModule,
     PublicRoutingModule,
     NgxsModule.forFeature([PublicState]),
   ],

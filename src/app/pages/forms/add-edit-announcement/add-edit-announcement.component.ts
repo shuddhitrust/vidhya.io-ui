@@ -21,8 +21,6 @@ import {
   CurrentMember,
   MatSelectOption,
 } from 'src/app/shared/common/models';
-import { AuthState } from 'src/app/shared/state/auth/auth.state';
-import { GroupState } from 'src/app/shared/state/groups/group.state';
 import {
   defaultSearchParams,
   USER_ROLES_NAMES,
@@ -30,6 +28,7 @@ import {
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { OptionsState } from 'src/app/shared/state/options/options.state';
 import { FetchAdminGroupOptions } from 'src/app/shared/state/options/options.actions';
+import { AuthState } from 'src/app/modules/auth/state/auth.state';
 @Component({
   selector: 'app-add-edit-announcement',
   templateUrl: './add-edit-announcement.component.html',

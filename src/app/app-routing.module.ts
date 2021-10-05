@@ -7,7 +7,6 @@ import {
 } from './shared/api/authentication.guard';
 import { ProfileComponent } from './pages/static/profile/profile.component';
 import { uiroutes } from './shared/common/ui-routes';
-import { AddEditMemberComponent } from './modules/auth/components/add-edit-member/add-edit-member.component';
 import { AddEditGroupComponent } from './pages/forms/add-edit-group/add-edit-group.component';
 import { GroupProfileComponent } from './pages/profiles/group-profile/group-profile.component';
 import { AnnouncementProfileComponent } from './pages/profiles/announcement-profile/announcement-profile.component';
@@ -18,7 +17,6 @@ import { AddEditUserRoleComponent } from './modules/dashboard/modules/admin/modu
 import { ChatComponent } from './pages/static/chat/chat.component';
 import { CourseProfileComponent } from './pages/profiles/course-profile/course-profile.component';
 import { ChapterProfileComponent } from './pages/profiles/chapter-profile/chapter-profile.component';
-import { PublicUserProfileComponent } from './modules/public/components/public-user-profile/public-user-profile.component';
 
 // import { InstitutionProfileComponent } from './pages/modals/institution-profile/institution-profile.component';
 
@@ -59,14 +57,6 @@ const routes: Routes = [
   //   data: uiroutes.SUPPORT_ROUTE.auth,
   //   pathMatch: 'full',
   // },
-
-  {
-    path: uiroutes.MEMBER_FORM_ROUTE.route,
-    component: AddEditMemberComponent,
-    canActivate: [RegistrationFormAuthGuard],
-    data: uiroutes.MEMBER_FORM_ROUTE.auth,
-    pathMatch: 'full',
-  },
 
   {
     path: uiroutes.GROUP_FORM_ROUTE.route,

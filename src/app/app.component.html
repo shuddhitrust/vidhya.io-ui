@@ -1,26 +1,15 @@
 <div id="main">
   <app-navbar></app-navbar>
   <router-outlet
-    *ngIf="isFullyAuthenticated$ | async; else otherStuff"
+    *ngIf="isFullyAuthenticated$ | async; else publicTemplate"
   ></router-outlet>
   <!-- <router-outlet *ngIf="showApp; else homePage"></router-outlet> -->
 </div>
 
-<ng-template #otherStuff>
-  <app-password-reset
-    *ngIf="showUnprotectedPage(uiroutes.PASSWORD_RESET_ROUTE.route)"
-  ></app-password-reset>
-  <app-add-edit-member
-    *ngIf="showUnprotectedPage(uiroutes.MEMBER_FORM_ROUTE.route)"
-  >
-  </app-add-edit-member>
-  <app-public-user-profile
-    *ngIf="showUnprotectedPage(uiroutes.MEMBER_PROFILE_ROUTE.route)"
-  >
-  </app-public-user-profile>
-  <app-privacy *ngIf="showUnprotectedPage(uiroutes.PRIVACY_ROUTE.route)">
-  </app-privacy>
-  <app-home *ngIf="showHomePage()"></app-home>
+<ng-template #publicTemplate>
+  <app-public-component
+    [firstTimeSetup]="firstTimeSetup"
+  ></app-public-component>
 </ng-template>
 
 <app-loading></app-loading>

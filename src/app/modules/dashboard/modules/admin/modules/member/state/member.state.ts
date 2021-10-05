@@ -25,37 +25,27 @@ import {
   ResetMemberFormAction,
   SuspendMemberAction,
 } from './member.actions';
-import {
-  AUTH_QUERIES,
-  USER_QUERIES,
-} from '../../../../../../../shared/api/graphql/queries.graphql';
+import { USER_QUERIES } from '../../../../../../../shared/api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
 import {
   User,
-  MatSelectOption,
   FetchParams,
   startingFetchParams,
 } from '../../../../../../../shared/common/models';
 import { USER_MUTATIONS } from '../../../../../../../shared/api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../../../../../../../shared/state/notifications/notification.actions';
 import {
-  convertPaginatedListToNormalList,
   getErrorMessageFromGraphQLResponse,
   subscriptionUpdater,
   updateFetchParams,
 } from '../../../../../../../shared/common/functions';
-import { defaultSearchParams } from '../../../../../../../shared/common/constants';
-import {
-  GetCurrentUserAction,
-  LogoutAction,
-  UpdateCurrentUserInStateAction,
-} from '../../../../../../../shared/state/auth/auth.actions';
 import { Router } from '@angular/router';
-import { AuthState } from '../../../../../../../shared/state/auth/auth.state';
 import { Observable } from 'rxjs';
 import { SUBSCRIPTIONS } from '../../../../../../../shared/api/graphql/subscriptions.graphql';
 import { uiroutes } from '../../../../../../../shared/common/ui-routes';
 import { SearchParams } from '../../../../../../../shared/abstract/master-grid/table.model';
+import { AuthState } from 'src/app/modules/auth/state/auth.state';
+import { UpdateCurrentUserInStateAction } from 'src/app/modules/auth/state/auth.actions';
 
 @State<MemberStateModel>({
   name: 'memberState',

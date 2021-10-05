@@ -1,0 +1,14 @@
+<app-password-reset
+  *ngIf="showUnprotectedPage(uiroutes.PASSWORD_RESET_ROUTE.route)"
+></app-password-reset>
+<app-add-edit-member
+  *ngIf="showUnprotectedPage(uiroutes.MEMBER_FORM_ROUTE.route)"
+>
+</app-add-edit-member>
+<app-public-user-profile
+  *ngIf="showUnprotectedPage(uiroutes.MEMBER_PROFILE_ROUTE.route)"
+>
+</app-public-user-profile>
+<app-privacy *ngIf="showUnprotectedPage(uiroutes.PRIVACY_ROUTE.route)">
+</app-privacy>
+<app-home *ngIf="showHomePage()"></app-home>
