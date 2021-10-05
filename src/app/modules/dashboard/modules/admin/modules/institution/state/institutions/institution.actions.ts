@@ -1,6 +1,6 @@
 import { FormGroup, FormGroupDirective } from '@angular/forms';
-import { SearchParams } from '../../../../../../shared/abstract/master-grid/table.model';
-import { idPayload } from '../../../../../../shared/common/models';
+import { SearchParams } from '../../../../../../../../shared/abstract/master-grid/table.model';
+import { idPayload } from '../../../../../../../../shared/common/models';
 
 export class FetchInstitutionsAction {
   static readonly type = '[INSTITUTIONS] Fetch';

@@ -12,10 +12,10 @@ import { ActivatedRoute } from '@angular/router';
 import {
   CreateUpdateInstitutionAction,
   GetInstitutionAction,
-} from 'src/app/modules/dashboard/modules/institution/state/institutions/institution.actions';
-import { InstitutionState } from 'src/app/modules/dashboard/modules/institution/state/institutions/institution.state';
+} from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.actions';
+import { InstitutionState } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.state';
 import { Observable } from 'rxjs';
-import { emptyInstitutionFormRecord } from 'src/app/modules/dashboard/modules/institution/state/institutions/institution.model';
+import { emptyInstitutionFormRecord } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.model';
 import { Institution } from 'src/app/shared/common/models';
 import { UploadService } from 'src/app/shared/api/upload.service';
 import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';

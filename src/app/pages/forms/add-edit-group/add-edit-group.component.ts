@@ -19,13 +19,13 @@ import {
   emptyGroupFormRecord,
   groupTypeOptions,
 } from 'src/app/shared/state/groups/group.model';
-import { InstitutionState } from 'src/app/modules/dashboard/modules/institution/state/institutions/institution.state';
+import { InstitutionState } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.state';
 import {
   CurrentMember,
   Group,
   MatSelectOption,
 } from 'src/app/shared/common/models';
-import { FetchInstitutionsAction } from 'src/app/modules/dashboard/modules/institution/state/institutions/institution.actions';
+import { FetchInstitutionsAction } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.actions';
 import { OptionsState } from 'src/app/shared/state/options/options.state';
 import {
   defaultSearchParams,

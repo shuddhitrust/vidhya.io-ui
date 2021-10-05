@@ -9,11 +9,11 @@ import {
   resources,
   RESOURCE_ACTIONS,
 } from 'src/app/shared/common/models';
-import { InstitutionState } from 'src/app/modules/dashboard/modules/institution/state/institutions/institution.state';
+import { InstitutionState } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.state';
 import {
   DeleteInstitutionAction,
   GetInstitutionAction,
-} from 'src/app/modules/dashboard/modules/institution/state/institutions/institution.actions';
+} from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.actions';
 import {
   MatDialog,
   MatDialogRef,

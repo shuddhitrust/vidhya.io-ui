@@ -17,8 +17,8 @@ import {
   ForceRefetchInstitutionsAction,
   FetchInstitutionsAction,
   ResetInstitutionFormAction,
-} from 'src/app/modules/dashboard/modules/institution/state/institutions/institution.actions';
-import { InstitutionState } from 'src/app/modules/dashboard/modules/institution/state/institutions/institution.state';
+} from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.actions';
+import { InstitutionState } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.state';
 import { InstitutionModalComponent } from '../institution-modal/institution-modal.component';
 
 @Component({
