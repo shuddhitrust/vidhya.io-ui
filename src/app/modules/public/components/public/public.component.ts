@@ -44,17 +44,17 @@ export class PublicComponent {
   showUnprotectedPage(route) {
     switch (route) {
       case uiroutes.PASSWORD_RESET_ROUTE.route:
-        if (this.router.url.includes(uiroutes.PASSWORD_RESET_ROUTE.route)) {
+        if (this.router.url.startsWith(uiroutes.PASSWORD_RESET_ROUTE.route)) {
           return true;
         }
         break;
       case uiroutes.MEMBER_PROFILE_ROUTE.route:
-        if (this.router.url.includes(uiroutes.MEMBER_PROFILE_ROUTE.route)) {
+        if (this.router.url.startsWith(uiroutes.MEMBER_PROFILE_ROUTE.route)) {
           return true;
         }
         break;
       case uiroutes.PRIVACY_ROUTE.route:
-        if (this.router.url.includes(uiroutes.PRIVACY_ROUTE.route)) {
+        if (this.router.url.startsWith(uiroutes.PRIVACY_ROUTE.route)) {
           return true;
         }
         break;
@@ -66,8 +66,13 @@ export class PublicComponent {
           return true;
         }
         break;
+      case uiroutes.HOME_ROUTE.route:
+        if (this.currentRoute() == uiroutes.HOME_ROUTE.route) {
+          return true;
+        }
+        break;
       default:
-        this.router.navigate[uiroutes.HOME_ROUTE.route];
+        this.router.navigate[uiroutes.ERROR_ROUTE.route];
     }
     return false;
   }

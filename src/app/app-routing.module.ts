@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthenticationGuard } from './shared/api/authentication.guard';
 import { uiroutes } from './shared/common/ui-routes';
+import { ErrorPageComponent } from './modules/public/components/error/error.component';
+
 const routes: Routes = [
   {
     path: uiroutes.DASHBOARD_ROUTE.route,
@@ -19,7 +21,6 @@ const routes: Routes = [
     canActivate: [AuthenticationGuard],
     data: null,
   },
-  { path: '**', redirectTo: '' },
 ];
 
 @NgModule({

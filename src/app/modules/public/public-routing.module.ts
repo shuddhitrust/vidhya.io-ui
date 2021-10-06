@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthenticationGuard } from './../../shared/api/authentication.guard';
 import { uiroutes } from './../../shared/common/ui-routes';
+import { ErrorPageComponent } from './components/error/error.component';
 import { HomeComponent } from './components/home/home.component';
 import { PasswordResetComponent } from './components/password-reset/password-reset.component';
 import { PrivacyComponent } from './components/privacy/privacy.component';
@@ -46,6 +47,7 @@ const routes: Routes = [
     pathMatch: 'full',
   },
   { path: '', component: HomeComponent },
+  { path: '**', pathMatch: 'full', component: ErrorPageComponent },
   // End of public routes
 ];
 

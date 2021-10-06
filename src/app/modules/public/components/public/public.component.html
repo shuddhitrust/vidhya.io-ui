@@ -11,4 +11,7 @@
 </app-public-user-profile>
 <app-privacy *ngIf="showUnprotectedPage(uiroutes.PRIVACY_ROUTE.route)">
 </app-privacy>
+<app-error-component *ngIf="showUnprotectedPage(uiroutes.ERROR_ROUTE.route)">
+  `
+</app-error-component>
 <app-home *ngIf="showHomePage()"></app-home>
