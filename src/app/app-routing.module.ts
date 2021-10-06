@@ -9,8 +9,6 @@ import { ProfileComponent } from './pages/static/profile/profile.component';
 import { uiroutes } from './shared/common/ui-routes';
 import { AddEditGroupComponent } from './pages/forms/add-edit-group/add-edit-group.component';
 import { GroupProfileComponent } from './pages/profiles/group-profile/group-profile.component';
-import { AnnouncementProfileComponent } from './pages/profiles/announcement-profile/announcement-profile.component';
-import { AddEditAnnouncementComponent } from './pages/forms/add-edit-announcement/add-edit-announcement.component';
 import { AddEditCourseComponent } from './pages/forms/add-edit-course/add-edit-course.component';
 import { AddEditChapterComponent } from './pages/forms/add-edit-chapter/add-edit-chapter.component';
 import { AddEditUserRoleComponent } from './modules/dashboard/modules/admin/modules/user-role/components/forms/add-edit-user-role/add-edit-user-role.component';
@@ -70,20 +68,6 @@ const routes: Routes = [
     component: GroupProfileComponent,
     canActivate: [AuthenticationGuard],
     data: uiroutes.GROUP_PROFILE_ROUTE.auth,
-    pathMatch: 'full',
-  },
-  {
-    path: uiroutes.ANNOUNCEMENT_FORM_ROUTE.route,
-    component: AddEditAnnouncementComponent,
-    canActivate: [AuthenticationGuard],
-    data: uiroutes.ANNOUNCEMENT_FORM_ROUTE.auth,
-    pathMatch: 'full',
-  },
-  {
-    path: uiroutes.ANNOUNCEMENT_PROFILE_ROUTE.route,
-    component: AnnouncementProfileComponent,
-    canActivate: [AuthenticationGuard],
-    data: uiroutes.ANNOUNCEMENT_PROFILE_ROUTE.auth,
     pathMatch: 'full',
   },
   {

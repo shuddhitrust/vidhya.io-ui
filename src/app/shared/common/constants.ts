@@ -1,3 +1,4 @@
+import { MarkedOptions, MarkedRenderer } from 'ngx-markdown';
 import { SearchParams } from '../abstract/master-grid/table.model';
 
 export const secondInMillseconds = 60000;
@@ -43,3 +44,29 @@ export const ADMIN_SECTION_LABELS = {
   MODERATION: 'Moderation',
   USER_ROLES: 'User Roles',
 };
+
+/**
+ * Marked options for import into modules that use Markdown
+ */
+export function markedOptionsFactory(): MarkedOptions {
+  const renderer = new MarkedRenderer();
+
+  renderer.blockquote = (text: string) => {
+    return '<blockquote class="blockquote"><p>' + text + '</p></blockquote>';
+  };
+
+  const linkRenderer = renderer.link;
+  renderer.link = (href, title, text) => {
+    const html = linkRenderer.call(renderer, href, title, text);
+    return html.replace(/^<a /, '<a target="_blank" rel="nofollow" ');
+  };
+
+  return {
+    renderer: renderer,
+    gfm: true,
+    breaks: false,
+    pedantic: false,
+    smartLists: true,
+    smartypants: false,
+  };
+}

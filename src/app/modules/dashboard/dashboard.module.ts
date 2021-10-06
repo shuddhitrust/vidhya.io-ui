@@ -3,7 +3,6 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
 import { DashboardComponent } from './dashboard.component';
 import { ReportDashboardComponent } from './tabs/report-dashboard/report-dashboard.component';
 import { CourseDashboardComponent } from './tabs/course-dashboard/course-dashboard.component';
-import { AnnouncementDashboardComponent } from './tabs/announcement-dashboard/announcement-dashboard.component';
 import { AssignmentDashboardComponent } from './tabs/assignment-dashboard/assignment-dashboard.component';
 import { GroupDashboardComponent } from './tabs/group-dashboard/group-dashboard.component';
 import {
@@ -24,9 +23,6 @@ import { AddEditGroupComponent } from '../../pages/forms/add-edit-group/add-edit
 import { AddEditChapterComponent } from '../../pages/forms/add-edit-chapter/add-edit-chapter.component';
 import { AddEditCourseComponent } from '../../pages/forms/add-edit-course/add-edit-course.component';
 import { GroupProfileComponent } from '../../pages/profiles/group-profile/group-profile.component';
-import { AnnouncementProfileComponent } from '../../pages/profiles/announcement-profile/announcement-profile.component';
-import { AddEditAnnouncementComponent } from '../../pages/forms/add-edit-announcement/add-edit-announcement.component';
-
 import { LMarkdownEditorModule } from 'ngx-markdown-editor';
 import { MarkdownModule, MarkedOptions, MarkedRenderer } from 'ngx-markdown';
 import { HttpClient } from '@angular/common/http';
@@ -38,7 +34,6 @@ import { NotificationState } from 'src/app/shared/state/notifications/notificati
 import { LoadingState } from 'src/app/shared/state/loading/loading.state';
 import { MemberState } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.state';
 import { GroupState } from 'src/app/shared/state/groups/group.state';
-import { AnnouncementState } from 'src/app/shared/state/announcements/announcement.state';
 import { CourseState } from 'src/app/shared/state/courses/course.state';
 import { AssignmentState } from 'src/app/shared/state/assignments/assignment.state';
 import { CourseSectionState } from 'src/app/shared/state/courseSections/courseSection.state';
@@ -59,34 +54,11 @@ import { MasterGridModule } from 'src/app/shared/abstract/master-grid/master-gri
 import { ReportsTableComponent } from './../../pages/tables/reports-table/reports-table.component';
 import { AdminModule } from './modules/admin/admin.module';
 import { AnnouncementModule } from './modules/announcement/announcement.module';
-
-export function markedOptionsFactory(): MarkedOptions {
-  const renderer = new MarkedRenderer();
-
-  renderer.blockquote = (text: string) => {
-    return '<blockquote class="blockquote"><p>' + text + '</p></blockquote>';
-  };
-
-  const linkRenderer = renderer.link;
-  renderer.link = (href, title, text) => {
-    const html = linkRenderer.call(renderer, href, title, text);
-    return html.replace(/^<a /, '<a target="_blank" rel="nofollow" ');
-  };
-
-  return {
-    renderer: renderer,
-    gfm: true,
-    breaks: false,
-    pedantic: false,
-    smartLists: true,
-    smartypants: false,
-  };
-}
+import { markedOptionsFactory } from 'src/app/shared/common/constants';
 
 @NgModule({
   declarations: [
     DashboardComponent,
-    AnnouncementDashboardComponent,
     AssignmentDashboardComponent,
     CourseDashboardComponent,
     GroupDashboardComponent,
@@ -94,8 +66,6 @@ export function markedOptionsFactory(): MarkedOptions {
     ReportDashboardComponent,
     AddEditGroupComponent,
     GroupProfileComponent,
-    AddEditAnnouncementComponent,
-    AnnouncementProfileComponent,
     AddEditCourseComponent,
     AddEditChapterComponent,
     LoginModalComponent,
@@ -118,6 +88,13 @@ export function markedOptionsFactory(): MarkedOptions {
     MasterGridModule,
     InfiniteScrollModule,
     LMarkdownEditorModule,
+    MarkdownModule.forRoot({
+      loader: HttpClient,
+      markedOptions: {
+        provide: MarkedOptions,
+        useFactory: markedOptionsFactory,
+      },
+    }),
     HotToastModule.forRoot(),
     [
       NgxsModule.forRoot(
@@ -126,7 +103,6 @@ export function markedOptionsFactory(): MarkedOptions {
           LoadingState,
           MemberState,
           GroupState,
-          AnnouncementState,
           AssignmentState,
           CourseState,
           CourseSectionState,
@@ -147,13 +123,6 @@ export function markedOptionsFactory(): MarkedOptions {
     ],
     AdminModule,
     AnnouncementModule,
-    MarkdownModule.forRoot({
-      loader: HttpClient,
-      markedOptions: {
-        provide: MarkedOptions,
-        useFactory: markedOptionsFactory,
-      },
-    }),
     DashboardRoutingModule,
   ],
 })

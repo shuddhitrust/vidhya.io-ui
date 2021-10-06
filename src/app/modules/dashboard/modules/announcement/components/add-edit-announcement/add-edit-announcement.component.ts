@@ -34,7 +34,7 @@ import { AuthState } from 'src/app/modules/auth/state/auth.state';
   templateUrl: './add-edit-announcement.component.html',
   styleUrls: [
     './add-edit-announcement.component.scss',
-    './../../../shared/common/shared-styles.css',
+    './../../../../../../shared/common/shared-styles.css',
   ],
 })
 export class AddEditAnnouncementComponent implements OnInit {
