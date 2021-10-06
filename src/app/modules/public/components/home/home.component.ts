@@ -21,6 +21,7 @@ import { LoginModalComponent } from '../../../auth/components/login/login-modal.
 import {
   FetchNextPublicMembersAction,
   FetchPublicMembersAction,
+  ResetPublicHomePageListsAction,
 } from '../../state/public/public.actions';
 import { PublicState } from '../../state/public/public.state';
 
@@ -2144,5 +2145,9 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.activateAccount();
+  }
+
+  ngOnDestroy(): void {
+    this.store.dispatch(new ResetPublicHomePageListsAction());
   }
 }

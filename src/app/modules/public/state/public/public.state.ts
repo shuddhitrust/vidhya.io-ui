@@ -17,6 +17,8 @@ import {
   FetchNextPublicMembersAction,
   FetchPublicMembersAction,
   GetMemberByUsernameAction,
+  ResetPublicHomePageListsAction,
+  ResetPublicMemberFormAction,
 } from './public.actions';
 
 @State<PublicStateModel>({
@@ -26,6 +28,11 @@ import {
 @Injectable()
 export class PublicState {
   constructor(private apollo: Apollo, private store: Store) {}
+
+  @Selector()
+  static getMemberFormRecord(state: PublicStateModel): User {
+    return state.memberFormRecord;
+  }
 
   @Selector()
   static listMembers(state: PublicStateModel): User[] {
@@ -160,5 +167,24 @@ export class PublicState {
           patchState({ isFetching: false });
         }
       );
+  }
+
+  @Action(ResetPublicMemberFormAction)
+  resetPublicMemberFormAction({ patchState }: StateContext<PublicStateModel>) {
+    patchState({
+      isFetching: false,
+      memberFormRecord: defaultPublicState.memberFormRecord,
+    });
+  }
+
+  @Action(ResetPublicHomePageListsAction)
+  resetPublicHomePageListsAction({
+    patchState,
+  }: StateContext<PublicStateModel>) {
+    patchState({
+      isFetching: false,
+      memberFormRecord: defaultPublicState.memberFormRecord,
+      members: defaultPublicState.members,
+    });
   }
 }

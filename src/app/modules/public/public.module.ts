@@ -8,6 +8,7 @@ import { PublicRoutingModule } from './public-routing.module';
 import { NgxsModule } from '@ngxs/store';
 import { PublicState } from './state/public/public.state';
 import { PublicComponent } from './components/public/public.component';
+import { MemberModule } from '../dashboard/modules/admin/modules/member/member.module';
 import { AuthModule } from '../auth/auth.module';
 
 const declarations = [
@@ -24,6 +25,7 @@ const declarations = [
   imports: [
     SharedModule,
     AuthModule,
+    MemberModule,
     PublicRoutingModule,
     NgxsModule.forFeature([PublicState]),
   ],

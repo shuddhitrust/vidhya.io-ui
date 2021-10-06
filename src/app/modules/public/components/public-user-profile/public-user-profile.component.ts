@@ -10,9 +10,12 @@ import {
   User,
 } from 'src/app/shared/common/models';
 
-import { MemberState } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.state';
 import { parseDateTime } from 'src/app/shared/common/functions';
-import { GetMemberByUsernameAction } from '../../state/public/public.actions';
+import {
+  GetMemberByUsernameAction,
+  ResetPublicMemberFormAction,
+} from '../../state/public/public.actions';
+import { PublicState } from '../../state/public/public.state';
 
 @Component({
   selector: 'app-public-user-profile',
@@ -27,12 +30,12 @@ export class PublicUserProfileComponent implements OnInit, OnDestroy {
   resource = resources.OWN_PROFILE;
   userDoesNotExist: boolean = false;
   resourceActions = RESOURCE_ACTIONS;
-  @Select(MemberState.getMemberFormRecord)
+  @Select(PublicState.getMemberFormRecord)
   member$: Observable<User>;
   member: any;
   courses: any = [];
   username: string = null;
-  @Select(MemberState.isFetching)
+  @Select(PublicState.isFetching)
   isFetching$: Observable<boolean>;
 
   constructor(
@@ -89,5 +92,7 @@ export class PublicUserProfileComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    this.store.dispatch(new ResetPublicMemberFormAction());
+  }
 }
