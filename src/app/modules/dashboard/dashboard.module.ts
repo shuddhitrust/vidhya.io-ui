@@ -1,19 +1,16 @@
 import { NgModule } from '@angular/core';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { DashboardComponent } from './dashboard.component';
-import { ChatComponent } from '../../pages/static/chat/chat.component';
 import { LoginModalComponent } from '../auth/components/login/login-modal.component';
 import { LMarkdownEditorModule } from 'ngx-markdown-editor';
-import { MarkdownModule, MarkedOptions, MarkedRenderer } from 'ngx-markdown';
+import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 import { HttpClient } from '@angular/common/http';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { NgxsModule } from '@ngxs/store';
 import { HotToastModule } from '@ngneat/hot-toast';
 import { NotificationState } from 'src/app/shared/state/notifications/notification.state';
 import { LoadingState } from 'src/app/shared/state/loading/loading.state';
-import { MemberState } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.state';
 import { OptionsState } from 'src/app/shared/state/options/options.state';
-import { ChatState } from 'src/app/shared/state/chats/chat.state';
 import { SubscriptionsState } from 'src/app/shared/state/subscriptions/subscriptions.state';
 import { environment } from 'src/environments/environment';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
@@ -29,12 +26,12 @@ import { GradingModule } from './modules/grading/grading.module';
 import { ReportModule } from './modules/report/report.module';
 import { AssignmentModule } from './modules/assignment/assignment.module';
 import { GroupModule } from './modules/group/group.module';
+// import { ChatModule } from './modules/chat/chat.module';
 
 @NgModule({
   declarations: [
     DashboardComponent,
     LoginModalComponent,
-    ChatComponent,
     MasterConfirmationDialog,
     ImageDisplayDialog,
   ],
@@ -53,14 +50,7 @@ import { GroupModule } from './modules/group/group.module';
     HotToastModule.forRoot(),
     [
       NgxsModule.forRoot(
-        [
-          NotificationState,
-          LoadingState,
-          MemberState,
-          OptionsState,
-          ChatState,
-          SubscriptionsState,
-        ],
+        [NotificationState, LoadingState, OptionsState, SubscriptionsState],
         {
           developmentMode: !environment.production,
         }
@@ -74,6 +64,7 @@ import { GroupModule } from './modules/group/group.module';
     GradingModule,
     GroupModule,
     ReportModule,
+    // ChatModule,
     DashboardRoutingModule,
   ],
 })

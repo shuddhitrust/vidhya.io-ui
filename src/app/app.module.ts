@@ -6,8 +6,6 @@ import {
   // TokenUpdater,
 } from './shared/api/graphql/graphql.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { ProfileComponent } from './pages/static/profile/profile.component';
-import { AccountComponent } from './pages/static/account/account.component';
 import {
   AuthenticationGuard,
   AuthInterceptor,
@@ -74,8 +72,6 @@ import { AuthModule } from './modules/auth/auth.module';
   declarations: [
     AppComponent,
     NavbarComponent,
-    ProfileComponent,
-    AccountComponent,
     DragDropComponent,
     AppLoadingOverlayComponent,
   ],
@@ -106,13 +102,13 @@ import { AuthModule } from './modules/auth/auth.module';
       deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
     },
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+    { provide: NZ_I18N, useValue: en_US },
     AuthenticationGuard,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true,
     },
-    { provide: NZ_I18N, useValue: en_US },
     RegistrationFormAuthGuard,
   ],
   bootstrap: [AppComponent],
