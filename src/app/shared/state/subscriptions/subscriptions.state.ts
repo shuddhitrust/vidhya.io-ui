@@ -9,7 +9,6 @@ import { AuthorizationService } from '../../api/authorization/authorization.serv
 import { InitiateSubscriptionsAction } from './subscriptions.actions';
 import { AnnouncementSubscriptionAction } from '../../../modules/dashboard/modules/announcement/state/announcement.actions';
 import { ChapterSubscriptionAction } from '../../../modules/dashboard/modules/course/state/chapters/chapter.actions';
-import { ReportSubscriptionAction } from '../reports/report.actions';
 import { MemberSubscriptionAction } from '../../../modules/dashboard/modules/admin/modules/member/state/member.actions';
 import { InstitutionSubscriptionAction } from '../../../modules/dashboard/modules/admin/modules/institution/state/institutions/institution.actions';
 import { ChatMessageSubscriptionAction } from '../chats/chat.actions';
@@ -22,6 +21,7 @@ import { ExerciseKeySubscriptionAction } from 'src/app/modules/dashboard/modules
 import { ExerciseSubscriptionAction } from 'src/app/modules/dashboard/modules/course/state/exercises/exercise.actions';
 import { ExerciseSubmissionSubscriptionAction } from 'src/app/modules/dashboard/modules/course/state/exerciseSubmissions/exerciseSubmission.actions';
 import { GroupSubscriptionAction } from 'src/app/modules/dashboard/modules/group/state/group.actions';
+import { ReportSubscriptionAction } from 'src/app/modules/dashboard/modules/report/state/report.actions';
 
 @State<SubscriptionsStateModel>({
   name: 'subscriptionState',

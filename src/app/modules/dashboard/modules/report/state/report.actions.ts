@@ -1,6 +1,6 @@
 import { FormGroup, FormGroupDirective } from '@angular/forms';
-import { SearchParams } from '../../abstract/master-grid/table.model';
-import { idPayload } from '../../common/models';
+import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
+import { idPayload } from 'src/app/shared/common/models';
 
 export class FetchReportsAction {
   static readonly type = '[REPORTS] Fetch';

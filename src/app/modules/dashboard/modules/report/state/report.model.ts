@@ -1,9 +1,4 @@
-import {
-  FetchPolicy,
-  Report,
-  FetchParams,
-  startingFetchParams,
-} from '../../common/models';
+import { FetchParams, FetchPolicy, Report } from 'src/app/shared/common/models';
 
 export const emptyReportFormRecord: Report = {
   id: null,

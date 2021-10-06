@@ -1,19 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { GridOptions } from 'ag-grid-community';
 import { Observable } from 'rxjs';
 import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
-import { MemberProfileRendererComponent } from 'src/app/modules/dashboard/modules/admin/modules/member/components/cell-renderers/member-profile/member-profile-renderer.component';
 import { Report, FetchParams, resources } from 'src/app/shared/common/models';
-import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
-  ForceRefetchReportsAction,
   FetchReportsAction,
-  ResetReportFormAction,
-} from 'src/app/shared/state/reports/report.actions';
-import { ReportState } from 'src/app/shared/state/reports/report.state';
+  ForceRefetchReportsAction,
+} from '../../state/report.actions';
+import { ReportState } from '../../state/report.state';
 
 @Component({
   selector: 'app-reports-table',
@@ -71,11 +67,7 @@ export class ReportsTableComponent implements OnInit {
   frameworkComponents = {};
   gridOptions: GridOptions;
 
-  constructor(
-    public dialog: MatDialog,
-    private router: Router,
-    private store: Store
-  ) {
+  constructor(public dialog: MatDialog, private store: Store) {
     this.gridOptions = <GridOptions>{
       context: {
         componentParent: this,

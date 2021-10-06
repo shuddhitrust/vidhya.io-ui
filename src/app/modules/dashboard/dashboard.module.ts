@@ -1,12 +1,8 @@
 import { NgModule } from '@angular/core';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { DashboardComponent } from './dashboard.component';
-import { ReportDashboardComponent } from './tabs/report-dashboard/report-dashboard.component';
-import { GroupDashboardComponent } from './modules/group/components/group-dashboard/group-dashboard.component';
 import { ChatComponent } from '../../pages/static/chat/chat.component';
 import { LoginModalComponent } from '../../pages/modals/login/login-modal.component';
-import { AddEditGroupComponent } from './modules/group/components/add-edit-group/add-edit-group.component';
-import { GroupProfileComponent } from './modules/group/components/group-profile/group-profile.component';
 import { LMarkdownEditorModule } from 'ngx-markdown-editor';
 import { MarkdownModule, MarkedOptions, MarkedRenderer } from 'ngx-markdown';
 import { HttpClient } from '@angular/common/http';
@@ -16,7 +12,6 @@ import { HotToastModule } from '@ngneat/hot-toast';
 import { NotificationState } from 'src/app/shared/state/notifications/notification.state';
 import { LoadingState } from 'src/app/shared/state/loading/loading.state';
 import { MemberState } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.state';
-import { ReportState } from 'src/app/shared/state/reports/report.state';
 import { OptionsState } from 'src/app/shared/state/options/options.state';
 import { ChatState } from 'src/app/shared/state/chats/chat.state';
 import { SubscriptionsState } from 'src/app/shared/state/subscriptions/subscriptions.state';
@@ -26,7 +21,7 @@ import { MasterConfirmationDialog } from 'src/app/shared/components/confirmation
 import { ImageDisplayDialog } from 'src/app/shared/components/image-display/image-display-dialog.component';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { MasterGridModule } from 'src/app/shared/abstract/master-grid/master-grid.module';
-import { ReportsTableComponent } from './../../pages/tables/reports-table/reports-table.component';
+import { ReportsTableComponent } from './modules/report/components/reports-table/reports-table.component';
 import { AdminModule } from './modules/admin/admin.module';
 import { AnnouncementModule } from './modules/announcement/announcement.module';
 import { markedOptionsFactory } from 'src/app/shared/common/constants';
@@ -39,12 +34,10 @@ import { GroupModule } from './modules/group/group.module';
 @NgModule({
   declarations: [
     DashboardComponent,
-    ReportDashboardComponent,
     LoginModalComponent,
     ChatComponent,
     MasterConfirmationDialog,
     ImageDisplayDialog,
-    ReportsTableComponent,
   ],
   imports: [
     SharedModule,
@@ -65,7 +58,6 @@ import { GroupModule } from './modules/group/group.module';
           NotificationState,
           LoadingState,
           MemberState,
-          ReportState,
           OptionsState,
           ChatState,
           SubscriptionsState,
