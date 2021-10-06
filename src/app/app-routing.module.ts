@@ -1,20 +1,17 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AccountComponent } from './pages/static/account/account.component';
-import {
-  AuthenticationGuard,
-  RegistrationFormAuthGuard,
-} from './shared/api/authentication.guard';
+import { AuthenticationGuard } from './shared/api/authentication.guard';
 import { ProfileComponent } from './pages/static/profile/profile.component';
 import { uiroutes } from './shared/common/ui-routes';
 import { AddEditGroupComponent } from './pages/forms/add-edit-group/add-edit-group.component';
 import { GroupProfileComponent } from './pages/profiles/group-profile/group-profile.component';
-import { AddEditCourseComponent } from './pages/forms/add-edit-course/add-edit-course.component';
-import { AddEditChapterComponent } from './pages/forms/add-edit-chapter/add-edit-chapter.component';
+import { AddEditChapterComponent } from './modules/dashboard/modules/course/components/forms/add-edit-chapter/add-edit-chapter.component';
 import { AddEditUserRoleComponent } from './modules/dashboard/modules/admin/modules/user-role/components/forms/add-edit-user-role/add-edit-user-role.component';
 import { ChatComponent } from './pages/static/chat/chat.component';
-import { CourseProfileComponent } from './pages/profiles/course-profile/course-profile.component';
-import { ChapterProfileComponent } from './pages/profiles/chapter-profile/chapter-profile.component';
+import { AddEditCourseComponent } from './modules/dashboard/modules/course/components/forms/add-edit-course/add-edit-course.component';
+import { CourseProfileComponent } from './modules/dashboard/modules/course/components/profiles/course-profile/course-profile.component';
+import { ChapterProfileComponent } from './modules/dashboard/modules/course/components/profiles/chapter-profile/chapter-profile.component';
 
 // import { InstitutionProfileComponent } from './pages/modals/institution-profile/institution-profile.component';
 
@@ -96,14 +93,6 @@ const routes: Routes = [
     component: ChapterProfileComponent,
     canActivate: [AuthenticationGuard],
     data: uiroutes.CHAPTER_PROFILE_ROUTE.auth,
-    pathMatch: 'full',
-  },
-
-  {
-    path: uiroutes.USER_ROLE_FORM_ROUTE.route,
-    component: AddEditUserRoleComponent,
-    canActivate: [AuthenticationGuard],
-    data: uiroutes.USER_ROLE_FORM_ROUTE.auth,
     pathMatch: 'full',
   },
   // {

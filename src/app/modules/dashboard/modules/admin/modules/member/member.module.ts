@@ -16,6 +16,7 @@ import { UserModerationRendererComponent } from './components/cell-renderers/use
 import { MemberProfileComponent } from './components/member-profile/member-profile.component';
 import { NgxsModule } from '@ngxs/store';
 import { MemberState } from './state/member.state';
+import { MemberRoutingModule } from './member-routing.module';
 
 const declarations = [
   MembersTableComponent,
@@ -34,7 +35,11 @@ const imports = [SharedModule, MasterGridModule];
 
 @NgModule({
   declarations,
-  imports: [...imports, NgxsModule.forFeature([MemberState])],
+  imports: [
+    ...imports,
+    MemberRoutingModule,
+    NgxsModule.forFeature([MemberState]),
+  ],
   exports: [...declarations, ...imports],
 })
 export class MemberModule {}

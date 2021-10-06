@@ -7,6 +7,7 @@ import { AddEditUserRoleComponent } from './components/forms/add-edit-user-role/
 import { RoleProfileComponent } from './components/profiles/role-profile/role-profile.component';
 import { RolesTableComponent } from './components/tables/roles-table/roles-table.component';
 import { UserRoleState } from './state/userRole.state';
+import { UserRoleRoutingModule } from './user-role-routing.module';
 
 const declarations = [
   AddEditUserRoleComponent,
@@ -18,7 +19,11 @@ const imports = [SharedModule, MasterGridModule];
 
 @NgModule({
   declarations,
-  imports: [...imports, NgxsModule.forFeature([UserRoleState])],
+  imports: [
+    ...imports,
+    NgxsModule.forFeature([UserRoleState]),
+    UserRoleRoutingModule,
+  ],
   exports: [...declarations, ...imports],
 })
 export class UserRoleModule {}

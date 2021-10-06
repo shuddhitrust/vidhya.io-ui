@@ -12,10 +12,10 @@ import { ActivatedRoute } from '@angular/router';
 import {
   CreateUpdateAnnouncementAction,
   GetAnnouncementAction,
-} from 'src/app/shared/state/announcements/announcement.actions';
-import { AnnouncementState } from 'src/app/shared/state/announcements/announcement.state';
+} from 'src/app/modules/dashboard/modules/announcement/state/announcement.actions';
+import { AnnouncementState } from 'src/app/modules/dashboard/modules/announcement/state/announcement.state';
 import { Observable } from 'rxjs';
-import { emptyAnnouncementFormRecord } from 'src/app/shared/state/announcements/announcement.model';
+import { emptyAnnouncementFormRecord } from 'src/app/modules/dashboard/modules/announcement/state/announcement.model';
 import {
   Announcement,
   CurrentMember,

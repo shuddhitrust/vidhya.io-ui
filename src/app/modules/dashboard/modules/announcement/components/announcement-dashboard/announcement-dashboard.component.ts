@@ -15,8 +15,8 @@ import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   FetchAnnouncementsAction,
   FetchNextAnnouncementsAction,
-} from 'src/app/shared/state/announcements/announcement.actions';
-import { AnnouncementState } from 'src/app/shared/state/announcements/announcement.state';
+} from 'src/app/modules/dashboard/modules/announcement/state/announcement.actions';
+import { AnnouncementState } from 'src/app/modules/dashboard/modules/announcement/state/announcement.state';
 import { OptionsState } from 'src/app/shared/state/options/options.state';
 
 @Component({

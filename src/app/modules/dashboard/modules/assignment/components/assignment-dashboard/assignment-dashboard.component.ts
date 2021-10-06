@@ -15,10 +15,9 @@ import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   FetchAssignmentsAction,
   FetchNextAssignmentsAction,
-} from 'src/app/shared/state/assignments/assignment.actions';
-import { AssignmentState } from 'src/app/shared/state/assignments/assignment.state';
-
-import { Assignment } from 'src/app/shared/state/assignments/assignment.model';
+} from '../../state/assignment.actions';
+import { Assignment } from '../../state/assignment.model';
+import { AssignmentState } from '../../state/assignment.state';
 
 @Component({
   selector: 'app-assignment-dashboard',

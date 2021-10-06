@@ -7,21 +7,21 @@ import {
 } from './subscriptions.model';
 import { AuthorizationService } from '../../api/authorization/authorization.service';
 import { InitiateSubscriptionsAction } from './subscriptions.actions';
-import { AnnouncementSubscriptionAction } from '../announcements/announcement.actions';
-import { ChapterSubscriptionAction } from '../chapters/chapter.actions';
+import { AnnouncementSubscriptionAction } from '../../../modules/dashboard/modules/announcement/state/announcement.actions';
+import { ChapterSubscriptionAction } from '../../../modules/dashboard/modules/course/state/chapters/chapter.actions';
 import { ReportSubscriptionAction } from '../reports/report.actions';
 import { MemberSubscriptionAction } from '../../../modules/dashboard/modules/admin/modules/member/state/member.actions';
 import { InstitutionSubscriptionAction } from '../../../modules/dashboard/modules/admin/modules/institution/state/institutions/institution.actions';
 import { GroupSubscriptionAction } from '../groups/group.actions';
-import { ExerciseSubmissionSubscriptionAction } from '../exerciseSubmissions/exerciseSubmission.actions';
-import { ExerciseSubscriptionAction } from '../exercises/exercise.actions';
-import { ExerciseKeySubscriptionAction } from '../exerciseKeys/exerciseKey.actions';
-import { CourseSectionSubscriptionAction } from '../courseSections/courseSection.actions';
-import { CourseSubscriptionAction } from '../courses/course.actions';
 import { ChatMessageSubscriptionAction } from '../chats/chat.actions';
 import { resources, RESOURCE_ACTIONS } from '../../common/models';
 import { Observable } from 'rxjs';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
+import { CourseSubscriptionAction } from 'src/app/modules/dashboard/modules/course/state/courses/course.actions';
+import { CourseSectionSubscriptionAction } from 'src/app/modules/dashboard/modules/course/state/courseSections/courseSection.actions';
+import { ExerciseKeySubscriptionAction } from 'src/app/modules/dashboard/modules/course/state/exerciseKeys/exerciseKey.actions';
+import { ExerciseSubscriptionAction } from 'src/app/modules/dashboard/modules/course/state/exercises/exercise.actions';
+import { ExerciseSubmissionSubscriptionAction } from 'src/app/modules/dashboard/modules/course/state/exerciseSubmissions/exerciseSubmission.actions';
 
 @State<SubscriptionsStateModel>({
   name: 'subscriptionState',

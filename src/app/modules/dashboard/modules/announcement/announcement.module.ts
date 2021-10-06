@@ -6,7 +6,7 @@ import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 import { LMarkdownEditorModule } from 'ngx-markdown-editor';
 import { markedOptionsFactory } from 'src/app/shared/common/constants';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
-import { AnnouncementState } from 'src/app/shared/state/announcements/announcement.state';
+import { AnnouncementState } from 'src/app/modules/dashboard/modules/announcement/state/announcement.state';
 import { AnnouncementRoutingModule } from './announcement-routing.module';
 import { AddEditAnnouncementComponent } from './components/add-edit-announcement/add-edit-announcement.component';
 import { AnnouncementDashboardComponent } from './components/announcement-dashboard/announcement-dashboard.component';

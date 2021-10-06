@@ -7,8 +7,8 @@ import {
   DeleteAnnouncementAction,
   GetAnnouncementAction,
   ResetAnnouncementFormAction,
-} from 'src/app/shared/state/announcements/announcement.actions';
-import { AnnouncementState } from 'src/app/shared/state/announcements/announcement.state';
+} from 'src/app/modules/dashboard/modules/announcement/state/announcement.actions';
+import { AnnouncementState } from 'src/app/modules/dashboard/modules/announcement/state/announcement.state';
 import {
   MatDialog,
   MatDialogRef,
