@@ -53,18 +53,11 @@ import { UpdateCurrentUserInStateAction } from 'src/app/modules/auth/state/auth.
 })
 @Injectable()
 export class MemberState {
-  firstTimeSetup: boolean = false;
-  @Select(AuthState.getFirstTimeSetup)
-  firstTimeSetup$: Observable<boolean>;
   constructor(
     private apollo: Apollo,
     private store: Store,
     private router: Router
-  ) {
-    this.firstTimeSetup$.subscribe((val) => {
-      this.firstTimeSetup = val;
-    });
-  }
+  ) {}
 
   @Selector()
   static listMembers(state: MemberStateModel): User[] {
@@ -243,7 +236,7 @@ export class MemberState {
     { payload }: CreateUpdateMemberAction
   ) {
     const state = getState();
-    const { form, formDirective } = payload;
+    const { form, formDirective, firstTimeSetup } = payload;
     let { formSubmitting } = state;
     if (form.valid) {
       formSubmitting = true;
@@ -276,7 +269,7 @@ export class MemberState {
                   action: 'success',
                 })
               );
-              if (this.firstTimeSetup) {
+              if (firstTimeSetup) {
                 this.router.navigateByUrl(uiroutes.HOME_ROUTE.route);
               } else {
                 this.router.navigate([MemberFormCloseURL]);

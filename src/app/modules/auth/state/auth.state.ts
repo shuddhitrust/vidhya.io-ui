@@ -36,6 +36,7 @@ import {
   UpdateTokenAction,
   SetAuthStorage,
   GetAuthStorage,
+  UpdateTokenExpiry,
 } from './auth.actions';
 import { Apollo } from 'apollo-angular';
 
@@ -87,28 +88,11 @@ import { uiroutes } from 'src/app/shared/common/ui-routes';
 @Injectable()
 export class AuthState {
   refreshTokenTimeout; // Variable that stores the timeout method for the next RefreshToken call
-  @Select(AuthState.getExpiresAt)
-  expiresAt$: Observable<string>;
-  @Select(AuthState.getAuthStorageFromState)
-  authStorage$: Observable<string>;
-  authStorage: any = AuthStorage(AuthStorageOptions.default);
   constructor(
     private store: Store,
     private apollo: Apollo,
     private router: Router
-  ) {
-    // Fetching authStorage option i.e. local storage or session storage
-    this.authStorage$.subscribe((val) => {
-      this.authStorage = AuthStorage(val);
-    });
-    // Looking for updates in the expiresAt value...
-    this.expiresAt$.subscribe((val) => {
-      // Calling the startAutoRefreshTokenTimeout method the moment a new expiresAt value is detected
-      if (val) {
-        this.startAutoRefreshTokenTimeout(val);
-      }
-    });
-  }
+  ) {}
 
   /**
    * Creates a timeout method to call for refreshToken just a minute before
@@ -124,9 +108,19 @@ export class AuthState {
     );
   };
 
+  // Only call this method when you also want to automatically update expiresAt
+  getDecodedToken = (token): { userId: number } => {
+    const decodedToken: any = jwtDecode(token);
+    const expiresAt = decodedToken.exp;
+    this.store.dispatch(new UpdateTokenExpiry({ expiresAt }));
+    return {
+      userId: decodedToken.sub.toString(),
+    };
+  };
+
   @Selector()
   static getAuthStorageFromState(state: AuthStateModel): string {
-    return state.authStorage;
+    return state.authStorageType;
   }
 
   @Selector()
@@ -189,11 +183,11 @@ export class AuthState {
     if (typeof remember != 'boolean') {
       remember = false;
     }
-    const authStorage = remember
+    const authStorageType = remember
       ? AuthStorageOptions.local
       : AuthStorageOptions.session;
     patchState({
-      authStorage,
+      authStorageType,
     });
     this.store.dispatch(new AuthenticationCheckAction());
   }
@@ -214,11 +208,24 @@ export class AuthState {
       JSON.stringify(remember)
     );
     patchState({
-      authStorage: remember
+      authStorageType: remember
         ? AuthStorageOptions.local
         : AuthStorageOptions.session,
     });
   }
+
+  @Action(UpdateTokenExpiry)
+  updateExpiresAt(
+    { patchState }: StateContext<AuthStateModel>,
+    { payload }: UpdateTokenExpiry
+  ) {
+    const { expiresAt } = payload;
+    // When the expiresAt value changes we call the startAutoRefreshTokenTimeout method
+    // to auto schedule the refresh of the token before its expiry
+    this.startAutoRefreshTokenTimeout(expiresAt);
+    patchState({ expiresAt });
+  }
+
   @Action(UpdateTokenAction)
   updateToken(
     { getState, patchState }: StateContext<AuthStateModel>,
@@ -227,29 +234,31 @@ export class AuthState {
     const state = getState();
     let { currentMember } = state;
     const { token, refreshToken } = payload;
-    const { expiresAt, userId } = getDecodedToken(token);
+    const { userId } = this.getDecodedToken(token);
     currentMember = { ...currentMember, id: userId };
 
     patchState({
       currentMember,
-      expiresAt,
       token,
       refreshToken,
     });
     this.store.dispatch(new SetAuthSessionAction());
   }
   @Action(AuthenticationCheckAction)
-  checkAuthentication({ patchState }: StateContext<AuthStateModel>) {
+  checkAuthentication({ getState, patchState }: StateContext<AuthStateModel>) {
     this.store.dispatch(
       new ToggleLoadingScreen({
         showLoadingScreen: true,
         message: 'Checking authentication status...',
       })
     );
-    const authStorageToken = this.authStorage.getItem(
+    const state = getState();
+    let { authStorageType } = state;
+    const authStorage = AuthStorage(authStorageType);
+    const authStorageToken = authStorage.getItem(
       localStorageKeys.AUTH_TOKEN_KEY
     );
-    const authStorageRefreshToken = this.authStorage.getItem(
+    const authStorageRefreshToken = authStorage.getItem(
       localStorageKeys.AUTH_REFRESH_TOKEN_KEY
     );
     if (authStorageToken && authStorageRefreshToken) {
@@ -289,13 +298,12 @@ export class AuthState {
             new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
           );
           if (response.success) {
-            const { expiresAt, userId } = getDecodedToken(token);
+            const { userId } = this.getDecodedToken(token);
 
             currentMember = { ...currentMember, id: userId };
 
             patchState({
               currentMember,
-              expiresAt,
               isLoggedIn: true,
             });
 
@@ -339,14 +347,12 @@ export class AuthState {
             const response = data.refreshToken;
             const { token, refreshToken } = response;
             if (response.success) {
-              const { userId, expiresAt } = getDecodedToken(token);
+              const { userId } = this.getDecodedToken(token);
               const currentMember = { ...state.currentMember, id: userId };
               this.store.dispatch(
                 new UpdateTokenAction({ token, refreshToken })
               );
-
               patchState({
-                expiresAt,
                 isLoggedIn: true,
               });
 
@@ -387,20 +393,20 @@ export class AuthState {
   @Action(SetAuthSessionAction)
   setAuthSession({ getState }: StateContext<AuthStateModel>) {
     const state = getState();
-    const { token, refreshToken } = state;
-
+    const { token, refreshToken, authStorageType } = state;
+    const authStorage = AuthStorage(authStorageType);
     if (token) {
-      this.authStorage.setItem(localStorageKeys.AUTH_TOKEN_KEY, token);
+      authStorage.setItem(localStorageKeys.AUTH_TOKEN_KEY, token);
     } else {
-      this.authStorage.removeItem(localStorageKeys.AUTH_TOKEN_KEY);
+      authStorage.removeItem(localStorageKeys.AUTH_TOKEN_KEY);
     }
     if (refreshToken) {
-      this.authStorage.setItem(
+      authStorage.setItem(
         localStorageKeys.AUTH_REFRESH_TOKEN_KEY,
         refreshToken
       );
     } else {
-      this.authStorage.removeItem(localStorageKeys.AUTH_REFRESH_TOKEN_KEY);
+      authStorage.removeItem(localStorageKeys.AUTH_REFRESH_TOKEN_KEY);
     }
   }
 
@@ -534,7 +540,7 @@ export class AuthState {
               formDirective.resetForm();
               const token = response?.token;
               const refreshToken = response?.refreshToken;
-              const { expiresAt, userId } = getDecodedToken(token);
+              const { userId } = this.getDecodedToken(token);
               let user = response.user;
               user.id = userId;
               this.store.dispatch(
@@ -543,7 +549,6 @@ export class AuthState {
               patchState({
                 isLoggedIn: true,
                 closeLoginForm: true,
-                expiresAt,
                 lastLogin: response?.user?.lastLogin,
               });
               this.store.dispatch(new UpdateCurrentUserInStateAction({ user }));
@@ -1291,15 +1296,6 @@ export class AuthState {
     patchState({ closeLoginForm: false });
   }
 }
-
-const getDecodedToken = (token) => {
-  const decodedToken: any = jwtDecode(token);
-  return {
-    userId: decodedToken.sub.toString(),
-    // userId: parseInt(decodedToken.sub, 10),
-    expiresAt: decodedToken.exp,
-  };
-};
 
 const calculateFirstTiimeSetup = (currentMember: CurrentMember): boolean => {
   const firstTimeSetup =

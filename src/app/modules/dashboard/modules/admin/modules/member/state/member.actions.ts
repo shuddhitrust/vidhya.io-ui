@@ -30,7 +30,11 @@ export class CreateUpdateMemberAction {
   static readonly type = '[MEMBER] Create';
 
   constructor(
-    public payload: { form: FormGroup; formDirective: FormGroupDirective }
+    public payload: {
+      form: FormGroup;
+      formDirective: FormGroupDirective;
+      firstTimeSetup: boolean;
+    }
   ) {}
 }
 

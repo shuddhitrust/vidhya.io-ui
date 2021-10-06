@@ -223,7 +223,11 @@ export class AddEditMemberComponent implements OnInit {
           const url = res.secure_url;
           form.get('avatar').setValue(url);
           this.store.dispatch(
-            new CreateUpdateMemberAction({ form, formDirective })
+            new CreateUpdateMemberAction({
+              form,
+              formDirective,
+              firstTimeSetup: this.firstTimeSetup,
+            })
           );
           this.store.dispatch(
             new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
@@ -241,7 +245,11 @@ export class AddEditMemberComponent implements OnInit {
       );
     } else {
       this.store.dispatch(
-        new CreateUpdateMemberAction({ form, formDirective })
+        new CreateUpdateMemberAction({
+          form,
+          formDirective,
+          firstTimeSetup: this.firstTimeSetup,
+        })
       );
     }
     // this.store.dispatch(

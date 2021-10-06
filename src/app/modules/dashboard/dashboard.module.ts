@@ -115,7 +115,6 @@ export function markedOptionsFactory(): MarkedOptions {
   imports: [
     SharedModule,
     MasterGridModule,
-    AdminModule,
     InfiniteScrollModule,
     LMarkdownEditorModule,
     HotToastModule.forRoot(),
@@ -145,6 +144,7 @@ export function markedOptionsFactory(): MarkedOptions {
       ),
       NgxsReduxDevtoolsPluginModule.forRoot(),
     ],
+    AdminModule,
     MarkdownModule.forRoot({
       loader: HttpClient,
       markedOptions: {

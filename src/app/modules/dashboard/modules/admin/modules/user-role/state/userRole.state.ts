@@ -52,18 +52,11 @@ import { AuthState } from 'src/app/modules/auth/state/auth.state';
 })
 @Injectable()
 export class UserRoleState {
-  firstTimeSetup: boolean = false;
-  @Select(AuthState.getFirstTimeSetup)
-  firstTimeSetup$: Observable<boolean>;
   constructor(
     private apollo: Apollo,
     private store: Store,
     private router: Router
-  ) {
-    this.firstTimeSetup$.subscribe((val) => {
-      this.firstTimeSetup = val;
-    });
-  }
+  ) {}
 
   @Selector()
   static listRoles(state: UserRoleStateModel): UserRole[] {

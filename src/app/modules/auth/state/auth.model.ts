@@ -11,7 +11,7 @@ export const AuthStorageOptions = {
 };
 
 export interface AuthStateModel {
-  authStorage: string;
+  authStorageType: string;
   token: string;
   expiresAt: number;
   refreshToken: string;
@@ -29,7 +29,7 @@ export interface AuthStateModel {
 }
 
 export const defaultAuthState: AuthStateModel = {
-  authStorage: AuthStorageOptions.default,
+  authStorageType: AuthStorageOptions.default,
   token: null,
   expiresAt: null,
   refreshToken: null,
