@@ -47,7 +47,6 @@ const routes: Routes = [
     pathMatch: 'full',
   },
   { path: '', component: HomeComponent },
-  { path: '**', pathMatch: 'full', component: ErrorPageComponent },
   // End of public routes
 ];
 

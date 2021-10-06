@@ -21,6 +21,7 @@ const routes: Routes = [
     canActivate: [AuthenticationGuard],
     data: null,
   },
+  { path: '**', pathMatch: 'full', component: ErrorPageComponent },
 ];
 
 @NgModule({
