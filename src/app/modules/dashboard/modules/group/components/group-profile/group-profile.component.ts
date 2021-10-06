@@ -3,17 +3,7 @@ import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import {
-  DeleteGroupAction,
-  GetGroupAction,
-  ResetGroupFormAction,
-} from 'src/app/shared/state/groups/group.actions';
-import { GroupState } from 'src/app/shared/state/groups/group.state';
-import {
-  MatDialog,
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   CurrentMember,
@@ -25,19 +15,25 @@ import {
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { OptionsState } from 'src/app/shared/state/options/options.state';
 import { FetchMemberOptionsByInstitution } from 'src/app/shared/state/options/options.actions';
-import { groupTypeOptions } from 'src/app/shared/state/groups/group.model';
 import {
   MasterConfirmationDialog,
   MasterConfirmationDialogObject,
 } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
+import { groupTypeOptions } from '../../state/group.model';
+import { GroupState } from '../../state/group.state';
+import {
+  DeleteGroupAction,
+  GetGroupAction,
+  ResetGroupFormAction,
+} from '../../state/group.actions';
 
 @Component({
   selector: 'app-group-profile',
   templateUrl: './group-profile.component.html',
   styleUrls: [
     './group-profile.component.scss',
-    './../../../shared/common/shared-styles.css',
+    './../../../../../../shared/common/shared-styles.css',
   ],
 })
 export class GroupProfileComponent implements OnInit, OnDestroy {

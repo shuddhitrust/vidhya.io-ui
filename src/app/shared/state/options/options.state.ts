@@ -6,11 +6,7 @@ import {
 } from './options.actions';
 import { Injectable } from '@angular/core';
 import { MatSelectOption } from '../../common/models';
-import {
-  getErrorMessageFromGraphQLResponse,
-  getOptionLabel,
-} from '../../common/functions';
-import { groupTypeOptions } from '../groups/group.model';
+import { getErrorMessageFromGraphQLResponse } from '../../common/functions';
 import { GROUP_QUERIES, USER_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
 import { ShowNotificationAction } from '../notifications/notification.actions';

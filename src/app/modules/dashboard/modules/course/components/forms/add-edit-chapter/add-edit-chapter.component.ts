@@ -22,13 +22,13 @@ import {
   ChapterStatusOptions,
   MatSelectOption,
 } from 'src/app/shared/common/models';
-import { GroupState } from 'src/app/shared/state/groups/group.state';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { CourseState } from '../../../state/courses/course.state';
 import { CourseSectionState } from '../../../state/courseSections/courseSection.state';
 import { FetchCoursesAction } from '../../../state/courses/course.actions';
 import { FetchCourseSectionsAction } from '../../../state/courseSections/courseSection.actions';
+import { GroupState } from '../../../../group/state/group.state';
 
 @Component({
   selector: 'app-add-edit-chapter',

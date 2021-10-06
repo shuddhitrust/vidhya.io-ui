@@ -7,6 +7,15 @@ import {
 } from './group.model';
 
 import { Injectable } from '@angular/core';
+import { Apollo } from 'apollo-angular';
+import { Router } from '@angular/router';
+import {
+  FetchParams,
+  Group,
+  MatSelectOption,
+  startingFetchParams,
+  SUBSCRIPTION_METHODS,
+} from 'src/app/shared/common/models';
 import {
   CreateUpdateGroupAction,
   DeleteGroupAction,
@@ -17,29 +26,18 @@ import {
   GroupSubscriptionAction,
   ResetGroupFormAction,
 } from './group.actions';
-import { GROUP_QUERIES } from '../../api/graphql/queries.graphql';
-import { Apollo } from 'apollo-angular';
+import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
 import {
-  Group,
-  MatSelectOption,
-  FetchParams,
-  SUBSCRIPTION_METHODS,
-  startingFetchParams,
-} from '../../common/models';
-import { GROUP_MUTATIONS } from '../../api/graphql/mutations.graphql';
-import { ShowNotificationAction } from '../notifications/notification.actions';
-import {
-  getErrorMessageFromGraphQLResponse,
-  subscriptionUpdater,
-  updateFetchParams,
   convertPaginatedListToNormalList,
+  getErrorMessageFromGraphQLResponse,
   paginatedSubscriptionUpdater,
-} from '../../common/functions';
-import { Router } from '@angular/router';
-import { defaultSearchParams } from '../../common/constants';
-import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
-import { SearchParams } from '../../abstract/master-grid/table.model';
-import { ToggleLoadingScreen } from '../loading/loading.actions';
+  updateFetchParams,
+} from 'src/app/shared/common/functions';
+import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
+import { GROUP_QUERIES } from 'src/app/shared/api/graphql/queries.graphql';
+import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
+import { SUBSCRIPTIONS } from 'src/app/shared/api/graphql/subscriptions.graphql';
+import { GROUP_MUTATIONS } from 'src/app/shared/api/graphql/mutations.graphql';
 
 @State<GroupStateModel>({
   name: 'groupState',

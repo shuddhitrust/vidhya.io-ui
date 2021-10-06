@@ -12,7 +12,6 @@ import { ChapterSubscriptionAction } from '../../../modules/dashboard/modules/co
 import { ReportSubscriptionAction } from '../reports/report.actions';
 import { MemberSubscriptionAction } from '../../../modules/dashboard/modules/admin/modules/member/state/member.actions';
 import { InstitutionSubscriptionAction } from '../../../modules/dashboard/modules/admin/modules/institution/state/institutions/institution.actions';
-import { GroupSubscriptionAction } from '../groups/group.actions';
 import { ChatMessageSubscriptionAction } from '../chats/chat.actions';
 import { resources, RESOURCE_ACTIONS } from '../../common/models';
 import { Observable } from 'rxjs';
@@ -22,6 +21,7 @@ import { CourseSectionSubscriptionAction } from 'src/app/modules/dashboard/modul
 import { ExerciseKeySubscriptionAction } from 'src/app/modules/dashboard/modules/course/state/exerciseKeys/exerciseKey.actions';
 import { ExerciseSubscriptionAction } from 'src/app/modules/dashboard/modules/course/state/exercises/exercise.actions';
 import { ExerciseSubmissionSubscriptionAction } from 'src/app/modules/dashboard/modules/course/state/exerciseSubmissions/exerciseSubmission.actions';
+import { GroupSubscriptionAction } from 'src/app/modules/dashboard/modules/group/state/group.actions';
 
 @State<SubscriptionsStateModel>({
   name: 'subscriptionState',

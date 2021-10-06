@@ -1,14 +1,14 @@
 import { GROUPS } from 'src/app/modules/dashboard/dashboard.component';
-import { defaultLogos } from '../../common/constants';
-import { autoGenOptions } from '../../common/functions';
+import { defaultLogos } from 'src/app/shared/common/constants';
+import { autoGenOptions } from 'src/app/shared/common/functions';
 import {
+  FetchParams,
   FetchPolicy,
   Group,
   GroupTypeOptions,
   MatSelectOption,
-  FetchParams,
-} from '../../common/models';
-import { uiroutes } from '../../common/ui-routes';
+} from 'src/app/shared/common/models';
+import { uiroutes } from 'src/app/shared/common/ui-routes';
 
 export const emptyGroupFormRecord: Group = {
   id: null,

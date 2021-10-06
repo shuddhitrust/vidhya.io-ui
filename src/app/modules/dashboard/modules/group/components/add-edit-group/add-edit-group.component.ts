@@ -8,17 +8,7 @@ import {
 } from '@angular/forms';
 import { Select, Store } from '@ngxs/store';
 import { ActivatedRoute } from '@angular/router';
-
-import {
-  CreateUpdateGroupAction,
-  GetGroupAction,
-} from 'src/app/shared/state/groups/group.actions';
-import { GroupState } from 'src/app/shared/state/groups/group.state';
 import { Observable } from 'rxjs';
-import {
-  emptyGroupFormRecord,
-  groupTypeOptions,
-} from 'src/app/shared/state/groups/group.model';
 import { InstitutionState } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.state';
 import {
   CurrentMember,
@@ -33,17 +23,25 @@ import {
 } from 'src/app/shared/common/constants';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
-import { environment } from 'src/environments/environment';
 import { UploadService } from 'src/app/shared/api/upload.service';
 import { FetchMemberOptionsByInstitution } from 'src/app/shared/state/options/options.actions';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
+import { GroupState } from '../../state/group.state';
+import {
+  emptyGroupFormRecord,
+  groupTypeOptions,
+} from '../../state/group.model';
+import {
+  CreateUpdateGroupAction,
+  GetGroupAction,
+} from '../../state/group.actions';
 
 @Component({
   selector: 'app-add-edit-group',
   templateUrl: './add-edit-group.component.html',
   styleUrls: [
     './add-edit-group.component.scss',
-    './../../../shared/common/shared-styles.css',
+    './../../../../../../shared/common/shared-styles.css',
   ],
 })
 export class AddEditGroupComponent implements OnInit {

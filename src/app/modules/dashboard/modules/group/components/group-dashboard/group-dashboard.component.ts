@@ -15,15 +15,15 @@ import {
   FetchGroupsAction,
   FetchNextGroupsAction,
   ResetGroupFormAction,
-} from 'src/app/shared/state/groups/group.actions';
-import { GroupState } from 'src/app/shared/state/groups/group.state';
+} from '../../state/group.actions';
+import { GroupState } from '../../state/group.state';
 
 @Component({
   selector: 'app-group-dashboard',
   templateUrl: './group-dashboard.component.html',
   styleUrls: [
     './group-dashboard.component.scss',
-    './../../../../shared/common/shared-styles.css',
+    './../../../../../../shared/common/shared-styles.css',
   ],
 })
 export class GroupDashboardComponent implements OnInit {
