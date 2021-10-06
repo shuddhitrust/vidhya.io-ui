@@ -32,34 +32,35 @@ import {
   SearchChatMembersAction,
   SelectChatAction,
 } from './chat.actions';
-import { CHAT_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
+import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
+
+import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import {
-  Chat,
-  ChatMessage,
   ChatSearchResult,
-  MatSelectOption,
   FetchParams,
-  User,
+  MatSelectOption,
   startingFetchParams,
-} from '../../common/models';
-import {
-  CHAT_MUTATIONS,
-  CHAT_MESSAGE_MUTATIONS,
-} from '../../api/graphql/mutations.graphql';
-import { ShowNotificationAction } from '../notifications/notification.actions';
+  User,
+} from 'src/app/shared/common/models';
+import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
+import { CHAT_QUERIES } from 'src/app/shared/api/graphql/queries.graphql';
 import {
   getErrorMessageFromGraphQLResponse,
   parseDateTime,
   subscriptionUpdater,
   updateFetchParams,
-} from '../../common/functions';
-import { Router } from '@angular/router';
-import { defaultLogos, defaultSearchParams } from '../../common/constants';
-import { Observable } from 'rxjs';
-import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
-import { SearchParams } from '../../modules/master-grid/table.model';
-import { AuthState } from 'src/app/modules/auth/state/auth.state';
+} from 'src/app/shared/common/functions';
+import {
+  defaultLogos,
+  defaultSearchParams,
+} from 'src/app/shared/common/constants';
+import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
+import {
+  CHAT_MESSAGE_MUTATIONS,
+  CHAT_MUTATIONS,
+} from 'src/app/shared/api/graphql/mutations.graphql';
 
 @State<ChatStateModel>({
   name: 'chatState',

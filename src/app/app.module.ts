@@ -83,6 +83,7 @@ import { AuthModule } from './modules/auth/auth.module';
     AuthModule,
     PublicModule,
     DashboardModule,
+    AppRoutingModule,
     GraphQLModule,
     // TokenUpdater,
     ScullyLibModule,
@@ -92,7 +93,6 @@ import { AuthModule } from './modules/auth/auth.module';
       }),
       NgxsReduxDevtoolsPluginModule.forRoot(),
     ],
-    AppRoutingModule,
   ],
   providers: [
     FormBuilder,
