@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { NgxsModule } from '@ngxs/store';
+import { AgGridAngular, AgGridModule } from 'ag-grid-angular';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { AddEditGroupComponent } from './components/add-edit-group/add-edit-group.component';
 import { GroupDashboardComponent } from './components/group-dashboard/group-dashboard.component';
@@ -12,7 +13,7 @@ const declarations = [
   GroupProfileComponent,
   AddEditGroupComponent,
 ];
-const imports = [SharedModule];
+const imports = [SharedModule, AgGridModule];
 
 @NgModule({
   declarations,

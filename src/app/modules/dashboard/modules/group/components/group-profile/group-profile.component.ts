@@ -89,16 +89,16 @@ export class GroupProfileComponent implements OnInit, OnDestroy {
     );
   }
   populateMemberRows() {
-    const memberIds = this.group?.members.map((m) => m.id);
-    const adminIds = this.group?.admins.map((m) => m.id);
+    const memberIds = this.group?.members?.map((m) => m.id);
+    const adminIds = this.group?.admins?.map((m) => m.id);
     this.memberRows = this.memberOptions.filter((o) => {
-      return memberIds.includes(o.value) || adminIds.includes(o.value);
+      return memberIds?.includes(o.value) || adminIds?.includes(o.value);
     });
     this.memberRows = this.memberRows.map((row) => {
-      if (memberIds.includes(row.value)) {
+      if (memberIds?.includes(row.value)) {
         row.role = 'Member';
       }
-      if (adminIds.includes(row.value)) {
+      if (adminIds?.includes(row.value)) {
         row.role = 'Admin';
       }
       return row;

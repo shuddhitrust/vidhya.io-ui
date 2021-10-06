@@ -25,6 +25,7 @@ import { CourseState } from './state/courses/course.state';
 import { ExerciseState } from './state/exercises/exercise.state';
 import { ExerciseSubmissionState } from './state/exerciseSubmissions/exerciseSubmission.state';
 import { CourseRoutingModule } from './course-routing.module';
+import { AgGridModule } from 'ag-grid-angular';
 
 const declarations = [
   CourseDashboardComponent,
@@ -37,7 +38,7 @@ const declarations = [
   CourseSectionModalComponent,
   ExerciseRubricDialog,
 ];
-const imports = [SharedModule];
+const imports = [SharedModule, AgGridModule];
 
 @NgModule({
   declarations,
