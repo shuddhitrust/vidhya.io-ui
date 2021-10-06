@@ -3,7 +3,7 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
 import { DashboardComponent } from './dashboard.component';
 import { ReportDashboardComponent } from './tabs/report-dashboard/report-dashboard.component';
 import { CourseDashboardComponent } from './tabs/course-dashboard/course-dashboard.component';
-import { AssignmentDashboardComponent } from './tabs/assignment-dashboard/assignment-dashboard.component';
+import { AssignmentDashboardComponent } from './modules/assignment/components/assignment-dashboard/assignment-dashboard.component';
 import { GroupDashboardComponent } from './tabs/group-dashboard/group-dashboard.component';
 import {
   ExerciseKeyDialog,
