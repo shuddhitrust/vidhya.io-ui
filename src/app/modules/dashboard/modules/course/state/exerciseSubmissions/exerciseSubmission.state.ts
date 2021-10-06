@@ -34,7 +34,7 @@ import {
   startingFetchParams,
   SUBSCRIPTION_METHODS,
 } from 'src/app/shared/common/models';
-import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
+import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
 import { EXERCISE_SUBMISSION_QUERIES } from 'src/app/shared/api/graphql/queries.graphql';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import {

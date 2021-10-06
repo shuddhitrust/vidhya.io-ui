@@ -17,7 +17,7 @@ import {
 import { MembershipStatusOptions, User } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
-import { LoginModalComponent } from '../../../../pages/modals/login/login-modal.component';
+import { LoginModalComponent } from '../../../auth/components/login/login-modal.component';
 import {
   FetchNextPublicMembersAction,
   FetchPublicMembersAction,

@@ -19,8 +19,6 @@ import {
   week,
   year,
 } from './constants';
-import { SearchParams } from '../abstract/master-grid/table.model';
-import { METHODS } from 'http';
 
 export const getOptionLabel = (
   value: string,

@@ -58,7 +58,7 @@ import { Router } from '@angular/router';
 import { defaultLogos, defaultSearchParams } from '../../common/constants';
 import { Observable } from 'rxjs';
 import { SUBSCRIPTIONS } from '../../api/graphql/subscriptions.graphql';
-import { SearchParams } from '../../abstract/master-grid/table.model';
+import { SearchParams } from '../../modules/master-grid/table.model';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
 
 @State<ChatStateModel>({

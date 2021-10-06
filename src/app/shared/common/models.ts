@@ -1,4 +1,4 @@
-import { defaultPageSize } from '../abstract/master-grid/table.model';
+import { defaultPageSize } from '../modules/master-grid/table.model';
 import { defaultSearchParams } from './constants';
 
 /* 

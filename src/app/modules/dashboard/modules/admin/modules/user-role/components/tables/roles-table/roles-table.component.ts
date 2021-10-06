@@ -5,7 +5,7 @@ import { Select, Store } from '@ngxs/store';
 import { GridOptions } from 'ag-grid-community';
 import { Observable } from 'rxjs';
 
-import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
+import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
 import { RoleProfileRendererComponent } from 'src/app/modules/dashboard/modules/admin/modules/user-role/components/cell-renderers/role-profile/role-profile-renderer.component';
 import { ADMIN_SECTION_LABELS } from 'src/app/shared/common/constants';
 import { FetchParams, resources, User } from 'src/app/shared/common/models';

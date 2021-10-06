@@ -38,7 +38,7 @@ import {
 import { Router } from '@angular/router';
 import { defaultSearchParams } from '../../../../../shared/common/constants';
 import { SUBSCRIPTIONS } from '../../../../../shared/api/graphql/subscriptions.graphql';
-import { SearchParams } from '../../../../../shared/abstract/master-grid/table.model';
+import { SearchParams } from '../../../../../shared/modules/master-grid/table.model';
 import { ToggleLoadingScreen } from '../../../../../shared/state/loading/loading.actions';
 
 @State<AnnouncementStateModel>({

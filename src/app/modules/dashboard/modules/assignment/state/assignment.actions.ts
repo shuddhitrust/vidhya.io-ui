@@ -1,4 +1,4 @@
-import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
+import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
 
 export class FetchAssignmentsAction {
   static readonly type = '[ASSIGNMENTS] Fetch';

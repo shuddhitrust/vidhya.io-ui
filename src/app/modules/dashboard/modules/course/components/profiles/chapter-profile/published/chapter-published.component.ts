@@ -90,7 +90,7 @@ type previewImage = {
   templateUrl: './chapter-published.component.html',
   styleUrls: [
     './chapter-published.component.scss',
-    './../../../../shared/common/shared-styles.css',
+    './../../../../../../../../shared/common/shared-styles.css',
   ],
 })
 export class ChapterPublishedComponent implements OnInit, OnDestroy {

@@ -12,7 +12,7 @@ import {
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { startingFetchParams, User } from 'src/app/shared/common/models';
 import { defaultPublicState, PublicStateModel } from './public.model';
-import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
+import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
 import {
   FetchNextPublicMembersAction,
   FetchPublicMembersAction,

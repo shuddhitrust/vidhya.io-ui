@@ -5,8 +5,8 @@ import { Select, Store } from '@ngxs/store';
 import { GridOptions } from 'ag-grid-community';
 import { Observable } from 'rxjs';
 
-import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
-import { InstitutionProfileRendererComponent } from 'src/app/shared/cell-renderers/institution-profile/institution-profile-renderer.component';
+import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
+import { InstitutionProfileRendererComponent } from 'src/app/modules/dashboard/modules/admin/modules/institution/components/institution-profile-cell-renderer/institution-profile-renderer.component';
 import {
   Institution,
   FetchParams,

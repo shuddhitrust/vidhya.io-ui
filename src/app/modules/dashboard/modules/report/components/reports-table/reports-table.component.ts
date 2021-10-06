@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Select, Store } from '@ngxs/store';
 import { GridOptions } from 'ag-grid-community';
 import { Observable } from 'rxjs';
-import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
+import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
 import { Report, FetchParams, resources } from 'src/app/shared/common/models';
 import {
   FetchReportsAction,

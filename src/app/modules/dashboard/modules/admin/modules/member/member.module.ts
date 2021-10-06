@@ -7,7 +7,7 @@ import {
   UserDenialConfirmationDialog,
   UserModerationProfileComponent,
 } from './components/modals/moderate-user/user-moderation.component';
-import { MasterGridModule } from 'src/app/shared/abstract/master-grid/master-grid.module';
+import { MasterGridModule } from 'src/app/shared/modules/master-grid/master-grid.module';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { ClassAdminsTableComponent } from './components/tables/class-admin-table/class-admins-table.component';
 import { AwaitingModerationTableComponent } from './components/tables/awaiting-moderation-table/awaiting-moderation-table.component';

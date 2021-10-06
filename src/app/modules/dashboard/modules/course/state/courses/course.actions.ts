@@ -1,5 +1,5 @@
 import { FormGroup, FormGroupDirective } from '@angular/forms';
-import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
+import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
 import { idPayload } from 'src/app/shared/common/models';
 
 export class FetchCoursesAction {

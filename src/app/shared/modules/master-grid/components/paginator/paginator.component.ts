@@ -7,7 +7,7 @@ import {
   EventEmitter,
 } from '@angular/core';
 import { defaultPageSize } from '../../table.model';
-import { pageSizeOptions } from './../../table.config';
+import { pageSizeOptions } from '../../table.config';
 
 @Component({
   selector: 'app-paginator',

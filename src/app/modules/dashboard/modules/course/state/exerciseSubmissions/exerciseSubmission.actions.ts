@@ -1,4 +1,4 @@
-import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
+import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
 import { ExerciseSubmission, idPayload } from 'src/app/shared/common/models';
 
 export class FetchExerciseSubmissionsAction {

@@ -43,7 +43,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { SUBSCRIPTIONS } from '../../../../../../../shared/api/graphql/subscriptions.graphql';
 import { uiroutes } from '../../../../../../../shared/common/ui-routes';
-import { SearchParams } from '../../../../../../../shared/abstract/master-grid/table.model';
+import { SearchParams } from '../../../../../../../shared/modules/master-grid/table.model';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { UpdateCurrentUserInStateAction } from 'src/app/modules/auth/state/auth.actions';
 

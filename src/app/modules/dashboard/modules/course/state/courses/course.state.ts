@@ -27,7 +27,7 @@ import {
   startingFetchParams,
   SUBSCRIPTION_METHODS,
 } from 'src/app/shared/common/models';
-import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
+import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
 import {
   convertPaginatedListToNormalList,
   getErrorMessageFromGraphQLResponse,

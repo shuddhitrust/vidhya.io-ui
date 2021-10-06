@@ -1,5 +1,5 @@
 import { MarkedOptions, MarkedRenderer } from 'ngx-markdown';
-import { SearchParams } from '../abstract/master-grid/table.model';
+import { SearchParams } from '../modules/master-grid/table.model';
 
 export const secondInMillseconds = 60000;
 export const minute = 60;

@@ -4,7 +4,7 @@ import { NgxsModule } from '@ngxs/store';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 import { LMarkdownEditorModule } from 'ngx-markdown-editor';
-import { MasterGridModule } from 'src/app/shared/abstract/master-grid/master-grid.module';
+import { MasterGridModule } from 'src/app/shared/modules/master-grid/master-grid.module';
 import { markedOptionsFactory } from 'src/app/shared/common/constants';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { ChapterState } from 'src/app/modules/dashboard/modules/course/state/chapters/chapter.state';
@@ -24,6 +24,7 @@ import { ExerciseKeyState } from './state/exerciseKeys/exerciseKey.state';
 import { CourseState } from './state/courses/course.state';
 import { ExerciseState } from './state/exercises/exercise.state';
 import { ExerciseSubmissionState } from './state/exerciseSubmissions/exerciseSubmission.state';
+import { CourseRoutingModule } from './course-routing.module';
 
 const declarations = [
   CourseDashboardComponent,
@@ -60,6 +61,7 @@ const imports = [SharedModule];
       ExerciseSubmissionState,
       ExerciseKeyState,
     ]),
+    CourseRoutingModule,
   ],
   exports: [...declarations, ...imports],
 })

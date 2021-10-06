@@ -13,7 +13,7 @@ import {
 } from './assignment.actions';
 import { Apollo } from 'apollo-angular';
 import { FetchParams, startingFetchParams } from 'src/app/shared/common/models';
-import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
+import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
 import {
   convertPaginatedListToNormalList,
   getErrorMessageFromGraphQLResponse,

@@ -5,12 +5,12 @@ import { ICellRendererParams } from 'ag-grid-community';
 import { Observable } from 'rxjs';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { InstitutionModalComponent } from 'src/app/modules/dashboard/modules/admin/modules/institution/components/institution-modal/institution-modal.component';
-import { AuthorizationService } from '../../api/authorization/authorization.service';
+import { AuthorizationService } from '../../../../../../../../shared/api/authorization/authorization.service';
 import {
   CurrentMember,
   resources,
   RESOURCE_ACTIONS,
-} from '../../common/models';
+} from '../../../../../../../../shared/common/models';
 
 @Component({
   selector: 'app-institution-profile',

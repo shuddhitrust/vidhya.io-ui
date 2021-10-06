@@ -15,7 +15,7 @@ import { FetchInstitutionsAction } from 'src/app/modules/dashboard/modules/admin
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { OptionsState } from 'src/app/shared/state/options/options.state';
 import { FetchMemberOptionsByInstitution } from 'src/app/shared/state/options/options.actions';
-import { DefaultColDef } from 'src/app/shared/abstract/master-grid/table.config';
+import { DefaultColDef } from 'src/app/shared/modules/master-grid/table.config';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { CourseState } from '../../../state/courses/course.state';
 import { emptyCourseFormRecord } from '../../../state/courses/course.model';

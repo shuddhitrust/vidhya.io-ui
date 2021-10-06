@@ -4,6 +4,7 @@ import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { AddEditGroupComponent } from './components/add-edit-group/add-edit-group.component';
 import { GroupDashboardComponent } from './components/group-dashboard/group-dashboard.component';
 import { GroupProfileComponent } from './components/group-profile/group-profile.component';
+import { GroupRoutingModule } from './group-routing.module';
 import { GroupState } from './state/group.state';
 
 const declarations = [
@@ -15,7 +16,11 @@ const imports = [SharedModule];
 
 @NgModule({
   declarations,
-  imports: [...imports, NgxsModule.forFeature([GroupState])],
+  imports: [
+    ...imports,
+    NgxsModule.forFeature([GroupState]),
+    GroupRoutingModule,
+  ],
   exports: [...declarations, ...imports],
 })
 export class GroupModule {}

@@ -9,7 +9,7 @@ import {
 } from 'src/app/modules/auth/state/auth.actions';
 import { AuthStateModel } from 'src/app/modules/auth/state/auth.model';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
-import { LoginModalComponent } from 'src/app/pages/modals/login/login-modal.component';
+import { LoginModalComponent } from 'src/app/modules/auth/components/login/login-modal.component';
 import { CurrentMember } from '../../common/models';
 import { uiroutes } from '../../common/ui-routes';
 

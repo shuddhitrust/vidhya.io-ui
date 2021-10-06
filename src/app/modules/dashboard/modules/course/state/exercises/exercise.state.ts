@@ -21,7 +21,7 @@ import { Apollo } from 'apollo-angular';
 import { Router } from '@angular/router';
 import { emptyExerciseSubmissionFormRecord } from '../exerciseSubmissions/exerciseSubmission.model';
 import { ForceRefetchExerciseKeysAction } from '../exerciseKeys/exerciseKey.actions';
-import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
+import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
 import { SUBSCRIPTIONS } from 'src/app/shared/api/graphql/subscriptions.graphql';
 import {
   Exercise,

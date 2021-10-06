@@ -26,7 +26,7 @@ import {
   GroupSubscriptionAction,
   ResetGroupFormAction,
 } from './group.actions';
-import { SearchParams } from 'src/app/shared/abstract/master-grid/table.model';
+import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
 import {
   convertPaginatedListToNormalList,
   getErrorMessageFromGraphQLResponse,

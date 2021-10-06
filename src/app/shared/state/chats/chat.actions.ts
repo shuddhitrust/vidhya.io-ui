@@ -1,5 +1,5 @@
 import { FormGroup, FormGroupDirective } from '@angular/forms';
-import { SearchParams } from '../../abstract/master-grid/table.model';
+import { SearchParams } from '../../modules/master-grid/table.model';
 import { idPayload } from '../../common/models';
 
 export class FetchChatsAction {

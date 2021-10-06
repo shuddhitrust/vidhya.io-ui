@@ -8,13 +8,13 @@ import {
 } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { GridOptions } from 'ag-grid-community';
-import { pageSizeOptions } from './../../table.config';
-import { ColWidth, defaultPageSize, SearchParams } from './../../table.model';
+import { pageSizeOptions } from '../../table.config';
+import { ColWidth, defaultPageSize, SearchParams } from '../../table.model';
 import {
   setColumnWidthsFromLocalStorage,
   updateColumnWidth,
   customWidthsExist,
-} from './../../table.functions';
+} from '../../table.functions';
 import {
   FetchParams,
   RESOURCE_ACTIONS,
