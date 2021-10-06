@@ -58,6 +58,7 @@ import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { MasterGridModule } from 'src/app/shared/abstract/master-grid/master-grid.module';
 import { ReportsTableComponent } from './../../pages/tables/reports-table/reports-table.component';
 import { AdminModule } from './modules/admin/admin.module';
+import { AnnouncementModule } from './modules/announcement/announcement.module';
 
 export function markedOptionsFactory(): MarkedOptions {
   const renderer = new MarkedRenderer();
@@ -145,6 +146,7 @@ export function markedOptionsFactory(): MarkedOptions {
       NgxsReduxDevtoolsPluginModule.forRoot(),
     ],
     AdminModule,
+    AnnouncementModule,
     MarkdownModule.forRoot({
       loader: HttpClient,
       markedOptions: {

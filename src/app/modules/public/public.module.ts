@@ -5,13 +5,10 @@ import { SharedModule } from './../../shared/modules/shared.module';
 import { PublicUserProfileComponent } from './components/public-user-profile/public-user-profile.component';
 import { PasswordResetComponent } from './components/password-reset/password-reset.component';
 import { PublicRoutingModule } from './public-routing.module';
-import { environment } from 'src/environments/environment';
-import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsModule } from '@ngxs/store';
 import { PublicState } from './state/public/public.state';
 import { PublicComponent } from './components/public/public.component';
 import { AuthModule } from '../auth/auth.module';
-// function that returns `MarkedOptions` with renderer override
 
 const declarations = [
   HomeComponent,
