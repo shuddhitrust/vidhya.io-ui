@@ -6,14 +6,7 @@ import { LMarkdownEditorModule } from 'ngx-markdown-editor';
 import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 import { HttpClient } from '@angular/common/http';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
-import { NgxsModule } from '@ngxs/store';
 import { HotToastModule } from '@ngneat/hot-toast';
-import { NotificationState } from 'src/app/shared/state/notifications/notification.state';
-import { LoadingState } from 'src/app/shared/state/loading/loading.state';
-import { OptionsState } from 'src/app/shared/state/options/options.state';
-import { SubscriptionsState } from 'src/app/shared/state/subscriptions/subscriptions.state';
-import { environment } from 'src/environments/environment';
-import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { MasterConfirmationDialog } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { ImageDisplayDialog } from 'src/app/shared/components/image-display/image-display-dialog.component';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
@@ -48,15 +41,6 @@ import { GroupModule } from './modules/group/group.module';
       },
     }),
     HotToastModule.forRoot(),
-    [
-      NgxsModule.forRoot(
-        [NotificationState, LoadingState, OptionsState, SubscriptionsState],
-        {
-          developmentMode: !environment.production,
-        }
-      ),
-      NgxsReduxDevtoolsPluginModule.forRoot(),
-    ],
     AdminModule,
     AnnouncementModule,
     AssignmentModule,
