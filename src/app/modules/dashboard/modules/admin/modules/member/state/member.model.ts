@@ -105,4 +105,4 @@ export const memberColumns: any[] = [
   // },
 ];
 
-export const MemberFormCloseURL = uiroutes.MEMBER_PROFILE_ROUTE.route;
+export const MemberFormCloseURL = uiroutes.OWN_PROFILE_ROUTE.route;
