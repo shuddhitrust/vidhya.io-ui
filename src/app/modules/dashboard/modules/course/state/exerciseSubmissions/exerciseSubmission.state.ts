@@ -278,7 +278,7 @@ export class ExerciseSubmissionState {
       patchState({ isFetching: true });
       this.store.dispatch(
         new ToggleLoadingScreen({
-          message: 'Fetching grading groups...',
+          message: 'Fetching submissions...',
           showLoadingScreen: true,
         })
       );
