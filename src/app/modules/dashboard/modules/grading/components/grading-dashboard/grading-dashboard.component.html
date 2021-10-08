@@ -271,7 +271,7 @@
                   <br />
                 </span>
 
-                <mat-form-field
+                <div
                   *ngIf="
                     exerciseSubmission.exercise?.questionType ==
                     questionTypes.link
@@ -279,14 +279,19 @@
                   class="col-lg-12 col-md-12 col-sm-12"
                   appearance="outline"
                 >
-                  <mat-label>Link</mat-label>
-                  <input
-                    matInput
-                    disabled
-                    [value]="exerciseSubmission.link"
-                    placeholder="Link"
-                  />
-                </mat-form-field>
+                  <br />
+                  <p>
+                    <i>Submitted Link</i> -
+                    <a
+                      [href]="exerciseSubmission?.link"
+                      alt="Link submitted"
+                      target="_blank"
+                      rel="noopener noreferrer nofollow"
+                      >{{ exerciseSubmission?.link }}</a
+                    >
+                  </p>
+                  <br />
+                </div>
 
                 <mat-form-field
                   class="col-lg-12 col-md-12 col-sm-12"

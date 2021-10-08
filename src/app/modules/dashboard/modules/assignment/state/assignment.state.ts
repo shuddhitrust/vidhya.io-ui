@@ -121,7 +121,7 @@ export class AssignmentState {
       newColumnFilters: columnFilters,
     });
     const variables = {
-      status: columnFilters.status,
+      status: columnFilters?.status,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };

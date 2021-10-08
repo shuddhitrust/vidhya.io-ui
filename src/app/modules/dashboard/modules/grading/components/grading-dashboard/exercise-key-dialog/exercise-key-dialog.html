@@ -53,20 +53,23 @@
     </div>
   </span>
 
-  <span
+  <div
     class="form-element-block col-lg-12 col-md-12 col-sm-12"
     *ngIf="exerciseKey.exercise?.questionType == questionTypes.link"
   >
-    <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
-      <mat-label>Link</mat-label>
-      <input
-        matInput
-        disabled
-        [(ngModel)]="exerciseKey.referenceLink"
-        placeholder="Reference Link"
-      />
-    </mat-form-field>
-  </span>
+    <br />
+    <p>
+      <i>Reference Link</i> -
+      <a
+        [href]="exerciseKey.referenceLink"
+        target="_blank"
+        rel="noopener noreferrer nofollow"
+        alt="Reference link"
+        >{{exerciseKey.referenceLink}}</a
+      >
+    </p>
+  </div>
+  <br />
   <ng-template #validAnswersTemplate>
     <p class="form-element-block">Possible valid answers</p>
     <div
@@ -89,14 +92,14 @@
     <br />
   </ng-template>
 
-  <mat-form-field
+  <div
     *ngIf="exerciseKey?.remarks"
     class="col-lg-12 col-md-12 col-sm-12"
     appearance="outline"
   >
-    <mat-label>Additional Remarks</mat-label>
-    <input matInput disabled [value]="exerciseKey?.remarks" />
-  </mat-form-field>
+    <p><i>Additional Remarks</i> - {{exerciseKey?.remarks}}</p>
+    <br />
+  </div>
   <p>
     <a [href]="chapterRoute" target="_blank" rel="noopener noreferrer nofollow"
       >View this exercise in context</a
