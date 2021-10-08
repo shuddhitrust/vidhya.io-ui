@@ -41,53 +41,6 @@ export class AppComponent {
     return result;
   }
 
-  showHomePage() {
-    // Make sure to add the routes of other components that are allowed to be shown when not logged in fully
-    const routes = [
-      uiroutes.PRIVACY_ROUTE.route,
-      uiroutes.MEMBER_FORM_ROUTE.route,
-      uiroutes.PASSWORD_RESET_ROUTE.route,
-      uiroutes.MEMBER_PROFILE_ROUTE.route,
-    ];
-    return this.currentRouteNoteEquals(routes);
-  }
-
-  /**
-   * This method ensures that we get to show select components to the user when not logged in
-   * @param route
-   * @returns
-   */
-  showUnprotectedPage(route) {
-    switch (route) {
-      case uiroutes.PASSWORD_RESET_ROUTE.route:
-        if (this.router.url.includes(uiroutes.PASSWORD_RESET_ROUTE.route)) {
-          return true;
-        }
-        break;
-      case uiroutes.MEMBER_PROFILE_ROUTE.route:
-        if (this.router.url.includes(uiroutes.MEMBER_PROFILE_ROUTE.route)) {
-          return true;
-        }
-        break;
-      case uiroutes.PRIVACY_ROUTE.route:
-        if (this.router.url.includes(uiroutes.PRIVACY_ROUTE.route)) {
-          return true;
-        }
-        break;
-      case uiroutes.MEMBER_FORM_ROUTE.route:
-        if (
-          this.firstTimeSetup &&
-          this.currentRoute() == uiroutes.MEMBER_FORM_ROUTE.route
-        ) {
-          return true;
-        }
-        break;
-      default:
-        this.router.navigate[uiroutes.HOME_ROUTE.route];
-    }
-    return false;
-  }
-
   ngOnInit(): void {
     this.checkAuthentication();
   }

@@ -2087,7 +2087,6 @@ export class HomeComponent implements OnInit {
   }
 
   fetchMembers() {
-    console.log('Fetching members from home component');
     this.store.dispatch(
       new FetchPublicMembersAction({
         searchParams: {
