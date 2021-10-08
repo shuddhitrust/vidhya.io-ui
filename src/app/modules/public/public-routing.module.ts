@@ -20,15 +20,11 @@ const routes: Routes = [
   {
     path: `${uiroutes.MEMBER_PROFILE_ROUTE.route}/:username`,
     component: PublicUserProfileComponent,
-    canActivate: [AuthenticationGuard],
-    data: uiroutes.MEMBER_PROFILE_ROUTE.auth,
     pathMatch: 'full',
   },
   {
     path: uiroutes.PRIVACY_ROUTE.route,
     component: PrivacyComponent,
-    canActivate: [AuthenticationGuard],
-    data: uiroutes.PRIVACY_ROUTE.auth,
     pathMatch: 'full',
   },
   {
