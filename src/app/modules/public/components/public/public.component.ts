@@ -32,6 +32,7 @@ export class PublicComponent {
       uiroutes.MEMBER_FORM_ROUTE.route,
       uiroutes.PASSWORD_RESET_ROUTE.route,
       uiroutes.MEMBER_PROFILE_ROUTE.route,
+      uiroutes.ERROR_ROUTE.route,
     ];
     return this.currentRouteNoteEquals(routes);
   }
@@ -44,30 +45,35 @@ export class PublicComponent {
   showUnprotectedPage(route) {
     switch (route) {
       case uiroutes.PASSWORD_RESET_ROUTE.route:
-        if (this.router.url.startsWith(uiroutes.PASSWORD_RESET_ROUTE.route)) {
+        if (this.router.url.includes(uiroutes.PASSWORD_RESET_ROUTE.route)) {
           return true;
         }
         break;
       case uiroutes.MEMBER_PROFILE_ROUTE.route:
-        if (this.router.url.startsWith(uiroutes.MEMBER_PROFILE_ROUTE.route)) {
+        if (this.router.url.includes(uiroutes.MEMBER_PROFILE_ROUTE.route)) {
           return true;
         }
         break;
       case uiroutes.PRIVACY_ROUTE.route:
-        if (this.router.url.startsWith(uiroutes.PRIVACY_ROUTE.route)) {
+        if (this.router.url.includes(uiroutes.PRIVACY_ROUTE.route)) {
           return true;
         }
         break;
       case uiroutes.MEMBER_FORM_ROUTE.route:
         if (
           this.firstTimeSetup &&
-          this.currentRoute() == uiroutes.MEMBER_FORM_ROUTE.route
+          this.currentRoute().includes(uiroutes.MEMBER_FORM_ROUTE.route)
         ) {
           return true;
         }
         break;
       case uiroutes.HOME_ROUTE.route:
         if (this.currentRoute() == uiroutes.HOME_ROUTE.route) {
+          return true;
+        }
+        break;
+      case uiroutes.ERROR_ROUTE.route:
+        if (this.currentRoute() == uiroutes.ERROR_ROUTE.route) {
           return true;
         }
         break;

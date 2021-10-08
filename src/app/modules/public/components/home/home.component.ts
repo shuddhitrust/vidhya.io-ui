@@ -2137,9 +2137,9 @@ export class HomeComponent implements OnInit {
   }
 
   onClickCard(learner) {
-    this.router.navigate([
-      `${uiroutes.MEMBER_PROFILE_ROUTE.route}/${learner.username}`,
-    ]);
+    this.router.navigateByUrl(
+      `${uiroutes.MEMBER_PROFILE_ROUTE.route}/${learner.username}`
+    );
   }
 
   ngOnInit(): void {

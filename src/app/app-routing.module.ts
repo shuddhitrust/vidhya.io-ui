@@ -18,10 +18,13 @@ const routes: Routes = [
     path: '',
     loadChildren: () =>
       import('./modules/public/public.module').then((m) => m.PublicModule),
-    canActivate: [AuthenticationGuard],
-    data: null,
   },
-  { path: '**', pathMatch: 'full', component: ErrorPageComponent },
+  {
+    path: uiroutes.ERROR_ROUTE.route,
+    pathMatch: 'full',
+    component: ErrorPageComponent,
+  },
+  { path: '**', pathMatch: 'full', redirectTo: uiroutes.ERROR_ROUTE.route },
 ];
 
 @NgModule({
