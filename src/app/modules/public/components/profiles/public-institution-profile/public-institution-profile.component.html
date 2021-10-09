@@ -3,29 +3,11 @@
 </button>
 
 <div class="institution-card">
+  <h2>{{ institution?.name }}</h2>
+  <p>{{ institution?.bio }}</p>
   <div>
     <img [src]="institution.logo" class="logo" alt="profile pic" />
   </div>
-  <button
-    *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
-    mat-mini-fab
-    color="warn"
-    class="profile-button"
-    (click)="deleteConfirmation()"
-  >
-    <mat-icon>delete</mat-icon>
-  </button>
-  <button
-    *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
-    mat-mini-fab
-    color="info"
-    class="profile-button"
-    (click)="editInstitution()"
-  >
-    <mat-icon>edit</mat-icon>
-  </button>
-  <h2>{{ institution?.name }}</h2>
-  <p>{{ institution?.bio }}</p>
 </div>
 
 <ng-template #loading>

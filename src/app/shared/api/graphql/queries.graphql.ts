@@ -102,7 +102,6 @@ export const PUBLIC_QUERIES = {
         phone
         logo
         bio
-        invitecode
       }
     }
   `,

@@ -43,6 +43,11 @@ export class PublicState {
   }
 
   @Selector()
+  static getInstitutionFormRecord(state: PublicStateModel): Institution {
+    return state.institutionFormRecord;
+  }
+
+  @Selector()
   static listInstitutions(state: PublicStateModel): Institution[] {
     return state.institutions;
   }
@@ -317,7 +322,7 @@ export class PublicState {
         ({ data }: any) => {
           const response = data.publicInstitution;
           patchState({
-            instituionFormRecord: response,
+            institutionFormRecord: response,
             isFetchingFormRecord: false,
           });
         },
@@ -339,7 +344,7 @@ export class PublicState {
   }: StateContext<PublicStateModel>) {
     patchState({
       isFetchingFormRecord: false,
-      memberFormRecord: defaultPublicState.memberFormRecord,
+      institutionFormRecord: defaultPublicState.institutionFormRecord,
     });
   }
 
@@ -352,7 +357,7 @@ export class PublicState {
       memberFormRecord: defaultPublicState.memberFormRecord,
       members: defaultPublicState.members,
       isFetchingInstitutions: false,
-      instituionFormRecord: defaultPublicState.instituionFormRecord,
+      institutionFormRecord: defaultPublicState.institutionFormRecord,
       institutions: defaultPublicState.institutions,
     });
   }

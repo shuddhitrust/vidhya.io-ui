@@ -46,7 +46,7 @@ export interface PublicStateModel {
   paginatedPublicInstitutions: any[];
   fetchInstitutionsParamObjects: FetchParams[];
   institutionFormId: string;
-  instituionFormRecord: Institution;
+  institutionFormRecord: Institution;
   isFetchingInstitutions: boolean;
 }
 
@@ -66,6 +66,6 @@ export const defaultPublicState: PublicStateModel = {
   paginatedPublicInstitutions: [],
   fetchInstitutionsParamObjects: [],
   institutionFormId: null,
-  instituionFormRecord: emptyInstitutionFormRecord,
+  institutionFormRecord: emptyInstitutionFormRecord,
   isFetchingInstitutions: false,
 };
