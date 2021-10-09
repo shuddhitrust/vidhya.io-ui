@@ -21,12 +21,14 @@ import {
 import {
   autoGenOptions,
   convertKeyToLabel,
+  ExerciseTitle,
   getKeyForValue,
   parseDateTime,
   sortByIndex,
 } from 'src/app/shared/common/functions';
 import {
   CurrentMember,
+  Exercise,
   ExerciseKey,
   ExerciseQuestionTypeOptions,
   ExerciseSubmission,
@@ -338,6 +340,11 @@ export class GradingDashboardComponent implements OnInit {
       `<span class="title-search-description">${searchDescription}</span>` +
       '</span>'
     );
+  }
+
+  exerciseTitle(exercise: Exercise): string {
+    console.log('from exercise title', { chapter: exercise.chapter, exercise });
+    return `${ExerciseTitle(exercise.chapter, exercise)} ${exercise.prompt}`;
   }
 
   fetchGradingGroups() {

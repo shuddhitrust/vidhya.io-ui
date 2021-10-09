@@ -630,8 +630,10 @@ export const EXERCISE_SUBMISSION_QUERIES = {
           chapter {
             id
             title
+            index
             dueDate
             section {
+              index
               title
             }
           }
@@ -684,8 +686,10 @@ export const EXERCISE_SUBMISSION_QUERIES = {
           chapter {
             id
             title
+            index
             dueDate
             section {
+              index
               title
             }
           }
