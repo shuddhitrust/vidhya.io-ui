@@ -14,11 +14,11 @@ import {
 import { PublicState } from '../../../state/public/public.state';
 
 @Component({
-  selector: 'app-institutions-list',
-  templateUrl: './institutions-list.component.html',
-  styleUrls: ['./institutions-list.component.scss'],
+  selector: 'app-institutions-feed',
+  templateUrl: './institutions-feed.component.html',
+  styleUrls: ['./institutions-feed.component.scss'],
 })
-export class PublicInstitutionsTabComponent {
+export class InstitutionsFeedComponent {
   @Select(PublicState.listInstitutions)
   institutions$: Observable<Institution[]>;
   institutions: any[] = [];
@@ -58,7 +58,7 @@ export class PublicInstitutionsTabComponent {
 
   onClickInstitutionCard(institution) {
     this.router.navigateByUrl(
-      `${uiroutes.INSTITUTION_PROFILE_ROUTE.route}/?id=${institution.id}`
+      `${uiroutes.INSTITUTION_PROFILE_ROUTE.route}?id=${institution.id}`
     );
   }
 

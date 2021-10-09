@@ -1,20 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthenticationGuard } from './../../shared/api/authentication.guard';
 import { uiroutes } from './../../shared/common/ui-routes';
-import { ErrorPageComponent } from './components/error/error.component';
-import { HomeComponent } from './components/home/home.component';
-import { PasswordResetComponent } from './components/password-reset/password-reset.component';
-import { PrivacyComponent } from './components/privacy/privacy.component';
-import { InstitutionProfileComponent } from './components/public-institution-profile/public-institution-profile.component';
-import { PublicUserProfileComponent } from './components/public-user-profile/public-user-profile.component';
-
-// import { InstitutionProfileComponent } from './pages/modals/institution-profile/institution-profile.component';
+import { HomeComponent } from './components/pages/home/home.component';
+import { PasswordResetComponent } from './components/pages/password-reset/password-reset.component';
+import { PrivacyComponent } from './components/pages/privacy/privacy.component';
+import { InstitutionProfileComponent } from './components/profiles/public-institution-profile/public-institution-profile.component';
+import { PublicUserProfileComponent } from './components/profiles/public-user-profile/public-user-profile.component';
 
 /**
  * Public routes
  *  ***NOTE*** - In order for routes to be available without logging in,
- * special provisions need to be made on app.component.html and the corresponding .ts file.
+ * special provisions need to be made on public.component.html and the corresponding .ts file.
  * Without making these changes the route would not show.
  */
 const routes: Routes = [
@@ -24,7 +20,7 @@ const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path: `${uiroutes.INSTITUTION_PROFILE_ROUTE.route}/:id`,
+    path: `${uiroutes.INSTITUTION_PROFILE_ROUTE.route}`,
     component: InstitutionProfileComponent,
     pathMatch: 'full',
   },

@@ -13,7 +13,7 @@ import {
 } from '../../../../../../../../shared/common/models';
 
 @Component({
-  selector: 'app-institution-profile',
+  selector: 'app-institution-profile-renderer',
   templateUrl: './institution-profile-renderer.component.html',
   styleUrls: ['./institution-profile-renderer.component.scss'],
 })

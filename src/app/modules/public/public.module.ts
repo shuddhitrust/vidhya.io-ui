@@ -1,21 +1,21 @@
 import { NgModule } from '@angular/core';
-import { HomeComponent } from './components/home/home.component';
-import { PrivacyComponent } from './components/privacy/privacy.component';
 import { SharedModule } from './../../shared/modules/shared.module';
-import { PublicUserProfileComponent } from './components/public-user-profile/public-user-profile.component';
-import { PasswordResetComponent } from './components/password-reset/password-reset.component';
 import { PublicRoutingModule } from './public-routing.module';
 import { NgxsModule } from '@ngxs/store';
 import { PublicState } from './state/public/public.state';
 import { PublicComponent } from './components/public/public.component';
 import { MemberModule } from '../dashboard/modules/admin/modules/member/member.module';
 import { AuthModule } from '../auth/auth.module';
-import { ErrorPageComponent } from './components/error/error.component';
-import { PublicTabsComponent } from './components/public-lists/public-lists.component';
-import { LearnersListComponent } from './components/public-lists/learners-list/learners-list.component';
-import { PublicInstitutionsTabComponent } from './components/public-lists/institutions-list/institutions-list.component';
+import { ErrorPageComponent } from './components/pages/error/error.component';
+import { PublicTabsComponent } from './components/feed/public-lists.component';
+import { PublicLearnersFeedComponent } from './components/feed/learners-feed/learners-feed.component';
 import { InstitutionModule } from '../dashboard/modules/admin/modules/institution/institution.module';
-import { InstitutionProfileComponent } from './components/public-institution-profile/public-institution-profile.component';
+import { InstitutionProfileComponent } from './components/profiles/public-institution-profile/public-institution-profile.component';
+import { InstitutionsFeedComponent } from './components/feed/institutions-feed/institutions-feed.component';
+import { HomeComponent } from './components/pages/home/home.component';
+import { PasswordResetComponent } from './components/pages/password-reset/password-reset.component';
+import { PrivacyComponent } from './components/pages/privacy/privacy.component';
+import { PublicUserProfileComponent } from './components/profiles/public-user-profile/public-user-profile.component';
 
 const declarations = [
   HomeComponent,
@@ -25,8 +25,8 @@ const declarations = [
   PublicComponent,
   ErrorPageComponent,
   PublicTabsComponent,
-  LearnersListComponent,
-  PublicInstitutionsTabComponent,
+  PublicLearnersFeedComponent,
+  InstitutionsFeedComponent,
   InstitutionProfileComponent,
 ];
 

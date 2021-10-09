@@ -9,7 +9,7 @@ import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { MembershipStatusOptions } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
-import { LoginModalComponent } from '../../../auth/components/login/login-modal.component';
+import { LoginModalComponent } from '../../../../auth/components/login/login-modal.component';
 
 @Component({
   selector: 'app-home',

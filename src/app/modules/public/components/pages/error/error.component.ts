@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { uiroutes } from '../../../../shared/common/ui-routes';
+import { uiroutes } from '../../../../../shared/common/ui-routes';
 
 @Component({
   selector: 'app-error-component',

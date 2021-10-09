@@ -18,11 +18,11 @@ import {
 import { PublicState } from '../../../state/public/public.state';
 
 @Component({
-  selector: 'app-learners-list',
-  templateUrl: './learners-list.component.html',
-  styleUrls: ['./learners-list.component.scss'],
+  selector: 'app-learners-feed',
+  templateUrl: './learners-feed.component.html',
+  styleUrls: ['./learners-feed.component.scss'],
 })
-export class LearnersListComponent {
+export class PublicLearnersFeedComponent {
   @Select(PublicState.listMembers)
   learners$: Observable<User[]>;
   @Select(PublicState.isFetchingMembers)

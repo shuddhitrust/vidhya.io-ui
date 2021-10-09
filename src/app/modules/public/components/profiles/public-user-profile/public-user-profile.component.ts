@@ -14,15 +14,15 @@ import { parseDateTime } from 'src/app/shared/common/functions';
 import {
   GetMemberByUsernameAction,
   ResetPublicMemberFormAction,
-} from '../../state/public/public.actions';
-import { PublicState } from '../../state/public/public.state';
+} from '../../../state/public/public.actions';
+import { PublicState } from '../../../state/public/public.state';
 
 @Component({
   selector: 'app-public-user-profile',
   templateUrl: './public-user-profile.component.html',
   styleUrls: [
     './public-user-profile.component.scss',
-    './../../../../shared/common/shared-styles.css',
+    './../../../../../shared/common/shared-styles.css',
   ],
 })
 export class PublicUserProfileComponent implements OnInit, OnDestroy {
