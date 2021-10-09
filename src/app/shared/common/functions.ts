@@ -9,6 +9,7 @@ import {
   Exercise,
   ExerciseSubmission,
   ExerciseSubmissionStatusOptions,
+  Group,
 } from './models';
 import {
   day,
@@ -19,6 +20,7 @@ import {
   week,
   year,
 } from './constants';
+import { groupTypeOptions } from 'src/app/modules/dashboard/modules/group/state/group.model';
 
 export const getOptionLabel = (
   value: string,
@@ -528,4 +530,27 @@ export const generateMemberSubtitle = (user) => {
   const title = user.title ? user.title + ', ' : '';
   const institution = user.institution?.name ? user.institution?.name : '';
   return title + institution;
+};
+
+export const generateGroupSubtitle = (group: Group) => {
+  const groupType = groupTypeOptions.find(
+    (option) => option.value == group?.groupType
+  )?.label;
+  let admins = '';
+  group.admins.forEach((a) => {
+    if (admins.length) {
+      //  Adding comma if more than one admin
+      admins += ', ';
+    }
+    admins += a.name;
+  });
+  admins = clipLongText(admins);
+  return `${groupType}, ${
+    group.institution.name
+  }, Administered by ${admins}, Created on ${parseDateTime(group.createdAt)}`;
+};
+
+export const clipLongText = (string) => {
+  const clipLength = 50;
+  return string.slice(0, clipLength);
 };
