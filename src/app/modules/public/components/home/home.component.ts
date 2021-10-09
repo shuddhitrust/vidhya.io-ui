@@ -2024,12 +2024,8 @@ export class HomeComponent implements OnInit {
   firstTimeSetup$: Observable<boolean>;
   membershipStatus: string;
   authState: AuthStateModel;
-  pendingApproval: boolean = false;
-  suspended: boolean = false;
-  showAnnouncements: boolean = true;
   isLoggedIn: boolean = false;
   firstTimeSetup: boolean = false;
-  showUnverifiedNotification: boolean = false;
   @Select(PublicState.listMembers)
   learners$: Observable<User[]>;
   @Select(PublicState.isFetching)
@@ -2114,10 +2110,6 @@ export class HomeComponent implements OnInit {
         })
       );
     }
-  }
-
-  closeAnnouncements() {
-    this.showAnnouncements = false;
   }
 
   activateAccount() {

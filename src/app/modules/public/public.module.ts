@@ -11,6 +11,7 @@ import { PublicComponent } from './components/public/public.component';
 import { MemberModule } from '../dashboard/modules/admin/modules/member/member.module';
 import { AuthModule } from '../auth/auth.module';
 import { ErrorPageComponent } from './components/error/error.component';
+import { PublicLearnersTabComponent } from './components/public-lists/public-lists.component';
 
 const declarations = [
   HomeComponent,
@@ -19,6 +20,7 @@ const declarations = [
   PublicUserProfileComponent,
   PublicComponent,
   ErrorPageComponent,
+  PublicLearnersTabComponent,
 ];
 
 @NgModule({
