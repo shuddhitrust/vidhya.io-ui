@@ -1,3 +1,4 @@
+import { idPayload } from 'src/app/shared/common/models';
 import { SearchParams } from '../../../../shared/modules/master-grid/table.model';
 
 export class FetchPublicMembersAction {
@@ -20,6 +21,30 @@ export class GetMemberByUsernameAction {
 
 export class ResetPublicMemberFormAction {
   static readonly type = '[PUBLIC] Reset Member Form';
+
+  constructor() {}
+}
+
+export class FetchPublicInstitutionssAction {
+  static readonly type = '[PUBLIC] Public Fetch Institutions';
+
+  constructor(public payload: { searchParams: SearchParams }) {}
+}
+
+export class FetchNextPublicInstitutionsAction {
+  static readonly type = '[PUBLIC] Fetch Next Institutions';
+
+  constructor() {}
+}
+
+export class GetPublicInstitutionAction {
+  static readonly type = '[PUBLIC] Get Institution';
+
+  constructor(public payload: idPayload) {}
+}
+
+export class ResetPublicInstitutionFormAction {
+  static readonly type = '[PUBLIC] Reset Institution Form';
 
   constructor() {}
 }

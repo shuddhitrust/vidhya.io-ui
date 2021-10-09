@@ -33,28 +33,7 @@ export const AUTH_QUERIES = {
   `,
 };
 
-export const USER_QUERIES = {
-  GET_USER: gql`
-    query user($id: ID!) {
-      user(id: $id) {
-        username
-        firstName
-        lastName
-        name
-        avatar
-        invitecode
-        institution {
-          id
-          name
-        }
-        role {
-          name
-          permissions
-        }
-        membershipStatus
-      }
-    }
-  `,
+export const PUBLIC_QUERIES = {
   GET_USER_BY_USERNAME: gql`
     query userByUsername($username: String!) {
       userByUsername(username: $username) {
@@ -78,6 +57,98 @@ export const USER_QUERIES = {
       }
     }
   `,
+  GET_PUBLIC_USERS: gql`
+    query publicUsers(
+      $searchField: String
+      $membershipStatusNot: [String]
+      $membershipStatusIs: [String]
+      $roles: [String]
+      $limit: Int
+      $offset: Int
+    ) {
+      publicUsers(
+        searchField: $searchField
+        membershipStatusNot: $membershipStatusNot
+        membershipStatusIs: $membershipStatusIs
+        roles: $roles
+        limit: $limit
+        offset: $offset
+      ) {
+        records {
+          id
+          username
+          name
+          title
+          bio
+          avatar
+          institution {
+            id
+            name
+          }
+          score
+        }
+        total
+      }
+    }
+  `,
+  GET_INSTITUTION: gql`
+    query publicInstitution($id: ID!) {
+      publicInstitution(id: $id) {
+        id
+        name
+        location
+        city
+        website
+        phone
+        logo
+        bio
+        invitecode
+      }
+    }
+  `,
+  GET_INSTITUTIONS: gql`
+    query publicInstitutions($searchField: String, $limit: Int, $offset: Int) {
+      publicInstitutions(
+        searchField: $searchField
+        limit: $limit
+        offset: $offset
+      ) {
+        records {
+          id
+          name
+          location
+          city
+          bio
+        }
+        total
+      }
+    }
+  `,
+};
+
+export const USER_QUERIES = {
+  GET_USER: gql`
+    query user($id: ID!) {
+      user(id: $id) {
+        username
+        firstName
+        lastName
+        name
+        avatar
+        invitecode
+        institution {
+          id
+          name
+        }
+        role {
+          name
+          permissions
+        }
+        membershipStatus
+      }
+    }
+  `,
+
   GET_USERS: gql`
     query users(
       $searchField: String
@@ -112,40 +183,6 @@ export const USER_QUERIES = {
             id
             name
           }
-        }
-        total
-      }
-    }
-  `,
-  GET_PUBLIC_USERS: gql`
-    query publicUsers(
-      $searchField: String
-      $membershipStatusNot: [String]
-      $membershipStatusIs: [String]
-      $roles: [String]
-      $limit: Int
-      $offset: Int
-    ) {
-      publicUsers(
-        searchField: $searchField
-        membershipStatusNot: $membershipStatusNot
-        membershipStatusIs: $membershipStatusIs
-        roles: $roles
-        limit: $limit
-        offset: $offset
-      ) {
-        records {
-          id
-          username
-          name
-          title
-          bio
-          avatar
-          institution {
-            id
-            name
-          }
-          score
         }
         total
       }

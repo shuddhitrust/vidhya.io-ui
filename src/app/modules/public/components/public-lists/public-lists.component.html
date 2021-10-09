@@ -1,4 +1,83 @@
-<div *ngIf="learners?.length; else emptyListTemplate">
+<nz-tabset
+  [nzSelectedIndex]="activeTabIndex"
+  [nzSize]="'large'"
+  [nzTabBarGutter]="20"
+  [nzTabBarStyle]="{
+    'font-family': 'Hahmlet, Roboto, sans-serif;',
+    padding: '10px'
+  }"
+  (nzSelectedIndexChange)="onTabChange($event)"
+  nzCentered
+>
+  <nz-tab [nzTitle]="Schools">
+    <ng-template nz-tab>
+      <ng-container *ngTemplateOutlet="institutionsListFeed"></ng-container>
+    </ng-template>
+  </nz-tab>
+  <nz-tab [nzTitle]="Students">
+    <ng-template nz-tab>
+      <ng-container *ngTemplateOutlet="learnersListFeed"></ng-container>
+    </ng-template>
+  </nz-tab>
+  <!-- <nz-tab nzTitle="Teams">
+    <ng-template nz-tab>
+      <ng-container *ngTemplateOutlet="teamListFeed"></ng-container>
+      </ng-template>
+      </nz-tab> -->
+</nz-tabset>
+
+<!-- Institutions Feed -->
+
+<ng-template #institutionsListFeed>
+  <div *ngIf="institutions?.length; else emptyListTemplate">
+    <ng-container *ngTemplateOutlet="institutionsListTemplate"></ng-container>
+  </div>
+</ng-template>
+
+<ng-template #institutionsListTemplate>
+  <div
+    class="scroll-feed"
+    infiniteScroll
+    [infiniteScrollDistance]="2"
+    [infiniteScrollThrottle]="50"
+    infiniteScrollContainer=".scroll-feed"
+    [fromRoot]="true"
+    (scrolled)="onInstitutionScroll()"
+  >
+    <div class="cards">
+      <div *ngFor="let institution of institutions">
+        <mat-card class="card" (click)="onClickInstitutionCard(institution)">
+          <mat-card-header>
+            <img
+              mat-card-avatar
+              [src]="institution.avatar"
+              [alt]="institution.name"
+            />
+            <mat-card-title>{{ institution.name }}</mat-card-title>
+            <mat-card-subtitle>{{
+              generateInstitutionSubtitle(institution)
+            }}</mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            {{ institution.bio }}
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+  <ng-container *ngTemplateOutlet="loading"></ng-container>
+</ng-template>
+
+<!-- Learners Feed -->
+
+<ng-template #learnersListFeed>
+  <div *ngIf="learners?.length; else emptyListTemplate">
+    <ng-container *ngTemplateOutlet="learnersListTemplate"></ng-container>
+  </div>
+</ng-template>
+
+<ng-template #learnersListTemplate>
   <div
     class="scroll-feed"
     infiniteScroll
@@ -8,37 +87,35 @@
     [fromRoot]="true"
     (scrolled)="onLearnerScroll()"
   >
-    <ng-container *ngTemplateOutlet="learnersListTemplate"></ng-container>
-  </div>
-</div>
+    <div class="cards">
+      <div *ngFor="let learner of learners">
+        <mat-card class="card" (click)="onClickLearnerCard(learner)">
+          <mat-card-header>
+            <img
+              mat-card-avatar
+              [src]="learner.avatar"
+              [alt]="learner.firstName"
+            />
+            <mat-card-title>{{ learner.name }}</mat-card-title>
+            <mat-card-subtitle>{{
+              generateLearnerSubtitle(learner)
+            }}</mat-card-subtitle>
+          </mat-card-header>
 
-<ng-template #learnersListTemplate>
-  <div class="cards">
-    <div *ngFor="let learner of learners">
-      <mat-card class="card" (click)="onClickLearnerCard(learner)">
-        <mat-card-header>
-          <img
-            mat-card-avatar
-            [src]="learner.avatar"
-            [alt]="learner.firstName"
-          />
-          <mat-card-title>{{ learner.name }}</mat-card-title>
-          <mat-card-subtitle>{{
-            generateLearnerSubtitle(learner)
-          }}</mat-card-subtitle>
-        </mat-card-header>
-
-        <mat-card-content>
-          {{ learner.bio }}
-        </mat-card-content>
-      </mat-card>
+          <mat-card-content>
+            {{ learner.bio }}
+          </mat-card-content>
+        </mat-card>
+      </div>
     </div>
   </div>
-  <ng-container *ngTemplateOutlet="loading"></ng-container>
+  <span *ngIf="isFetchingMembers">
+    <ng-container *ngTemplateOutlet="loading"></ng-container>
+  </span>
 </ng-template>
 
 <ng-template #loading>
-  <app-simple-loading-spinner *ngIf="isFetching"></app-simple-loading-spinner
+  <app-simple-loading-spinner></app-simple-loading-spinner
 ></ng-template>
 
 <ng-template #emptyListTemplate>

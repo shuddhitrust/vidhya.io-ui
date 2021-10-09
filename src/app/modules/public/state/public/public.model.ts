@@ -1,7 +1,9 @@
+import { emptyInstitutionFormRecord } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.model';
 import {
   FetchPolicy,
   FetchParams,
   User,
+  Institution,
 } from '../../../../shared/common/models';
 
 export interface MemberInput {
@@ -33,14 +35,19 @@ export interface PublicStateModel {
   lastPagePublicMembers: number;
   paginatedPublicMembers: any[];
   fetchPolicy: FetchPolicy;
-  fetchParamObjects: FetchParams[];
+  fetchMembersParamObjects: FetchParams[];
   memberFormId: string;
   memberFormRecord: User;
   isFetchingFormRecord: boolean;
-  isFetching: boolean;
-  errorFetching: boolean;
-  formSubmitting: boolean;
-  errorSubmitting: boolean;
+  isFetchingMembers: boolean;
+  // Institutions
+  institutions: Institution[];
+  lastPagePublicInstitutions: number;
+  paginatedPublicInstitutions: any[];
+  fetchInstitutionsParamObjects: FetchParams[];
+  institutionFormId: string;
+  instituionFormRecord: Institution;
+  isFetchingInstitutions: boolean;
 }
 
 export const defaultPublicState: PublicStateModel = {
@@ -48,12 +55,17 @@ export const defaultPublicState: PublicStateModel = {
   lastPagePublicMembers: null,
   paginatedPublicMembers: [],
   fetchPolicy: null,
-  fetchParamObjects: [],
+  fetchMembersParamObjects: [],
   memberFormId: null,
   memberFormRecord: emptyMemberFormRecord,
   isFetchingFormRecord: false,
-  isFetching: false,
-  errorFetching: false,
-  formSubmitting: false,
-  errorSubmitting: false,
+  isFetchingMembers: false,
+  // Institutions
+  institutions: [],
+  lastPagePublicInstitutions: null,
+  paginatedPublicInstitutions: [],
+  fetchInstitutionsParamObjects: [],
+  institutionFormId: null,
+  instituionFormRecord: emptyInstitutionFormRecord,
+  isFetchingInstitutions: false,
 };

@@ -1,7 +1,7 @@
 import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 
 import { Injectable } from '@angular/core';
-import { USER_QUERIES } from '../../../../shared/api/graphql/queries.graphql';
+import { PUBLIC_QUERIES } from '../../../../shared/api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
 
 import {
@@ -10,16 +10,25 @@ import {
   updateFetchParams,
 } from 'src/app/shared/common/functions';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
-import { startingFetchParams, User } from 'src/app/shared/common/models';
+import {
+  Institution,
+  startingFetchParams,
+  User,
+} from 'src/app/shared/common/models';
 import { defaultPublicState, PublicStateModel } from './public.model';
 import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
 import {
+  FetchNextPublicInstitutionsAction,
   FetchNextPublicMembersAction,
+  FetchPublicInstitutionssAction,
   FetchPublicMembersAction,
   GetMemberByUsernameAction,
+  GetPublicInstitutionAction,
   ResetPublicHomePageListsAction,
+  ResetPublicInstitutionFormAction,
   ResetPublicMemberFormAction,
 } from './public.actions';
+import { PublicLearnersTabComponent } from '../../components/public-lists/public-lists.component';
 
 @State<PublicStateModel>({
   name: 'publicState',
@@ -35,13 +44,28 @@ export class PublicState {
   }
 
   @Selector()
+  static listInstitutions(state: PublicStateModel): Institution[] {
+    return state.institutions;
+  }
+
+  @Selector()
   static listMembers(state: PublicStateModel): User[] {
     return state.members;
   }
 
   @Selector()
-  static isFetching(state: PublicStateModel): boolean {
-    return state.isFetching;
+  static isFetchingMembers(state: PublicStateModel): boolean {
+    return state.isFetchingMembers;
+  }
+
+  @Selector()
+  static isFetchingInstitutions(state: PublicStateModel): boolean {
+    return state.isFetchingInstitutions;
+  }
+
+  @Selector()
+  static isFetchingFormRecord(state: PublicStateModel): boolean {
+    return state.isFetchingFormRecord;
   }
 
   @Action(FetchNextPublicMembersAction)
@@ -49,7 +73,7 @@ export class PublicState {
     const state = getState();
     const lastPageNumber = state.lastPagePublicMembers;
     let previousFetchParams =
-      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+      state.fetchMembersParamObjects[state.fetchMembersParamObjects.length - 1];
     previousFetchParams = previousFetchParams
       ? previousFetchParams
       : startingFetchParams;
@@ -77,16 +101,16 @@ export class PublicState {
   ) {
     const state = getState();
     const { searchParams } = payload;
-    const { fetchPolicy, fetchParamObjects } = state;
+    const { fetchPolicy, fetchMembersParamObjects } = state;
     const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({
-      fetchParamObjects,
+      fetchParamObjects: fetchMembersParamObjects,
       newPageNumber: pageNumber,
       newPageSize: pageSize,
       newSearchQuery: searchQuery,
       newColumnFilters: columnFilters,
     });
-    patchState({ isFetching: true });
+    patchState({ isFetchingMembers: true });
     const variables = {
       searchField: searchQuery,
       membershipStatusNot: columnFilters.membershipStatusNot,
@@ -98,7 +122,7 @@ export class PublicState {
 
     this.apollo
       .watchQuery({
-        query: USER_QUERIES.GET_PUBLIC_USERS,
+        query: PUBLIC_QUERIES.GET_PUBLIC_USERS,
         variables,
         fetchPolicy,
       })
@@ -123,8 +147,10 @@ export class PublicState {
             members,
             paginatedPublicMembers,
             lastPagePublicMembers,
-            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
-            isFetching: false,
+            fetchMembersParamObjects: state.fetchMembersParamObjects.concat([
+              newFetchParams,
+            ]),
+            isFetchingMembers: false,
           });
         },
         (error) => {
@@ -134,7 +160,7 @@ export class PublicState {
               action: 'error',
             })
           );
-          patchState({ isFetching: false });
+          patchState({ isFetchingMembers: false });
         }
       );
   }
@@ -145,17 +171,20 @@ export class PublicState {
     { payload }: GetMemberByUsernameAction
   ) {
     const { username } = payload;
-    patchState({ isFetching: true });
+    patchState({ isFetchingFormRecord: true });
     this.apollo
       .watchQuery({
-        query: USER_QUERIES.GET_USER_BY_USERNAME,
+        query: PUBLIC_QUERIES.GET_USER_BY_USERNAME,
         variables: { username },
         fetchPolicy: 'network-only',
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
           const response = data.userByUsername;
-          patchState({ memberFormRecord: response, isFetching: false });
+          patchState({
+            memberFormRecord: response,
+            isFetchingFormRecord: false,
+          });
         },
         (error) => {
           this.store.dispatch(
@@ -164,7 +193,7 @@ export class PublicState {
               action: 'error',
             })
           );
-          patchState({ isFetching: false });
+          patchState({ isFetchingFormRecord: false });
         }
       );
   }
@@ -172,7 +201,145 @@ export class PublicState {
   @Action(ResetPublicMemberFormAction)
   resetPublicMemberFormAction({ patchState }: StateContext<PublicStateModel>) {
     patchState({
-      isFetching: false,
+      isFetchingFormRecord: false,
+      memberFormRecord: defaultPublicState.memberFormRecord,
+    });
+  }
+
+  @Action(FetchNextPublicInstitutionsAction)
+  fetchNextPublicInstitutions({ getState }: StateContext<PublicStateModel>) {
+    const state = getState();
+    const lastPageNumber = state.lastPagePublicInstitutions;
+    let previousFetchParams =
+      state.fetchInstitutionsParamObjects[
+        state.fetchInstitutionsParamObjects.length - 1
+      ];
+    previousFetchParams = previousFetchParams
+      ? previousFetchParams
+      : startingFetchParams;
+    const pageNumber = previousFetchParams.currentPage + 1;
+    const newSearchParams: SearchParams = {
+      pageNumber,
+      pageSize: previousFetchParams.pageSize,
+      searchQuery: previousFetchParams.searchQuery,
+      columnFilters: previousFetchParams.columnFilters,
+    };
+    if (
+      !lastPageNumber ||
+      (lastPageNumber != null && pageNumber <= lastPageNumber)
+    ) {
+      this.store.dispatch(
+        new FetchPublicInstitutionssAction({ searchParams: newSearchParams })
+      );
+    }
+  }
+
+  @Action(FetchPublicInstitutionssAction)
+  fetchPublicInstitutions(
+    { getState, patchState }: StateContext<PublicStateModel>,
+    { payload }: FetchPublicInstitutionssAction
+  ) {
+    const state = getState();
+    const { searchParams } = payload;
+    const { fetchPolicy, fetchInstitutionsParamObjects } = state;
+    const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
+    let newFetchParams = updateFetchParams({
+      fetchParamObjects: fetchInstitutionsParamObjects,
+      newPageNumber: pageNumber,
+      newPageSize: pageSize,
+      newSearchQuery: searchQuery,
+      newColumnFilters: columnFilters,
+    });
+    patchState({ isFetchingInstitutions: true });
+    const variables = {
+      searchField: searchQuery,
+      limit: newFetchParams.pageSize,
+      offset: newFetchParams.offset,
+    };
+
+    this.apollo
+      .watchQuery({
+        query: PUBLIC_QUERIES.GET_INSTITUTIONS,
+        variables,
+        fetchPolicy,
+      })
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          const response = data.publicInstitutions.records;
+
+          newFetchParams = { ...newFetchParams };
+          let paginatedPublicInstitutions = state.paginatedPublicInstitutions;
+          paginatedPublicInstitutions = {
+            ...paginatedPublicInstitutions,
+            [pageNumber]: response,
+          };
+          let institutions = convertPaginatedListToNormalList(
+            paginatedPublicInstitutions
+          );
+          let lastPagePublicInstitutions = null;
+          if (response.length < newFetchParams.pageSize) {
+            lastPagePublicInstitutions = newFetchParams.currentPage;
+          }
+          patchState({
+            institutions,
+            paginatedPublicInstitutions,
+            lastPagePublicInstitutions,
+            fetchInstitutionsParamObjects:
+              state.fetchInstitutionsParamObjects.concat([newFetchParams]),
+            isFetchingInstitutions: false,
+          });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetchingInstitutions: false });
+        }
+      );
+  }
+
+  @Action(GetPublicInstitutionAction)
+  getPublicInstitution(
+    { patchState }: StateContext<PublicStateModel>,
+    { payload }: GetPublicInstitutionAction
+  ) {
+    const { id } = payload;
+    patchState({ isFetchingFormRecord: true });
+    this.apollo
+      .watchQuery({
+        query: PUBLIC_QUERIES.GET_INSTITUTION,
+        variables: { id },
+        fetchPolicy: 'network-only',
+      })
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          const response = data.publicInstitution;
+          patchState({
+            instituionFormRecord: response,
+            isFetchingFormRecord: false,
+          });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetchingFormRecord: false });
+        }
+      );
+  }
+
+  @Action(ResetPublicInstitutionFormAction)
+  resetPublicInstitutionFormAction({
+    patchState,
+  }: StateContext<PublicStateModel>) {
+    patchState({
+      isFetchingFormRecord: false,
       memberFormRecord: defaultPublicState.memberFormRecord,
     });
   }
@@ -182,9 +349,12 @@ export class PublicState {
     patchState,
   }: StateContext<PublicStateModel>) {
     patchState({
-      isFetching: false,
+      isFetchingMembers: false,
       memberFormRecord: defaultPublicState.memberFormRecord,
       members: defaultPublicState.members,
+      isFetchingInstitutions: false,
+      instituionFormRecord: defaultPublicState.instituionFormRecord,
+      institutions: defaultPublicState.institutions,
     });
   }
 }

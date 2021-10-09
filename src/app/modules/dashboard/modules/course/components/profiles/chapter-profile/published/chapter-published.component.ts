@@ -461,7 +461,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     const formData = new FormData();
     formData.append(
       'file',
-      this.imagesQueuedForUpload[exerciseId][imageIndex].file
+      this.imagesQueuedForUpload[exerciseId][imageIndex]?.file
     );
     this.store.dispatch(
       new ToggleLoadingScreen({

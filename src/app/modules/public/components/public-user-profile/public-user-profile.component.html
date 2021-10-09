@@ -75,8 +75,8 @@
 </ng-template> -->
 
 <ng-template #userDoesNotExistTemplate>
-  <div *ngIf="!(isFetching$ | async); else loading">
-  <h2 id="user-not-found">User not found!</h2>
+  <div *ngIf="!(isFetchingFormRecord$ | async); else loading">
+    <h2 id="user-not-found">User not found!</h2>
   </div>
 </ng-template>
 
