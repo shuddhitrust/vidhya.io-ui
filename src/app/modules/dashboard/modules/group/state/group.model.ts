@@ -1,13 +1,6 @@
 import { GROUPS } from 'src/app/modules/dashboard/dashboard.component';
 import { defaultLogos } from 'src/app/shared/common/constants';
-import { autoGenOptions } from 'src/app/shared/common/functions';
-import {
-  FetchParams,
-  FetchPolicy,
-  Group,
-  GroupTypeOptions,
-  MatSelectOption,
-} from 'src/app/shared/common/models';
+import { FetchParams, FetchPolicy, Group } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 
 export const emptyGroupFormRecord: Group = {
@@ -52,6 +45,3 @@ export const defaultGroupState: GroupStateModel = {
 
 export const GroupFormCloseURL =
   uiroutes.DASHBOARD_ROUTE.route + '?tab=' + GROUPS;
-
-export const groupTypeOptions: MatSelectOption[] =
-  autoGenOptions(GroupTypeOptions);

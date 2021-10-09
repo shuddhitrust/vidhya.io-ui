@@ -13,6 +13,7 @@ import { InstitutionState } from 'src/app/modules/dashboard/modules/admin/module
 import {
   CurrentMember,
   Group,
+  groupTypeOptions,
   MatSelectOption,
 } from 'src/app/shared/common/models';
 import { FetchInstitutionsAction } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.actions';
@@ -27,10 +28,7 @@ import { UploadService } from 'src/app/shared/api/upload.service';
 import { FetchMemberOptionsByInstitution } from 'src/app/shared/state/options/options.actions';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { GroupState } from '../../state/group.state';
-import {
-  emptyGroupFormRecord,
-  groupTypeOptions,
-} from '../../state/group.model';
+import { emptyGroupFormRecord } from '../../state/group.model';
 import {
   CreateUpdateGroupAction,
   GetGroupAction,

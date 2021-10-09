@@ -23,13 +23,31 @@
     >
       <div *ngFor="let group of groups$ | async">
         <mat-card class="feed-card" (click)="openGroup(group)">
+          <button
+            *ngIf="group?.admins"
+            [nz-tooltip]="group?.admins?.length + ' admin(s)'"
+            class="card-count"
+            mat-mini-fab
+            color="accent"
+          >
+            {{ group?.admins?.length }}
+          </button>
+          <button
+            *ngIf="group?.members"
+            [nz-tooltip]="group?.members?.length + ' member(s)'"
+            class="card-count"
+            mat-mini-fab
+            color="primary"
+          >
+            {{ group?.members?.length }}
+          </button>
           <h2>{{ group.name }}</h2>
           <p>{{ clip(group.description) }}</p>
 
           <mat-card-actions>
-            <small style="font-style: italic"
-              >Created on {{ parseDate(group.createdAt) }}</small
-            ></mat-card-actions
+            <small style="font-style: italic">{{
+              renderGroupSubtitle(group)
+            }}</small></mat-card-actions
           >
         </mat-card>
       </div>

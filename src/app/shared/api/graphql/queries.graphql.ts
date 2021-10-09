@@ -223,6 +223,7 @@ export const GROUP_QUERIES = {
         description
         institution {
           id
+          name
         }
         groupType
         admins {
@@ -242,6 +243,16 @@ export const GROUP_QUERIES = {
       groups(searchField: $searchField, limit: $limit, offset: $offset) {
         id
         name
+        groupType
+        institution {
+          name
+        }
+        admins {
+          name
+        }
+        members {
+          id
+        }
         description
         createdAt
       }

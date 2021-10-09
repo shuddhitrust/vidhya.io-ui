@@ -10,6 +10,7 @@ import {
   ExerciseSubmission,
   ExerciseSubmissionStatusOptions,
   Group,
+  groupTypeOptions,
 } from './models';
 import {
   day,
@@ -20,7 +21,6 @@ import {
   week,
   year,
 } from './constants';
-import { groupTypeOptions } from 'src/app/modules/dashboard/modules/group/state/group.model';
 
 export const getOptionLabel = (
   value: string,
@@ -532,25 +532,19 @@ export const generateMemberSubtitle = (user) => {
   return title + institution;
 };
 
-export const generateGroupSubtitle = (group: Group) => {
-  const groupType = groupTypeOptions.find(
-    (option) => option.value == group?.groupType
-  )?.label;
-  let admins = '';
-  group.admins.forEach((a) => {
-    if (admins.length) {
-      //  Adding comma if more than one admin
-      admins += ', ';
-    }
-    admins += a.name;
-  });
-  admins = clipLongText(admins);
+export const generateGroupSubtitle = (group: Group): string => {
+  const groupType =
+    groupTypeOptions.find((option) => option.value == group?.groupType)?.label +
+    ' Group';
+  let admins = group?.admins?.map((a) => a.name).join(', ');
+  // Clipping the admins if there are too many admins
+  admins = ', ' + (admins ? 'Administered by ' + clipLongText(admins) : admins);
   return `${groupType}, ${
-    group.institution.name
-  }, Administered by ${admins}, Created on ${parseDateTime(group.createdAt)}`;
+    group?.institution?.name
+  }${admins}, Created on ${parseDateTime(group?.createdAt)}`;
 };
 
-export const clipLongText = (string) => {
+export const clipLongText = (string = '') => {
   const clipLength = 50;
   return string.slice(0, clipLength);
 };

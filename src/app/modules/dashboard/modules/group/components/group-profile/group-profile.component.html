@@ -23,13 +23,29 @@
     >
       <mat-icon>edit</mat-icon>
     </button>
-    <h2>
-      {{ group?.name }}
-      <small
-        ><i>({{ groupTypeLabel }})</i></small
-      >
-    </h2>
-    <p>{{ group?.description }}</p>
+
+    <button
+      *ngIf="group?.admins"
+      [nz-tooltip]="group?.admins?.length + ' admin(s)'"
+      class="profile-button"
+      mat-mini-fab
+      color="accent"
+    >
+      {{ group?.admins?.length }}
+    </button>
+    <button
+      *ngIf="group?.members"
+      [nz-tooltip]="group?.members?.length + ' member(s)'"
+      class="profile-button"
+      mat-mini-fab
+      color="primary"
+    >
+      {{ group?.members?.length }}
+    </button>
+    <h2>{{ group.name }}</h2>
+    <p>{{ clip(group.description) }}</p>
+
+    <small style="font-style: italic">{{ renderGroupSubtitle(group) }}</small>
   </div>
 
   <ag-grid-angular

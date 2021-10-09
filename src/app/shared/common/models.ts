@@ -1,5 +1,6 @@
 import { defaultPageSize } from '../modules/master-grid/table.model';
 import { defaultSearchParams } from './constants';
+import { autoGenOptions } from './functions';
 
 /* 
 This is an object that requires an id of type string
@@ -102,6 +103,9 @@ export const GroupTypeOptions = {
   team: 'TE',
   coordination: 'CO',
 };
+
+export const groupTypeOptions: MatSelectOption[] =
+  autoGenOptions(GroupTypeOptions);
 
 export type ExerciseQuestionType = 'OP' | 'DE' | 'IM' | 'LI';
 export const ExerciseQuestionTypeOptions = {

@@ -4,7 +4,11 @@ import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
-import { parseDateTime } from 'src/app/shared/common/functions';
+import {
+  clipLongText,
+  generateGroupSubtitle,
+  parseDateTime,
+} from 'src/app/shared/common/functions';
 import {
   Group,
   resources,
@@ -52,15 +56,19 @@ export class GroupDashboardComponent implements OnInit {
     return this.auth.authorizeResource(this.resource, action);
   }
 
+  renderGroupSubtitle(group: Group) {
+    return generateGroupSubtitle(group);
+  }
+
+  clip(string) {
+    return clipLongText(string);
+  }
+
   ngOnInit(): void {}
   onScroll() {
     if (!this.isFetching) {
       this.store.dispatch(new FetchNextGroupsAction());
     }
-  }
-  clip(string) {
-    const clipLength = 50;
-    return string.slice(0, clipLength);
   }
 
   parseDate(date) {

@@ -8,6 +8,7 @@ import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   CurrentMember,
   Group,
+  groupTypeOptions,
   MatSelectOption,
   resources,
   RESOURCE_ACTIONS,
@@ -20,13 +21,16 @@ import {
   MasterConfirmationDialogObject,
 } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
-import { groupTypeOptions } from '../../state/group.model';
 import { GroupState } from '../../state/group.state';
 import {
   DeleteGroupAction,
   GetGroupAction,
   ResetGroupFormAction,
 } from '../../state/group.actions';
+import {
+  clipLongText,
+  generateGroupSubtitle,
+} from 'src/app/shared/common/functions';
 
 @Component({
   selector: 'app-group-profile',
@@ -77,6 +81,13 @@ export class GroupProfileComponent implements OnInit, OnDestroy {
         (option) => option.value == this.group?.groupType
       )?.label;
     });
+  }
+  renderGroupSubtitle(group: Group) {
+    return generateGroupSubtitle(group);
+  }
+
+  clip(string) {
+    return clipLongText(string);
   }
   fetchMemberOptions() {
     this.currentMember$.subscribe((val) => {
