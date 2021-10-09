@@ -27,11 +27,6 @@ export class ReportsTableComponent implements OnInit {
   @Select(ReportState.fetchParams)
   fetchParams$: Observable<FetchParams>;
 
-  defaultColDef = {
-    resizable: true,
-    // sortable: true,
-    // comparator: () => null,
-  };
   columns = [
     {
       field: 'name',

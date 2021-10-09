@@ -36,9 +36,6 @@ export class MembersTableComponent implements OnInit {
   @Select(MemberState.fetchParams)
   fetchParams$: Observable<FetchParams>;
 
-  defaultColDef = {
-    resizable: true,
-  };
   columns = memberColumns;
   frameworkComponents = {
     memberRenderer: MemberProfileRendererComponent,

@@ -36,9 +36,6 @@ export class RolesTableComponent implements OnInit {
   @Select(UserRoleState.fetchParams)
   fetchParams$: Observable<FetchParams>;
 
-  defaultColDef = {
-    resizable: true,
-  };
   columnFilters = {
     // roleshipStatus: { eq: RoleshipStatus.PENDING_APPROVAL },
   };

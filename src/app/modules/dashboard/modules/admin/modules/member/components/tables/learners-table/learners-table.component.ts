@@ -39,9 +39,6 @@ export class LearnersTableComponent implements OnInit {
   columnFilters = {
     roles: [USER_ROLES_NAMES.LEARNER, USER_ROLES_NAMES.CLASS_ADMIN_LEARNER],
   };
-  defaultColDef = {
-    resizable: true,
-  };
   columns = memberColumns;
   frameworkComponents = {
     memberRenderer: MemberProfileRendererComponent,

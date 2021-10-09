@@ -1,4 +1,4 @@
-<div id="title-tab">
+<div *ngIf="!staticTable" id="title-tab">
   <div class="title-block">
     <mat-form-field
       id="search-query-field"
@@ -48,8 +48,9 @@
     </button>
   </div>
 </div>
-<span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
+<span *ngIf="!resource || authorizeResourceMethod(resourceActions.LIST)">
   <ag-grid-angular
+    [style]="{ height: calculateTableHeight() }"
     class="ag-theme-alpine table-style"
     [gridOptions]="gridOptions"
     [rowData]="rows"
@@ -76,6 +77,7 @@
   >
   </ag-grid-angular>
   <app-paginator
+    *ngIf="!staticTable"
     [totalRecords]="totalRecords"
     [pageSize]="pageSize"
     [currentPage]="currentPage"

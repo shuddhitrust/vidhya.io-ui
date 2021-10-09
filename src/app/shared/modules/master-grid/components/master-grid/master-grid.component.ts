@@ -6,7 +6,6 @@ import {
   EventEmitter,
   OnChanges,
 } from '@angular/core';
-import { Select, Store } from '@ngxs/store';
 import { GridOptions } from 'ag-grid-community';
 import { pageSizeOptions } from '../../table.config';
 import { ColWidth, defaultPageSize, SearchParams } from '../../table.model';
@@ -40,21 +39,23 @@ export class MasterGridComponent implements OnInit, OnChanges {
   @Input()
   rows;
   @Input()
-  defaultColDef;
+  defaultColDef = {
+    resizable: true,
+  };
   @Input()
   columns;
   @Input()
-  frameworkComponents;
+  frameworkComponents = {};
   @Input()
   columnFilters: object = {};
   @Input()
-  gridOptions: GridOptions;
+  gridOptions: GridOptions = {};
   @Input()
-  isFetching: boolean;
+  isFetching: boolean = false;
   @Input()
-  errorFetching: boolean;
+  errorFetching: boolean = false;
   @Input()
-  tableTitle: string;
+  tableTitle: string = '';
   @Output()
   fetchMethod: EventEmitter<any> = new EventEmitter();
   @Output()
@@ -64,9 +65,10 @@ export class MasterGridComponent implements OnInit, OnChanges {
 
   private originalSearchParams;
   pageSizeOptions: Array<Object> = pageSizeOptions.map((p) => p.value);
-  staticTable = false; // Set to true if there are no server side operations
+  @Input()
+  staticTable: boolean = false; // Set to true if there are no server side operations
   @Input() searchInputExists: boolean = false;
-  @Input() resource: string;
+  @Input() resource: string = null;
   @Input() tableId = '';
   @Input() addRoute = '';
   @Input() addLabel = '';
@@ -93,7 +95,7 @@ export class MasterGridComponent implements OnInit, OnChanges {
 
   selectedRows = [];
   @Output() selectionChangeCallback: EventEmitter<any> = new EventEmitter();
-  private tableHeight = `100vh - var(--topnav-height) - var(--paginator-height) - var(--search-input-height) - var(--generic-padding)`;
+  private tableHeight = `100vh - 250px`;
   sortModel = [];
   draftSearchQuery = '';
   lastPage = 1;
@@ -102,14 +104,14 @@ export class MasterGridComponent implements OnInit, OnChanges {
   previewPageStyles: object[] = [];
   isFetchingCSVDownload = false;
   csvDownloadReady = false;
-  // calculateTableHeight = () => {
-  //   if (this.tableHeightStatic) {
-  //     return this.tableHeightStatic;
-  //   } else {
-  //     return `calc(${this.tableHeight} - ${this.tableHeightClearanceInPx}px)`;
-  //   }
-  // };
-  constructor(private store: Store, private auth: AuthorizationService) {}
+  calculateTableHeight = () => {
+    if (this.tableHeightStatic) {
+      return this.tableHeightStatic;
+    } else {
+      return `calc(${this.tableHeight} - ${this.tableHeightClearanceInPx}px)`;
+    }
+  };
+  constructor(private auth: AuthorizationService) {}
 
   ngOnChanges(changes) {
     if (changes.fetchParams$) {
@@ -141,7 +143,7 @@ export class MasterGridComponent implements OnInit, OnChanges {
       columnFilters: this.columnFilters,
     };
     this.fetchRecords();
-    // this.autoSizeAllColumns();
+    this.sizeColumnsToFit();
   }
 
   authorizeResourceMethod(action) {

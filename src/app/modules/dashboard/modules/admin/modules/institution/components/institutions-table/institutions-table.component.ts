@@ -38,11 +38,6 @@ export class InstitutionsTableComponent implements OnInit {
   @Select(InstitutionState.fetchParams)
   fetchParams$: Observable<FetchParams>;
 
-  defaultColDef = {
-    resizable: true,
-    // sortable: true,
-    // comparator: () => null,
-  };
   columns = [
     {
       field: 'name',

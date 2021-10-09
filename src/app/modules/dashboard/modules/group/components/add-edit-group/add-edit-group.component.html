@@ -163,12 +163,12 @@
       {{ (formSubmitting$ | async) === true ? "Submitting..." : "Submit" }}
     </button>
   </form>
-  <ag-grid-angular
-    class="ag-theme-alpine group-member-table"
-    [rowData]="memberRows"
-    [columnDefs]="selectedMemberColumns"
-  >
-  </ag-grid-angular>
+  <app-master-grid
+    tableHeightStatic="500px"
+    [staticTable]="true"
+    [columns]="selectedMemberColumns"
+    [rows]="memberRows"
+  ></app-master-grid>
   <br />
   <br />
 </div>

@@ -42,9 +42,6 @@ export class AwaitingModerationTableComponent implements OnInit {
   @Select(MemberState.fetchParams)
   fetchParams$: Observable<FetchParams>;
 
-  defaultColDef = {
-    resizable: true,
-  };
   columnFilters = {
     membershipStatusNot: [MembershipStatusOptions.APPROVED],
   };

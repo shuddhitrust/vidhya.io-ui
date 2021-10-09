@@ -39,9 +39,6 @@ export class ClassAdminsTableComponent implements OnInit {
   columnFilters = {
     roles: [USER_ROLES_NAMES.CLASS_ADMIN, USER_ROLES_NAMES.CLASS_ADMIN_LEARNER],
   };
-  defaultColDef = {
-    resizable: true,
-  };
   columns = memberColumns;
   frameworkComponents = {
     memberRenderer: MemberProfileRendererComponent,

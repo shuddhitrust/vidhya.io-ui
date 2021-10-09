@@ -41,9 +41,6 @@ export class InstitutionAdminsTableComponent implements OnInit {
   columnFilters = {
     roles: [USER_ROLES_NAMES.INSTITUTION_ADMIN],
   };
-  defaultColDef = {
-    resizable: true,
-  };
   columns = memberColumns;
   frameworkComponents = {
     memberRenderer: MemberProfileRendererComponent,

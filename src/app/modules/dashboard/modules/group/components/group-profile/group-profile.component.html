@@ -47,13 +47,14 @@
 
     <small style="font-style: italic">{{ renderGroupSubtitle(group) }}</small>
   </div>
-
-  <ag-grid-angular
-    class="ag-theme-alpine group-member-table"
-    [rowData]="memberRows"
-    [columnDefs]="selectedMemberColumns"
-  >
-  </ag-grid-angular>
+  <div class="table-wrapper">
+    <app-master-grid
+      tableHeightStatic="500px"
+      [staticTable]="true"
+      [columns]="selectedMemberColumns"
+      [rows]="memberRows"
+    ></app-master-grid>
+  </div>
 </span>
 
 <ng-template #loading>
