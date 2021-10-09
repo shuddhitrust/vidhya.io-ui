@@ -11,7 +11,11 @@ import { PublicComponent } from './components/public/public.component';
 import { MemberModule } from '../dashboard/modules/admin/modules/member/member.module';
 import { AuthModule } from '../auth/auth.module';
 import { ErrorPageComponent } from './components/error/error.component';
-import { PublicLearnersTabComponent } from './components/public-lists/public-lists.component';
+import { PublicTabsComponent } from './components/public-lists/public-lists.component';
+import { LearnersListComponent } from './components/public-lists/learners-list/learners-list.component';
+import { PublicInstitutionsTabComponent } from './components/public-lists/institutions-list/institutions-list.component';
+import { InstitutionModule } from '../dashboard/modules/admin/modules/institution/institution.module';
+import { InstitutionProfileComponent } from './components/public-institution-profile/public-institution-profile.component';
 
 const declarations = [
   HomeComponent,
@@ -20,7 +24,10 @@ const declarations = [
   PublicUserProfileComponent,
   PublicComponent,
   ErrorPageComponent,
-  PublicLearnersTabComponent,
+  PublicTabsComponent,
+  LearnersListComponent,
+  PublicInstitutionsTabComponent,
+  InstitutionProfileComponent,
 ];
 
 @NgModule({
@@ -30,6 +37,7 @@ const declarations = [
     SharedModule,
     AuthModule,
     MemberModule,
+    InstitutionModule,
     PublicRoutingModule,
     NgxsModule.forFeature([PublicState]),
   ],

@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { InstitutionModalComponent } from './components/institution-modal/institution-modal.component';
 import { InstitutionsTableComponent } from './components/institutions-table/institutions-table.component';
-import { InstitutionProfileComponent } from './components/institution-profile/institution-profile.component';
 import { InstitutionProfileRendererComponent } from 'src/app/modules/dashboard/modules/admin/modules/institution/components/institution-profile-cell-renderer/institution-profile-renderer.component';
 import { AddEditInstitutionComponent } from './components/add-edit-institution/add-edit-institution.component';
 
@@ -15,7 +14,6 @@ const declarations = [
   AddEditInstitutionComponent,
   InstitutionProfileRendererComponent,
   InstitutionsTableComponent,
-  InstitutionProfileComponent,
   InstitutionModalComponent,
 ];
 

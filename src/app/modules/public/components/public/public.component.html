@@ -9,6 +9,9 @@
   *ngIf="showUnprotectedPage(uiroutes.MEMBER_PROFILE_ROUTE.route)"
 >
 </app-public-user-profile>
+<app-institution-profile
+  *ngIf="showUnprotectedPage(uiroutes.INSTITUTION_PROFILE_ROUTE.route)"
+></app-institution-profile>
 <app-privacy *ngIf="showUnprotectedPage(uiroutes.PRIVACY_ROUTE.route)">
 </app-privacy>
 <app-error-component *ngIf="showUnprotectedPage(uiroutes.ERROR_ROUTE.route)">

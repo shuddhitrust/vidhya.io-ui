@@ -343,7 +343,6 @@ export class GradingDashboardComponent implements OnInit {
   }
 
   exerciseTitle(exercise: Exercise): string {
-    console.log('from exercise title', { chapter: exercise.chapter, exercise });
     return `${ExerciseTitle(exercise.chapter, exercise)} ${exercise.prompt}`;
   }
 

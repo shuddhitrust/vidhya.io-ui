@@ -10,6 +10,15 @@ h2 {
   border: 1px solid grey;
   border-radius: 5px;
   width: 80%;
+  min-height: 300px;
+}
+
+.logo {
+  float: left;
+  display: block;
+  height: 150px;
+  width: auto;
+  margin-bottom: 20px;
 }
 
 .announcement-card p {

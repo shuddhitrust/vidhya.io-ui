@@ -23,7 +23,10 @@ import { ShowNotificationAction } from 'src/app/shared/state/notifications/notif
 @Component({
   selector: 'app-add-edit-institution',
   templateUrl: './add-edit-institution.component.html',
-  styleUrls: ['./add-edit-institution.component.scss'],
+  styleUrls: [
+    './add-edit-institution.component.scss',
+    './../../../../../../../../shared/common/shared-styles.css',
+  ],
 })
 export class AddEditInstitutionComponent implements OnInit {
   formSubmitting: boolean = false;

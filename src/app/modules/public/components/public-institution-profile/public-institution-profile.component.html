@@ -3,6 +3,9 @@
 </button>
 
 <div class="institution-card">
+  <div>
+    <img [src]="institution.logo" class="logo" alt="profile pic" />
+  </div>
   <button
     *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
     mat-mini-fab

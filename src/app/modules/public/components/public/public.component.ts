@@ -32,6 +32,7 @@ export class PublicComponent {
       uiroutes.MEMBER_FORM_ROUTE.route,
       uiroutes.PASSWORD_RESET_ROUTE.route,
       uiroutes.MEMBER_PROFILE_ROUTE.route,
+      uiroutes.INSTITUTION_PROFILE_ROUTE.route,
       uiroutes.ERROR_ROUTE.route,
     ];
     return this.currentRouteNoteEquals(routes);
@@ -54,6 +55,13 @@ export class PublicComponent {
           return true;
         }
         break;
+      case uiroutes.INSTITUTION_PROFILE_ROUTE.route:
+        if (
+          this.router.url.includes(uiroutes.INSTITUTION_PROFILE_ROUTE.route)
+        ) {
+          return true;
+        }
+        break;
       case uiroutes.PRIVACY_ROUTE.route:
         if (this.router.url.includes(uiroutes.PRIVACY_ROUTE.route)) {
           return true;
@@ -67,6 +75,7 @@ export class PublicComponent {
           return true;
         }
         break;
+
       case uiroutes.HOME_ROUTE.route:
         if (this.currentRoute() == uiroutes.HOME_ROUTE.route) {
           return true;

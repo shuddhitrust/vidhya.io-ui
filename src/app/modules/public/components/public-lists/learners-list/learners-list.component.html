@@ -1,0 +1,51 @@
+<div *ngIf="learners?.length; else emptyListTemplate">
+  <ng-container *ngTemplateOutlet="learnersListTemplate"></ng-container>
+</div>
+
+<ng-template #learnersListTemplate>
+  <div
+    class="scroll-feed"
+    infiniteScroll
+    [infiniteScrollDistance]="2"
+    [infiniteScrollThrottle]="50"
+    infiniteScrollContainer=".scroll-feed"
+    [fromRoot]="true"
+    (scrolled)="onLearnerScroll()"
+  >
+    <div class="cards">
+      <div *ngFor="let learner of learners">
+        <mat-card class="card" (click)="onClickLearnerCard(learner)">
+          <mat-card-header>
+            <img
+              mat-card-avatar
+              [src]="learner.avatar"
+              [alt]="learner.firstName"
+            />
+            <mat-card-title>{{ learner.name }}</mat-card-title>
+            <mat-card-subtitle>{{
+              generateLearnerSubtitle(learner)
+            }}</mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            {{ learner.bio }}
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+  <span *ngIf="isFetchingMembers">
+    <ng-container *ngTemplateOutlet="loading"></ng-container>
+  </span>
+</ng-template>
+
+<ng-template #loading>
+  <app-simple-loading-spinner></app-simple-loading-spinner
+></ng-template>
+
+<ng-template #emptyListTemplate>
+  <div id="hero-block">
+    <h2>Welcome to</h2>
+    <img id="hero-logo" src="assets/images/logo.svg" />
+  </div>
+</ng-template>

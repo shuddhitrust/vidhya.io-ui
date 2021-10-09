@@ -29,7 +29,7 @@ export const uiroutes = {
   PRIVACY_ROUTE: { route: 'privacy', auth: { resource: null, actions: [] } },
   INSTITUTION_PROFILE_ROUTE: {
     route: 'institution',
-    auth: { resource: resources.INSTITUTION, actions: [RESOURCE_ACTIONS.GET] },
+    auth: { resource: null, actions: [] },
   },
   INSTITUTION_FORM_ROUTE: {
     route: 'institution-form',

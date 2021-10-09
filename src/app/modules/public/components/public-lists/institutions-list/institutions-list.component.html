@@ -1,0 +1,49 @@
+<div *ngIf="institutions?.length; else emptyListTemplate">
+  <ng-container *ngTemplateOutlet="institutionsListTemplate"></ng-container>
+</div>
+
+<ng-template #institutionsListTemplate>
+  <div
+    class="scroll-feed"
+    infiniteScroll
+    [infiniteScrollDistance]="2"
+    [infiniteScrollThrottle]="50"
+    infiniteScrollContainer=".scroll-feed"
+    [fromRoot]="true"
+    (scrolled)="onInstitutionScroll()"
+  >
+    <div class="cards">
+      <div *ngFor="let institution of institutions">
+        <mat-card class="card" (click)="onClickInstitutionCard(institution)">
+          <mat-card-header>
+            <img
+              mat-card-avatar
+              [src]="institution.logo"
+              [alt]="institution.name"
+            />
+            <mat-card-title>{{ institution.name }}</mat-card-title>
+            <mat-card-subtitle>{{
+              generateInstitutionSubtitle(institution)
+            }}</mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            {{ institution.bio }}
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+  <ng-container *ngTemplateOutlet="loading"></ng-container>
+</ng-template>
+
+<ng-template #loading>
+  <app-simple-loading-spinner></app-simple-loading-spinner
+></ng-template>
+
+<ng-template #emptyListTemplate>
+  <div id="hero-block">
+    <h2>Welcome to</h2>
+    <img id="hero-logo" src="assets/images/logo.svg" />
+  </div>
+</ng-template>

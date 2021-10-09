@@ -28,7 +28,6 @@ import {
   ResetPublicInstitutionFormAction,
   ResetPublicMemberFormAction,
 } from './public.actions';
-import { PublicLearnersTabComponent } from '../../components/public-lists/public-lists.component';
 
 @State<PublicStateModel>({
   name: 'publicState',
@@ -259,7 +258,7 @@ export class PublicState {
 
     this.apollo
       .watchQuery({
-        query: PUBLIC_QUERIES.GET_INSTITUTIONS,
+        query: PUBLIC_QUERIES.GET_PUBLIC_INSTITUTIONS,
         variables,
         fetchPolicy,
       })
@@ -310,7 +309,7 @@ export class PublicState {
     patchState({ isFetchingFormRecord: true });
     this.apollo
       .watchQuery({
-        query: PUBLIC_QUERIES.GET_INSTITUTION,
+        query: PUBLIC_QUERIES.GET_PUBLIC_INSTITUTION,
         variables: { id },
         fetchPolicy: 'network-only',
       })

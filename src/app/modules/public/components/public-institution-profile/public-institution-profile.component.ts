@@ -28,8 +28,11 @@ import {
 
 @Component({
   selector: 'app-institution-profile',
-  templateUrl: './institution-profile.component.html',
-  styleUrls: ['./institution-profile.component.scss'],
+  templateUrl: './public-institution-profile.component.html',
+  styleUrls: [
+    './public-institution-profile.component.scss',
+    './../../../../shared/common/shared-styles.css',
+  ],
 })
 export class InstitutionProfileComponent implements OnInit {
   resource = resources.INSTITUTION;

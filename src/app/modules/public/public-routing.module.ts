@@ -6,6 +6,7 @@ import { ErrorPageComponent } from './components/error/error.component';
 import { HomeComponent } from './components/home/home.component';
 import { PasswordResetComponent } from './components/password-reset/password-reset.component';
 import { PrivacyComponent } from './components/privacy/privacy.component';
+import { InstitutionProfileComponent } from './components/public-institution-profile/public-institution-profile.component';
 import { PublicUserProfileComponent } from './components/public-user-profile/public-user-profile.component';
 
 // import { InstitutionProfileComponent } from './pages/modals/institution-profile/institution-profile.component';
@@ -20,6 +21,11 @@ const routes: Routes = [
   {
     path: `${uiroutes.MEMBER_PROFILE_ROUTE.route}/:username`,
     component: PublicUserProfileComponent,
+    pathMatch: 'full',
+  },
+  {
+    path: `${uiroutes.INSTITUTION_PROFILE_ROUTE.route}/:id`,
+    component: InstitutionProfileComponent,
     pathMatch: 'full',
   },
   {

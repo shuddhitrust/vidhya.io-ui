@@ -91,7 +91,7 @@ export const PUBLIC_QUERIES = {
       }
     }
   `,
-  GET_INSTITUTION: gql`
+  GET_PUBLIC_INSTITUTION: gql`
     query publicInstitution($id: ID!) {
       publicInstitution(id: $id) {
         id
@@ -106,7 +106,7 @@ export const PUBLIC_QUERIES = {
       }
     }
   `,
-  GET_INSTITUTIONS: gql`
+  GET_PUBLIC_INSTITUTIONS: gql`
     query publicInstitutions($searchField: String, $limit: Int, $offset: Int) {
       publicInstitutions(
         searchField: $searchField
@@ -116,6 +116,7 @@ export const PUBLIC_QUERIES = {
         records {
           id
           name
+          logo
           location
           city
           bio
