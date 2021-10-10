@@ -33,8 +33,10 @@
         </mat-card>
       </div>
     </div>
+    <span *ngIf="isFetchingInstitutions$ | async">
+      <ng-container *ngTemplateOutlet="loading"></ng-container>
+    </span>
   </div>
-  <ng-container *ngTemplateOutlet="loading"></ng-container>
 </ng-template>
 
 <ng-template #loading>

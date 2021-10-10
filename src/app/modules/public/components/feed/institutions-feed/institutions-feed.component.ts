@@ -45,7 +45,7 @@ export class InstitutionsFeedComponent {
       new FetchPublicInstitutionssAction({
         searchParams: {
           ...defaultSearchParams,
-          pageSize: 36,
+          pageSize: 10,
           columnFilters: {},
         },
       })

@@ -33,10 +33,10 @@
         </mat-card>
       </div>
     </div>
+    <span *ngIf="isFetchingMembers$ | async">
+      <ng-container *ngTemplateOutlet="loading"></ng-container>
+    </span>
   </div>
-  <span *ngIf="isFetchingMembers">
-    <ng-container *ngTemplateOutlet="loading"></ng-container>
-  </span>
 </ng-template>
 
 <ng-template #loading>
