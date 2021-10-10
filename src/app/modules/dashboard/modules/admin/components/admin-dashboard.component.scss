@@ -1,48 +1,17 @@
-.drawer-container {
-  height: 100%;
-  width: 100%;
-  padding: 0px;
-  min-height: 500px;
+nz-sider {
+  background: #fff;
 }
 
-.drawer-content {
-  border-right: 1px solid rgba(0, 0, 0, 0.2);
-  overflow: hidden;
+nz-layout {
+  min-width: 500px;
+  background: #fff;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-  nz-sider {
-    background: #fff;
-  }
-
-  nz-layout {
-    min-width: 500px;
-  }
-#drawer-puller {
-  float: left;
-  position: absolute;
-  left: -10px;
-  z-index: 1000;
-  top: 80%;
-  visibility: hidden;
-}
-
-#drawer-puller:hover {
-  background: rgba(0, 0, 0, 0.05);
-}
-
-#drawer-puller mat-icon {
-  color: var(--shuddhi-color);
-}
 .selectedSection {
   border-right: 2px solid var(--shuddhi-color);
 }
 
-.unselectedSelection {
-  border-right: inherit;
-}
-
-@media screen and (max-width: 1000px) {
-  #drawer-puller {
-    visibility: visible;
-  }
-}
+// .unselectedSection {
+//   border-right: 1px solid rgba(0, 0, 0, 0.5);
+// }
