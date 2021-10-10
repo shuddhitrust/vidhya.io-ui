@@ -428,6 +428,71 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     this.exerciseSubmissions = newExerciseSubmissions;
   }
 
+  removePreviewImage(exerciseId: number, i: number) {
+    let imagesQueuedForExercise = Object.assign(
+      [],
+      this.imagesQueuedForUpload[exerciseId]
+    );
+    imagesQueuedForExercise.splice(i, 1);
+    this.imagesQueuedForUpload[exerciseId] = imagesQueuedForExercise;
+  }
+
+  removeExistingImage(exerciseId, i) {
+    let newExerciseSubmissions = this.exerciseSubmissions.map((e) => {
+      if (e?.exercise == exerciseId) {
+        let newSubmission = Object.assign({}, e);
+        let newImages = Object.assign([], newSubmission.images);
+        newImages.splice(i, 1);
+        newSubmission = {
+          ...newSubmission,
+          images: newImages,
+        };
+        return newSubmission;
+      } else return e;
+    });
+    this.exerciseSubmissions = newExerciseSubmissions;
+  }
+
+  /*************************************
+   * Methods concerning upload of images
+   *************************************/
+
+  // The method that gets the file from the input and queues it for upload
+  addImageFileToSubmission(event, exercise) {
+    if (event.target.files.length > 0) {
+      let previewImageObject: previewImage = { file: null, url: null };
+      const file = event.target.files[0];
+      const fileValid = file.type.startsWith('image/');
+      if (fileValid) {
+        previewImageObject.file = file;
+
+        const reader = new FileReader();
+        reader.onload = () => {
+          const url = reader.result as string;
+          previewImageObject.url = url;
+        };
+        reader.readAsDataURL(file);
+        let imagesQueuedForExercise = Object.assign(
+          [],
+          this.imagesQueuedForUpload[exercise.id]
+        );
+        imagesQueuedForExercise = imagesQueuedForExercise.concat([
+          previewImageObject,
+        ]);
+        this.imagesQueuedForUpload[exercise.id] = imagesQueuedForExercise;
+      } else {
+        event.target.value = null;
+        this.store.dispatch(
+          new ShowNotificationAction({
+            message: 'Please upload only images',
+            action: 'error',
+          })
+        );
+      }
+    }
+  }
+
+  // To check whether images exist for upload
   imagesExist() {
     let exist = false;
     const exerciseIdsWithImages = Object.keys(this.imagesQueuedForUpload);
@@ -443,6 +508,12 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     return exist;
   }
 
+  // Generates a unique ID for each image queued for upload
+  generateIdforImageToUpload(exerciseId, imageIndex) {
+    return `exerciseId${exerciseId}imageIndex${imageIndex}`;
+  }
+
+  // This is the method that checks and uploads for images or goes to submit the form right away
   uploadNewImages() {
     if (this.imagesExist()) {
       const exerciseIdsWithImages = Object.keys(this.imagesQueuedForUpload);
@@ -489,6 +560,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Updates the exercise submissions with an image belonging to a certain exercise
   updateExerciseSubmissionImages(exerciseId, image) {
     let newExerciseSubmissions = this.exerciseSubmissions.map((e) => {
       if (e?.exercise == exerciseId) {
@@ -500,31 +572,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     this.exerciseSubmissions = newExerciseSubmissions;
   }
 
-  removePreviewImage(exerciseId: number, i: number) {
-    let imagesQueuedForExercise = Object.assign(
-      [],
-      this.imagesQueuedForUpload[exerciseId]
-    );
-    imagesQueuedForExercise.splice(i, 1);
-    this.imagesQueuedForUpload[exerciseId] = imagesQueuedForExercise;
-  }
-
-  removeExistingImage(exerciseId, i) {
-    let newExerciseSubmissions = this.exerciseSubmissions.map((e) => {
-      if (e?.exercise == exerciseId) {
-        let newSubmission = Object.assign({}, e);
-        let newImages = Object.assign([], newSubmission.images);
-        newImages.splice(i, 1);
-        newSubmission = {
-          ...newSubmission,
-          images: newImages,
-        };
-        return newSubmission;
-      } else return e;
-    });
-    this.exerciseSubmissions = newExerciseSubmissions;
-  }
-
+  // Checks if all the images queued for upload have indeed been uploaded
   checkIfAllFilesAreUpdated() {
     let result = true;
     this.serialUploadQueue.forEach((image) => {
@@ -533,15 +581,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     return result;
   }
 
-  generateIdforImageToUpload(exerciseId, imageIndex) {
-    return `exerciseId${exerciseId}imageIndex${imageIndex}`;
-  }
-
-  checkIfPreviewImageExistsForExerciseIndexCombination(imageIndex, exerciseId) {
-    return this.imagesQueuedForUpload[exerciseId][imageIndex]?.file
-      ? true
-      : false;
-  }
+  // The method that actually uploads the file to the server and initiates the addition of the url to the submission
   async uploadImage(queuedImage) {
     const exerciseId = queuedImage.exerciseId;
     const imageIndex = queuedImage.imageIndex;
@@ -598,39 +638,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     );
   }
 
-  addImageFileToSubmission(event, exercise) {
-    if (event.target.files.length > 0) {
-      let previewImageObject: previewImage = { file: null, url: null };
-      const file = event.target.files[0];
-      const fileValid = file.type.startsWith('image/');
-      if (fileValid) {
-        previewImageObject.file = file;
-
-        const reader = new FileReader();
-        reader.onload = () => {
-          const url = reader.result as string;
-          previewImageObject.url = url;
-        };
-        reader.readAsDataURL(file);
-        let imagesQueuedForExercise = Object.assign(
-          [],
-          this.imagesQueuedForUpload[exercise.id]
-        );
-        imagesQueuedForExercise = imagesQueuedForExercise.concat([
-          previewImageObject,
-        ]);
-        this.imagesQueuedForUpload[exercise.id] = imagesQueuedForExercise;
-      } else {
-        event.target.value = null;
-        this.store.dispatch(
-          new ShowNotificationAction({
-            message: 'Please upload only images',
-            action: 'error',
-          })
-        );
-      }
-    }
-  }
+  // End of methods relating to image upload
 
   renderRubric(exercise: Exercise) {
     return JSON.parse(exercise.rubric);
