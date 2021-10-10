@@ -55,7 +55,12 @@
       </li>
       <li *ngIf="institution.website">
         <i>Website</i> -
-        <a [href]="institution.website">{{ institution.website }}</a>
+        <a
+          [href]="institution.website"
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+          >{{ institution.website }}</a
+        >
       </li>
       <li *ngIf="institution.phone"><i>Phone</i> - {{ institution.phone }}</li>
       <li>
