@@ -35,8 +35,6 @@ export class MemberProfileComponent {
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<MemberProfileComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private route: ActivatedRoute,
-    private router: Router,
     private store: Store,
     private auth: AuthorizationService
   ) {

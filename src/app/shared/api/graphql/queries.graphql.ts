@@ -92,8 +92,8 @@ export const PUBLIC_QUERIES = {
     }
   `,
   GET_PUBLIC_INSTITUTION: gql`
-    query publicInstitution($id: ID!) {
-      publicInstitution(id: $id) {
+    query publicInstitution($code: String!) {
+      publicInstitution(code: $code) {
         id
         name
         location
@@ -119,6 +119,7 @@ export const PUBLIC_QUERIES = {
         records {
           id
           name
+          code
           logo
           location
           city

@@ -11,6 +11,7 @@ import {
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { PublicState } from '../../../state/public/public.state';
 import { GetPublicInstitutionAction } from '../../../state/public/public.actions';
+import { uiroutes } from 'src/app/shared/common/ui-routes';
 
 @Component({
   selector: 'app-institution-profile',
@@ -21,6 +22,9 @@ import { GetPublicInstitutionAction } from '../../../state/public/public.actions
   ],
 })
 export class InstitutionProfileComponent implements OnInit {
+  url: string;
+  code: string;
+  institutionDoesNotExist: boolean;
   resource = resources.INSTITUTION;
   resourceActions = RESOURCE_ACTIONS;
   params: object = {};
@@ -28,10 +32,13 @@ export class InstitutionProfileComponent implements OnInit {
   institutionFormRecord$: Observable<Institution>;
   institution: any;
 
+  @Select(PublicState.isFetchingFormRecord)
+  isFetchingFormRecord$: Observable<boolean>;
+
   constructor(
     private location: Location,
     private store: Store,
-    private route: ActivatedRoute,
+    private router: Router,
     private auth: AuthorizationService
   ) {
     this.institutionFormRecord$.subscribe((val) => {
@@ -51,17 +58,23 @@ export class InstitutionProfileComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
-      this.params = params;
-      const id = params['id'];
-      if (id) {
-        this.store.dispatch(new GetPublicInstitutionAction({ id }));
-      }
-    });
-  }
-
   goBack() {
     this.location.back();
+  }
+
+  ngOnInit(): void {
+    this.url = window.location.href;
+    if (this.router.url.includes(uiroutes.INSTITUTION_PROFILE_ROUTE.route)) {
+      this.code = this.url.split(
+        uiroutes.INSTITUTION_PROFILE_ROUTE.route + '/'
+      )[1];
+      if (this.code && this.code != 'undefined' && this.code != 'null') {
+        this.store.dispatch(
+          new GetPublicInstitutionAction({ code: this.code })
+        );
+      } else {
+        this.institutionDoesNotExist = true;
+      }
+    }
   }
 }

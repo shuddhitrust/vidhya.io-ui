@@ -40,7 +40,7 @@ export class FetchNextPublicInstitutionsAction {
 export class GetPublicInstitutionAction {
   static readonly type = '[PUBLIC] Get Institution';
 
-  constructor(public payload: idPayload) {}
+  constructor(public payload: { code: string }) {}
 }
 
 export class ResetPublicInstitutionFormAction {

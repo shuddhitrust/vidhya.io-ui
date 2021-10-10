@@ -20,6 +20,7 @@ import { Institution } from 'src/app/shared/common/models';
 import { UploadService } from 'src/app/shared/api/upload.service';
 import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
+import { sanitizeUsername } from 'src/app/shared/common/functions';
 @Component({
   selector: 'app-add-edit-institution',
   templateUrl: './add-edit-institution.component.html',
@@ -64,6 +65,7 @@ export class AddEditInstitutionComponent implements OnInit {
     const formGroup = this.fb.group({
       id: [institutionFormRecord.id],
       name: [institutionFormRecord.name, Validators.required],
+      code: [institutionFormRecord.code, Validators.required],
       location: [institutionFormRecord.location, Validators.required],
       city: [institutionFormRecord.city, Validators.required],
       website: [institutionFormRecord.website],
@@ -82,6 +84,10 @@ export class AddEditInstitutionComponent implements OnInit {
         this.store.dispatch(new GetInstitutionAction({ id }));
       }
     });
+  }
+
+  sanitizeCode(event) {
+    return sanitizeUsername(event);
   }
 
   onLogoChange(event) {

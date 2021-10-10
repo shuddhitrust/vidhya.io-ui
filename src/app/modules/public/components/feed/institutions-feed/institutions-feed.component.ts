@@ -58,7 +58,7 @@ export class InstitutionsFeedComponent {
 
   onClickInstitutionCard(institution) {
     this.router.navigateByUrl(
-      `${uiroutes.INSTITUTION_PROFILE_ROUTE.route}?id=${institution.id}`
+      `${uiroutes.INSTITUTION_PROFILE_ROUTE.route}/${institution.code}`
     );
   }
 

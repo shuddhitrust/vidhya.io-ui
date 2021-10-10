@@ -310,12 +310,12 @@ export class PublicState {
     { patchState }: StateContext<PublicStateModel>,
     { payload }: GetPublicInstitutionAction
   ) {
-    const { id } = payload;
+    const { code } = payload;
     patchState({ isFetchingFormRecord: true });
     this.apollo
       .watchQuery({
         query: PUBLIC_QUERIES.GET_PUBLIC_INSTITUTION,
-        variables: { id },
+        variables: { code },
         fetchPolicy: 'network-only',
       })
       .valueChanges.subscribe(

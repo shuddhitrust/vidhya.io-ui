@@ -6,13 +6,13 @@ import {
   FetchPolicy,
   Institution,
   FetchParams,
-  startingFetchParams,
 } from '../../../../../../../../shared/common/models';
 import { uiroutes } from '../../../../../../../../shared/common/ui-routes';
 
 export const emptyInstitutionFormRecord: Institution = {
   id: null,
   name: null,
+  code: null,
   location: null,
   city: null,
   website: null,

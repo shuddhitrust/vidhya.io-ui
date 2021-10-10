@@ -20,7 +20,7 @@ const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path: `${uiroutes.INSTITUTION_PROFILE_ROUTE.route}`,
+    path: `${uiroutes.INSTITUTION_PROFILE_ROUTE.route}/:code`,
     component: InstitutionProfileComponent,
     pathMatch: 'full',
   },

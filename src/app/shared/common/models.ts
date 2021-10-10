@@ -197,6 +197,7 @@ export type Group = {
 export type Institution = {
   id: number;
   name: string;
+  code: string;
   location?: string;
   city?: string;
   website?: string;

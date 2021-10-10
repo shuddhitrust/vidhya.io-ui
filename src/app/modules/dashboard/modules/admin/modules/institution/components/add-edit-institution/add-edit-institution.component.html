@@ -53,6 +53,27 @@
         Name is required
       </small>
     </mat-form-field>
+
+    <mat-form-field class="col-lg-9 col-md-6 col-sm-12" appearance="outline">
+      <mat-label>Code</mat-label>
+      <input
+        matInput
+        formControlName="code"
+        (keyup)="sanitizeCode($event)"
+        required
+        placeholder="Unique code for the institution"
+      />
+      <small
+        class="validation-error"
+        *ngIf="
+          institutionForm.get('code').hasError('required') &&
+          formDirective.submitted
+        "
+      >
+        Code is required
+      </small>
+    </mat-form-field>
+
     <mat-form-field class="col-lg-9 col-md-6 col-sm-12" appearance="outline">
       <mat-label>Location</mat-label>
       <input
