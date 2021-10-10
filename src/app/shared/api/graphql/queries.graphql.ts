@@ -102,6 +102,10 @@ export const PUBLIC_QUERIES = {
         phone
         logo
         bio
+        learnerCount
+        completed
+        percentage
+        score
       }
     }
   `,
@@ -119,6 +123,7 @@ export const PUBLIC_QUERIES = {
           location
           city
           bio
+          score
         }
         total
       }

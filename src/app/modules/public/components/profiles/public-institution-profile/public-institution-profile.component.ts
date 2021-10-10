@@ -26,7 +26,7 @@ export class InstitutionProfileComponent implements OnInit {
   params: object = {};
   @Select(PublicState.getInstitutionFormRecord)
   institutionFormRecord$: Observable<Institution>;
-  institution: Institution;
+  institution: any;
 
   constructor(
     private location: Location,
@@ -37,6 +37,12 @@ export class InstitutionProfileComponent implements OnInit {
     this.institutionFormRecord$.subscribe((val) => {
       this.institution = val;
     });
+  }
+
+  generateInstitutionLocation() {
+    return `${this.institution.location}${
+      this.institution.city ? ', ' + this.institution.city : ''
+    }`;
   }
 
   authorizeResourceMethod(action) {
