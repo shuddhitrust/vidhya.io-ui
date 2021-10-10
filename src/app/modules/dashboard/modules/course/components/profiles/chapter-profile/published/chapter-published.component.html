@@ -170,7 +170,10 @@
       *ngIf="question.questionType == questionTypes.image_upload"
     >
       <div
-        *ngIf="disableExerciseModification(question)"
+        *ngIf="
+          disableExerciseModification(question) ||
+          isSubmissionRetgurned(response)
+        "
         class="col-lg-3 col-md-4 col-sm-12 floating-logo"
       >
         <div
@@ -184,6 +187,14 @@
               class="thumbnail"
               (click)="showExpandedImage(image)"
             />
+            <button
+              *ngIf="!disableExerciseModification(question)"
+              type="button"
+              mat-button
+              (click)="removeExistingImage(response.exercise, i)"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
           </span>
         </div>
         <br />
@@ -207,12 +218,13 @@
               [src]="image.url"
               alt="Exercise submission"
               class="thumbnail"
+              (click)="showExpandedImage(image.url)"
             />
 
             <button
               type="button"
               mat-button
-              (click)="removePreviewImage(question, i)"
+              (click)="removePreviewImage(question.id, i)"
             >
               <mat-icon>close</mat-icon>
             </button>

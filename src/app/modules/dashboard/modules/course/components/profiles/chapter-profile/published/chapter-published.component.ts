@@ -278,6 +278,10 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     return authorized && submissionAllowed;
   }
 
+  isSubmissionRetgurned(submission: ExerciseSubmission) {
+    return submission.status === ExerciseSubmissionStatusOptions.returned;
+  }
+
   disableExerciseModification(exercise) {
     const submission = this.exerciseSubmissions.find(
       (sub) => sub.exercise == exercise.id
@@ -433,18 +437,18 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     this.exerciseSubmissions = newExerciseSubmissions;
   }
 
-  removePreviewImage(exercise, i) {
+  removePreviewImage(exerciseId: number, i: number) {
     let imagesQueuedForExercise = Object.assign(
       [],
-      this.imagesQueuedForUpload[exercise.id]
+      this.imagesQueuedForUpload[exerciseId]
     );
     imagesQueuedForExercise.splice(i, 1);
-    this.imagesQueuedForUpload[exercise.id] = imagesQueuedForExercise;
+    this.imagesQueuedForUpload[exerciseId] = imagesQueuedForExercise;
   }
 
-  removeExistingImage(exercise, i) {
+  removeExistingImage(exerciseId, i) {
     let newExerciseSubmissions = this.exerciseSubmissions.map((e) => {
-      if (e?.exercise == exercise.id) {
+      if (e?.exercise == exerciseId) {
         let newSubmission = Object.assign({}, e);
         let newImages = Object.assign([], newSubmission.images);
         newImages.splice(i, 1);
@@ -457,12 +461,22 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     });
     this.exerciseSubmissions = newExerciseSubmissions;
   }
+
+  checkIfPreviewImageExistsForExerciseIndexCombination(imageIndex, exerciseId) {
+    return this.imagesQueuedForUpload[exerciseId][imageIndex]?.file
+      ? true
+      : false;
+  }
   uploadImage(imageIndex, exerciseId) {
     const formData = new FormData();
-    formData.append(
-      'file',
-      this.imagesQueuedForUpload[exerciseId][imageIndex]?.file
-    );
+    console.log({
+      'this.imagesQueuedForUpload[exerciseId][imageIndex]?.file':
+        this.imagesQueuedForUpload[exerciseId][imageIndex]?.file,
+      exerciseId,
+      imageIndex,
+    });
+    const file = this.imagesQueuedForUpload[exerciseId][imageIndex]?.file;
+    formData.append('file', file);
     this.store.dispatch(
       new ToggleLoadingScreen({
         showLoadingScreen: true,
@@ -478,25 +492,67 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
             message: '',
           })
         );
-        // We update the referenceImages field in the form with the new url
-        this.uploadedImages[exerciseId] =
-          this.uploadedImages[exerciseId].concat(url);
+        console.log('before concatenating url', {
+          url,
+          uploadedImages: this.uploadedImages,
+        });
+        // We update the images in the response form with the new array
+        this.uploadedImages[exerciseId] = [
+          ...this.uploadedImages[exerciseId],
+          url,
+        ];
         this.updateExerciseSubmissionImages(
           exerciseId,
           this.uploadedImages[exerciseId]
         );
+        console.log('after', { uploadedImages: this.uploadedImages });
+
+        // Also removing that image from previewImages, to prevent it displaying twice as it uploads the images
+        this.removePreviewImage(exerciseId, imageIndex);
         // Checking if this is the final image to be uploaded..
         const allExerciseIds = Object.keys(this.imagesQueuedForUpload);
         const lastExerciseId = allExerciseIds[allExerciseIds.length - 1];
         const lastImageIndex =
-          this.imagesQueuedForUpload[exerciseId].length - 1;
-        if (exerciseId == lastExerciseId && imageIndex == lastImageIndex) {
-          // if it is, then we update the form and submit it.
+          this.imagesQueuedForUpload[lastExerciseId].length - 1;
+        console.log('checking before form submission', {
+          exerciseId,
+          lastExerciseId,
+          imageIndex,
+          lastImageIndex,
+        });
 
+        const uploadNext = () => {
+          ++imageIndex;
+          if (
+            this.checkIfPreviewImageExistsForExerciseIndexCombination(
+              imageIndex,
+              exerciseId
+            )
+          ) {
+            this.uploadImage(imageIndex, exerciseId);
+          }
+        };
+        if (exerciseId != lastExerciseId) {
+          uploadNext();
+        } else if (
+          exerciseId == lastExerciseId &&
+          imageIndex != lastImageIndex
+        ) {
+          uploadNext();
+        } else if (
+          exerciseId == lastExerciseId &&
+          imageIndex == lastImageIndex
+        ) {
+          console.log('everthing is uploaded. Submitting form', {
+            exerciseId,
+            lastExerciseId,
+            imageIndex,
+            lastImageIndex,
+            imagesForUpload: this.imagesQueuedForUpload,
+            uploadedImages: this.uploadedImages,
+          });
+          // if it is, then we update the form and submit it.
           this.submitExerciseSubmissionForm();
-        } else {
-          imageIndex++;
-          this.uploadImage(imageIndex, exerciseId);
         }
       },
       (err) => {
@@ -530,11 +586,26 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     if (this.imagesExist()) {
       const exerciseIdsWithImages = Object.keys(this.imagesQueuedForUpload);
       exerciseIdsWithImages.forEach((id) => {
-        this.uploadedImages[id] = [];
+        // Checking if the response already has some images
+        const responseForExercise = this.exerciseSubmissions.find((sub) => {
+          return sub?.exercise == id;
+        });
+        // if it does then we have that as the starting point, if not, then we assign the uploaded iamges a blank array.
+        this.uploadedImages[id] = responseForExercise?.images?.length
+          ? responseForExercise.images
+          : [];
       });
       for (let i = 0; i < exerciseIdsWithImages.length; i++) {
+        const exerciseId = exerciseIdsWithImages[i];
         if (this.imagesQueuedForUpload[exerciseIdsWithImages[i]].length) {
-          this.uploadImage(0, exerciseIdsWithImages[i]);
+          if (
+            this.checkIfPreviewImageExistsForExerciseIndexCombination(
+              0,
+              exerciseId
+            )
+          ) {
+            this.uploadImage(0, exerciseId);
+          }
         }
       }
     } else {
