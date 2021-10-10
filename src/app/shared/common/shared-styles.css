@@ -81,11 +81,13 @@
 }
 
 .thumbnail {
-  height: 100%;
+  width: auto;
+  height: auto;
   max-height: 200px;
   min-height: 100px;
+  min-width: 100px;
+  max-width: 200px;
   padding: 10px;
-  width: auto;
   cursor: pointer;
 }
 

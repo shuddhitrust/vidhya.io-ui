@@ -118,6 +118,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
   @Select(ExerciseSubmissionState.formSubmitting)
   formSubmitting$: Observable<boolean>;
   formSubmitting: boolean;
+  uploadingImages: boolean = false;
   @Select(ExerciseState.errorFetching)
   errorFetching$: Observable<boolean>;
   errorFetching: boolean;
@@ -129,6 +130,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
   formErrorMessages: string = '';
   exerciseSubmissions: ExerciseSubmission[] = [];
   imagesQueuedForUpload: any = {};
+  serialUploadQueue: any[] = [];
   uploadedImages: any = {};
   formDirective: FormGroupDirective;
   tempAnswers = {};
@@ -426,11 +428,72 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     this.exerciseSubmissions = newExerciseSubmissions;
   }
 
-  updateExerciseSubmissionImages(exerciseId, images) {
+  imagesExist() {
+    let exist = false;
+    const exerciseIdsWithImages = Object.keys(this.imagesQueuedForUpload);
+    if (exerciseIdsWithImages.length > 0) {
+      exist = true;
+    } else {
+      exerciseIdsWithImages.forEach((id) => {
+        if (this.imagesQueuedForUpload[id].length > 0) {
+          exist = true;
+        }
+      });
+    }
+    return exist;
+  }
+
+  uploadNewImages() {
+    if (this.imagesExist()) {
+      const exerciseIdsWithImages = Object.keys(this.imagesQueuedForUpload);
+      exerciseIdsWithImages.forEach((id) => {
+        // Checking if the response already has some images
+        const responseForExercise = this.exerciseSubmissions.find((sub) => {
+          return sub?.exercise == id;
+        });
+        // if it does then we have that as the starting point, if not, then we assign the uploaded iamges a blank array.
+        this.uploadedImages[id] = responseForExercise?.images?.length
+          ? responseForExercise.images
+          : [];
+      });
+      this.serialUploadQueue = [];
+      exerciseIdsWithImages.forEach((exerciseId) => {
+        const images = this.imagesQueuedForUpload[exerciseId];
+        for (let i = 0; i < images.length; i++) {
+          const imageIndex = i;
+          const id = this.generateIdforImageToUpload(exerciseId, imageIndex);
+          this.serialUploadQueue.push({
+            id,
+            exerciseId,
+            imageIndex,
+            file: this.imagesQueuedForUpload[exerciseId][imageIndex]?.file,
+            uploaded: false,
+          });
+        }
+      });
+
+      // Starting upload of images...
+      this.uploadingImages = true;
+      this.store.dispatch(
+        new ToggleLoadingScreen({
+          showLoadingScreen: true,
+          message: 'Uploading files...',
+        })
+      );
+      for (let i = 0; i < this.serialUploadQueue.length; i++) {
+        const queuedImage = this.serialUploadQueue[i];
+        this.uploadImage(queuedImage);
+      }
+    } else {
+      this.submitExerciseSubmissionForm();
+    }
+  }
+
+  updateExerciseSubmissionImages(exerciseId, image) {
     let newExerciseSubmissions = this.exerciseSubmissions.map((e) => {
       if (e?.exercise == exerciseId) {
         let newSubmission = Object.assign({}, e);
-        newSubmission.images = images;
+        newSubmission.images = newSubmission.images.concat([image]);
         return newSubmission;
       } else return e;
     });
@@ -462,100 +525,68 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     this.exerciseSubmissions = newExerciseSubmissions;
   }
 
+  checkIfAllFilesAreUpdated() {
+    let result = true;
+    this.serialUploadQueue.forEach((image) => {
+      result = result && image.uploaded;
+    });
+    return result;
+  }
+
+  generateIdforImageToUpload(exerciseId, imageIndex) {
+    return `exerciseId${exerciseId}imageIndex${imageIndex}`;
+  }
+
   checkIfPreviewImageExistsForExerciseIndexCombination(imageIndex, exerciseId) {
     return this.imagesQueuedForUpload[exerciseId][imageIndex]?.file
       ? true
       : false;
   }
-  uploadImage(imageIndex, exerciseId) {
+  async uploadImage(queuedImage) {
+    const exerciseId = queuedImage.exerciseId;
+    const imageIndex = queuedImage.imageIndex;
+    const file = queuedImage.file;
+
     const formData = new FormData();
-    console.log({
-      'this.imagesQueuedForUpload[exerciseId][imageIndex]?.file':
-        this.imagesQueuedForUpload[exerciseId][imageIndex]?.file,
-      exerciseId,
-      imageIndex,
-    });
-    const file = this.imagesQueuedForUpload[exerciseId][imageIndex]?.file;
     formData.append('file', file);
-    this.store.dispatch(
-      new ToggleLoadingScreen({
-        showLoadingScreen: true,
-        message: 'Uploading file',
-      })
-    );
     this.uploadService.upload(formData).subscribe(
       (res) => {
         const url = res.secure_url;
+
+        // We update the images in the response form with the new array
+        this.updateExerciseSubmissionImages(exerciseId, url);
+
+        // Marking this image object as uploaded
+        this.serialUploadQueue = this.serialUploadQueue.map((image) => {
+          return queuedImage.id == image.id
+            ? { ...image, uploaded: true }
+            : image;
+        });
+
+        // Also removing that image from previewImages, to prevent it displaying twice as it uploads the images
+        this.removePreviewImage(exerciseId, imageIndex);
+
+        // Check if all files are uploaded
+        if (this.checkIfAllFilesAreUpdated()) {
+          this.store.dispatch(
+            new ToggleLoadingScreen({
+              showLoadingScreen: false,
+              message: '',
+            })
+          );
+          this.uploadingImages = false;
+          // if it is, then we update the form and submit it.
+          this.submitExerciseSubmissionForm();
+        }
+      },
+      (err) => {
         this.store.dispatch(
           new ToggleLoadingScreen({
             showLoadingScreen: false,
             message: '',
           })
         );
-        console.log('before concatenating url', {
-          url,
-          uploadedImages: this.uploadedImages,
-        });
-        // We update the images in the response form with the new array
-        this.uploadedImages[exerciseId] = [
-          ...this.uploadedImages[exerciseId],
-          url,
-        ];
-        this.updateExerciseSubmissionImages(
-          exerciseId,
-          this.uploadedImages[exerciseId]
-        );
-        console.log('after', { uploadedImages: this.uploadedImages });
-
-        // Also removing that image from previewImages, to prevent it displaying twice as it uploads the images
-        this.removePreviewImage(exerciseId, imageIndex);
-        // Checking if this is the final image to be uploaded..
-        const allExerciseIds = Object.keys(this.imagesQueuedForUpload);
-        const lastExerciseId = allExerciseIds[allExerciseIds.length - 1];
-        const lastImageIndex =
-          this.imagesQueuedForUpload[lastExerciseId].length - 1;
-        console.log('checking before form submission', {
-          exerciseId,
-          lastExerciseId,
-          imageIndex,
-          lastImageIndex,
-        });
-
-        const uploadNext = () => {
-          ++imageIndex;
-          if (
-            this.checkIfPreviewImageExistsForExerciseIndexCombination(
-              imageIndex,
-              exerciseId
-            )
-          ) {
-            this.uploadImage(imageIndex, exerciseId);
-          }
-        };
-        if (exerciseId != lastExerciseId) {
-          uploadNext();
-        } else if (
-          exerciseId == lastExerciseId &&
-          imageIndex != lastImageIndex
-        ) {
-          uploadNext();
-        } else if (
-          exerciseId == lastExerciseId &&
-          imageIndex == lastImageIndex
-        ) {
-          console.log('everthing is uploaded. Submitting form', {
-            exerciseId,
-            lastExerciseId,
-            imageIndex,
-            lastImageIndex,
-            imagesForUpload: this.imagesQueuedForUpload,
-            uploadedImages: this.uploadedImages,
-          });
-          // if it is, then we update the form and submit it.
-          this.submitExerciseSubmissionForm();
-        }
-      },
-      (err) => {
+        this.uploadingImages = false;
         this.store.dispatch(
           new ShowNotificationAction({
             message:
@@ -565,52 +596,6 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
         );
       }
     );
-  }
-
-  imagesExist() {
-    let exist = false;
-    const exerciseIdsWithImages = Object.keys(this.imagesQueuedForUpload);
-    if (exerciseIdsWithImages.length > 0) {
-      exist = true;
-    } else {
-      exerciseIdsWithImages.forEach((id) => {
-        if (this.imagesQueuedForUpload[id].length > 0) {
-          exist = true;
-        }
-      });
-    }
-    return exist;
-  }
-
-  uploadNewImages() {
-    if (this.imagesExist()) {
-      const exerciseIdsWithImages = Object.keys(this.imagesQueuedForUpload);
-      exerciseIdsWithImages.forEach((id) => {
-        // Checking if the response already has some images
-        const responseForExercise = this.exerciseSubmissions.find((sub) => {
-          return sub?.exercise == id;
-        });
-        // if it does then we have that as the starting point, if not, then we assign the uploaded iamges a blank array.
-        this.uploadedImages[id] = responseForExercise?.images?.length
-          ? responseForExercise.images
-          : [];
-      });
-      for (let i = 0; i < exerciseIdsWithImages.length; i++) {
-        const exerciseId = exerciseIdsWithImages[i];
-        if (this.imagesQueuedForUpload[exerciseIdsWithImages[i]].length) {
-          if (
-            this.checkIfPreviewImageExistsForExerciseIndexCombination(
-              0,
-              exerciseId
-            )
-          ) {
-            this.uploadImage(0, exerciseId);
-          }
-        }
-      }
-    } else {
-      this.submitExerciseSubmissionForm();
-    }
   }
 
   addImageFileToSubmission(event, exercise) {
@@ -722,6 +707,10 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
         s.status !== ExerciseSubmissionStatusOptions.submitted
       );
     });
+  }
+
+  submitButtonDisabled() {
+    return this.formSubmitting || this.uploadingImages;
   }
 
   submitExerciseSubmissionForm() {

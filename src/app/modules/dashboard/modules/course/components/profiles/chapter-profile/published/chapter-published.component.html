@@ -71,9 +71,9 @@
   mat-raised-button
   color="primary"
   (click)="updateFormBeforeSubmit()"
-  [disabled]="(formSubmitting$ | async) === true"
+  [disabled]="submitButtonDisabled()"
 >
-  {{ (formSubmitting$ | async) === true ? "Submitting..." : "Submit" }}
+  {{ submitButtonDisabled() ? "Submitting..." : "Submit" }}
 </button>
 <br />
 <br />
@@ -190,11 +190,13 @@
             <button
               *ngIf="!disableExerciseModification(question)"
               type="button"
+              class="image-close-button"
               mat-button
               (click)="removeExistingImage(response.exercise, i)"
             >
               <mat-icon>close</mat-icon>
             </button>
+            <hr />
           </span>
         </div>
         <br />
@@ -223,11 +225,13 @@
 
             <button
               type="button"
+              class="image-close-button"
               mat-button
               (click)="removePreviewImage(question.id, i)"
             >
               <mat-icon>close</mat-icon>
             </button>
+            <hr />
           </span>
         </div>
         <br />
