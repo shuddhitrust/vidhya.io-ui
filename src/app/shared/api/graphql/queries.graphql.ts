@@ -229,6 +229,7 @@ export const INSTITUTION_QUERIES = {
       institution(id: $id) {
         id
         name
+        code
         location
         city
         website
