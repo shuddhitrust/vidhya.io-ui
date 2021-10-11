@@ -476,7 +476,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
           [],
           this.imagesQueuedForUpload[exercise.id]
         );
-        imagesQueuedForExercise = imagesQueuedForExercise.concat([
+        imagesQueuedForExercise = imagesQueuedForExercise?.concat([
           previewImageObject,
         ]);
         this.imagesQueuedForUpload[exercise.id] = imagesQueuedForExercise;
@@ -565,7 +565,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     let newExerciseSubmissions = this.exerciseSubmissions.map((e) => {
       if (e?.exercise == exerciseId) {
         let newSubmission = Object.assign({}, e);
-        newSubmission.images = newSubmission.images.concat([image]);
+        newSubmission.images = newSubmission.images?.concat([image]);
         return newSubmission;
       } else return e;
     });
