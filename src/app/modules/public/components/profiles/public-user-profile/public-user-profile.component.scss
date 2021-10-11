@@ -18,13 +18,10 @@ h2 {
 }
 
 .avatar {
-  position: static;
-  float: left;
-  display: block;
+  display: inline;
   height: 150px;
   width: auto;
   margin-bottom: 20px;
-  margin-right: 20px;
 }
 
 .profile-button {
@@ -32,8 +29,11 @@ h2 {
   margin: 5px 10px;
 }
 
-.title-link {
+.icon-button {
   cursor: pointer;
+}
+
+.legend-container {
   display: inline;
 }
 
@@ -105,5 +105,30 @@ h2 {
   .card-completed {
     float: none;
     display: inline-block;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .card-percentage,
+  .card-completed {
+    margin: 5px;
+  }
+
+  .color-legend-circle-completed,
+  .color-legend-circle-percentage {
+    height: 10px;
+    width: 10px;
+  }
+
+  .color-legend {
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+  }
+  .avatar {
+    width: auto;
+    max-height: 150px;
+    display: block;
+    margin: 5px auto 20px auto;
   }
 }

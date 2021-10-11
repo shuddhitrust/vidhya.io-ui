@@ -30,6 +30,10 @@ h4 {
   cursor: pointer;
 }
 
+.legend-container {
+  display: inline;
+}
+
 .card-percentage,
 .card-completed {
   display: block;
@@ -103,5 +107,34 @@ h4 {
   .card-completed {
     float: none;
     display: inline-block;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .card-percentage,
+  .card-completed {
+    margin: 5px;
+  }
+
+  .color-legend-circle-completed,
+  .color-legend-circle-percentage {
+    height: 10px;
+    width: 10px;
+  }
+
+  .color-legend {
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+  }
+  .logo {
+    width: auto;
+    max-height: 150px;
+    display: block;
+    margin: 5px auto 20px auto;
+  }
+
+  .legend-container {
+    margin-bottom: 20px;
   }
 }
