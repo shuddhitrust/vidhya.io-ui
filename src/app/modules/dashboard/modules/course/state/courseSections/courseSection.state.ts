@@ -343,7 +343,6 @@ export class CourseSectionState {
           const response = data.deleteCourseSection;
 
           if (response.ok) {
-            this.router.navigateByUrl(CourseSectionFormCloseURL);
             const method = SUBSCRIPTION_METHODS.DELETE_METHOD;
             const courseSection = response.courseSection;
             const state = getState();
