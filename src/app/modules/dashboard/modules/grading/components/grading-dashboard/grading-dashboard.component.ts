@@ -740,6 +740,15 @@ export class SubmissionHistoryDialog implements OnDestroy {
   parseDateTime(date) {
     return parseDateTime(date);
   }
+
+  renderGradingRemarks(exerciseSubmission) {
+    return `Remarks ${
+      exerciseSubmission.grader?.name
+        ? ` by
+                  ${exerciseSubmission.grader?.name}`
+        : ''
+    }`;
+  }
   showExpandedImage(image) {
     const dialogRef = this.dialog.open(ImageDisplayDialog, {
       data: {

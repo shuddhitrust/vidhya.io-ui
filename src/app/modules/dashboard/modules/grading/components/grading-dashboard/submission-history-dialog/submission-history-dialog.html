@@ -91,22 +91,18 @@
                 <br />
               </span>
 
-              <mat-form-field
-                *ngIf="
-                    exerciseSubmission.exercise?.questionType ==
-                    questionTypes.link
-                  "
-                class="col-lg-12 col-md-12 col-sm-12"
-                appearance="outline"
-              >
-                <mat-label>Link</mat-label>
-                <input
-                  matInput
-                  disabled
-                  [value]="exerciseSubmission.link"
-                  placeholder="Link"
-                />
-              </mat-form-field>
+              <br />
+              <div class="col-lg-12 col-md-12 col-sm-12">
+                <i>Submitted Link</i> -
+                <a
+                  [href]="exerciseSubmission?.link"
+                  alt="Link submitted"
+                  target="_blank"
+                  rel="noopener noreferrer nofollow"
+                  >{{ exerciseSubmission?.link }}</a
+                >
+              </div>
+              <br />
 
               <mat-form-field
                 class="col-lg-12 col-md-12 col-sm-12"
@@ -114,8 +110,7 @@
                 *ngIf="exerciseSubmission.remarks"
               >
                 <mat-label
-                  >Remarks{{exerciseSubmission.grader?.name ? ` by
-                  ${exerciseSubmission.grader?.name}` : ''</mat-label
+                  >{{renderGradingRemarks(exerciseSubmission)}}</mat-label
                 >
                 <input matInput disabled [value]="exerciseSubmission.remarks" />
               </mat-form-field>
