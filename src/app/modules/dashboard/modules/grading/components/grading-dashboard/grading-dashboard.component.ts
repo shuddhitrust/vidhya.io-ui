@@ -231,9 +231,6 @@ export class GradingDashboardComponent implements OnInit {
     this.route.queryParams.subscribe((params) => {
       this.params = params;
       this.submissionFilter = params[URL_PARAMS.submission];
-      console.log('from after ngOnInit ', {
-        submissionFilter: this.submissionFilter,
-      });
       if (this.submissionFilter) {
         this.fetchExerciseSubmissions();
       } else {
