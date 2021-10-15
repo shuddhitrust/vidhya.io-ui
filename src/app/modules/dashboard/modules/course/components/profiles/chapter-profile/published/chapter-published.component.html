@@ -108,14 +108,15 @@
     </button>
     <button
       *ngIf="showRubric(question)"
-      mat-mini-fab
+      mat-icon-button
       type="button"
       color="primary"
       [class.button-loading]="isFetchingExercises$ | async"
       class="profile-button"
       (click)="openRubricDialog(question, response)"
+      nz-tooltip="This exercise contains a rubric, which shows the breakdown of points. Click to view the rubric."
     >
-      <mat-icon>info</mat-icon>
+      <mat-icon>info</mat-icon> Rubric
     </button>
     <p class="form-element-block col-lg-12 col-md-12 col-sm-12">
       <span style="float: left"> {{ exerciseTitle(question) }}&nbsp;</span>

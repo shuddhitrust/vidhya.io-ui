@@ -1,0 +1,14 @@
+.dialog-box {
+  width: 70vw;
+  min-width: 400px;
+  height: 80vh;
+  min-height: 300px;
+  overflow: auto;
+}
+
+@media screen and (max-width: 480px) {
+  .dialog-box {
+    width: 100%;
+    height: auto;
+  }
+}

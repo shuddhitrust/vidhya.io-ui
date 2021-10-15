@@ -3,6 +3,7 @@
   min-width: 300px;
   height: 60vh;
   min-height: 500px;
+  overflow: auto;
 }
 
 .profile-title {
@@ -25,4 +26,11 @@
 
 .bio-text {
   padding-left: 10px;
+}
+
+@media screen and (max-width: 480px) {
+  .dialog-box {
+    width: 100%;
+    height: auto;
+  }
 }

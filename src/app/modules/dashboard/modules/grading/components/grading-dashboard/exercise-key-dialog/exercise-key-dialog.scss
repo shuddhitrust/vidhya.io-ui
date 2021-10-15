@@ -3,6 +3,7 @@
   min-width: 300px;
   height: 60vh;
   min-height: 300px;
+  overflow: auto;
 }
 
 .exercise-submission-options {
@@ -23,4 +24,11 @@
 
 .reference-image {
   width: 100%;
+}
+
+@media screen and (max-width: 480px) {
+  .dialog-box {
+    width: 100%;
+    height: auto;
+  }
 }

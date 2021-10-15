@@ -3,6 +3,7 @@
   min-width: 300px;
   height: 60vh;
   min-height: 300px;
+  overflow: auto;
 }
 
 .profile-title {
@@ -18,4 +19,11 @@
   height: 150px;
   width: auto;
   margin-bottom: 20px;
+}
+
+@media screen and (max-width: 480px) {
+  .dialog-box {
+    width: 100%;
+    height: auto;
+  }
 }
