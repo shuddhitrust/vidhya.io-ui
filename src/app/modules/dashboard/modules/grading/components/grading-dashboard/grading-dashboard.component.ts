@@ -60,6 +60,20 @@ import {
 } from '../../../course/state/exerciseSubmissions/exerciseSubmission.model';
 import { ExerciseSubmissionState } from '../../../course/state/exerciseSubmissions/exerciseSubmission.state';
 import { ExerciseSubmissionService } from '../../../course/state/exerciseSubmissions/exerciseSubmission.service';
+import { Clipboard } from '@angular/cdk/clipboard';
+import { GRADING } from 'src/app/modules/dashboard/dashboard.component';
+import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
+
+/**
+ * URL Param Labels for filters
+ */
+const URL_PARAMS = {
+  gradingStatus: 'gradingStatus',
+  groupBy: 'groupBy',
+  submission: 'submission',
+  participant: 'participant',
+  searchQuery: 'searchQuery',
+};
 
 /**
  * If you wish to change how it shows in the UI, just change the key.
@@ -101,10 +115,13 @@ export class GradingDashboardComponent implements OnInit {
   submissionsParticipantFilter: number = null;
   searchQueryFilter: string = null;
   lastUsedSearchQuery: string = null;
+  submissionFilter: number = null;
   gradingGroupColumnFilters = {
     groupBy: this.groupByFilter,
     status: this.submissionStatusFilter,
     searchQuery: this.searchQueryFilter,
+    submission: this.submissionFilter,
+    participant: this.submissionsParticipantFilter,
   };
   params: object = {};
   questionTypes: any = ExerciseQuestionTypeOptions;
@@ -152,6 +169,7 @@ export class GradingDashboardComponent implements OnInit {
     private store: Store,
     private router: Router,
     private auth: AuthorizationService,
+    public clipboard: Clipboard,
     public dialog: MatDialog,
     private route: ActivatedRoute,
     private exerciseSubmissionService: ExerciseSubmissionService
@@ -179,9 +197,6 @@ export class GradingDashboardComponent implements OnInit {
       });
       this.setupTempVariables();
     });
-    this.updateGradingGroupByFilter();
-
-    this.getFiltersFromParams();
     this.isFetching$.subscribe((val) => {
       this.isFetching = val;
     });
@@ -215,19 +230,28 @@ export class GradingDashboardComponent implements OnInit {
   getFiltersFromParams() {
     this.route.queryParams.subscribe((params) => {
       this.params = params;
-      const statusOptions = Object.values(this.exerciseSubmissionStatusTypes);
-      const groupByOptions = Object.values(groupByTypes);
-      const status = params['gradingStatus'];
-      const groupBy = params['groupBy'];
-      const searchQuery = params['searchQuery'];
-      this.submissionStatusFilter = statusOptions.includes(status)
-        ? status
-        : exerciseSubmissionStatusTypes.ungraded;
-      this.groupByFilter = groupByOptions.includes(groupBy)
-        ? groupBy
-        : groupByTypes.CHAPTER;
-      if (this.groupByFilter && this.submissionStatusFilter) {
-        this.fetchGradingGroups();
+      this.submissionFilter = params[URL_PARAMS.submission];
+      console.log('from after ngOnInit ', {
+        submissionFilter: this.submissionFilter,
+      });
+      if (this.submissionFilter) {
+        this.fetchExerciseSubmissions();
+      } else {
+        this.searchQueryFilter = params[URL_PARAMS.searchQuery];
+        this.submissionsParticipantFilter = params[URL_PARAMS.participant];
+        const statusOptions = Object.values(this.exerciseSubmissionStatusTypes);
+        const groupByOptions = Object.values(groupByTypes);
+        const status = params[URL_PARAMS.gradingStatus];
+        const groupBy = params[URL_PARAMS.groupBy];
+        this.submissionStatusFilter = statusOptions.includes(status)
+          ? status
+          : exerciseSubmissionStatusTypes.ungraded;
+        this.groupByFilter = groupByOptions.includes(groupBy)
+          ? groupBy
+          : groupByTypes.CHAPTER;
+        if (this.groupByFilter && this.submissionStatusFilter) {
+          this.fetchGradingGroups();
+        }
       }
     });
   }
@@ -240,17 +264,27 @@ export class GradingDashboardComponent implements OnInit {
   }
 
   updateGradingGroupByFilter() {
-    const gradingStatus = this.submissionStatusFilter;
+    const submission = this.submissionFilter;
+    const status = this.submissionStatusFilter;
     const groupBy = this.groupByFilter;
     const searchQuery = this.searchQueryFilter;
+    const participant = this.submissionsParticipantFilter;
     this.gradingGroupColumnFilters = {
-      groupBy: this.groupByFilter,
-      status: gradingStatus,
+      groupBy,
+      status,
       searchQuery,
+      submission,
+      participant,
     };
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { gradingStatus, groupBy, searchQuery },
+      queryParams: {
+        [URL_PARAMS.gradingStatus]: status,
+        [URL_PARAMS.groupBy]: groupBy,
+        [URL_PARAMS.searchQuery]: searchQuery,
+        [URL_PARAMS.submission]: submission,
+        [URL_PARAMS.participant]: participant,
+      },
       queryParamsHandling: 'merge',
       skipLocationChange: false,
     });
@@ -261,13 +295,13 @@ export class GradingDashboardComponent implements OnInit {
       ...this.exerciseSubmissionColumnFilters,
       status: this.submissionStatusFilter,
       participantId: this.submissionsParticipantFilter,
+      submissionId: this.submissionFilter,
       searchQuery: this.searchQueryFilter,
     };
   }
 
   openGroupedCard(card) {
     this.currentCard = card;
-    this.showGroupCards = false;
     this.exerciseSubmissionColumnFilters = {
       exerciseId: card.type == resources.EXERCISE_SUBMISSION ? card.id : null,
       chapterId: card.type == resources.CHAPTER ? card.id : null,
@@ -300,6 +334,9 @@ export class GradingDashboardComponent implements OnInit {
       this.preventLossOfUnsavedWork();
     } else {
       this.showGroupCards = true;
+      this.submissionFilter = null;
+      this.updateGradingGroupByFilter();
+      this.getFiltersFromParams();
     }
   }
   authorizeResourceMethod(action) {
@@ -312,20 +349,26 @@ export class GradingDashboardComponent implements OnInit {
   }
 
   pageTitle() {
+    // Initial text for the title...
     let title = '<span class="page-title">';
+    // text describing the currently applied submission status filter...
     const statusTypeText = getKeyForValue(
       exerciseSubmissionStatusTypes,
       this.submissionStatusFilter,
       false
     );
+    // text describing the item type...
     let itemTypeText = getKeyForValue(groupByTypes, this.groupByFilter);
     itemTypeText = itemTypeText ? itemTypeText + 's' : 'results';
+    // text describing the search filter...
     const searchDescription = this.lastUsedSearchQuery
       ? ` containing "${this.lastUsedSearchQuery}"`
       : '';
+    // Altering the item description depending on whether we're showing the grouping cards or submissions
     const items = this.showGroupCards
       ? `${itemTypeText} with ${statusTypeText} `
       : `${statusTypeText} `;
+    // constructing the title using all the separate parts
     if (this.showGroupCards) {
       title += `${items}submissions`;
     } else {
@@ -335,18 +378,33 @@ export class GradingDashboardComponent implements OnInit {
         this.currentCard?.type
       )})</span>`;
     }
-    return (
+    const finalTitle =
       title +
       `<span class="title-search-description">${searchDescription}</span>` +
-      '</span>'
-    );
+      '</span>';
+    const doNotShowTitle = !this.showGroupCards && !this.currentCard.title; // When we are showing submissions directly, like in the case of having a submission filter from the URL params.
+    return doNotShowTitle ? '' : finalTitle;
   }
 
   exerciseTitle(exercise: Exercise): string {
     return `${ExerciseTitle(exercise.chapter, exercise)} ${exercise.prompt}`;
   }
 
+  copyShareURL(exerciseSubmission) {
+    const parsedUrl = new URL(window.location.href);
+    const baseUrl = parsedUrl.origin;
+    const url = `${baseUrl}/${uiroutes.DASHBOARD_ROUTE.route}?tab=${GRADING}&${URL_PARAMS.submission}=${exerciseSubmission.id}`;
+    this.clipboard.copy(url);
+    this.store.dispatch(
+      new ShowNotificationAction({
+        message: 'Copied the link to this submission to your clipboard!',
+        action: 'success',
+      })
+    );
+  }
+
   fetchGradingGroups() {
+    this.submissionFilter = null; // Resetting the submission filter
     this.updateGradingGroupByFilter();
     this.showGroupCards = true;
     this.lastUsedSearchQuery = this.searchQueryFilter;
@@ -367,6 +425,7 @@ export class GradingDashboardComponent implements OnInit {
   }
 
   fetchExerciseSubmissions() {
+    this.showGroupCards = false;
     this.updateExerciseSubmissionColumnFilters();
     this.store.dispatch(
       new FetchExerciseSubmissionsAction({

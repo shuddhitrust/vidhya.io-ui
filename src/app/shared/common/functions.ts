@@ -312,7 +312,7 @@ export const humanReadableTime = (time) => {
 
 export const convertKeyToLabel = (key: string = ''): string => {
   return key
-    .replace('_', ' ')
+    ?.replace('_', ' ')
     .split(' ')
     .map((word) => word.toLowerCase())
     .map((word) => {

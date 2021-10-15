@@ -631,6 +631,7 @@ export const EXERCISE_SUBMISSION_QUERIES = {
   `,
   GET_EXERCISE_SUBMISSIONS: gql`
     query exerciseSubmissions(
+      $submissionId: ID
       $exerciseId: ID
       $participantId: ID
       $chapterId: ID
@@ -641,6 +642,7 @@ export const EXERCISE_SUBMISSION_QUERIES = {
       $offset: Int
     ) {
       exerciseSubmissions(
+        submissionId: $submissionId
         exerciseId: $exerciseId
         participantId: $participantId
         chapterId: $chapterId

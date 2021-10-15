@@ -338,11 +338,23 @@
                   style="margin-left: 10px"
                   color="secondary"
                   (click)="showHistory(exerciseSubmission)"
-                  nz-tooltip
+                  nz-tooltip="Show history of changes for this submission"
                   nzTooltipPlacement="top"
                   nzTooltipTitle="View submission history"
                 >
                   <mat-icon>history</mat-icon>
+                </button>
+                <button
+                  mat-mini-fab
+                  type="button"
+                  style="margin-left: 10px"
+                  color="secondary"
+                  (click)="copyShareURL(exerciseSubmission)"
+                  nz-tooltip="Copy URL to this submission"
+                  nzTooltipPlacement="top"
+                  nzTooltipTitle="Copy the link for this submission"
+                >
+                  <mat-icon>share</mat-icon>
                 </button>
                 <button
                   *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"

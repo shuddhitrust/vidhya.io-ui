@@ -405,6 +405,7 @@ export class ExerciseSubmissionState {
       chapterId: columnFilters?.chapterId,
       courseId: columnFilters?.courseId,
       participantId: columnFilters?.participantId,
+      submissionId: columnFilters?.submissionId,
       status: columnFilters?.status,
       searchField: columnFilters?.searchQuery,
     };
