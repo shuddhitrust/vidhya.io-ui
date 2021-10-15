@@ -37,6 +37,7 @@ import {
   ExerciseTitle,
   getOptionLabel,
   parseDateTime,
+  preventSpaces,
   sortByIndex,
   SubmissionPoints,
   SubmissionStatus,
@@ -404,6 +405,10 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
       } else return e;
     });
     this.exerciseSubmissions = newExerciseSubmissions;
+  }
+
+  sanitizeLink(event) {
+    return preventSpaces(event);
   }
 
   updateExerciseSubmissionLink(exercise) {

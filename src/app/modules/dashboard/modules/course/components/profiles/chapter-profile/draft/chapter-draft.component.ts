@@ -29,6 +29,7 @@ import {
   autoGenOptions,
   ChapterSubtitle,
   ChapterTitle,
+  preventSpaces,
   ExerciseTitle,
   getOptionLabel,
   parseDateTime,
@@ -422,6 +423,11 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
       }
     }
   }
+
+  sanitizeLink($event) {
+    return preventSpaces($event);
+  }
+
   showRubric(question: Exercise): boolean {
     const typeChosen = question.questionType; // A question type is chosen
     const optionType = question.questionType == this.questionTypes.options; // The chosen question type is options

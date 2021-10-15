@@ -436,7 +436,12 @@ export const sortArrayOfObjectsByString = (array: any[], key: string) => {
 };
 
 export const preventSpaces = (event) => {
-  return event.code != 'Space';
+  const space = event.code == 'Space';
+  console.log('preventSpaces', { event, space });
+  if (space) {
+    event.preventDefault();
+  }
+  return !space;
 };
 
 export const preventSymbols = (event) => {

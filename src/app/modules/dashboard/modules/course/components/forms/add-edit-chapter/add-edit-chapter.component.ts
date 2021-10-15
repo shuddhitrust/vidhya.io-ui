@@ -77,7 +77,7 @@ export class AddEditChapterComponent implements OnInit {
     );
     this.courseOptions$.subscribe((val) => {
       if (this.courseId) {
-        this.chapterForm.get('course').setValue(this.courseId);
+        this.chapterForm?.get('course')?.setValue(this.courseId);
       }
     });
     this.chapterFormRecord$.subscribe((val) => {

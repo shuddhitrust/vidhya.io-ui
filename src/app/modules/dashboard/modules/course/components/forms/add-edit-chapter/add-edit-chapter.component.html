@@ -21,7 +21,7 @@
       <small
         class="validation-error"
         *ngIf="
-          chapterForm.get('title').hasError('required') &&
+          chapterForm?.get('title').hasError('required') &&
           formDirective.submitted
         "
       >
@@ -40,7 +40,7 @@
       <small
         class="validation-error"
         *ngIf="
-          chapterForm.get('instructions').hasError('required') &&
+          chapterForm?.get('instructions').hasError('required') &&
           formDirective.submitted
         "
       >
@@ -64,7 +64,7 @@
       <small
         class="validation-error"
         *ngIf="
-          chapterForm.get('course').hasError('required') &&
+          chapterForm?.get('course').hasError('required') &&
           formDirective.submitted
         "
       >

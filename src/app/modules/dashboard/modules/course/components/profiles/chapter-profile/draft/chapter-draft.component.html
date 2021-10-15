@@ -453,6 +453,7 @@
       <mat-label>Link</mat-label>
       <input
         matInput
+        (keydown)="sanitizeLink($event)"
         [(ngModel)]="response.referenceLink"
         placeholder="Reference Link"
       />
