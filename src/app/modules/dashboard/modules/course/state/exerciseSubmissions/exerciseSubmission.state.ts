@@ -256,7 +256,7 @@ export class ExerciseSubmissionState {
   ) {
     let { searchParams } = payload;
     let state = getState();
-    const { fetchPolicy, gradingGroupsfetchParamObjects } = state;
+    let { fetchPolicy, gradingGroupsfetchParamObjects } = state;
     const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({
       fetchParamObjects: gradingGroupsfetchParamObjects,
@@ -265,6 +265,21 @@ export class ExerciseSubmissionState {
       newSearchQuery: searchQuery,
       newColumnFilters: columnFilters,
     });
+    // Resetting the data if the columnFilters have changed
+    if (
+      columnFiltersChanged({
+        fetchParamObjects: gradingGroupsfetchParamObjects,
+        newFetchParams,
+      })
+    ) {
+      patchState({
+        gradingGroupLastPage:
+          defaultExerciseSubmissionState.gradingGroupLastPage,
+        gradingGroups: defaultExerciseSubmissionState.gradingGroups,
+        paginatedGradingGroups:
+          defaultExerciseSubmissionState.paginatedGradingGroups,
+      });
+    }
     const variables = {
       groupBy: columnFilters?.groupBy,
       status: columnFilters?.status,
@@ -275,7 +290,11 @@ export class ExerciseSubmissionState {
     if (
       columnFilters?.groupBy // This action is only executed when groupBy is valid
     ) {
-      patchState({ isFetching: true });
+      patchState({
+        isFetching: true,
+        gradingGroupsfetchParamObjects:
+          state.gradingGroupsfetchParamObjects.concat([newFetchParams]),
+      });
       this.store.dispatch(
         new ToggleLoadingScreen({
           message: 'Fetching submissions...',
@@ -296,25 +315,7 @@ export class ExerciseSubmissionState {
               })
             );
             const response = data.exerciseSubmissionGroups;
-            newFetchParams = { ...newFetchParams };
 
-            if (
-              columnFiltersChanged({
-                fetchParamObjects: gradingGroupsfetchParamObjects,
-                newFetchParams,
-              })
-            ) {
-              // Resetting the state to clear existing groups.
-              patchState({ paginatedGradingGroups: [] });
-              state = getState();
-            } else {
-              // console.log('filter params have NOT changed ', {
-              //   old: gradingGroupsfetchParamObjects[
-              //     gradingGroupsfetchParamObjects?.length - 1
-              //   ]?.columnFilters,
-              //   new: newFetchParams.columnFilters,
-              // });
-            }
             let paginatedGradingGroups = state.paginatedGradingGroups;
             paginatedGradingGroups = {
               ...paginatedGradingGroups,
@@ -324,16 +325,14 @@ export class ExerciseSubmissionState {
             let gradingGroups = convertPaginatedListToNormalList(
               paginatedGradingGroups
             );
-            let lastPage = null;
+            let gradingGroupLastPage = null;
             if (response.length < newFetchParams.pageSize) {
-              lastPage = newFetchParams.currentPage;
+              gradingGroupLastPage = newFetchParams.currentPage;
             }
             patchState({
-              lastPage,
+              gradingGroupLastPage,
               gradingGroups,
               paginatedGradingGroups,
-              gradingGroupsfetchParamObjects:
-                state.gradingGroupsfetchParamObjects.concat([newFetchParams]),
               isFetching: false,
             });
             // if (!exerciseSubmissionsSubscribed) {
@@ -388,8 +387,7 @@ export class ExerciseSubmissionState {
   ) {
     let { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, fetchParamObjects, exerciseSubmissionsSubscribed } =
-      state;
+    let { fetchPolicy, fetchParamObjects } = state;
     const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({
       fetchParamObjects,
@@ -409,7 +407,26 @@ export class ExerciseSubmissionState {
       status: columnFilters?.status,
       searchField: columnFilters?.searchQuery,
     };
-    patchState({ isFetching: true });
+    // Resetting the data if the columnFitlers changed
+
+    if (
+      columnFiltersChanged({
+        fetchParamObjects,
+        newFetchParams,
+      })
+    ) {
+      patchState({
+        lastPage: defaultExerciseSubmissionState.lastPage,
+        exerciseSubmissions: defaultExerciseSubmissionState.exerciseSubmissions,
+        paginatedExerciseSubmissions:
+          defaultExerciseSubmissionState.paginatedExerciseSubmissions,
+      });
+    }
+    // Updating the fetchParamObjects
+    patchState({
+      isFetching: true,
+      fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
+    });
     this.store.dispatch(
       new ToggleLoadingScreen({
         message: 'Fetching submissions...',
@@ -449,7 +466,6 @@ export class ExerciseSubmissionState {
             lastPage,
             exerciseSubmissions,
             paginatedExerciseSubmissions,
-            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
             isFetching: false,
           });
         },

@@ -136,7 +136,7 @@ export class UserRoleState {
   ) {
     const { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, fetchParamObjects, userRolesSubscribed } = state;
+    const { fetchPolicy, fetchParamObjects } = state;
     const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({
       fetchParamObjects,

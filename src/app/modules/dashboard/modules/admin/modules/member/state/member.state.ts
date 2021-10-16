@@ -125,7 +125,7 @@ export class MemberState {
   ) {
     const state = getState();
     const { searchParams } = payload;
-    const { fetchPolicy, fetchParamObjects, membersSubscribed } = state;
+    const { fetchPolicy, fetchParamObjects } = state;
     const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({
       fetchParamObjects,

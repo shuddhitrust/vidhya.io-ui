@@ -206,25 +206,22 @@ export const updateFetchParams = ({
   newSearchQuery: string;
   newColumnFilters: any;
 }): FetchParams => {
-  const fetchParams = fetchParamObjects[fetchParamObjects.length - 1];
+  const lastFetchParams = fetchParamObjects[fetchParamObjects.length - 1];
   let pageSize = defaultSearchParams.pageSize;
   let currentPage = defaultSearchParams.pageNumber;
   let searchQuery = defaultSearchParams.searchQuery;
   let offset = 0;
   let totalCount = 0;
   let columnFilters = defaultSearchParams.columnFilters;
-  if (fetchParams) {
-    currentPage = fetchParams.currentPage;
-    totalCount = fetchParams.totalCount;
-    pageSize = fetchParams.pageSize;
-    offset = fetchParams.offset;
-    searchQuery = fetchParams.searchQuery;
-    columnFilters = fetchParams.columnFilters;
+  if (lastFetchParams) {
+    // Setting previous known value to totalCount
+    totalCount = lastFetchParams.totalCount;
   }
+  // ...and then setting the new values
   pageSize = newPageSize;
   currentPage = newPageNumber;
-  searchQuery = newSearchQuery;
   offset = (currentPage - 1) * pageSize;
+  searchQuery = newSearchQuery;
   columnFilters = newColumnFilters;
 
   let newFetchParams = {
@@ -375,7 +372,13 @@ export const constructPermissions = (permissions: UserPermissions) => {
   return newPermissions;
 };
 
-export const compareObjects = (o1, o2) => {
+/**
+ * Method to compare two objects and return a boolean
+ * @param o1 Object 1
+ * @param o2 Object 2
+ * @returns False if they are different, True if they are the same
+ */
+export const compareObjects = (o1, o2): boolean => {
   for (var p in o1) {
     if (o1.hasOwnProperty(p)) {
       if (o1?.[p] !== o2?.[p]) {

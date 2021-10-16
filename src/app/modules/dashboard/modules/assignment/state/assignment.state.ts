@@ -15,6 +15,7 @@ import { Apollo } from 'apollo-angular';
 import { FetchParams, startingFetchParams } from 'src/app/shared/common/models';
 import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
 import {
+  columnFiltersChanged,
   convertPaginatedListToNormalList,
   getErrorMessageFromGraphQLResponse,
   updateFetchParams,
@@ -125,7 +126,18 @@ export class AssignmentState {
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
-    patchState({ isFetching: true });
+
+    if (columnFiltersChanged({ fetchParamObjects, newFetchParams })) {
+      patchState({
+        assignments: defaultAssignmentState.assignments,
+        paginatedAssignments: defaultAssignmentState.paginatedAssignments,
+        lastPage: defaultAssignmentState.lastPage,
+      });
+    }
+    patchState({
+      isFetching: true,
+      fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
+    });
     this.store.dispatch(
       new ToggleLoadingScreen({
         message: 'Fetching assignments...',
@@ -164,7 +176,6 @@ export class AssignmentState {
             assignments,
             paginatedAssignments,
             lastPage,
-            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
             isFetching: false,
           });
         },
