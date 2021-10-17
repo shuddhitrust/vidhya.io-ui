@@ -5,7 +5,7 @@ import {
 import {
   ExerciseSubmission,
   FetchParams,
-  FetchPolicy,
+  FetchPolicyModel,
 } from 'src/app/shared/common/models';
 
 export type GradingGroup = {
@@ -49,7 +49,7 @@ export interface ExerciseSubmissionStateModel {
   gradingGroupLastPage: number;
   gradingGroupsfetchParamObjects: FetchParams[];
   exerciseSubmissionsSubscribed: boolean;
-  fetchPolicy: FetchPolicy;
+  fetchPolicy: FetchPolicyModel;
   fetchParamObjects: FetchParams[];
   exerciseSubmissionFormId: number;
   exerciseSubmissionFormRecord: ExerciseSubmission;

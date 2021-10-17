@@ -2,7 +2,7 @@ import { COURSES } from 'src/app/modules/dashboard/dashboard.component';
 import {
   CourseSection,
   FetchParams,
-  FetchPolicy,
+  FetchPolicyModel,
 } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 
@@ -17,7 +17,7 @@ export interface CourseSectionStateModel {
   paginatedCourseSections: any;
   lastPage: number;
   courseSectionsSubscribed: boolean;
-  fetchPolicy: FetchPolicy;
+  fetchPolicy: FetchPolicyModel;
   fetchParamObjects: FetchParams[];
   courseSectionFormId: number;
   courseSectionFormRecord: CourseSection;

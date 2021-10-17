@@ -1,13 +1,13 @@
-import { FetchPolicy, Group, User } from '../../common/models';
+import { FetchPolicyModel, Group, User } from '../../common/models';
 
 export interface OptionsStateModel {
   membersByInstitution: User[];
   memberInstitutionId: string;
   isFetchingMembersByInstitution: boolean;
-  fetchPolicyForMembers: FetchPolicy;
+  fetchPolicyForMembers: FetchPolicyModel;
   adminGroups: Group[];
   isFetchingAdminGroups: boolean;
-  fetchPolicyForGroups: FetchPolicy;
+  fetchPolicyForGroups: FetchPolicyModel;
 }
 
 export const defaultOptionsState: OptionsStateModel = {

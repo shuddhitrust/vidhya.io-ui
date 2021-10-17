@@ -3,7 +3,7 @@ import {
   ExerciseKey,
   ExerciseSubmission,
   FetchParams,
-  FetchPolicy,
+  FetchPolicyModel,
 } from 'src/app/shared/common/models';
 
 export const emptyExerciseFormRecord: Exercise = {
@@ -36,7 +36,7 @@ export interface ExerciseStateModel {
   paginatedExercises: any;
   lastPage: number;
   exercisesSubscribed: boolean;
-  fetchPolicy: FetchPolicy;
+  fetchPolicy: FetchPolicyModel;
   fetchParamObjects: FetchParams[];
   exerciseFormId: number;
   exerciseFormRecord: Exercise;

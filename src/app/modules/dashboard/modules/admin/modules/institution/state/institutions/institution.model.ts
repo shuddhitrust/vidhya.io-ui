@@ -3,7 +3,7 @@ import {
   defaultLogos,
 } from '../../../../../../../../shared/common/constants';
 import {
-  FetchPolicy,
+  FetchPolicyModel,
   Institution,
   FetchParams,
 } from '../../../../../../../../shared/common/models';
@@ -24,7 +24,7 @@ export const emptyInstitutionFormRecord: Institution = {
 export interface InstitutionStateModel {
   institutions: Institution[];
   institutionsSubscribed: boolean;
-  fetchPolicy: FetchPolicy;
+  fetchPolicy: FetchPolicyModel;
   fetchParamObjects: FetchParams[];
   institutionFormId: number;
   institutionFormRecord: Institution;

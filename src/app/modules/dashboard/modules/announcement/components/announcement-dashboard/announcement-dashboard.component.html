@@ -28,8 +28,8 @@
           (click)="openAnnouncement(announcement)"
         >
           <h2>
+            <nz-badge nzDot nzStandalone></nz-badge>&nbsp;
             {{ announcement.title }}
-            <mat-icon style="color: var(--red)">new_releases</mat-icon>
           </h2>
           <p>
             {{ clip(announcement.message) }}

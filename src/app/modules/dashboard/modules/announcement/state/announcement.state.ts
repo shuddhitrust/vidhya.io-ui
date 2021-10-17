@@ -40,6 +40,7 @@ import { defaultSearchParams } from '../../../../../shared/common/constants';
 import { SUBSCRIPTIONS } from '../../../../../shared/api/graphql/subscriptions.graphql';
 import { SearchParams } from '../../../../../shared/modules/master-grid/table.model';
 import { ToggleLoadingScreen } from '../../../../../shared/state/loading/loading.actions';
+import { GetUnreadCountAction } from '../../../state/dashboard.actions';
 
 @State<AnnouncementStateModel>({
   name: 'announcementState',
@@ -216,6 +217,7 @@ export class AnnouncementState {
             fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
             isFetching: false,
           });
+          this.store.dispatch(new GetUnreadCountAction()); // Refreshing the announcement count
         },
         (error) => {
           this.store.dispatch(

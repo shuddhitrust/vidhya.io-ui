@@ -1,4 +1,4 @@
-import { FetchParams, FetchPolicy } from 'src/app/shared/common/models';
+import { FetchParams, FetchPolicyModel } from 'src/app/shared/common/models';
 
 export type Assignment = {
   id: number;
@@ -20,7 +20,7 @@ export interface AssignmentStateModel {
   paginatedAssignments: any;
   lastPage: number;
   assignmentsSubscribed: boolean;
-  fetchPolicy: FetchPolicy;
+  fetchPolicy: FetchPolicyModel;
   fetchParamObjects: FetchParams[];
   isFetching: boolean;
   errorFetching: boolean;

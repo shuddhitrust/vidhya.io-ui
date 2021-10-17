@@ -18,13 +18,13 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ClipboardModule } from '@angular/cdk/clipboard';
-import { MatBadgeModule } from '@angular/material/badge';
 // Zorro
 import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzBadgeModule } from 'ng-zorro-antd/badge';
 
 const components = [
   MatToolbarModule,
@@ -45,13 +45,13 @@ const components = [
   MatDatepickerModule,
   MatNativeDateModule,
   DragDropModule,
+  ClipboardModule,
   NzPaginationModule,
   NzListModule,
   NzLayoutModule,
-  ClipboardModule,
-  MatBadgeModule,
   NzTabsModule,
   NzToolTipModule,
+  NzBadgeModule,
 ];
 
 @NgModule({

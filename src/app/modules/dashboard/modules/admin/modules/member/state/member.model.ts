@@ -4,7 +4,7 @@ import {
   parseDateTime,
 } from '../../../../../../../shared/common/functions';
 import {
-  FetchPolicy,
+  FetchPolicyModel,
   MatSelectOption,
   MembershipStatusOptions,
   FetchParams,
@@ -42,7 +42,7 @@ export interface MemberStateModel {
   membersSubscribed: boolean;
   lastPagePublicMembers: number;
   paginatedPublicMembers: any[];
-  fetchPolicy: FetchPolicy;
+  fetchPolicy: FetchPolicyModel;
   fetchParamObjects: FetchParams[];
   memberFormId: string;
   memberFormRecord: User;

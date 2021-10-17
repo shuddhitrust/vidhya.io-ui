@@ -19,7 +19,15 @@
           [entities]="processEntities()"
         ></app-admin-dashboard></div></ng-template
   ></nz-tab>
-  <nz-tab [nzTitle]="ANNOUNCEMENTS" *ngIf="visibleTabs.includes(ANNOUNCEMENTS)">
+  <nz-tab
+    [nzTitle]="announcementsTitleTemplate"
+    *ngIf="visibleTabs.includes(ANNOUNCEMENTS)"
+  >
+    <ng-template #announcementsTitleTemplate>
+      <nz-badge *ngIf="unreadCount?.announcements > 0" nzDot nzStandalone>
+      </nz-badge>
+      &nbsp;{{ ANNOUNCEMENTS }}
+    </ng-template>
     <ng-template nz-tab>
       <app-announcement-dashboard></app-announcement-dashboard> </ng-template
   ></nz-tab>

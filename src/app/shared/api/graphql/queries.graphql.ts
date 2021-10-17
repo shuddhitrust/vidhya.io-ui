@@ -132,6 +132,17 @@ export const PUBLIC_QUERIES = {
   `,
 };
 
+export const DASHBOARD_MUTATIONS = {
+  GET_UNREAD_COUNT: gql`
+    query unreadCount {
+      unreadCount {
+        announcements
+        assignments
+      }
+    }
+  `,
+};
+
 export const USER_QUERIES = {
   GET_USER: gql`
     query user($id: ID!) {

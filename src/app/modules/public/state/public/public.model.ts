@@ -1,6 +1,6 @@
 import { emptyInstitutionFormRecord } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.model';
 import {
-  FetchPolicy,
+  FetchPolicyModel,
   FetchParams,
   User,
   Institution,
@@ -34,7 +34,7 @@ export interface PublicStateModel {
   members: User[];
   lastPagePublicMembers: number;
   paginatedPublicMembers: any[];
-  fetchPolicy: FetchPolicy;
+  fetchPolicy: FetchPolicyModel;
   fetchMembersParamObjects: FetchParams[];
   memberFormId: string;
   memberFormRecord: User;

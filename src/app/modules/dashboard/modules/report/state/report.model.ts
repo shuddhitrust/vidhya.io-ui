@@ -1,4 +1,8 @@
-import { FetchParams, FetchPolicy, Report } from 'src/app/shared/common/models';
+import {
+  FetchParams,
+  FetchPolicyModel,
+  Report,
+} from 'src/app/shared/common/models';
 
 export const emptyReportFormRecord: Report = {
   id: null,
@@ -12,7 +16,7 @@ export interface ReportStateModel {
   reports: Report[];
   lastPage: number;
   reportsSubscribed: boolean;
-  fetchPolicy: FetchPolicy;
+  fetchPolicy: FetchPolicyModel;
   fetchParamObjects: FetchParams[];
   reportFormId: number;
   reportFormRecord: Report;

@@ -1,10 +1,7 @@
-import { SearchParams } from '../../../../../../shared/modules/master-grid/table.model';
 import {
-  FetchPolicy,
+  FetchPolicyModel,
   Chapter,
   FetchParams,
-  startingFetchParams,
-  CourseStatusOptions,
 } from '../../../../../../shared/common/models';
 
 export const emptyChapterFormRecord: Chapter = {
@@ -20,7 +17,7 @@ export interface ChapterStateModel {
   paginatedChapters: any;
   lastPage: number;
   chaptersSubscribed: boolean;
-  fetchPolicy: FetchPolicy;
+  fetchPolicy: FetchPolicyModel;
   fetchParamObjects: FetchParams[];
   chapterFormId: number;
   chapterFormRecord: Chapter;

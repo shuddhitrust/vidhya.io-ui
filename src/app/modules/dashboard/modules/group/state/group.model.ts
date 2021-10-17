@@ -1,6 +1,10 @@
 import { GROUPS } from 'src/app/modules/dashboard/dashboard.component';
 import { defaultLogos } from 'src/app/shared/common/constants';
-import { FetchParams, FetchPolicy, Group } from 'src/app/shared/common/models';
+import {
+  FetchParams,
+  FetchPolicyModel,
+  Group,
+} from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 
 export const emptyGroupFormRecord: Group = {
@@ -18,7 +22,7 @@ export interface GroupStateModel {
   paginatedGroups: any;
   lastPage: number;
   groupsSubscribed: boolean;
-  fetchPolicy: FetchPolicy;
+  fetchPolicy: FetchPolicyModel;
   fetchParamObjects: FetchParams[];
   groupFormId: number;
   groupFormRecord: Group;

@@ -1,5 +1,9 @@
 import { COURSES } from 'src/app/modules/dashboard/dashboard.component';
-import { Course, FetchParams, FetchPolicy } from 'src/app/shared/common/models';
+import {
+  Course,
+  FetchParams,
+  FetchPolicyModel,
+} from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 
 export const emptyCourseFormRecord: Course = {
@@ -23,7 +27,7 @@ export interface CourseStateModel {
   paginatedCourses: any;
   lastPage: number;
   coursesSubscribed: boolean;
-  fetchPolicy: FetchPolicy;
+  fetchPolicy: FetchPolicyModel;
   fetchParamObjects: FetchParams[];
   courseFormId: number;
   courseFormRecord: Course;

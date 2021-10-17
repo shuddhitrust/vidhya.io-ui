@@ -11,6 +11,7 @@ import { AnnouncementRoutingModule } from './announcement-routing.module';
 import { AddEditAnnouncementComponent } from './components/add-edit-announcement/add-edit-announcement.component';
 import { AnnouncementDashboardComponent } from './components/announcement-dashboard/announcement-dashboard.component';
 import { AnnouncementProfileComponent } from './components/announcement-profile/announcement-profile.component';
+import { DashboardState } from '../../state/dashboard.state';
 
 const declarations = [
   AnnouncementDashboardComponent,

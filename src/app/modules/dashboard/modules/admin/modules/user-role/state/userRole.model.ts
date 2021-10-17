@@ -1,7 +1,7 @@
 import {
   defaultResourcePermissions,
   FetchParams,
-  FetchPolicy,
+  FetchPolicyModel,
   resources,
   UserRole,
 } from 'src/app/shared/common/models';
@@ -29,7 +29,7 @@ export const emptyUserRoleFormRecord: UserRole = {
 export interface UserRoleStateModel {
   roles: UserRole[];
   userRolesSubscribed: boolean;
-  fetchPolicy: FetchPolicy;
+  fetchPolicy: FetchPolicyModel;
   fetchParamObjects: FetchParams[];
   userRoleFormId: string;
   userRoleFormRecord: UserRole;

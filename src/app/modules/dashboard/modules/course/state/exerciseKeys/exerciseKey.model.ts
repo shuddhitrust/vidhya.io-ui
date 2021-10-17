@@ -1,7 +1,7 @@
 import {
   ExerciseKey,
   FetchParams,
-  FetchPolicy,
+  FetchPolicyModel,
 } from 'src/app/shared/common/models';
 
 export const emptyExerciseKeyFormRecord: ExerciseKey = {
@@ -20,7 +20,7 @@ export interface ExerciseKeyStateModel {
   paginatedExerciseKeys: any;
   lastPage: number;
   exerciseKeysSubscribed: boolean;
-  fetchPolicy: FetchPolicy;
+  fetchPolicy: FetchPolicyModel;
   fetchParamObjects: FetchParams[];
   exerciseKeyFormId: number;
   exerciseKeyFormRecord: ExerciseKey;

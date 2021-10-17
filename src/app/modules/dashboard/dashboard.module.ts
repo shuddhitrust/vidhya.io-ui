@@ -19,6 +19,8 @@ import { GradingModule } from './modules/grading/grading.module';
 import { ReportModule } from './modules/report/report.module';
 import { AssignmentModule } from './modules/assignment/assignment.module';
 import { GroupModule } from './modules/group/group.module';
+import { DashboardState } from './state/dashboard.state';
+import { NgxsModule } from '@ngxs/store';
 // import { ChatModule } from './modules/chat/chat.module';
 
 @NgModule({
@@ -41,6 +43,7 @@ import { GroupModule } from './modules/group/group.module';
       },
     }),
     HotToastModule.forRoot(),
+    NgxsModule.forFeature([DashboardState]),
     AdminModule,
     AnnouncementModule,
     AssignmentModule,

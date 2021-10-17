@@ -1,8 +1,7 @@
 import {
-  FetchPolicy,
+  FetchPolicyModel,
   Announcement,
   FetchParams,
-  startingFetchParams,
 } from '../../../../../shared/common/models';
 
 export const emptyAnnouncementFormRecord: Announcement = {
@@ -20,7 +19,7 @@ export interface AnnouncementStateModel {
   paginatedAnnouncements: any;
   lastPage: number;
   announcementsSubscribed: boolean;
-  fetchPolicy: FetchPolicy;
+  fetchPolicy: FetchPolicyModel;
   fetchParamObjects: FetchParams[];
   announcementFormId: number;
   announcementFormRecord: Announcement;

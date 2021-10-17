@@ -13,7 +13,7 @@ export type idPayload = {
 /*
 Fetch policy to be used when making Graphql queries via AWS Amplify Client
 */
-export type FetchPolicy =
+export type FetchPolicyModel =
   | 'cache-first'
   | 'cache-and-network'
   | 'network-only'

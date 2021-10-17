@@ -555,3 +555,14 @@ export const generateGroupSubtitle = (group: Group): string => {
 export const clipLongText = (string = '', length = 100) => {
   return string.slice(0, length);
 };
+
+export const sanitizeCount = (count, length = 1) => {
+  let indicator = '9';
+  let index = 1;
+  while (index < length) {
+    indicator = indicator + '9';
+    index++;
+  }
+  indicator = indicator + '+';
+  return count.toString().length <= length ? count : indicator;
+};

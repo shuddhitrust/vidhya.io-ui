@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Select } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { ADMIN_SECTION_LABELS } from 'src/app/shared/common/constants';
@@ -11,6 +11,9 @@ import {
 } from 'src/app/shared/common/models';
 import { uiroutes } from '../../shared/common/ui-routes';
 import { AuthState } from '../auth/state/auth.state';
+import { GetUnreadCountAction } from './state/dashboard.actions';
+import { unreadCountType } from './state/dashboard.model';
+import { DashboardState } from './state/dashboard.state';
 
 export const ADMIN = 'Admin';
 export const ANNOUNCEMENTS = 'Announcements';
@@ -63,19 +66,28 @@ export class DashboardComponent implements OnInit {
   permissions$: Observable<UserPermissions>;
   resources = resources;
   visibleTabs = [];
+  @Select(DashboardState.getUnreadCount)
+  unreadCount$: Observable<unreadCountType>;
+  unreadCount: unreadCountType;
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private auth: AuthorizationService
+    private auth: AuthorizationService,
+    private store: Store
   ) {
     this.permissions$.subscribe((val) => {
       this.populateVisibleTabs();
     });
+    this.unreadCount$.subscribe((val) => {
+      this.unreadCount = val;
+    });
+    this.store.dispatch(new GetUnreadCountAction());
   }
 
   ngOnInit(): void {
     this.setActiveIndexFromParams();
   }
+
   setActiveIndexFromParams() {
     this.route.queryParams.subscribe((params) => {
       this.params = params;
