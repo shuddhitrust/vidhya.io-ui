@@ -61,7 +61,7 @@ export class GroupDashboardComponent implements OnInit {
   }
 
   clip(string) {
-    return clipLongText(string);
+    return clipLongText(string, 200);
   }
 
   ngOnInit(): void {}

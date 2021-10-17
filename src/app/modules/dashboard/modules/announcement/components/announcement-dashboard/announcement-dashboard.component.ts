@@ -4,7 +4,7 @@ import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
-import { parseDateTime } from 'src/app/shared/common/functions';
+import { clipLongText, parseDateTime } from 'src/app/shared/common/functions';
 import {
   Announcement,
   MatSelectOption,
@@ -74,8 +74,7 @@ export class AnnouncementDashboardComponent implements OnInit {
     this.router.navigateByUrl(uiroutes.ANNOUNCEMENT_FORM_ROUTE.route);
   }
   clip(string) {
-    const clipLength = 50;
-    return string.slice(0, clipLength);
+    return clipLongText(string, 200);
   }
 
   parseDate(date) {

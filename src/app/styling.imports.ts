@@ -18,6 +18,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ClipboardModule } from '@angular/cdk/clipboard';
+import { MatBadgeModule } from '@angular/material/badge';
 // Zorro
 import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzListModule } from 'ng-zorro-antd/list';
@@ -48,6 +49,7 @@ const components = [
   NzListModule,
   NzLayoutModule,
   ClipboardModule,
+  MatBadgeModule,
   NzTabsModule,
   NzToolTipModule,
 ];

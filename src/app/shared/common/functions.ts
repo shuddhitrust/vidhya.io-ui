@@ -545,13 +545,13 @@ export const generateGroupSubtitle = (group: Group): string => {
     ' Group';
   let admins = group?.admins?.map((a) => a.name).join(', ');
   // Clipping the admins if there are too many admins
-  admins = ', ' + (admins ? 'Administered by ' + clipLongText(admins) : admins);
+  admins =
+    ', ' + (admins ? 'Administered by ' + clipLongText(admins, 50) : admins);
   return `${groupType}, ${
     group?.institution?.name
   }${admins}, Created on ${parseDateTime(group?.createdAt)}`;
 };
 
-export const clipLongText = (string = '') => {
-  const clipLength = 50;
-  return string.slice(0, clipLength);
+export const clipLongText = (string = '', length = 100) => {
+  return string.slice(0, length);
 };

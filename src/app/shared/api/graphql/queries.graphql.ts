@@ -346,6 +346,7 @@ export const ANNOUNCEMENT_QUERIES = {
           name
         }
         message
+        seen
         createdAt
       }
     }

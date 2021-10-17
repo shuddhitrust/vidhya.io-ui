@@ -87,7 +87,7 @@ export class GroupProfileComponent implements OnInit, OnDestroy {
   }
 
   clip(string) {
-    return clipLongText(string);
+    return clipLongText(string, 100);
   }
   fetchMemberOptions() {
     this.currentMember$.subscribe((val) => {

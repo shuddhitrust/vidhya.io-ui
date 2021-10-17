@@ -276,7 +276,11 @@ export class AnnouncementState {
       .valueChanges.subscribe(
         ({ data }: any) => {
           const response = data.announcement;
-          patchState({ announcementFormRecord: response, isFetching: false });
+          patchState({
+            announcementFormRecord: response,
+            isFetching: false,
+            fetchPolicy: 'network-only',
+          });
         },
         (error) => {
           this.store.dispatch(
@@ -297,7 +301,7 @@ export class AnnouncementState {
   ) {
     const state = getState();
     const { form, formDirective } = payload;
-    let { formSubmitting, fetchPolicy } = state;
+    let { formSubmitting } = state;
     if (form.valid) {
       formSubmitting = true;
       patchState({ formSubmitting });
@@ -345,7 +349,7 @@ export class AnnouncementState {
                 paginatedAnnouncements: newPaginatedItems,
                 announcements: newItemsList,
                 announcementFormRecord: emptyAnnouncementFormRecord,
-                fetchPolicy,
+                fetchPolicy: 'network-only',
               });
               this.store.dispatch(
                 new ShowNotificationAction({

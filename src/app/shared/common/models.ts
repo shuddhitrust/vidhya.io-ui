@@ -179,6 +179,7 @@ export type Announcement = {
   groups: any[];
   createdAt?: string;
   updatedAt?: string;
+  seen?: boolean;
 };
 
 export type Group = {
