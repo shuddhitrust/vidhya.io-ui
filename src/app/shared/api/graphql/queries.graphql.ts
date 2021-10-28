@@ -700,6 +700,7 @@ export const EXERCISE_SUBMISSION_QUERIES = {
         answer
         link
         images
+        rubric
         points
         percentage
         status

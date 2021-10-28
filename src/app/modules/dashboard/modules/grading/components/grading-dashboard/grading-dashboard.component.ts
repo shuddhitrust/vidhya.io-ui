@@ -63,6 +63,7 @@ import { ExerciseSubmissionService } from '../../../course/state/exerciseSubmiss
 import { Clipboard } from '@angular/cdk/clipboard';
 import { GRADING } from 'src/app/modules/dashboard/dashboard.component';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
+import { ExerciseRubricDialog } from '../../../course/components/profiles/chapter-profile/published/chapter-published.component';
 
 /**
  * URL Param Labels for filters
@@ -497,17 +498,18 @@ export class GradingDashboardComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {});
   }
 
-  renderRubric(exerciseSubmission: ExerciseSubmission) {
-    return JSON.parse(exerciseSubmission.exercise.rubric);
+  renderRubric(rubric) {
+    rubric = rubric ? rubric : '[]';
+    return JSON.parse(rubric);
   }
 
   showRubric(exerciseSubmission: ExerciseSubmission) {
-    const rubric = this.renderRubric(exerciseSubmission);
+    const rubric = this.renderRubric(exerciseSubmission?.exercise?.rubric);
     return rubric?.length > 0;
   }
 
   renderRubricForTable(exerciseSubmission: ExerciseSubmission) {
-    const rubric = this.renderRubric(exerciseSubmission);
+    const rubric = this.renderRubric(exerciseSubmission?.exercise?.rubric);
     const tableData = rubric.map((c) => {
       c['satisfied'] =
         exerciseSubmission?.criteriaSatisfied?.includes(c.description) == true
@@ -539,7 +541,7 @@ export class GradingDashboardComponent implements OnInit {
       : criteriaSatisfied.concat([description]);
     submission.status = this.exerciseSubmissionStatusTypes.graded;
     let points = 0;
-    const rubric = this.renderRubric(submission);
+    const rubric = this.renderRubric(submission?.exercise?.rubric);
     rubric.forEach((c) => {
       if (submission.criteriaSatisfied.includes(c.description)) {
         points += c.points;
@@ -551,6 +553,72 @@ export class GradingDashboardComponent implements OnInit {
         return submission;
       } else return s;
     });
+  }
+
+  renderCriterionFullPoints(exerciseSubmission, criterion) {
+    const exerciseRubric = this.renderRubric(
+      exerciseSubmission?.exercise?.rubric
+    );
+
+    const exerciseRubricCriterion = exerciseRubric.find(
+      (c) => c.description == criterion.description
+    );
+
+    const criterionFullPoints = exerciseRubricCriterion?.points;
+    return criterionFullPoints;
+  }
+  updateCriterionPoints(event, exerciseSubmission, criterion) {
+    event.preventDefault();
+    console.log('From updateCriterionPoints => ', {
+      value: event.target.value,
+      exerciseSubmission,
+      criterion,
+    });
+    this.gradingUpdate(exerciseSubmission);
+    let submission = this.exerciseSubmissions.find((s: ExerciseSubmission) => {
+      return s.id == exerciseSubmission.id;
+    });
+
+    submission = Object.assign({}, submission);
+    const exerciseRubric = this.renderRubric(
+      exerciseSubmission?.exercise?.rubric
+    );
+
+    const criterionFullPoints = exerciseRubric.find(
+      (c) => c.description == criterion.description
+    ).points;
+
+    console.log('From updateCriterion Points => ', {
+      exerciseSubmission,
+      exerciseRubric,
+      criterionFullPoints,
+    });
+
+    const points =
+      criterionFullPoints >= event.target.value
+        ? event.target.value
+        : criterionFullPoints;
+    event.target.value = points;
+    submission.points += points;
+    submission.status =
+      submission.status == this.exerciseSubmissionStatusTypes.ungraded
+        ? this.exerciseSubmissionStatusTypes.graded
+        : submission.status;
+    this.exerciseSubmissions = this.exerciseSubmissions.map((s) => {
+      if (s.id == submission.id) {
+        return submission;
+      } else return s;
+    });
+  }
+
+  partialCriterionScore(submission: ExerciseSubmission, criterion) {
+    const exercise = submission.exercise;
+    const rubric = this.renderRubric(exercise.rubric);
+    const criterionFullPoints = rubric?.find(
+      (c) => c.description == criterion.description
+    )?.points;
+    const currentCriterionPoints = criterion?.points;
+    return currentCriterionPoints < criterionFullPoints;
   }
 
   gradingUpdate(exerciseSubmission: ExerciseSubmission) {

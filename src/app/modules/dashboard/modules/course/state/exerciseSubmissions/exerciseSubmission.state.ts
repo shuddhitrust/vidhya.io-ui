@@ -462,6 +462,20 @@ export class ExerciseSubmissionState {
           if (response.length < newFetchParams.pageSize) {
             lastPage = newFetchParams.currentPage;
           }
+          // Sanitize rubric
+          exerciseSubmissions = exerciseSubmissions.map((s) => {
+            s = Object.assign({}, s);
+            const rubric = JSON.parse(s.rubric);
+            const exerciseRubric = JSON.parse(s.exercise?.rubric);
+            console.log('submission rubric', { rubric, exerciseRubric });
+            let finalRubric = rubric.length ? rubric : exerciseRubric;
+            finalRubric = finalRubric.map(c => {c.points = 0; return c});
+            s.rubric = finalRubric;
+            return s;
+          });
+          console.log('exercise submissions after sanitizing rubric', {
+            exerciseSubmissions,
+          });
           patchState({
             lastPage,
             exerciseSubmissions,
