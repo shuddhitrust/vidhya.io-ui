@@ -452,20 +452,18 @@
   <span *ngIf="showRubric(submission)">
     <hr />
     <h2>Rubric</h2>
-    <table>
-      <tr>
-        <td>Criterion</td>
-        <td>Points</td>
-        <td>Satisfied</td>
-      </tr>
-      <tr
-        *ngFor="
-          let criterion of renderRubricForTable(submission);
-          let i = index
-        "
-      >
-        <td>{{ criterion.description }}</td>
-        <td>
+
+    <table mat-table [dataSource]="submission.rubric" style="width: 100%">
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef>Description</th>
+        <td mat-cell *matCellDef="let criterion">
+          {{ criterion.description }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="points">
+        <th mat-header-cell *matHeaderCellDef>Points</th>
+        <td mat-cell *matCellDef="let criterion; let i = index">
           <mat-form-field class="points-input-container" appearance="outline">
             <input
               matInput
@@ -488,7 +486,11 @@
             >
           </mat-form-field>
         </td>
-        <td>
+      </ng-container>
+
+      <ng-container matColumnDef="satisfied">
+        <th mat-header-cell *matHeaderCellDef><mat-icon>check</mat-icon></th>
+        <td mat-cell *matCellDef="let criterion">
           <mat-icon
             (click)="checkCriterion(submission, criterion?.description)"
             style="cursor: pointer"
@@ -499,7 +501,9 @@
             }}</mat-icon
           >
         </td>
-      </tr>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="rubricDatatableColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: rubricDatatableColumns"></tr>
     </table>
   </span>
 </ng-template>

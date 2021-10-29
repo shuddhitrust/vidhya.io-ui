@@ -569,11 +569,6 @@ export class GradingDashboardComponent implements OnInit {
   }
   updateCriterionPoints(event, exerciseSubmission, criterion) {
     event.preventDefault();
-    console.log('From updateCriterionPoints => ', {
-      value: event.target.value,
-      exerciseSubmission,
-      criterion,
-    });
     this.gradingUpdate(exerciseSubmission);
     let submission = this.exerciseSubmissions.find((s: ExerciseSubmission) => {
       return s.id == exerciseSubmission.id;
