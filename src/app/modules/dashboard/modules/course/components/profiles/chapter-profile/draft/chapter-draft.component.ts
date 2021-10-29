@@ -163,7 +163,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   }
 
   startingRubric(): RubricCriterionType[] {
-    return Object.assign([], [{ points: null, description: '' }]);
+    return Object.assign([], [{ points: 0, description: '' }]);
   }
 
   sanitizeExerciseKeyRecord(exerciseKeyRecord) {

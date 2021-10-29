@@ -583,27 +583,30 @@ export class GradingDashboardComponent implements OnInit {
       (c) => c.description == criterion.description
     ).points;
 
-    console.log('From updateCriterion Points => ', {
-      exerciseSubmission,
-      exerciseRubric,
-      criterionFullPoints,
-    });
-
     const points =
       criterionFullPoints >= event.target.value
         ? event.target.value
         : criterionFullPoints;
-    event.target.value = points;
-    submission.points += points;
-    submission.status =
-      submission.status == this.exerciseSubmissionStatusTypes.ungraded
-        ? this.exerciseSubmissionStatusTypes.graded
-        : submission.status;
+
+    let newRubric = Object.assign([], submission.rubric);
+    newRubric = newRubric.map((c) => {
+      if (c.description == criterion.description) {
+        let newC = Object.assign({}, c);
+        newC.points = points;
+        return newC;
+      } else return c;
+    });
+    let totalPoints = 0;
+    newRubric.forEach((c) => {
+      totalPoints += parseInt(c.points, 10);
+    });
+    submission.rubric = newRubric;
     this.exerciseSubmissions = this.exerciseSubmissions.map((s) => {
       if (s.id == submission.id) {
         return submission;
       } else return s;
     });
+    this.updatePoints(submission, totalPoints);
   }
 
   partialCriterionScore(submission: ExerciseSubmission, criterion) {
