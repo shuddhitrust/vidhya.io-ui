@@ -24,6 +24,7 @@ import {
   ExerciseTitle,
   getKeyForValue,
   parseDateTime,
+  SanitizeRubric,
   sortByIndex,
 } from 'src/app/shared/common/functions';
 import {
@@ -498,18 +499,17 @@ export class GradingDashboardComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {});
   }
 
-  renderRubric(rubric) {
-    rubric = rubric ? rubric : '[]';
-    return JSON.parse(rubric);
+  sanitizeRubric(rubric) {
+    return SanitizeRubric(rubric);
   }
 
   showRubric(exerciseSubmission: ExerciseSubmission) {
-    const rubric = this.renderRubric(exerciseSubmission?.exercise?.rubric);
+    const rubric = this.sanitizeRubric(exerciseSubmission?.exercise?.rubric);
     return rubric?.length > 0;
   }
 
-  renderRubricForTable(exerciseSubmission: ExerciseSubmission) {
-    const rubric = this.renderRubric(exerciseSubmission?.exercise?.rubric);
+  sanitizeRubricForTable(exerciseSubmission: ExerciseSubmission) {
+    const rubric = this.sanitizeRubric(exerciseSubmission?.exercise?.rubric);
     const tableData = rubric.map((c) => {
       c['satisfied'] =
         exerciseSubmission?.criteriaSatisfied?.includes(c.description) == true
@@ -541,7 +541,7 @@ export class GradingDashboardComponent implements OnInit {
       : criteriaSatisfied.concat([description]);
     submission.status = this.exerciseSubmissionStatusTypes.graded;
     let points = 0;
-    const rubric = this.renderRubric(submission?.exercise?.rubric);
+    const rubric = this.sanitizeRubric(submission?.exercise?.rubric);
     rubric.forEach((c) => {
       if (submission.criteriaSatisfied.includes(c.description)) {
         points += c.points;
@@ -556,7 +556,7 @@ export class GradingDashboardComponent implements OnInit {
   }
 
   renderCriterionFullPoints(exerciseSubmission, criterion) {
-    const exerciseRubric = this.renderRubric(
+    const exerciseRubric = this.sanitizeRubric(
       exerciseSubmission?.exercise?.rubric
     );
 
@@ -575,7 +575,7 @@ export class GradingDashboardComponent implements OnInit {
     });
 
     submission = Object.assign({}, submission);
-    const exerciseRubric = this.renderRubric(
+    const exerciseRubric = this.sanitizeRubric(
       exerciseSubmission?.exercise?.rubric
     );
 
@@ -598,7 +598,7 @@ export class GradingDashboardComponent implements OnInit {
     });
     let totalPoints = 0;
     newRubric.forEach((c) => {
-      totalPoints += parseInt(c.points, 10);
+      totalPoints += parseInt(c.points);
     });
     submission.rubric = newRubric;
     this.exerciseSubmissions = this.exerciseSubmissions.map((s) => {
@@ -611,7 +611,7 @@ export class GradingDashboardComponent implements OnInit {
 
   partialCriterionScore(submission: ExerciseSubmission, criterion) {
     const exercise = submission.exercise;
-    const rubric = this.renderRubric(exercise.rubric);
+    const rubric = this.sanitizeRubric(exercise.rubric);
     const criterionFullPoints = rubric?.find(
       (c) => c.description == criterion.description
     )?.points;

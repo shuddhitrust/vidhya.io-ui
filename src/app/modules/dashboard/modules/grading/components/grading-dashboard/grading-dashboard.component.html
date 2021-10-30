@@ -469,7 +469,7 @@
               matInput
               type="number"
               [value]="submission?.rubric[i].points"
-              (keyup)="updateCriterionPoints($event, submission, criterion)"
+              (change)="updateCriterionPoints($event, submission, criterion)"
               [ngStyle]="{
                 'font-weight': partialCriterionScore(submission, criterion)
                   ? 'bold'
