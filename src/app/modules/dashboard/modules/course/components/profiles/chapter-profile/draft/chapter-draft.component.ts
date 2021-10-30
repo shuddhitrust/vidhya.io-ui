@@ -16,6 +16,7 @@ import {
   Chapter,
   ChapterStatusOptions,
   CourseStatusOptions,
+  Criterion,
   Exercise,
   ExerciseKey,
   ExerciseQuestionTypeOptions,
@@ -34,6 +35,7 @@ import {
   getOptionLabel,
   parseDateTime,
   sortByIndex,
+  SanitizeRubric,
 } from 'src/app/shared/common/functions';
 import {
   FormBuilder,
@@ -65,10 +67,7 @@ import {
   ReorderExercisesAction,
 } from '../../../../state/exercises/exercise.actions';
 const startingExerciseFormOptions = ['', ''];
-export type RubricCriterionType = {
-  points: number;
-  description: string;
-};
+
 type previewImage = {
   url: string;
   file: any;
@@ -162,7 +161,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     });
   }
 
-  startingRubric(): RubricCriterionType[] {
+  startingRubric(): Criterion[] {
     return Object.assign([], [{ points: 0, description: '' }]);
   }
 
@@ -179,12 +178,8 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     return this.exerciseKey;
   }
 
-  sanitizeRubric(rubric: any): RubricCriterionType[] {
-    let sanitizedRubric = rubric;
-    if (typeof rubric == 'string') {
-      sanitizedRubric = JSON.parse(rubric);
-    }
-    return sanitizedRubric;
+  sanitizeRubric(rubric: any): Criterion[] {
+    return SanitizeRubric(rubric);
   }
 
   setupExerciseForm(
@@ -224,7 +219,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
 
   calibrateRubricVariables() {
     let pointsAccountedFor = 0;
-    this.tempRubric?.forEach((c: RubricCriterionType) => {
+    this.tempRubric?.forEach((c: Criterion) => {
       pointsAccountedFor += c?.points;
     });
     this.pointsAccountedFor = pointsAccountedFor;

@@ -92,7 +92,7 @@
         <mat-icon>save</mat-icon>
       </button>
       <button
-        *ngIf="showBulkAutoOption()"
+        *ngIf="showBulkAction()"
         type="button"
         mat-mini-fab
         color="warn"
@@ -101,6 +101,19 @@
         nz-tooltip="This will automatically grade all submitted work that are eligible for automatic grading. Backup database before proceeding!"
         [class.button-loading]="isSubmittingForm$ | async"
         (click)="initiateBulkAutoGrading()"
+      >
+        <mat-icon>brightness_auto</mat-icon>
+      </button>
+      <button
+        *ngIf="showBulkAction()"
+        type="button"
+        mat-mini-fab
+        color="warn"
+        class="floating-header"
+        nzTooltipPlacement="left"
+        nz-tooltip="This will automatically sanitize all rubric in submissions. Backup database before proceeding!"
+        [class.button-loading]="isSubmittingForm$ | async"
+        (click)="bulkSanitizeSubmissionRubric()"
       >
         <mat-icon>brightness_auto</mat-icon>
       </button>
@@ -468,7 +481,7 @@
             <input
               matInput
               type="number"
-              [value]="submission?.rubric[i].points"
+              [value]="submission?.rubric[i].scoredPoints"
               (change)="updateCriterionPoints($event, submission, criterion)"
               [ngStyle]="{
                 'font-weight': partialCriterionScore(submission, criterion)
@@ -481,7 +494,7 @@
             />
             <span matSuffix class="points-suffix"
               >/
-              {{ renderCriterionFullPoints(submission, criterion) }}
+              {{ criterion.points }}
               points</span
             >
           </mat-form-field>

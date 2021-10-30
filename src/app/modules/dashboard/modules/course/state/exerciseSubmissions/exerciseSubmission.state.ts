@@ -22,6 +22,8 @@ import {
   FetchGradingGroupsAction,
   ShowSubmissionHistory,
   ResetSubmissionHistory,
+  BulkSanitizeSubmissionRubricAction,
+  BulkUpdateSanitizedRubricAction,
 } from './exerciseSubmission.actions';
 import { Apollo } from 'apollo-angular';
 import { Router } from '@angular/router';
@@ -702,6 +704,69 @@ export class ExerciseSubmissionState {
       );
   }
 
+  @Action(BulkSanitizeSubmissionRubricAction)
+  bulkSanitizeSubmissionRubricAction({
+    patchState,
+  }: StateContext<ExerciseSubmissionStateModel>) {
+    const variables = {
+      offset: 0,
+      limit: 500,
+    };
+    patchState({ formSubmitting: true });
+    this.apollo
+      .watchQuery({
+        query: EXERCISE_SUBMISSION_QUERIES.GET_EXERCISE_SUBMISSIONS_WITH_RUBRIC,
+        variables,
+        fetchPolicy: 'network-only',
+      })
+      .valueChanges.subscribe(({ data }: any) => {
+        console.log('submissions with rubric', { data });
+        const submissions = data.exerciseSubmissionsWithRubric;
+        const submissionList = submissions.map((s) => {
+          const response = {
+            exerciseId: s.exercise.id,
+            exerciseRubric: s.exercise.rubric,
+            submissionId: s.id,
+            submissionRubric: s.rubric,
+          };
+          response.exerciseRubric = SanitizeRubric(response.exerciseRubric);
+          response.submissionRubric = SanitizeRubric(response.submissionRubric);
+          const newExerciseRubric = {
+            ...response.exerciseRubric,
+            scoredPoints: 0,
+          };
+          const newScoredPoints =
+            response.submissionRubric.scoredPoints == null
+              ? response.submissionRubric.points
+              : response.submissionRubric.scoredPoints;
+          const newSubmissionRubric = {
+            ...response.submissionRubric,
+            scoredPoints: newScoredPoints,
+            points: newExerciseRubric.points,
+          };
+          response.exerciseRubric = newExerciseRubric;
+          response.submissionRubric = newSubmissionRubric;
+          return response;
+        });
+        this.store.dispatch(
+          new BulkUpdateSanitizedRubricAction({ submissionList })
+        );
+      });
+  }
+
+  @Action(BulkUpdateSanitizedRubricAction)
+  BulkUpdateSanitizedRubricAction(
+    { patchState }: StateContext<ExerciseSubmissionStateModel>,
+    { payload }: BulkUpdateSanitizedRubricAction
+  ) {
+    const { submissionList } = payload;
+    this.apollo
+      .mutate({
+        mutation: EXERCISE_SUBMISSION_MUTATIONS.BULK_UPDATE_RUBRIC,
+        variables: { submissionList },
+      })
+      .subscribe(({ data }: any) => {});
+  }
   @Action(ResetExerciseSubmissionFormAction)
   resetExerciseSubmissionForm({
     patchState,

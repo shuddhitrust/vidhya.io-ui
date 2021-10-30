@@ -28,6 +28,7 @@ import {
   sortByIndex,
 } from 'src/app/shared/common/functions';
 import {
+  Criterion,
   CurrentMember,
   Exercise,
   ExerciseKey,
@@ -567,7 +568,11 @@ export class GradingDashboardComponent implements OnInit {
     const criterionFullPoints = exerciseRubricCriterion?.points;
     return criterionFullPoints;
   }
-  updateCriterionPoints(event, exerciseSubmission, criterion) {
+  updateCriterionPoints(
+    event,
+    exerciseSubmission: ExerciseSubmission,
+    criterion: Criterion
+  ) {
     event.preventDefault();
     this.gradingUpdate(exerciseSubmission);
     let submission = this.exerciseSubmissions.find((s: ExerciseSubmission) => {
@@ -575,30 +580,25 @@ export class GradingDashboardComponent implements OnInit {
     });
 
     submission = Object.assign({}, submission);
-    const exerciseRubric = this.sanitizeRubric(
-      exerciseSubmission?.exercise?.rubric
-    );
 
-    const criterionFullPoints = exerciseRubric.find(
-      (c) => c.description == criterion.description
-    ).points;
-
-    const points =
-      criterionFullPoints >= event.target.value
+    let scoredPoints =
+      criterion.points >= event.target.value
         ? event.target.value
-        : criterionFullPoints;
+        : criterion.points;
+
+    scoredPoints = scoredPoints ? scoredPoints : 0;
 
     let newRubric = Object.assign([], submission.rubric);
     newRubric = newRubric.map((c) => {
       if (c.description == criterion.description) {
         let newC = Object.assign({}, c);
-        newC.points = points;
+        newC.scoredPoints = scoredPoints;
         return newC;
       } else return c;
     });
     let totalPoints = 0;
     newRubric.forEach((c) => {
-      totalPoints += parseInt(c.points);
+      totalPoints += parseInt(c.scoredPoints);
     });
     submission.rubric = newRubric;
     this.exerciseSubmissions = this.exerciseSubmissions.map((s) => {
@@ -742,7 +742,7 @@ export class GradingDashboardComponent implements OnInit {
     this.tempRemarks = {};
   }
 
-  showBulkAutoOption() {
+  showBulkAction() {
     return (
       this.currentMember.role.name == USER_ROLES_NAMES.SUPER_ADMIN &&
       this.authorizeResourceMethod(this.resourceActions.UPDATE)
@@ -772,6 +772,8 @@ export class GradingDashboardComponent implements OnInit {
       }
     });
   }
+
+  bulkSanitizeSubmissionRubric() {}
 
   submitExerciseSubmissionForm() {
     const submissionsToSave = this.exerciseSubmissions.filter((s) =>

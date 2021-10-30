@@ -26,6 +26,7 @@ import {
   MatSelectOption,
   resources,
   RESOURCE_ACTIONS,
+  Rubric,
   User,
 } from 'src/app/shared/common/models';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
@@ -38,6 +39,7 @@ import {
   getOptionLabel,
   parseDateTime,
   preventSpaces,
+  SanitizeRubric,
   sortByIndex,
   SubmissionPoints,
   SubmissionStatus,
@@ -645,21 +647,24 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
 
   // End of methods relating to image upload
 
-  renderRubric(exercise: Exercise) {
-    return JSON.parse(exercise.rubric);
+  renderRubric(rubric: any) {
+    return SanitizeRubric(rubric);
   }
 
   showRubric(exercise: Exercise) {
-    const rubric = this.renderRubric(exercise);
+    const rubric = this.renderRubric(exercise.rubric);
     return rubric?.length > 0;
   }
 
   openRubricDialog(exercise: Exercise, submission: ExerciseSubmission) {
+    const submissionRubric = this.renderRubric(submission.rubric);
+    const exerciseRubric = this.renderRubric(exercise.rubric);
+    const rubric = submissionRubric.length ? submissionRubric : exerciseRubric;
     const dialogRef = this.dialog.open(ExerciseRubricDialog, {
       data: {
         exercise,
         submission,
-        rubric: this.renderRubric(exercise),
+        rubric,
       },
     });
 
@@ -763,7 +768,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
 export class ExerciseRubricDialog {
   exercise: Exercise;
   submission: ExerciseSubmission;
-  rubric: any;
+  rubric: Rubric;
   rubricDatatableColumns: string[] = ['description', 'points'];
   constructor(
     public dialogRef: MatDialogRef<ExerciseRubricDialog>,

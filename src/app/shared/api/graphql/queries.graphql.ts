@@ -593,6 +593,7 @@ export const EXERCISE_QUERIES = {
           link
           images
           points
+          rubric
           status
           remarks
           flagged
@@ -712,6 +713,18 @@ export const EXERCISE_SUBMISSION_QUERIES = {
         }
         createdAt
         updatedAt
+      }
+    }
+  `,
+  GET_EXERCISE_SUBMISSIONS_WITH_RUBRIC: gql`
+    query exerciseSubmissionsWithRubric($limit: Int, $offset: Int) {
+      exerciseSubmissionsWithRubric(limit: $limit, offset: $offset) {
+        id
+        exercise {
+          id
+          rubric
+        }
+        rubric
       }
     }
   `,

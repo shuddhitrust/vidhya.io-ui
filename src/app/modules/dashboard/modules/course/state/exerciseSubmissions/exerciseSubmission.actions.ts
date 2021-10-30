@@ -78,3 +78,15 @@ export class ResetSubmissionHistory {
 
   constructor() {}
 }
+
+export class BulkSanitizeSubmissionRubricAction {
+  static readonly type = '[EXERCISE_SUBMISSION] Bulk Sanitize Rubric';
+
+  constructor() {}
+}
+
+export class BulkUpdateSanitizedRubricAction {
+  static readonly type = '[EXERCISE_SUBMISSION] Bulk Update Sanitize Rubric';
+
+  constructor(public payload: { submissionList: any[] }) {}
+}

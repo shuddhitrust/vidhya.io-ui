@@ -548,6 +548,13 @@ export const EXERCISE_SUBMISSION_MUTATIONS = {
       }
     }
   `,
+  BULK_UPDATE_RUBRIC: gql`
+    mutation bulkUpdateRubric($submissionList: [SubmissionExerciseRubric]!) {
+      bulkUpdateRubric(submissionList: $submissionList) {
+        ok
+      }
+    }
+  `,
   DELETE_EXERCISE_SUBMISSION: gql`
     mutation deleteExerciseSubmission($id: ID!) {
       deleteExerciseSubmission(id: $id) {

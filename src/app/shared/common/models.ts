@@ -255,6 +255,13 @@ export type Chapter = {
   updatedAt?: string;
 };
 
+export type Criterion = {
+  description: string;
+  points: number;
+  scoredPoints: number;
+};
+export type Rubric = Criterion[];
+
 export type Exercise = {
   id: number;
   prompt: string;
@@ -265,7 +272,7 @@ export type Exercise = {
   required: boolean;
   options?: string[];
   points?: number;
-  rubric?: any;
+  rubric?: Rubric;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -295,7 +302,7 @@ export type ExerciseSubmission = {
   points?: number;
   percentage?: number;
   status?: ExerciseSubmissionStatus | string;
-  rubric?: any;
+  rubric?: Rubric;
   criteriaSatisfied?: string[];
   grader?: any;
   flagged: boolean;
