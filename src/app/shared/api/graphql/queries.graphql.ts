@@ -716,18 +716,6 @@ export const EXERCISE_SUBMISSION_QUERIES = {
       }
     }
   `,
-  GET_EXERCISE_SUBMISSIONS_WITH_RUBRIC: gql`
-    query exerciseSubmissionsWithRubric($limit: Int, $offset: Int) {
-      exerciseSubmissionsWithRubric(limit: $limit, offset: $offset) {
-        id
-        exercise {
-          id
-          rubric
-        }
-        rubric
-      }
-    }
-  `,
   GET_SUBMISSION_HISTORY: gql`
     query submissionHistory($exerciseId: ID, $participantId: ID) {
       submissionHistory(

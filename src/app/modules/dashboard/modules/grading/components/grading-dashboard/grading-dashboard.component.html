@@ -91,29 +91,36 @@
       >
         <mat-icon>save</mat-icon>
       </button>
+
+      <mat-menu #adminActions="matMenu">
+        <button
+          mat-menu-item
+          (click)="initiateBulkAutoGrading()"
+          nzTooltipPlacement="left"
+          nz-tooltip="This will automatically grade all submitted work that are eligible for automatic grading. Backup database before proceeding!"
+        >
+          Auto Grade
+        </button>
+        <button
+          mat-menu-item
+          (click)="patchRubric()"
+          nzTooltipPlacement="left"
+          nz-tooltip="This will sanitize the rubric of all exercises and submissions"
+        >
+          Patch Rubric
+        </button>
+      </mat-menu>
       <button
         *ngIf="showBulkAction()"
         type="button"
         mat-mini-fab
+        aria-label="Filter the Grading"
+        [matMenuTriggerFor]="adminActions"
         color="warn"
         class="floating-header"
         nzTooltipPlacement="left"
-        nz-tooltip="This will automatically grade all submitted work that are eligible for automatic grading. Backup database before proceeding!"
+        nz-tooltip="Special actions accessible only to the admin"
         [class.button-loading]="isSubmittingForm$ | async"
-        (click)="initiateBulkAutoGrading()"
-      >
-        <mat-icon>brightness_auto</mat-icon>
-      </button>
-      <button
-        *ngIf="showBulkAction()"
-        type="button"
-        mat-mini-fab
-        color="warn"
-        class="floating-header"
-        nzTooltipPlacement="left"
-        nz-tooltip="This will automatically sanitize all rubric in submissions. Backup database before proceeding!"
-        [class.button-loading]="isSubmittingForm$ | async"
-        (click)="bulkSanitizeSubmissionRubric()"
       >
         <mat-icon>brightness_auto</mat-icon>
       </button>

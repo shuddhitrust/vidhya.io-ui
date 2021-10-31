@@ -47,6 +47,7 @@ import {
   FetchGradingGroupsAction,
   FetchNextExerciseSubmissionsAction,
   FetchNextGradingGroupsAction,
+  PatchRubricAction,
   ResetSubmissionHistory,
   ShowSubmissionHistory,
 } from '../../../course/state/exerciseSubmissions/exerciseSubmission.actions';
@@ -773,7 +774,9 @@ export class GradingDashboardComponent implements OnInit {
     });
   }
 
-  bulkSanitizeSubmissionRubric() {}
+  patchRubric() {
+    this.store.dispatch(new PatchRubricAction());
+  }
 
   submitExerciseSubmissionForm() {
     const submissionsToSave = this.exerciseSubmissions.filter((s) =>
