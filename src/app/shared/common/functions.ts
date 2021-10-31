@@ -566,11 +566,3 @@ export const sanitizeCount = (count, length = 1) => {
   indicator = indicator + '+';
   return count.toString().length <= length ? count : indicator;
 };
-
-export const SanitizeRubric = (rubric) => {
-  rubric = rubric ? rubric : '[]';
-  if (typeof rubric == 'string') {
-    rubric = JSON.parse(rubric);
-  }
-  return rubric;
-};

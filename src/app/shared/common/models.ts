@@ -270,9 +270,10 @@ export type CriterionResponse = {
   grader: any;
   score: number;
 };
-export type Rubric = Criterion[];
 
-export type RubricResponse = CriterionResponse[];
+export type ExerciseRubric = Criterion[];
+
+export type SubmissionRubric = CriterionResponse[];
 
 export type Exercise = {
   id: number;
@@ -284,7 +285,7 @@ export type Exercise = {
   required: boolean;
   options?: string[];
   points?: number;
-  rubric?: Rubric;
+  rubric?: ExerciseRubric;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -314,7 +315,7 @@ export type ExerciseSubmission = {
   points?: number;
   percentage?: number;
   status?: ExerciseSubmissionStatus | string;
-  rubric?: Rubric;
+  rubric?: SubmissionRubric;
   criteriaSatisfied?: string[];
   grader?: any;
   flagged: boolean;

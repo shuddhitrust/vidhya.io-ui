@@ -43,7 +43,6 @@ import {
   convertPaginatedListToNormalList,
   getErrorMessageFromGraphQLResponse,
   paginatedSubscriptionUpdater,
-  SanitizeRubric,
   updateFetchParams,
 } from 'src/app/shared/common/functions';
 import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
@@ -464,12 +463,7 @@ export class ExerciseSubmissionState {
           if (response.length < newFetchParams.pageSize) {
             lastPage = newFetchParams.currentPage;
           }
-          // Sanitize rubric
-          exerciseSubmissions = exerciseSubmissions.map((s) => {
-            s = Object.assign({}, s);
-            s.rubric = SanitizeRubric(s.rubric);
-            return s;
-          });
+
           console.log('exercise submissions after sanitizing rubric', {
             exerciseSubmissions,
           });

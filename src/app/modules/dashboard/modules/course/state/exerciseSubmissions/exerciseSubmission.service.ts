@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { SanitizeRubric } from 'src/app/shared/common/functions';
 import { ExerciseSubmission } from 'src/app/shared/common/models';
 import { emptyExerciseSubmissionFormRecord } from './exerciseSubmission.model';
 
@@ -31,10 +30,7 @@ export class ExerciseSubmissionService {
       submission.remarks = s.remarks;
       submission.flagged = s.flagged;
       submission.grader = s.grader;
-      const rubric = SanitizeRubric(s.rubric);
-      submission.rubric = rubric.length
-        ? rubric
-        : SanitizeRubric(s.exercise.rubric);
+      submission.rubric = s.rubric;
       submission.criteriaSatisfied = s.criteriaSatisfied;
       submission.createdAt = s.createdAt;
       submission.updatedAt = s.updatedAt;

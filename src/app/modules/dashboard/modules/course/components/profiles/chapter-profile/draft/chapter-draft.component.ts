@@ -35,7 +35,6 @@ import {
   getOptionLabel,
   parseDateTime,
   sortByIndex,
-  SanitizeRubric,
 } from 'src/app/shared/common/functions';
 import {
   FormBuilder,
@@ -127,7 +126,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   formDirective: FormGroupDirective;
   tempPrompt = '';
   // Rubric related variables
-  tempRubric = Object.assign([], this.startingRubric());
+  tempRubric = [];
   pointsAccountedFor: number = 0;
   rubricComplete: boolean = false;
   showAddCriterion: boolean = false;
@@ -161,10 +160,6 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     });
   }
 
-  startingRubric(): Criterion[] {
-    return Object.assign([], [{ points: 0, description: '' }]);
-  }
-
   sanitizeExerciseKeyRecord(exerciseKeyRecord) {
     this.exerciseFormOptions = exerciseKeyRecord.exercise?.options?.length
       ? exerciseKeyRecord?.exercise?.options
@@ -176,10 +171,6 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     let finalExerciseKeyRecord = { ...exerciseKeyRecord, validAnswers };
     this.exerciseKey = finalExerciseKeyRecord;
     return this.exerciseKey;
-  }
-
-  sanitizeRubric(rubric: any): Criterion[] {
-    return SanitizeRubric(rubric);
   }
 
   setupExerciseForm(
@@ -207,8 +198,8 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
       remarks: [exerciseKeyRecord?.remarks],
       rubric: [
         exerciseKeyRecord?.exercise.rubric
-          ? this.sanitizeRubric(exerciseKeyRecord.exercise.rubric)
-          : this.startingRubric(),
+          ? exerciseKeyRecord.exercise.rubric
+          : [],
       ],
     });
     this.tempPrompt = exerciseForm.get('prompt').value;
@@ -405,7 +396,9 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     const lastCriterion = currentRubric[currentRubric.length - 1];
     if (this.pointsAccountedFor < this.exerciseForm.get('points').value) {
       if (lastCriterion?.points && lastCriterion?.description) {
-        const newTempRubric = this.tempRubric.concat(this.startingRubric());
+        const newTempRubric = this.tempRubric.concat([
+          { description: '', points: null },
+        ]);
         this.tempRubric = Object.assign([], newTempRubric);
         this.exerciseForm.get('rubric').setValue(this.tempRubric);
       } else {
