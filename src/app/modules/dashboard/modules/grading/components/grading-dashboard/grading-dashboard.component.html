@@ -477,7 +477,7 @@
       <ng-container matColumnDef="description">
         <th mat-header-cell *matHeaderCellDef>Description</th>
         <td mat-cell *matCellDef="let criterion">
-          {{ criterion.description }}
+          {{ criterion.criterion?.description }}
         </td>
       </ng-container>
 
@@ -488,7 +488,7 @@
             <input
               matInput
               type="number"
-              [value]="submission?.rubric[i].scoredPoints"
+              [value]="submission?.rubric[i].score"
               (change)="updateCriterionPoints($event, submission, criterion)"
               [ngStyle]="{
                 'font-weight': partialCriterionScore(submission, criterion)
@@ -501,7 +501,7 @@
             />
             <span matSuffix class="points-suffix"
               >/
-              {{ criterion.points }}
+              {{ criterion.criterion?.points }}
               points</span
             >
           </mat-form-field>

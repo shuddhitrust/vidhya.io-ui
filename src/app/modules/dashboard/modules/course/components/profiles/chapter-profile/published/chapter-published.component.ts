@@ -769,7 +769,7 @@ export class ExerciseRubricDialog {
   exercise: Exercise;
   submission: ExerciseSubmission;
   rubric: Rubric;
-  rubricDatatableColumns: string[] = ['description', 'points'];
+  rubricDatatableColumns: string[] = ['description', 'points', 'remarks'];
   constructor(
     public dialogRef: MatDialogRef<ExerciseRubricDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any
@@ -777,21 +777,7 @@ export class ExerciseRubricDialog {
     this.exercise = data.exercise;
     this.submission = data.submission;
     this.rubric = data.rubric;
-    if (this.submission.status !== ExerciseSubmissionStatusOptions.pending) {
-      // Adding 'satisfied' column only if the submission is already created
-      this.rubricDatatableColumns.push('satisfied');
-    }
-  }
-
-  renderRubricForTable(exerciseSubmission: ExerciseSubmission) {
-    const tableData = this.rubric.map((c) => {
-      c['satisfied'] =
-        exerciseSubmission?.criteriaSatisfied?.includes(c.description) == true
-          ? true
-          : false;
-      return c;
-    });
-    return tableData;
+    console.log('rubric => ', { rubric: this.rubric });
   }
 
   isCriterionSatisfied(

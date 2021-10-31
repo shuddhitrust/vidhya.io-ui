@@ -256,11 +256,23 @@ export type Chapter = {
 };
 
 export type Criterion = {
+  id: number;
+  exercise: any;
   description: string;
   points: number;
-  scoredPoints: number;
+};
+
+export type CriterionResponse = {
+  id: number;
+  criterion: Criterion;
+  exercise: Exercise;
+  participant: any;
+  grader: any;
+  score: number;
 };
 export type Rubric = Criterion[];
+
+export type RubricResponse = CriterionResponse[];
 
 export type Exercise = {
   id: number;

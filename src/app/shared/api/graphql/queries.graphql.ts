@@ -540,7 +540,10 @@ export const EXERCISE_QUERIES = {
         required
         options
         points
-        rubric
+        rubric {
+          description
+          points
+        }
       }
     }
   `,
@@ -572,7 +575,10 @@ export const EXERCISE_QUERIES = {
           required
           options
           points
-          rubric
+          rubric {
+            description
+            points
+          }
         }
         submissions {
           id
@@ -593,7 +599,17 @@ export const EXERCISE_QUERIES = {
           link
           images
           points
-          rubric
+          rubric {
+            score
+            remarks
+            grader {
+              name
+            }
+            criterion {
+              description
+              points
+            }
+          }
           status
           remarks
           flagged
@@ -681,7 +697,10 @@ export const EXERCISE_SUBMISSION_QUERIES = {
           prompt
           options
           points
-          rubric
+          rubric {
+            description
+            points
+          }
           course {
             id
             title
@@ -701,7 +720,17 @@ export const EXERCISE_SUBMISSION_QUERIES = {
         answer
         link
         images
-        rubric
+        rubric {
+          score
+          remarks
+          grader {
+            name
+          }
+          criterion {
+            description
+            points
+          }
+        }
         points
         percentage
         status
@@ -738,7 +767,10 @@ export const EXERCISE_SUBMISSION_QUERIES = {
           prompt
           options
           points
-          rubric
+          rubric {
+            description
+            points
+          }
           course {
             id
             title
@@ -834,7 +866,10 @@ export const EXERCISE_KEY_QUERIES = {
           }
           options
           points
-          rubric
+          rubric {
+            description
+            points
+          }
         }
         validOption
         validAnswers
@@ -873,7 +908,10 @@ export const EXERCISE_KEY_QUERIES = {
           }
           options
           points
-          rubric
+          rubric {
+            description
+            points
+          }
         }
         validOption
         validAnswers
