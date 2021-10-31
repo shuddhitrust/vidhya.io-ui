@@ -541,8 +541,10 @@ export const EXERCISE_QUERIES = {
         options
         points
         rubric {
+          id
           description
           points
+          active
         }
       }
     }
@@ -576,8 +578,10 @@ export const EXERCISE_QUERIES = {
           options
           points
           rubric {
+            id
             description
             points
+            active
           }
         }
         submissions {
@@ -600,14 +604,17 @@ export const EXERCISE_QUERIES = {
           images
           points
           rubric {
+            id
             score
             remarks
             grader {
               name
             }
             criterion {
+              id
               description
               points
+              active
             }
           }
           status
@@ -698,8 +705,10 @@ export const EXERCISE_SUBMISSION_QUERIES = {
           options
           points
           rubric {
+            id
             description
             points
+            active
           }
           course {
             id
@@ -721,14 +730,17 @@ export const EXERCISE_SUBMISSION_QUERIES = {
         link
         images
         rubric {
+          id
           score
           remarks
           grader {
             name
           }
           criterion {
+            id
             description
             points
+            active
           }
         }
         points
@@ -768,8 +780,10 @@ export const EXERCISE_SUBMISSION_QUERIES = {
           options
           points
           rubric {
+            id
             description
             points
+            active
           }
           course {
             id
@@ -867,8 +881,10 @@ export const EXERCISE_KEY_QUERIES = {
           options
           points
           rubric {
+            id
             description
             points
+            active
           }
         }
         validOption
@@ -909,8 +925,10 @@ export const EXERCISE_KEY_QUERIES = {
           options
           points
           rubric {
+            id
             description
             points
+            active
           }
         }
         validOption

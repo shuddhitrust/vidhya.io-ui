@@ -28,6 +28,7 @@ import {
 } from 'src/app/shared/common/functions';
 import {
   Criterion,
+  CriterionResponse,
   CurrentMember,
   Exercise,
   ExerciseKey,
@@ -566,7 +567,7 @@ export class GradingDashboardComponent implements OnInit {
   updateCriterionPoints(
     event,
     exerciseSubmission: ExerciseSubmission,
-    criterion: Criterion
+    criterionResponse: CriterionResponse
   ) {
     event.preventDefault();
     this.gradingUpdate(exerciseSubmission);
@@ -576,24 +577,24 @@ export class GradingDashboardComponent implements OnInit {
 
     submission = Object.assign({}, submission);
 
-    let scoredPoints =
-      criterion.points >= event.target.value
+    let score =
+      criterionResponse.criterion.points >= event.target.value
         ? event.target.value
-        : criterion.points;
+        : criterionResponse.criterion.points;
 
-    scoredPoints = scoredPoints ? scoredPoints : 0;
+    score = score ? score : 0;
 
     let newRubric = Object.assign([], submission.rubric);
     newRubric = newRubric.map((c) => {
-      if (c.description == criterion.description) {
+      if (c.id == criterionResponse.criterion.id) {
         let newC = Object.assign({}, c);
-        newC.scoredPoints = scoredPoints;
+        newC.score = score;
         return newC;
       } else return c;
     });
     let totalPoints = 0;
     newRubric.forEach((c) => {
-      totalPoints += parseInt(c.scoredPoints);
+      totalPoints += parseInt(c.score);
     });
     submission.rubric = newRubric;
     this.exerciseSubmissions = this.exerciseSubmissions.map((s) => {

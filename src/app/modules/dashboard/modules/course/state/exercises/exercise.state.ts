@@ -318,7 +318,15 @@ export class ExerciseState {
       const values = form.value;
 
       const updateForm = values.id == null ? false : true;
-      const { id, ...sanitizedValues } = values;
+      let { id, ...sanitizedValues } = values;
+      if (values.rubric?.length) {
+        // Sanitizing the criteria in rubric if it is available
+        const sanitizedRubric = values.rubric.map((c) => {
+          const { __typename, ...sanitizedCriterion } = c;
+          return sanitizedCriterion;
+        });
+        sanitizedValues = { ...sanitizedValues, rubric: sanitizedRubric };
+      }
       const variables = updateForm
         ? {
             input: sanitizedValues,

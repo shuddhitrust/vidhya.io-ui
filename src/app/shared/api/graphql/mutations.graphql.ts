@@ -461,7 +461,12 @@ export const EXERCISE_MUTATIONS = {
           required
           options
           points
-          rubric
+          rubric {
+            id
+            description
+            points
+            active
+          }
         }
       }
     }
@@ -481,7 +486,12 @@ export const EXERCISE_MUTATIONS = {
           required
           options
           points
-          rubric
+          rubric {
+            id
+            description
+            points
+            active
+          }
         }
       }
     }

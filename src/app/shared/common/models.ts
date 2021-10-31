@@ -260,6 +260,14 @@ export type Criterion = {
   exercise: any;
   description: string;
   points: number;
+  active: boolean;
+};
+
+export const EmptyCriterion = {
+  exercise: null,
+  description: null,
+  points: null,
+  active: true,
 };
 
 export type CriterionResponse = {
@@ -269,6 +277,13 @@ export type CriterionResponse = {
   participant: any;
   grader: any;
   score: number;
+};
+
+export const EmptyCriterionResponse = {
+  exercise: null,
+  participant: null,
+  grader: null,
+  score: null,
 };
 
 export type ExerciseRubric = Criterion[];

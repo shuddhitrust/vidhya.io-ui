@@ -17,6 +17,8 @@ import {
   ChapterStatusOptions,
   CourseStatusOptions,
   Criterion,
+  EmptyCriterion,
+  EmptyCriterionResponse,
   Exercise,
   ExerciseKey,
   ExerciseQuestionTypeOptions,
@@ -130,6 +132,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   pointsAccountedFor: number = 0;
   rubricComplete: boolean = false;
   showAddCriterion: boolean = false;
+
   constructor(
     public dialog: MatDialog,
     private location: Location,
@@ -394,21 +397,29 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   addCriterion() {
     const currentRubric = Object.assign([], this.tempRubric);
     const lastCriterion = currentRubric[currentRubric.length - 1];
-    if (this.pointsAccountedFor < this.exerciseForm.get('points').value) {
+    let addNew = false;
+    if (!currentRubric.length) {
+      addNew = true;
+    } else if (
+      this.pointsAccountedFor < this.exerciseForm.get('points').value
+    ) {
       if (lastCriterion?.points && lastCriterion?.description) {
-        const newTempRubric = this.tempRubric.concat([
-          { description: '', points: null },
-        ]);
-        this.tempRubric = Object.assign([], newTempRubric);
-        this.exerciseForm.get('rubric').setValue(this.tempRubric);
+        addNew = true;
       } else {
         this.store.dispatch(
           new ShowNotificationAction({
-            message: 'Please add a valid criterion description',
+            message: 'Please add a valid criterion description and points',
             action: 'error',
           })
         );
       }
+    }
+    if (addNew) {
+      const newTempRubric = this.tempRubric.concat([
+        Object.assign({}, EmptyCriterion),
+      ]);
+      this.tempRubric = Object.assign([], newTempRubric);
+      this.exerciseForm.get('rubric').setValue(this.tempRubric);
     }
   }
 
@@ -434,7 +445,18 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     this.showAddCriterion = this.pointsAccountedFor <= exercise.points;
   }
   removeCriterion(index) {
-    this.tempRubric.splice(index, 1);
+    let criterion = Object.assign({}, this.tempRubric[index]);
+    let newTempRubric;
+    if (criterion.id) {
+      criterion.active = false;
+      newTempRubric = this.tempRubric.map((c) => {
+        return c.id == criterion.id ? criterion : c;
+      });
+    } else {
+      newTempRubric = Object.assign([], this.tempRubric);
+      newTempRubric.splice(index, 1);
+    }
+    this.tempRubric = newTempRubric;
     this.exerciseForm.get('rubric').setValue(this.tempRubric);
   }
 
