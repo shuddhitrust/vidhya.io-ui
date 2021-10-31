@@ -716,7 +716,6 @@ export class ExerciseSubmissionState {
         ({ data }: any) => {
           const response = data.patchRubric;
           patchState({ formSubmitting: false });
-          console.log({ data });
           if (response.ok) {
             this.store.dispatch(
               new ShowNotificationAction({
@@ -731,7 +730,6 @@ export class ExerciseSubmissionState {
                 action: 'error',
               })
             );
-            console.log({ data });
           }
         },
         (error) => {
