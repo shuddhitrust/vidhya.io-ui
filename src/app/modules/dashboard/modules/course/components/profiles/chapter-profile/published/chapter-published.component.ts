@@ -773,7 +773,6 @@ export class ExerciseRubricDialog {
     this.exercise = data.exercise;
     this.submission = data.submission;
     this.rubric = data.rubric;
-    console.log('rubric => ', { rubric: this.rubric });
   }
 
   isCriterionSatisfied(

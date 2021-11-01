@@ -1,0 +1,34 @@
+.dialog-box {
+  width: 60vw;
+  min-width: 300px;
+  height: 60vh;
+  min-height: 300px;
+  overflow: auto;
+}
+
+.exercise-submission-options {
+  list-style-type: none;
+}
+.exercise-submission-option {
+  padding: 5px;
+  cursor: pointer;
+  border: solid 1px rgba(0, 0, 0, 0.4);
+  border-radius: 5px;
+}
+
+.highlighted-option {
+  color: var(--green);
+  font-weight: bold;
+  border-color: var(--green);
+}
+
+.reference-image {
+  width: 100%;
+}
+
+@media screen and (max-width: 480px) {
+  .dialog-box {
+    width: 100%;
+    height: auto;
+  }
+}

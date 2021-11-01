@@ -465,9 +465,6 @@ export class ExerciseSubmissionState {
             lastPage = newFetchParams.currentPage;
           }
 
-          console.log('exercise submissions after sanitizing rubric', {
-            exerciseSubmissions,
-          });
           patchState({
             lastPage,
             exerciseSubmissions,

@@ -535,7 +535,6 @@ export class GradingDashboardComponent implements OnInit {
         return newC;
       } else return c;
     });
-    console.log('after updating score', { newRubric });
     let totalPoints = 0;
     newRubric.forEach((c) => {
       totalPoints += parseInt(c.score);
@@ -550,9 +549,57 @@ export class GradingDashboardComponent implements OnInit {
   }
 
   openCriterionResponseRemarks(
-    submission: ExerciseSubmission,
+    exerciseSubmission: ExerciseSubmission,
     criterionResponse: CriterionResponse
-  ) {}
+  ) {
+    const dialogRef = this.dialog.open(CriterionRemarkInputDialog, {
+      data: {
+        exerciseSubmission,
+        criterionResponse,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result.remarksUpdated == true) {
+        criterionResponse = Object.assign({
+          ...criterionResponse,
+          remarks: result.newRemarks,
+        });
+        this.updateCriterionResponseRemarks(
+          exerciseSubmission,
+          criterionResponse
+        );
+      }
+    });
+  }
+
+  updateCriterionResponseRemarks(exerciseSubmission, criterionResponse) {
+    this.gradingUpdate(exerciseSubmission);
+    let submission = this.exerciseSubmissions.find((s: ExerciseSubmission) => {
+      return s.id == exerciseSubmission.id;
+    });
+
+    submission = Object.assign({}, submission);
+
+    let newRubric = Object.assign([], submission.rubric);
+    newRubric = newRubric.map((c) => {
+      if (c.id == criterionResponse.id) {
+        let newC = Object.assign({}, c);
+        newC.remarks = criterionResponse.remarks;
+        newC.remarker = {
+          id: this.currentMember.id,
+          name: this.currentMember.name,
+        };
+        return newC;
+      } else return c;
+    });
+    submission.rubric = newRubric;
+    this.exerciseSubmissions = this.exerciseSubmissions.map((s) => {
+      if (s.id == submission.id) {
+        return submission;
+      } else return s;
+    });
+  }
 
   partialCriterionScore(criterionResponse: CriterionResponse): boolean {
     return criterionResponse.score < criterionResponse.criterion.points;
@@ -785,6 +832,91 @@ export class ExerciseKeyDialog {
   }
   trackByFn(index: any, item: any) {
     return index;
+  }
+}
+
+@Component({
+  selector: 'criterion-remark-dialog',
+  templateUrl: './criterion-remark-dialog/criterion-remark-dialog.html',
+  styleUrls: [
+    './criterion-remark-dialog/criterion-remark-dialog.scss',
+    './../../../../../../shared/common/shared-styles.css',
+  ],
+})
+export class CriterionRemarkInputDialog {
+  criterionResponse: CriterionResponse;
+  newRemarks: string;
+  remarksUpdated: boolean = false;
+  constructor(
+    public dialogRef: MatDialogRef<CriterionRemarkInputDialog>,
+    public dialog: MatDialog,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+    this.criterionResponse = data.criterionResponse;
+    this.newRemarks = this.criterionResponse.remarks;
+    this.dialogRef.disableClose = true; //disable default close operation
+    this.dialogRef.backdropClick().subscribe((result) => {
+      this.discardChangesCloseConfirmation();
+    });
+  }
+
+  discardChangesCloseConfirmation() {
+    if (this.remarksUpdated) {
+      const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
+        title: 'Close dialog without saving changes?',
+        message: `This could cause all unsaved work to be lost. Continue? `,
+        confirmButtonText: 'Yes',
+        denyButtonText: 'Cancel',
+      };
+      const dialogRef = this.dialog.open(MasterConfirmationDialog, {
+        data: masterDialogConfirmationObject,
+      });
+
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result == true) {
+          this.discardChangesClose();
+        }
+      });
+    } else {
+      this.discardChangesClose();
+    }
+  }
+  saveChangesCloseConfirmation() {
+    if (this.remarksUpdated) {
+      const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
+        title: 'Save all changes and close dialog?',
+        message: `This will overwrite any existing remarks. Continue?`,
+        confirmButtonText: 'Yes',
+        denyButtonText: 'Cancel',
+      };
+      const dialogRef = this.dialog.open(MasterConfirmationDialog, {
+        data: masterDialogConfirmationObject,
+      });
+
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result == true) {
+          this.saveCloseDialog();
+        }
+      });
+    } else {
+      this.discardChangesClose();
+    }
+  }
+  discardChangesClose() {
+    this.dialogRef.close({
+      remarksUpdated: false,
+      newRemarks: null,
+    });
+  }
+  saveCloseDialog() {
+    this.dialogRef.close({
+      remarksUpdated: this.remarksUpdated,
+      newRemarks: this.newRemarks,
+    });
+  }
+
+  updateRemarks() {
+    this.remarksUpdated = true;
   }
 }
 

@@ -276,6 +276,7 @@ export type CriterionResponse = {
   criterion: Criterion;
   exercise: Exercise;
   participant: any;
+  remarks: string;
   remarker: any;
   score: number;
 };
@@ -285,6 +286,7 @@ export const EmptyCriterionResponse = {
   criterion: null,
   exercise: null,
   participant: null,
+  remarks: null,
   remarker: null,
   score: null,
 };

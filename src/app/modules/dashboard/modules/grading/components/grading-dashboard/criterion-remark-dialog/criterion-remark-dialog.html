@@ -1,0 +1,37 @@
+<mat-dialog-content class="dialog-box">
+  <p mat-dialog-title>{{criterionResponse?.criterion?.description}}</p>
+  <p mat-dialog-subtitle>
+    {{criterionResponse.score }} / {{criterionResponse.criterion?.points}}
+    points
+  </p>
+  <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+    <mat-label
+      >{{criterionResponse.remarker?.name ? 'Remarks by ' +
+      criterionResponse.remarker?.name : 'Remarks' }}</mat-label
+    >
+    <input
+      matInput
+      [(ngModel)]="newRemarks"
+      (change)="updateRemarks()"
+      placeholder="Optional Remarks"
+    />
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button
+    mat-raised-button
+    mat-dialog-close
+    (click)="discardChangesCloseConfirmation()"
+    color="secondary"
+  >
+    Discard Changes
+  </button>
+  <button
+    mat-raised-button
+    (click)="saveChangesCloseConfirmation()"
+    cdkFocusInitial
+    color="primary"
+  >
+    Save changes
+  </button>
+</mat-dialog-actions>
