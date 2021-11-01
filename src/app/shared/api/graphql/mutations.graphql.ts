@@ -535,7 +535,6 @@ export const EXERCISE_SUBMISSION_MUTATIONS = {
           points
           percentage
           remarks
-          criteriaSatisfied
         }
       }
     }
@@ -552,7 +551,6 @@ export const EXERCISE_SUBMISSION_MUTATIONS = {
           status
           points
           percentage
-          criteriaSatisfied
           remarks
         }
       }

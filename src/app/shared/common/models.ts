@@ -336,7 +336,6 @@ export type ExerciseSubmission = {
   percentage?: number;
   status?: ExerciseSubmissionStatus | string;
   rubric?: SubmissionRubric;
-  criteriaSatisfied?: string[];
   grader?: any;
   flagged: boolean;
   remarks?: string;

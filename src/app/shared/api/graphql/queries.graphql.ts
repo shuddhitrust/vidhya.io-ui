@@ -624,7 +624,6 @@ export const EXERCISE_QUERIES = {
           status
           remarks
           flagged
-          criteriaSatisfied
           grader {
             name
           }
@@ -754,7 +753,6 @@ export const EXERCISE_SUBMISSION_QUERIES = {
         points
         percentage
         status
-        criteriaSatisfied
         remarks
         flagged
         grader {
