@@ -5,7 +5,9 @@
   </p>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-raised-button mat-dialog-close>{{ denyButtonText }}</button>
+  <button *ngIf="denyButtonText.length" mat-raised-button mat-dialog-close>
+    {{ denyButtonText }}
+  </button>
   <button
     mat-raised-button
     [mat-dialog-close]="true"

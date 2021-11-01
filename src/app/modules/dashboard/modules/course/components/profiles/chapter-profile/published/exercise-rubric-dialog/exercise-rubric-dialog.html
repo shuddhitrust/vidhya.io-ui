@@ -1,27 +1,47 @@
 <mat-dialog-content class="dialog-box">
   <p mat-dialog-title>Rubric</p>
-  <table mat-table [dataSource]="rubric" style="width: 100%">
+  <table mat-table [dataSource]="rubric" class="col-lg-12 col-md-12 col-sm-12">
     <!-- Description Column -->
     <ng-container matColumnDef="description">
-      <th mat-header-cell *matHeaderCellDef>Criterion</th>
-      <td mat-cell *matCellDef="let criterion">
-        {{ criterion.criterion?.description }}
+      <th mat-header-cell *matHeaderCellDef class="col-lg-9 col-md-7 col-sm-7">
+        Criterion
+      </th>
+      <td mat-cell *matCellDef="let criterionResponse">
+        {{ criterionResponse.criterion?.description }}
       </td>
     </ng-container>
 
     <!-- Points Column -->
     <ng-container matColumnDef="points">
-      <th mat-header-cell *matHeaderCellDef>Points</th>
-      <td mat-cell *matCellDef="let criterion">
-        {{ criterion.score ? criterion.score : 0 }} / {{
-        criterion.criterion?.points }}
+      <th mat-header-cell *matHeaderCellDef class="col-lg-1 col-md-1 col-sm-2">
+        Points
+      </th>
+      <td mat-cell *matCellDef="let criterionResponse">
+        {{ criterionResponse.score ? criterionResponse.score : 0 }} / {{
+        criterionResponse.criterion?.points }}
       </td>
     </ng-container>
 
     <!-- Remarks Column -->
     <ng-container matColumnDef="remarks">
-      <th mat-header-cell *matHeaderCellDef>Remarks</th>
-      <td mat-cell *matCellDef="let criterion">{{ criterion.remarks }}</td>
+      <th mat-header-cell *matHeaderCellDef class="col-lg-1 col-md-1 col-sm-2">
+        Remarks
+      </th>
+      <td mat-cell *matCellDef="let criterionResponse">
+        <button
+          *ngIf="criterionResponse.remarks"
+          mat-icon-button
+          color="primary"
+          (click)="
+              showRemarks(criterionResponse)
+            "
+          [nz-tooltip]="
+              'Click to view remarks by ' + criterionResponse.remarker?.name
+            "
+        >
+          <mat-icon> comment </mat-icon>
+        </button>
+      </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="rubricDatatableColumns"></tr>

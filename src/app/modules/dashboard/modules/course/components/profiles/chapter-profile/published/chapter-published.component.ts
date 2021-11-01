@@ -19,6 +19,7 @@ import {
   Chapter,
   ChapterStatusOptions,
   CourseStatusOptions,
+  CriterionResponse,
   Exercise,
   ExerciseQuestionTypeOptions,
   ExerciseRubric,
@@ -768,11 +769,26 @@ export class ExerciseRubricDialog {
   rubricDatatableColumns: string[] = ['description', 'points', 'remarks'];
   constructor(
     public dialogRef: MatDialogRef<ExerciseRubricDialog>,
+    public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.exercise = data.exercise;
     this.submission = data.submission;
     this.rubric = data.rubric;
+  }
+
+  showRemarks(criterion: CriterionResponse) {
+    const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
+      title: `Remarks by ${criterion?.remarker?.name}`,
+      message: `${criterion.remarks}`,
+      confirmButtonText: '',
+      denyButtonText: '',
+    };
+    const dialogRef = this.dialog.open(MasterConfirmationDialog, {
+      data: masterDialogConfirmationObject,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {});
   }
 
   isCriterionSatisfied(

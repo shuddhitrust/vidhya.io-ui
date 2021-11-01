@@ -9,12 +9,12 @@
       >{{criterionResponse.remarker?.name ? 'Remarks by ' +
       criterionResponse.remarker?.name : 'Remarks' }}</mat-label
     >
-    <input
+    <textarea
       matInput
       [(ngModel)]="newRemarks"
       (change)="updateRemarks()"
       placeholder="Optional Remarks"
-    />
+    ></textarea>
   </mat-form-field>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

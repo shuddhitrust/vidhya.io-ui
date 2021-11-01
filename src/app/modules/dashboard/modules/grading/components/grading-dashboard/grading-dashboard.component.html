@@ -318,7 +318,7 @@
                   appearance="outline"
                 >
                   <mat-label>Remarks</mat-label>
-                  <input
+                  <textarea
                     matInput
                     [required]="remarksRequired(exerciseSubmission)"
                     (keyup)="updateRemarks(exerciseSubmission)"
@@ -328,7 +328,7 @@
                         ? 'Remarks required'
                         : 'Optional Remarks'
                     "
-                  />
+                  ></textarea>
                 </mat-form-field>
                 <ng-container
                   *ngTemplateOutlet="
