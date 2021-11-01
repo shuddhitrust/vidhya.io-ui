@@ -504,15 +504,50 @@ export class GradingDashboardComponent implements OnInit {
 
   showRubric(exerciseSubmission: ExerciseSubmission) {
     const rubric: ExerciseRubric = exerciseSubmission?.exercise?.rubric;
-    return rubric?.length > 0;
+    return (
+      rubric?.length > 0 &&
+      this.authorizeResourceMethod(RESOURCE_ACTIONS.UPDATE)
+    );
+  }
+
+  criterionZeroButtonColor(criterionResponse: CriterionResponse): string {
+    let color = 'secondary';
+    if (criterionResponse.score == 0) {
+      color = 'accent';
+    }
+    return color;
+  }
+  criterionFullPointsButtonColor(criterionResponse: CriterionResponse): string {
+    return criterionResponse.score == criterionResponse?.criterion?.points
+      ? 'primary'
+      : 'secondary';
+  }
+
+  markCriterionIncorrect(submission, criterionResponse) {
+    // Updating it with zero points
+    this.updateCriterionPoints(null, submission, criterionResponse, 0);
+  }
+
+  markCriterionCorrect(submission, criterionResponse) {
+    // Updating it with full points
+    this.updateCriterionPoints(
+      null,
+      submission,
+      criterionResponse,
+      criterionResponse?.criterion?.points
+    );
   }
 
   updateCriterionPoints(
     event,
     exerciseSubmission: ExerciseSubmission,
-    criterionResponse: CriterionResponse
+    criterionResponse: CriterionResponse,
+    points: number = 0
   ) {
-    event.preventDefault();
+    if (event) {
+      event.preventDefault();
+      points = event.target.value;
+    }
     this.gradingUpdate(exerciseSubmission);
     let submission = this.exerciseSubmissions.find((s: ExerciseSubmission) => {
       return s.id == exerciseSubmission.id;
@@ -521,8 +556,8 @@ export class GradingDashboardComponent implements OnInit {
     submission = Object.assign({}, submission);
 
     let score =
-      criterionResponse.criterion.points >= event.target.value
-        ? event.target.value
+      criterionResponse.criterion.points >= points
+        ? points
         : criterionResponse.criterion.points;
 
     score = score ? score : 0;

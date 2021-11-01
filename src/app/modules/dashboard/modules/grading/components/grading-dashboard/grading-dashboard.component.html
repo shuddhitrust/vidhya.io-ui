@@ -473,17 +473,44 @@
     <hr />
     <h2>Rubric</h2>
 
-    <table mat-table [dataSource]="submission.rubric" style="width: 100%">
+    <table
+      mat-table
+      [dataSource]="submission.rubric"
+      class="col-lg-12 col-md-12 col-sm-12"
+    >
       <ng-container matColumnDef="description">
-        <th mat-header-cell *matHeaderCellDef>Description</th>
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          class="col-lg-9 col-md-7 col-sm-7"
+        >
+          Description
+        </th>
         <td mat-cell *matCellDef="let criterionResponse">
           {{ criterionResponse.criterion?.description }}
         </td>
       </ng-container>
 
       <ng-container matColumnDef="points">
-        <th mat-header-cell *matHeaderCellDef>Points</th>
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          class="col-lg-2 col-md-2 col-sm-3"
+        >
+          Points
+        </th>
         <td mat-cell *matCellDef="let criterionResponse; let i = index">
+          <button
+            type="button"
+            [color]="criterionZeroButtonColor(criterionResponse)"
+            mat-mini-fab
+            nz-tooltip
+            nzTooltipPlacement="top"
+            nzTooltipTitle="Award 0 points"
+            (click)="markCriterionIncorrect(submission, criterionResponse)"
+          >
+            {{ 0 }}</button
+          >&nbsp;
           <mat-form-field class="points-input-container" appearance="outline">
             <input
               matInput
@@ -505,16 +532,34 @@
               >/
               {{ criterionResponse.criterion?.points }}
               points</span
-            >
-          </mat-form-field>
+            > </mat-form-field
+          >&nbsp;
+          <button
+            mat-mini-fab
+            type="button"
+            [color]="criterionFullPointsButtonColor(criterionResponse)"
+            (click)="markCriterionCorrect(submission, criterionResponse)"
+            nz-tooltip
+            nzTooltipPlacement="top"
+            nzTooltipTitle="Award full points"
+          >
+            {{ criterionResponse?.criterion?.points }}
+          </button>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="remarks">
-        <th mat-header-cell *matHeaderCellDef>Remarks</th>
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          class="col-lg-1 col-md-1 col-sm-2"
+        >
+          Remarks
+        </th>
         <td mat-cell *matCellDef="let criterionResponse">
           <button
             mat-icon-button
+            [color]="criterionResponse.remarks ? 'primary' : 'accent'"
             (click)="
               openCriterionResponseRemarks(submission, criterionResponse)
             "
