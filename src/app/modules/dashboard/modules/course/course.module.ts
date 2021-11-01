@@ -14,10 +14,7 @@ import { AddEditCourseComponent } from './components/forms/add-edit-course/add-e
 import { CourseSectionModalComponent } from './components/modals/course-section-modal/course-section-modal.component';
 import { ChapterProfileComponent } from './components/profiles/chapter-profile/chapter-profile.component';
 import { ChapterDraftComponent } from './components/profiles/chapter-profile/draft/chapter-draft.component';
-import {
-  ChapterPublishedComponent,
-  ExerciseRubricDialog,
-} from './components/profiles/chapter-profile/published/chapter-published.component';
+import { ChapterPublishedComponent } from './components/profiles/chapter-profile/published/chapter-published.component';
 import { CourseProfileComponent } from './components/profiles/course-profile/course-profile.component';
 import { CourseSectionState } from './state/courseSections/courseSection.state';
 import { ExerciseKeyState } from './state/exerciseKeys/exerciseKey.state';
@@ -26,6 +23,7 @@ import { ExerciseState } from './state/exercises/exercise.state';
 import { ExerciseSubmissionState } from './state/exerciseSubmissions/exerciseSubmission.state';
 import { CourseRoutingModule } from './course-routing.module';
 import { AgGridModule } from 'ag-grid-angular';
+import { ExerciseRubricDialog } from 'src/app/shared/components/rubric-display/rubric-display-dialog.component';
 
 const declarations = [
   CourseDashboardComponent,

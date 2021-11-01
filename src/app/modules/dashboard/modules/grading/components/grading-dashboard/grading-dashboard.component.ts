@@ -67,7 +67,6 @@ import { ExerciseSubmissionService } from '../../../course/state/exerciseSubmiss
 import { Clipboard } from '@angular/cdk/clipboard';
 import { GRADING } from 'src/app/modules/dashboard/dashboard.component';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
-import { ExerciseRubricDialog } from '../../../course/components/profiles/chapter-profile/published/chapter-published.component';
 
 /**
  * URL Param Labels for filters
@@ -135,12 +134,6 @@ export class GradingDashboardComponent implements OnInit {
   exerciseSubmissionStatusOptions: MatSelectOption[] = autoGenOptions(
     exerciseSubmissionStatusTypes
   );
-
-  @Select(ExerciseSubmissionState.isFetchingSubmissionHistory)
-  isFetchingSubmissionHistory$: Observable<boolean>;
-
-  @Select(ExerciseSubmissionState.submissionHistory)
-  submissionHistory$: Observable<ExerciseSubmission[]>;
 
   @Select(ExerciseSubmissionState.listGradingGroups)
   gradingGroups$: Observable<GradingGroup[]>;
@@ -493,10 +486,7 @@ export class GradingDashboardComponent implements OnInit {
     );
 
     const dialogRef = this.dialog.open(SubmissionHistoryDialog, {
-      data: {
-        submissionHistory$: this.submissionHistory$,
-        isFetchingSubmissionHistory$: this.isFetchingSubmissionHistory$,
-      },
+      data: {},
     });
 
     dialogRef.afterClosed().subscribe((result) => {});
@@ -967,18 +957,38 @@ export class SubmissionHistoryDialog implements OnDestroy {
   history: any[];
   isFetchingSubmissionHistory: boolean = false;
   questionTypes: any = ExerciseQuestionTypeOptions;
+  @Select(ExerciseSubmissionState.isFetchingSubmissionHistory)
+  isFetchingSubmissionHistory$: Observable<boolean>;
+
+  @Select(ExerciseSubmissionState.submissionHistory)
+  submissionHistory$: Observable<ExerciseSubmission[]>;
+  rubricDatatableColumns: string[] = ['description', 'points', 'remarks'];
   constructor(
     private store: Store,
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<ExerciseKeyDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    data.submissionHistory$.subscribe((val) => {
+    this.submissionHistory$.subscribe((val) => {
       this.history = val;
     });
-    data.isFetchingSubmissionHistory$.subscribe((val) => {
+    this.isFetchingSubmissionHistory$.subscribe((val) => {
       this.isFetchingSubmissionHistory = val;
     });
+  }
+  showRemarks(criterion: CriterionResponse) {
+    console.log('showing remarks for criterion ', { criterion });
+    const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
+      title: `Remarks by ${criterion?.remarker?.name}`,
+      message: `${criterion.remarks}`,
+      confirmButtonText: '',
+      denyButtonText: '',
+    };
+    const dialogRef = this.dialog.open(MasterConfirmationDialog, {
+      data: masterDialogConfirmationObject,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {});
   }
   trackByFn(index: any, item: any) {
     return index;

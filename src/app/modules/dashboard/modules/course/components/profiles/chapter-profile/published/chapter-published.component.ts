@@ -70,6 +70,7 @@ import {
   ResetExerciseStateAction,
 } from '../../../../state/exercises/exercise.actions';
 import { CreateUpdateExerciseSubmissionsAction } from '../../../../state/exerciseSubmissions/exerciseSubmission.actions';
+import { ExerciseRubricDialog } from 'src/app/shared/components/rubric-display/rubric-display-dialog.component';
 
 const startingExerciseFormOptions = ['', ''];
 
@@ -751,50 +752,5 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
         })
       );
     }
-  }
-}
-
-@Component({
-  selector: 'exercise-rubric-dialog',
-  templateUrl: './exercise-rubric-dialog/exercise-rubric-dialog.html',
-  styleUrls: [
-    './exercise-rubric-dialog/exercise.rubric.dialog.scss',
-    './../../../../../../../../shared/common/shared-styles.css',
-  ],
-})
-export class ExerciseRubricDialog {
-  exercise: Exercise;
-  submission: ExerciseSubmission;
-  rubric: SubmissionRubric;
-  rubricDatatableColumns: string[] = ['description', 'points', 'remarks'];
-  constructor(
-    public dialogRef: MatDialogRef<ExerciseRubricDialog>,
-    public dialog: MatDialog,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {
-    this.exercise = data.exercise;
-    this.submission = data.submission;
-    this.rubric = data.rubric;
-  }
-
-  showRemarks(criterion: CriterionResponse) {
-    const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
-      title: `Remarks by ${criterion?.remarker?.name}`,
-      message: `${criterion.remarks}`,
-      confirmButtonText: '',
-      denyButtonText: '',
-    };
-    const dialogRef = this.dialog.open(MasterConfirmationDialog, {
-      data: masterDialogConfirmationObject,
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {});
-  }
-
-  isCriterionSatisfied(
-    exerciseSubmission: ExerciseSubmission,
-    description: string
-  ): boolean {
-    return exerciseSubmission.criteriaSatisfied?.includes(description);
   }
 }

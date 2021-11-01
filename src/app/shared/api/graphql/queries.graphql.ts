@@ -787,12 +787,6 @@ export const EXERCISE_SUBMISSION_QUERIES = {
           prompt
           options
           points
-          rubric {
-            id
-            description
-            points
-            active
-          }
           course {
             id
             title
@@ -813,7 +807,8 @@ export const EXERCISE_SUBMISSION_QUERIES = {
         link
         images
         status
-        criteriaSatisfied
+        points
+        rubric
         remarks
         flagged
         grader {

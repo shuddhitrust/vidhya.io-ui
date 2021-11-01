@@ -213,7 +213,7 @@ export class ExerciseSubmissionState {
       exerciseId &&
       participantId // This action is only executed when both exerciseId and participantId are valid
     ) {
-      patchState({ isFetchingSubmissionHistory: true });
+      patchState({ isFetchingSubmissionHistory: true, submissionHistory: [] });
       this.apollo
         .watchQuery({
           query: EXERCISE_SUBMISSION_QUERIES.GET_SUBMISSION_HISTORY,
@@ -224,8 +224,13 @@ export class ExerciseSubmissionState {
           ({ data }: any) => {
             const response = data.submissionHistory;
 
+            // Sanitizing rubric
+            const submissionHistory = response.map((s) => {
+              return s.rubric ? { ...s, rubric: JSON.parse(s.rubric) } : s;
+            });
+
             patchState({
-              submissionHistory: response,
+              submissionHistory,
               isFetchingSubmissionHistory: false,
             });
           },
