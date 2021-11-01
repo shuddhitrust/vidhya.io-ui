@@ -476,50 +476,59 @@
     <table mat-table [dataSource]="submission.rubric" style="width: 100%">
       <ng-container matColumnDef="description">
         <th mat-header-cell *matHeaderCellDef>Description</th>
-        <td mat-cell *matCellDef="let criterion">
-          {{ criterion.criterion?.description }}
+        <td mat-cell *matCellDef="let criterionResponse">
+          {{ criterionResponse.criterion?.description }}
         </td>
       </ng-container>
 
       <ng-container matColumnDef="points">
         <th mat-header-cell *matHeaderCellDef>Points</th>
-        <td mat-cell *matCellDef="let criterion; let i = index">
+        <td mat-cell *matCellDef="let criterionResponse; let i = index">
           <mat-form-field class="points-input-container" appearance="outline">
             <input
               matInput
               type="number"
               [value]="submission?.rubric[i].score"
-              (change)="updateCriterionPoints($event, submission, criterion)"
+              (change)="
+                updateCriterionPoints($event, submission, criterionResponse)
+              "
               [ngStyle]="{
-                'font-weight': partialCriterionScore(submission, criterion)
+                'font-weight': partialCriterionScore(criterionResponse)
                   ? 'bold'
                   : '',
-                color: partialCriterionScore(submission, criterion)
+                color: partialCriterionScore(criterionResponse)
                   ? 'var(--shuddhi-color-dark)'
                   : '#000'
               }"
             />
             <span matSuffix class="points-suffix"
               >/
-              {{ criterion.criterion?.points }}
+              {{ criterionResponse.criterion?.points }}
               points</span
             >
           </mat-form-field>
         </td>
       </ng-container>
 
-      <ng-container matColumnDef="satisfied">
-        <th mat-header-cell *matHeaderCellDef><mat-icon>check</mat-icon></th>
-        <td mat-cell *matCellDef="let criterion">
-          <mat-icon
-            (click)="checkCriterion(submission, criterion?.description)"
-            style="cursor: pointer"
-            >{{
-              isCriterionSatisfied(submission, criterion?.description)
-                ? "check"
-                : "close"
-            }}</mat-icon
+      <ng-container matColumnDef="remarks">
+        <th mat-header-cell *matHeaderCellDef>Remarks</th>
+        <td mat-cell *matCellDef="let criterionResponse">
+          <button
+            mat-icon-button
+            (click)="
+              openCriterionResponseRemarks(submission, criterionResponse)
+            "
+            [nz-tooltip]="
+              criterionResponse.remarks
+                ? 'Click to view existing remarks by ' +
+                  criterionResponse.remarker.name
+                : 'Add remarks'
+            "
           >
+            <mat-icon>{{
+              criterionResponse.remarks ? "comment" : "add_comment"
+            }}</mat-icon>
+          </button>
         </td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="rubricDatatableColumns"></tr>

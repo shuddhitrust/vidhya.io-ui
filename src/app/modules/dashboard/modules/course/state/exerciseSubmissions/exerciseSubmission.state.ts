@@ -43,6 +43,7 @@ import {
   convertPaginatedListToNormalList,
   getErrorMessageFromGraphQLResponse,
   paginatedSubscriptionUpdater,
+  SanitizeSubmissionRubricToServer,
   updateFetchParams,
 } from 'src/app/shared/common/functions';
 import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
@@ -561,8 +562,10 @@ export class ExerciseSubmissionState {
     let { formSubmitting } = state;
     formSubmitting = true;
     patchState({ formSubmitting });
+    const sanitizedSubmissions =
+      SanitizeSubmissionRubricToServer(exerciseSubmissions);
     const variables = {
-      exerciseSubmissions,
+      exerciseSubmissions: sanitizedSubmissions,
       grading,
       bulkauto: bulkauto ? bulkauto : false,
     };

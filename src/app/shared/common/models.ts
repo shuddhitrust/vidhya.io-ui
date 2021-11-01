@@ -264,6 +264,7 @@ export type Criterion = {
 };
 
 export const EmptyCriterion = {
+  id: null,
   exercise: null,
   description: null,
   points: null,
@@ -275,14 +276,16 @@ export type CriterionResponse = {
   criterion: Criterion;
   exercise: Exercise;
   participant: any;
-  grader: any;
+  remarker: any;
   score: number;
 };
 
 export const EmptyCriterionResponse = {
+  id: null,
+  criterion: null,
   exercise: null,
   participant: null,
-  grader: null,
+  remarker: null,
   score: null,
 };
 

@@ -607,7 +607,11 @@ export const EXERCISE_QUERIES = {
             id
             score
             remarks
-            grader {
+            participant {
+              id
+            }
+            remarker {
+              id
               name
             }
             criterion {
@@ -733,7 +737,11 @@ export const EXERCISE_SUBMISSION_QUERIES = {
           id
           score
           remarks
-          grader {
+          participant {
+            id
+          }
+          remarker {
+            id
             name
           }
           criterion {
