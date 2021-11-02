@@ -22,7 +22,6 @@ import {
   FetchGradingGroupsAction,
   ShowSubmissionHistory,
   ResetSubmissionHistory,
-  PatchRubricAction,
 } from './exerciseSubmission.actions';
 import { Apollo } from 'apollo-angular';
 import { Router } from '@angular/router';
@@ -702,46 +701,6 @@ export class ExerciseSubmissionState {
       );
   }
 
-  @Action(PatchRubricAction)
-  patchRubricAction({
-    patchState,
-  }: StateContext<ExerciseSubmissionStateModel>) {
-    patchState({ formSubmitting: true });
-    this.apollo
-      .mutate({
-        mutation: EXERCISE_SUBMISSION_MUTATIONS.PATCH_RUBRIC,
-      })
-      .subscribe(
-        ({ data }: any) => {
-          const response = data.patchRubric;
-          patchState({ formSubmitting: false });
-          if (response.ok) {
-            this.store.dispatch(
-              new ShowNotificationAction({
-                message: 'Sanitized all rubric',
-                action: 'success',
-              })
-            );
-          } else {
-            this.store.dispatch(
-              new ShowNotificationAction({
-                message: 'Something went wrong',
-                action: 'error',
-              })
-            );
-          }
-        },
-        (error) => {
-          patchState({ formSubmitting: false });
-          this.store.dispatch(
-            new ShowNotificationAction({
-              message: getErrorMessageFromGraphQLResponse(error),
-              action: 'error',
-            })
-          );
-        }
-      );
-  }
   @Action(ResetExerciseSubmissionFormAction)
   resetExerciseSubmissionForm({
     patchState,

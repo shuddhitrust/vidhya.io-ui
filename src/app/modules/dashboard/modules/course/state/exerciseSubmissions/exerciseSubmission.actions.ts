@@ -78,9 +78,3 @@ export class ResetSubmissionHistory {
 
   constructor() {}
 }
-
-export class PatchRubricAction {
-  static readonly type = '[EXERCISE_SUBMISSION] Patch Rubric';
-
-  constructor() {}
-}

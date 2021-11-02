@@ -556,17 +556,6 @@ export const EXERCISE_SUBMISSION_MUTATIONS = {
       }
     }
   `,
-  PATCH_RUBRIC: gql`
-    mutation patchRubric {
-      patchRubric {
-        ok
-        totalExercisesCount
-        totalSubmissionsCount
-        processedExercisesCount
-        processedSubmissionsCount
-      }
-    }
-  `,
   DELETE_EXERCISE_SUBMISSION: gql`
     mutation deleteExerciseSubmission($id: ID!) {
       deleteExerciseSubmission(id: $id) {

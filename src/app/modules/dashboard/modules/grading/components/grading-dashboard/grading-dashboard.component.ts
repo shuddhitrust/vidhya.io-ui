@@ -48,7 +48,6 @@ import {
   FetchGradingGroupsAction,
   FetchNextExerciseSubmissionsAction,
   FetchNextGradingGroupsAction,
-  PatchRubricAction,
   ResetSubmissionHistory,
   ShowSubmissionHistory,
 } from '../../../course/state/exerciseSubmissions/exerciseSubmission.actions';
@@ -780,24 +779,6 @@ export class GradingDashboardComponent implements OnInit {
             bulkauto: true,
           })
         );
-      }
-    });
-  }
-
-  initiatePatchRubric() {
-    const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
-      title: 'Confirm bulk sanitizing of rubric?',
-      message: `If you don't know what this is, please press cancel! Are you sure you want to sanitize the rubric of all exercises and submissions? This will reset all the rubric scores of all submissions! Make sure to backup database before confirming!`,
-      confirmButtonText: 'Initiate patching of all rubric',
-      denyButtonText: 'Cancel',
-    };
-    const dialogRef = this.dialog.open(MasterConfirmationDialog, {
-      data: masterDialogConfirmationObject,
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result == true) {
-        this.store.dispatch(new PatchRubricAction());
       }
     });
   }
