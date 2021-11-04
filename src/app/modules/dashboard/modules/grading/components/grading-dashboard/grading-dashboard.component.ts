@@ -958,7 +958,6 @@ export class SubmissionHistoryDialog implements OnDestroy {
     });
   }
   showRemarks(criterion: CriterionResponse) {
-    console.log('showing remarks for criterion ', { criterion });
     const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
       title: `Remarks by ${criterion?.remarker?.name}`,
       message: `${criterion.remarks}`,
