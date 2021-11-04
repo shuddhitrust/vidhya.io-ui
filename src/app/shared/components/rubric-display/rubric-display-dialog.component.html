@@ -15,8 +15,8 @@
         >
           Criterion
         </th>
-        <td mat-cell *matCellDef="let criterionResponse">
-          {{ criterionResponse.criterion?.description }}
+        <td mat-cell *matCellDef="let criterion">
+          {{ criterion.description }}
         </td>
       </ng-container>
 
@@ -29,9 +29,9 @@
         >
           Points
         </th>
-        <td mat-cell *matCellDef="let criterionResponse">
-          {{ criterionResponse.score ? criterionResponse.score : 0 }} /
-          {{ criterionResponse.criterion?.points }}
+        <td mat-cell *matCellDef="let criterion">
+          {{ criterion?.score }} /
+          {{ criterion?.points }}
         </td>
       </ng-container>
 
@@ -44,14 +44,14 @@
         >
           Remarks
         </th>
-        <td mat-cell *matCellDef="let criterionResponse">
+        <td mat-cell *matCellDef="let criterion">
           <button
-            *ngIf="criterionResponse.remarks"
+            *ngIf="criterion.remarks"
             mat-icon-button
             color="primary"
-            (click)="showRemarks(criterionResponse)"
+            (click)="showRemarks(criterion)"
             [nz-tooltip]="
-              'Click to view remarks by ' + criterionResponse.remarker?.name
+              'Click to view remarks by ' + criterion.remarker?.name
             "
           >
             <mat-icon> comment </mat-icon>

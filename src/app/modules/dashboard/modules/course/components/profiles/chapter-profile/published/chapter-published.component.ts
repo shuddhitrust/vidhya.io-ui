@@ -660,8 +660,6 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     const rubric = submissionRubric.length ? submissionRubric : exerciseRubric;
     const dialogRef = this.dialog.open(ExerciseRubricDialog, {
       data: {
-        exercise,
-        submission,
         rubric,
       },
     });

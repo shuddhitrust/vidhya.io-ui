@@ -4,7 +4,11 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
-import { CriterionResponse, SubmissionRubric } from '../../common/models';
+import {
+  CriterionResponse,
+  ExerciseRubric,
+  SubmissionRubric,
+} from '../../common/models';
 import {
   MasterConfirmationDialog,
   MasterConfirmationDialogObject,
@@ -19,14 +23,26 @@ import {
   ],
 })
 export class ExerciseRubricDialog {
-  rubric: SubmissionRubric;
+  rubric: any = [];
   rubricDatatableColumns: string[] = ['description', 'points', 'remarks'];
   constructor(
     public dialogRef: MatDialogRef<ExerciseRubricDialog>,
     public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    this.rubric = data.rubric;
+    this.sanitizeRubric();
+  }
+
+  sanitizeRubric() {
+    this.rubric = this.data.rubric.map((c) => {
+      let newC = Object.assign({}, c);
+      newC.description = c.criterion?.description
+        ? c.criterion?.description
+        : c.description;
+      newC.score = c.score ? c.score : 0;
+      newC.points = c.criterion?.points ? c.criterion?.points : c.points;
+      return newC;
+    });
   }
 
   showRemarks(criterion: CriterionResponse) {
