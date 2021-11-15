@@ -5,7 +5,6 @@ import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import {
   DeleteChapterAction,
-  GetChapterAction,
   PublishChapterAction,
   ResetChapterFormAction,
 } from 'src/app/modules/dashboard/modules/course/state/chapters/chapter.actions';
@@ -258,12 +257,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     return this.auth.authorizeResource(this.resource, action);
   }
 
-  ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
-      const chapterId = params['id'];
-      this.store.dispatch(new GetChapterAction({ id: chapterId }));
-    });
-  }
+  ngOnInit(): void {}
 
   goToCourse() {
     this.router.navigate([uiroutes.COURSE_PROFILE_ROUTE.route], {

@@ -5,7 +5,6 @@ import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import {
   DeleteChapterAction,
-  GetChapterAction,
   ResetChapterFormAction,
 } from 'src/app/modules/dashboard/modules/course/state/chapters/chapter.actions';
 import { ChapterState } from 'src/app/modules/dashboard/modules/course/state/chapters/chapter.state';
@@ -301,12 +300,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     return submissionDisabled || exerciseLocked; // Disabling exercise modification if the submission is disabled or exercise is locked
   }
 
-  ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
-      const chapterId = params['id'];
-      this.store.dispatch(new GetChapterAction({ id: chapterId }));
-    });
-  }
+  ngOnInit(): void {}
 
   goToCourse() {
     this.router.navigate([uiroutes.COURSE_PROFILE_ROUTE.route], {

@@ -278,13 +278,13 @@ export class ChapterState {
     { patchState }: StateContext<ChapterStateModel>,
     { payload }: GetChapterAction
   ) {
-    const { id } = payload;
     patchState({ isFetching: true });
     this.apollo
       .watchQuery({
         query: CHAPTER_QUERIES.GET_CHAPTER,
-        variables: { id },
+        variables: payload,
         fetchPolicy: 'network-only',
+        nextFetchPolicy: 'cache-first',
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
@@ -460,9 +460,10 @@ export class ChapterState {
           if (response.ok) {
             const method = SUBSCRIPTION_METHODS.DELETE_METHOD;
             const chapter = response.chapter;
-            this.router.navigateByUrl(
-              uiroutes.COURSE_PROFILE_ROUTE.route + `?id=${chapter?.course?.id}`
-            );
+            const redirectUrl =
+              uiroutes.COURSE_PROFILE_ROUTE.route +
+              `?id=${chapter?.course?.id}`;
+            this.router.navigateByUrl(redirectUrl);
             const state = getState();
             const { newPaginatedItems, newItemsList } =
               paginatedSubscriptionUpdater({
