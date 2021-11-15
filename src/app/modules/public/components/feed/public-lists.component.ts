@@ -3,8 +3,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 
-const SCHOOLS_LABEL = 'Schools';
-const STUDENTS_LABEL = 'Students';
+const SCHOOLS_LABEL = 'Institutions';
+const STUDENTS_LABEL = 'Learners';
 
 @Component({
   selector: 'app-public-lists',
@@ -15,8 +15,8 @@ export class PublicTabsComponent implements OnInit {
   tabs = [SCHOOLS_LABEL, STUDENTS_LABEL];
   activeTabIndex = 0;
   params;
-  Schools = SCHOOLS_LABEL;
-  Students = STUDENTS_LABEL;
+  Institutions = SCHOOLS_LABEL;
+  Learners = STUDENTS_LABEL;
   constructor(
     private route: ActivatedRoute,
     private router: Router,
