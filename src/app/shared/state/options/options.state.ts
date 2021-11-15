@@ -5,8 +5,11 @@ import {
   FetchMemberOptionsByInstitution,
 } from './options.actions';
 import { Injectable } from '@angular/core';
-import { MatSelectOption } from '../../common/models';
-import { getErrorMessageFromGraphQLResponse } from '../../common/functions';
+import { groupTypeOptions, MatSelectOption } from '../../common/models';
+import {
+  getErrorMessageFromGraphQLResponse,
+  getOptionLabel,
+} from '../../common/functions';
 import { GROUP_QUERIES, USER_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
 import { ShowNotificationAction } from '../notifications/notification.actions';
@@ -50,7 +53,10 @@ export class OptionsState {
   @Selector()
   static listGroupAdminOptions(state: OptionsStateModel): MatSelectOption[] {
     const options = state.adminGroups.map((g) => {
-      return { value: g.id, label: `${g.name} (${g.groupType})` };
+      return {
+        value: g.id,
+        label: `${g.name} (${getOptionLabel(g.groupType, groupTypeOptions)})`,
+      };
     });
     return options;
   }

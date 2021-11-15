@@ -318,6 +318,7 @@ export const GROUP_QUERIES = {
       adminGroups(searchField: $searchField, limit: $limit, offset: $offset) {
         id
         name
+        groupType
         description
         createdAt
       }
