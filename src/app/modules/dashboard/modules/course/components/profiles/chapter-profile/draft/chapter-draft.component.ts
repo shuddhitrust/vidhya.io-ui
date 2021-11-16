@@ -452,6 +452,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     }
     this.tempRubric = newTempRubric;
     this.exerciseForm.get('rubric').setValue(this.tempRubric);
+    this.calibrateRubricVariables();
   }
 
   enableAddNewOption() {
