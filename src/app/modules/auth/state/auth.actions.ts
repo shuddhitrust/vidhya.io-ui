@@ -44,12 +44,6 @@ export class VerifyAccountAction {
   constructor(public payload: { token: string }) {}
 }
 
-export class GetInstitutionByInvitecodeAction {
-  static readonly type = '[AUTH] GET INSTITUTION BY INVITECODE';
-
-  constructor(public payload: { currentMember: CurrentMember }) {}
-}
-
 export class ResendActivationEmailAction {
   static readonly type = '[AUTH] Resend Activation Email';
 

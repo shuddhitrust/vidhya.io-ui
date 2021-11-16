@@ -30,7 +30,6 @@ import {
   CompleteLogoutAction,
   VerifyInvitecodeAction,
   AddInvitecodeAction,
-  GetInstitutionByInvitecodeAction,
   UpdateCurrentUserInStateAction,
   OpenLoginFormAction,
   UpdateTokenAction,
@@ -480,26 +479,18 @@ export class AuthState {
     };
 
     const firstTimeSetup = calculateFirstTiimeSetup(newCurrentMember);
-    if (firstTimeSetup) {
-      this.store.dispatch(
-        new GetInstitutionByInvitecodeAction({
-          currentMember: newCurrentMember,
-        })
-      );
-    } else {
-      const isFullyAuthenticated =
-        isLoggedIn == true &&
-        newCurrentMember?.membershipStatus == MembershipStatusOptions.APPROVED;
-      patchState({
-        isFullyAuthenticated,
-        currentMember: newCurrentMember,
-        permissions,
-        firstTimeSetup,
-      });
-      state = getState();
-      if (!state.subscriptionsInitiated) {
-        // this.store.dispatch(new InitiateSubscriptionsAction());
-      }
+    const isFullyAuthenticated =
+      isLoggedIn == true &&
+      newCurrentMember?.membershipStatus == MembershipStatusOptions.APPROVED;
+    patchState({
+      isFullyAuthenticated,
+      currentMember: newCurrentMember,
+      permissions,
+      firstTimeSetup,
+    });
+    state = getState();
+    if (!state.subscriptionsInitiated) {
+      // this.store.dispatch(new InitiateSubscriptionsAction());
     }
   }
 
@@ -1183,47 +1174,6 @@ export class AuthState {
           action: 'error',
         })
       );
-    }
-  }
-  @Action(GetInstitutionByInvitecodeAction)
-  getInstitutionByInvitecode(
-    { patchState, getState }: StateContext<AuthStateModel>,
-    { payload }: GetInstitutionByInvitecodeAction
-  ) {
-    let { currentMember } = payload;
-    const invitecode = currentMember.invitecode;
-
-    if (invitecode) {
-      this.apollo
-        .mutate({
-          mutation: AUTH_QUERIES.GET_INSTITUTION_BY_INVITECODE,
-          variables: {
-            invitecode: currentMember.invitecode,
-          },
-        })
-        .subscribe(
-          ({ data }: any) => {
-            const response = data.institutionByInvitecode;
-
-            currentMember = {
-              ...currentMember,
-              institution: { id: response?.id, name: response?.name },
-            };
-            patchState({
-              currentMember,
-              firstTimeSetup: true,
-            });
-          },
-          (error) => {
-            console.error('There was an error ', error);
-            this.store.dispatch(
-              new ShowNotificationAction({
-                message: getErrorMessageFromGraphQLResponse(error),
-                action: 'error',
-              })
-            );
-          }
-        );
     }
   }
 
