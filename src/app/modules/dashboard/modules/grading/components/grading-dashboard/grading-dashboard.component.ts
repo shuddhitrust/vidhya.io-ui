@@ -287,18 +287,17 @@ export class GradingDashboardComponent implements OnInit {
       participant,
     };
     let queryParams = {
+      [URL_PARAMS.flagged]: flagged,
       [URL_PARAMS.gradingStatus]: status,
       [URL_PARAMS.groupBy]: groupBy,
       [URL_PARAMS.searchQuery]: searchQuery,
       [URL_PARAMS.submission]: submission,
       [URL_PARAMS.participant]: participant,
     };
-    if (this.flaggedFilter == true || this.flaggedFilter == false) {
-      queryParams = { ...queryParams, flagged: flagged.toString() };
-    }
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams,
+      queryParamsHandling: 'merge',
       skipLocationChange: false,
     });
   }
