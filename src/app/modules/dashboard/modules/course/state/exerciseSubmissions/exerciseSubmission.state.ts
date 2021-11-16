@@ -218,6 +218,7 @@ export class ExerciseSubmissionState {
           query: EXERCISE_SUBMISSION_QUERIES.GET_SUBMISSION_HISTORY,
           variables,
           fetchPolicy: 'network-only',
+          nextFetchPolicy: 'network-only',
         })
         .valueChanges.subscribe(
           ({ data }: any) => {
@@ -289,6 +290,7 @@ export class ExerciseSubmissionState {
     const variables = {
       groupBy: columnFilters?.groupBy,
       status: columnFilters?.status,
+      flagged: columnFilters?.flagged,
       searchField: columnFilters?.searchQuery,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
@@ -311,7 +313,8 @@ export class ExerciseSubmissionState {
         .watchQuery({
           query: EXERCISE_SUBMISSION_QUERIES.GET_EXERCISE_SUBMISSION_GROUPS,
           variables,
-          fetchPolicy,
+          fetchPolicy: 'network-only',
+          nextFetchPolicy: 'network-only',
         })
         .valueChanges.subscribe(
           ({ data }: any) => {
@@ -411,6 +414,7 @@ export class ExerciseSubmissionState {
       participantId: columnFilters?.participantId,
       submissionId: columnFilters?.submissionId,
       status: columnFilters?.status,
+      flagged: columnFilters?.flagged,
       searchField: columnFilters?.searchQuery,
     };
     // Resetting the data if the columnFitlers changed
@@ -443,7 +447,8 @@ export class ExerciseSubmissionState {
       .watchQuery({
         query: EXERCISE_SUBMISSION_QUERIES.GET_EXERCISE_SUBMISSIONS,
         variables,
-        fetchPolicy,
+        fetchPolicy: 'network-only',
+        nextFetchPolicy: 'cache-and-network',
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
@@ -532,6 +537,7 @@ export class ExerciseSubmissionState {
         query: EXERCISE_SUBMISSION_QUERIES.GET_EXERCISE_SUBMISSION,
         variables: { id },
         fetchPolicy: 'network-only',
+        nextFetchPolicy: 'cache-and-network',
       })
       .valueChanges.subscribe(
         ({ data }: any) => {

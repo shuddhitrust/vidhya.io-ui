@@ -212,6 +212,7 @@ export class MemberState {
         query: USER_QUERIES.GET_USER,
         variables: { id },
         fetchPolicy: 'network-only',
+        nextFetchPolicy: 'cache-and-network',
       })
       .valueChanges.subscribe(
         ({ data }: any) => {

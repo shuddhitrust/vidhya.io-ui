@@ -252,6 +252,7 @@ export class ExerciseKeyState {
         query: EXERCISE_KEY_QUERIES.GET_EXERCISE_KEY,
         variables: { exerciseId },
         fetchPolicy: 'network-only',
+        nextFetchPolicy: 'cache-and-network',
       })
       .valueChanges.subscribe(
         ({ data }: any) => {

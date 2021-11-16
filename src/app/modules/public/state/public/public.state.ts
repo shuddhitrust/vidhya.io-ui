@@ -317,6 +317,7 @@ export class PublicState {
         query: PUBLIC_QUERIES.GET_PUBLIC_INSTITUTION,
         variables: { code },
         fetchPolicy: 'network-only',
+        nextFetchPolicy: 'cache-and-network',
       })
       .valueChanges.subscribe(
         ({ data }: any) => {

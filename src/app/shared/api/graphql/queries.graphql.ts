@@ -675,6 +675,7 @@ export const EXERCISE_SUBMISSION_QUERIES = {
       $chapterId: ID
       $courseId: ID
       $status: String
+      $flagged: Boolean
       $searchField: String
       $limit: Int
       $offset: Int
@@ -686,6 +687,7 @@ export const EXERCISE_SUBMISSION_QUERIES = {
         chapterId: $chapterId
         courseId: $courseId
         status: $status
+        flagged: $flagged
         searchField: $searchField
         limit: $limit
         offset: $offset
@@ -820,6 +822,7 @@ export const EXERCISE_SUBMISSION_QUERIES = {
     query exerciseSubmissionGroups(
       $groupBy: String!
       $status: String!
+      $flagged: Boolean
       $searchField: String
       $limit: Int
       $offset: Int
@@ -827,6 +830,7 @@ export const EXERCISE_SUBMISSION_QUERIES = {
       exerciseSubmissionGroups(
         groupBy: $groupBy
         status: $status
+        flagged: $flagged
         searchField: $searchField
         limit: $limit
         offset: $offset

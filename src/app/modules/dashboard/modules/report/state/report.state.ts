@@ -233,6 +233,7 @@ export class ReportState {
         query: REPORT_QUERIES.GET_REPORT,
         variables: { id },
         fetchPolicy: 'network-only',
+        nextFetchPolicy: 'cache-and-network',
       })
       .valueChanges.subscribe(
         ({ data }: any) => {

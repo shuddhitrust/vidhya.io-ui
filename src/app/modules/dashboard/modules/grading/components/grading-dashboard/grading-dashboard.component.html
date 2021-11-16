@@ -61,6 +61,20 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
+        <mat-form-field class="menu-item" appearance="outline">
+          <mat-label>Flagged</mat-label>
+          <mat-select
+            [(ngModel)]="flaggedFilter"
+            (ngModelChange)="fetchGradingGroups()"
+          >
+            <mat-option
+              *ngFor="let flagged of exerciseSubmissionFlaggedOptions"
+              [value]="flagged.value"
+            >
+              {{ flagged.label }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
       </mat-menu>
       <button
         type="button"

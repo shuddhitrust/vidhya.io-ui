@@ -75,6 +75,7 @@ const URL_PARAMS = {
   groupBy: 'groupBy',
   submission: 'submission',
   participant: 'participant',
+  flagged: 'flagged',
   searchQuery: 'searchQuery',
 };
 
@@ -95,6 +96,7 @@ const exerciseSubmissionStatusTypes = {
   ungraded: 'SU',
   graded: 'GR',
   returned: 'RE',
+  flagged: 'FL',
 };
 
 @Component({
@@ -114,6 +116,7 @@ export class GradingDashboardComponent implements OnInit {
   exerciseSubmissionColumnFilters = {};
   showGroupCards: boolean = true;
   currentCard: GradingGroup = emptyGradingGroup;
+  flaggedFilter: boolean = null;
   submissionStatusFilter: string = exerciseSubmissionStatusTypes.ungraded;
   submissionsParticipantFilter: number = null;
   searchQueryFilter: string = null;
@@ -122,6 +125,7 @@ export class GradingDashboardComponent implements OnInit {
   gradingGroupColumnFilters = {
     groupBy: this.groupByFilter,
     status: this.submissionStatusFilter,
+    flagged: this.flaggedFilter,
     searchQuery: this.searchQueryFilter,
     submission: this.submissionFilter,
     participant: this.submissionsParticipantFilter,
@@ -133,6 +137,11 @@ export class GradingDashboardComponent implements OnInit {
   exerciseSubmissionStatusOptions: MatSelectOption[] = autoGenOptions(
     exerciseSubmissionStatusTypes
   );
+  exerciseSubmissionFlaggedOptions: MatSelectOption[] = autoGenOptions({
+    true: true,
+    false: false,
+    both: null,
+  });
 
   @Select(ExerciseSubmissionState.listGradingGroups)
   gradingGroups$: Observable<GradingGroup[]>;
@@ -231,6 +240,12 @@ export class GradingDashboardComponent implements OnInit {
       if (this.submissionFilter) {
         this.fetchExerciseSubmissions();
       } else {
+        if (params[URL_PARAMS.flagged] == 'true') {
+          this.flaggedFilter = true;
+        }
+        if (params[URL_PARAMS.flagged] == 'false') {
+          this.flaggedFilter = false;
+        }
         this.searchQueryFilter = params[URL_PARAMS.searchQuery];
         this.submissionsParticipantFilter = params[URL_PARAMS.participant];
         const statusOptions = Object.values(this.exerciseSubmissionStatusTypes);
@@ -260,26 +275,31 @@ export class GradingDashboardComponent implements OnInit {
   updateGradingGroupByFilter() {
     const submission = this.submissionFilter;
     const status = this.submissionStatusFilter;
+    const flagged = this.flaggedFilter;
     const groupBy = this.groupByFilter;
     const searchQuery = this.searchQueryFilter;
     const participant = this.submissionsParticipantFilter;
     this.gradingGroupColumnFilters = {
       groupBy,
       status,
+      flagged,
       searchQuery,
       submission,
       participant,
     };
+    let queryParams = {
+      [URL_PARAMS.gradingStatus]: status,
+      [URL_PARAMS.groupBy]: groupBy,
+      [URL_PARAMS.searchQuery]: searchQuery,
+      [URL_PARAMS.submission]: submission,
+      [URL_PARAMS.participant]: participant,
+    };
+    if (this.flaggedFilter == true || this.flaggedFilter == false) {
+      queryParams = { ...queryParams, flagged: flagged.toString() };
+    }
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: {
-        [URL_PARAMS.gradingStatus]: status,
-        [URL_PARAMS.groupBy]: groupBy,
-        [URL_PARAMS.searchQuery]: searchQuery,
-        [URL_PARAMS.submission]: submission,
-        [URL_PARAMS.participant]: participant,
-      },
-      queryParamsHandling: 'merge',
+      queryParams,
       skipLocationChange: false,
     });
   }
@@ -290,6 +310,7 @@ export class GradingDashboardComponent implements OnInit {
       status: this.submissionStatusFilter,
       participantId: this.submissionsParticipantFilter,
       submissionId: this.submissionFilter,
+      flagged: this.flaggedFilter,
       searchQuery: this.searchQueryFilter,
     };
   }
@@ -302,6 +323,7 @@ export class GradingDashboardComponent implements OnInit {
       courseId: card.type == resources.COURSE ? card.id : null,
       participantId: this.submissionsParticipantFilter,
       status: this.submissionStatusFilter,
+      flagged: this.flaggedFilter,
       searchQuery: this.searchQueryFilter,
     };
     this.fetchExerciseSubmissions();

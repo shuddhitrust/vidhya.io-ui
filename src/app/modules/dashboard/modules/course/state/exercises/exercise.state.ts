@@ -285,6 +285,7 @@ export class ExerciseState {
         query: EXERCISE_QUERIES.GET_EXERCISE,
         variables: { id },
         fetchPolicy: 'network-only',
+        nextFetchPolicy: 'cache-and-network',
       })
       .valueChanges.subscribe(
         ({ data }: any) => {

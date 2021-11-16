@@ -220,6 +220,7 @@ export class InstitutionState {
         query: INSTITUTION_QUERIES.GET_INSTITUTION,
         variables: { id },
         fetchPolicy: 'network-only',
+        nextFetchPolicy: 'cache-and-network',
       })
       .valueChanges.subscribe(
         ({ data }: any) => {

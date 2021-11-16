@@ -258,6 +258,7 @@ export class GroupState {
         query: GROUP_QUERIES.GET_GROUP,
         variables: { id },
         fetchPolicy: 'network-only',
+        nextFetchPolicy: 'cache-and-network',
       })
       .valueChanges.subscribe(
         ({ data }: any) => {

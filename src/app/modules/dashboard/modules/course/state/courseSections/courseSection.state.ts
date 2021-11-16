@@ -213,6 +213,7 @@ export class CourseSectionState {
         query: COURSE_SECTION_QUERIES.GET_COURSE_SECTION,
         variables: { id },
         fetchPolicy: 'network-only',
+        nextFetchPolicy: 'cache-and-network',
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
