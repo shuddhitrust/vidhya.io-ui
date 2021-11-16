@@ -810,19 +810,35 @@ export class GradingDashboardComponent implements OnInit {
   }
 
   submitExerciseSubmissionForm() {
+    let allowSubmission = true;
     const submissionsToSave = this.exerciseSubmissions.filter((s) =>
       this.modifiedExerciseSubmissionIds.includes(s.id)
     );
-    const sanitizedSubmissions =
-      this.exerciseSubmissionService.sanitizeExerciseSubmissions(
-        submissionsToSave
+    // Checking if all the submissions that need a remarks field have it
+    submissionsToSave.forEach((s) => {
+      if (this.remarksRequired(s) && !s.remarks) {
+        allowSubmission = false;
+        this.store.dispatch(
+          new ShowNotificationAction({
+            message:
+              "Make sure you've added remarks wherever required and try again",
+            action: 'error',
+          })
+        );
+      }
+    });
+    if (allowSubmission) {
+      const sanitizedSubmissions =
+        this.exerciseSubmissionService.sanitizeExerciseSubmissions(
+          submissionsToSave
+        );
+      this.store.dispatch(
+        new CreateUpdateExerciseSubmissionsAction({
+          exerciseSubmissions: sanitizedSubmissions,
+          grading: true,
+        })
       );
-    this.store.dispatch(
-      new CreateUpdateExerciseSubmissionsAction({
-        exerciseSubmissions: sanitizedSubmissions,
-        grading: true,
-      })
-    );
+    }
   }
 }
 

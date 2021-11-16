@@ -224,7 +224,7 @@ export class UserRoleState {
         query: USER_ROLE_QUERIES.GET_USER_ROLE,
         variables: { roleName },
         fetchPolicy: 'network-only',
-        nextFetchPolicy: 'cache-and-network',
+        nextFetchPolicy: 'network-only',
       })
       .valueChanges.subscribe(
         ({ data }: any) => {

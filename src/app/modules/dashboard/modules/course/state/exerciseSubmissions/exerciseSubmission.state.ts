@@ -448,7 +448,7 @@ export class ExerciseSubmissionState {
         query: EXERCISE_SUBMISSION_QUERIES.GET_EXERCISE_SUBMISSIONS,
         variables,
         fetchPolicy: 'network-only',
-        nextFetchPolicy: 'cache-and-network',
+        nextFetchPolicy: 'network-only',
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
@@ -537,7 +537,7 @@ export class ExerciseSubmissionState {
         query: EXERCISE_SUBMISSION_QUERIES.GET_EXERCISE_SUBMISSION,
         variables: { id },
         fetchPolicy: 'network-only',
-        nextFetchPolicy: 'cache-and-network',
+        nextFetchPolicy: 'network-only',
       })
       .valueChanges.subscribe(
         ({ data }: any) => {

@@ -262,7 +262,7 @@ export class CourseState {
         query: COURSE_QUERIES.GET_COURSE,
         variables: { id },
         fetchPolicy: 'network-only',
-        nextFetchPolicy: 'cache-and-network',
+        nextFetchPolicy: 'network-only',
       })
       .valueChanges.subscribe(
         ({ data }: any) => {

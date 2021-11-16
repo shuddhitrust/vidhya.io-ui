@@ -274,7 +274,7 @@ export class AnnouncementState {
         query: ANNOUNCEMENT_QUERIES.GET_ANNOUNCEMENT,
         variables: { id },
         fetchPolicy: 'network-only',
-        nextFetchPolicy: 'cache-and-network',
+        nextFetchPolicy: 'network-only',
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
