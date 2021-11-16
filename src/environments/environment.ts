@@ -4,8 +4,8 @@
 
 const api_endpoint = 'http://localhost:8000';
 const websocket_api_endpoint = 'ws://localhost:8000';
-const cloudinary_endpoint = 'https://api.cloudinary.com/v1_1/svidhya';
-const cloudinary_preset = 'l4vdzicq';
+const cloudinary_endpoint = 'https://api.cloudinary.com/v1_1/ragav-dev';
+const cloudinary_preset = 'cljckgq2';
 
 export const environment = {
   production: false,

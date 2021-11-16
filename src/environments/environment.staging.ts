@@ -10,8 +10,8 @@
 
 const api_endpoint = 'https://vidhya-io-staging.herokuapp.com';
 const websocket_api_endpoint = 'wss://vidhya-io-staging.herokuapp.com';
-const cloudinary_endpoint = 'https://api.cloudinary.com/v1_1/svidhya';
-const cloudinary_preset = 'l4vdzicq';
+const cloudinary_endpoint = 'https://api.cloudinary.com/v1_1/ragav-dev';
+const cloudinary_preset = 'cljckgq2';
 
 export const environment = {
   production: true,
