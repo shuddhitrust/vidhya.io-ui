@@ -371,6 +371,12 @@ export class GradingDashboardComponent implements OnInit {
       this.submissionStatusFilter,
       false
     );
+
+    // Determining flagged status...
+    let flaggedStatus = this.flaggedFilter ? ' & flagged ' : '';
+    flaggedStatus =
+      this.flaggedFilter == false ? ' & non-flagged ' : flaggedStatus;
+
     // text describing the item type...
     let itemTypeText = getKeyForValue(groupByTypes, this.groupByFilter);
     itemTypeText = itemTypeText ? itemTypeText + 's' : 'results';
@@ -384,7 +390,7 @@ export class GradingDashboardComponent implements OnInit {
       : `${statusTypeText} `;
     // constructing the title using all the separate parts
     if (this.showGroupCards) {
-      title += `${items}submissions`;
+      title += `${items}${flaggedStatus}submissions`;
     } else {
       title += `${
         this.currentCard?.title
