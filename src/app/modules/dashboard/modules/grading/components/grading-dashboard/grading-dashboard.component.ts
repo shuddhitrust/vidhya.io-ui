@@ -96,7 +96,6 @@ const exerciseSubmissionStatusTypes = {
   ungraded: 'SU',
   graded: 'GR',
   returned: 'RE',
-  flagged: 'FL',
 };
 
 @Component({
