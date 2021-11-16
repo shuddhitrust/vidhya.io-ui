@@ -23,7 +23,6 @@ export const USER_MUTATIONS = {
           lastName
           name
           avatar
-          invitecode
           email
           institution {
             id
@@ -800,7 +799,6 @@ export const AUTH_MUTATIONS = {
           lastName
           name
           avatar
-          invitecode
           email
           institution {
             id

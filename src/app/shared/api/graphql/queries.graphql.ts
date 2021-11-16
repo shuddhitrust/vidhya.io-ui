@@ -9,7 +9,6 @@ export const AUTH_QUERIES = {
         lastName
         name
         avatar
-        invitecode
         email
         institution {
           id
@@ -152,7 +151,6 @@ export const USER_QUERIES = {
         lastName
         name
         avatar
-        invitecode
         institution {
           id
           name
