@@ -387,6 +387,8 @@ export const COURSE_QUERIES = {
         endDate
         creditHours
         status
+        passScorePercentage
+        passCompletionPercentage
         locked
         mandatoryPrerequisites {
           id

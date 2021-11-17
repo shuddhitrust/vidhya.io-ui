@@ -225,6 +225,8 @@ export type Course = {
   endDate?: string;
   creditHours?: number;
   status: CourseStatus;
+  passScorePercentage?: number;
+  passCompletionPercentage?: number;
   locked?: boolean;
   createdAt?: string;
   updatedAt?: string;

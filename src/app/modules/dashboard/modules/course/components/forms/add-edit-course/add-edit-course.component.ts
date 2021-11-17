@@ -159,6 +159,8 @@ export class AddEditCourseComponent implements OnInit {
       ],
       startDate: [courseFormRecord?.startDate],
       endDate: [courseFormRecord?.endDate],
+      passScorePercentage: [courseFormRecord?.passScorePercentage],
+      passCompletionPercentage: [courseFormRecord?.passCompletionPercentage],
       creditHours: [courseFormRecord?.creditHours],
       participants: [participantIds],
     });

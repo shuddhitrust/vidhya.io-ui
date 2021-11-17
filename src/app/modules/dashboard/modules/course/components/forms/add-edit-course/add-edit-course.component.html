@@ -166,6 +166,36 @@
       />
     </mat-form-field>
 
+    <mat-form-field class="col-lg-6 col-md-6 col-sm-12" appearance="outline">
+      <mat-label
+        >Pass Completion % (Completion % required to mark this course as
+        completed)</mat-label
+      >
+      <input
+        matInput
+        type="number"
+        min="1"
+        max="100"
+        formControlName="passCompletionPercentage"
+        placeholder="Pass Completion %"
+      />
+    </mat-form-field>
+
+    <mat-form-field class="col-lg-6 col-md-6 col-sm-12" appearance="outline">
+      <mat-label
+        >Pass Score % (Score % required to mark this course as
+        completed)</mat-label
+      >
+      <input
+        matInput
+        type="number"
+        min="1"
+        max="100"
+        formControlName="passScorePercentage"
+        placeholder="Pass Score %"
+      />
+    </mat-form-field>
+
     <!-- <mat-form-field
       *ngIf="memberOptions?.length"
       class="col-lg-12 col-md-12 col-sm-12"
