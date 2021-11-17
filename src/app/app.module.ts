@@ -66,6 +66,7 @@ import { environment } from 'src/environments/environment';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsModule } from '@ngxs/store';
 import { AuthModule } from './modules/auth/auth.module';
+import { NgxsResetPluginModule } from 'ngxs-reset-plugin';
 // function that returns `MarkedOptions` with renderer override
 
 @NgModule({
@@ -91,6 +92,7 @@ import { AuthModule } from './modules/auth/auth.module';
       NgxsModule.forRoot([], {
         developmentMode: !environment.production,
       }),
+      NgxsResetPluginModule.forRoot(),
       NgxsReduxDevtoolsPluginModule.forRoot(),
     ],
   ],

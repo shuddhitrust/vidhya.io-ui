@@ -58,6 +58,7 @@ import {
 import { AUTH_QUERIES } from 'src/app/shared/api/graphql/queries.graphql';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 
+import { StateResetAll } from 'ngxs-reset-plugin';
 /**
  * Auth flow steps:-
  * - When the application loads, it runs the AuthenticationCheckAction which checks for what kind of storage is used.
@@ -627,7 +628,7 @@ export class AuthState {
                 action: 'success',
               })
             );
-            window.location.reload();
+            this.store.dispatch(new StateResetAll());
           }
         },
         (error) => {
