@@ -277,7 +277,9 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   deleteConfirmation() {
     const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
       title: 'Confirm delete?',
-      message: `Are you sure you want to delete the chapter titled "${this.chapter.title}"`,
+      message: `Are you sure you want to delete the chapter titled "${this.chapter.title}"?`,
+      additionalDetails:
+        'Note that all exercises that are part of this chapter and their submissions will be deleted too!',
       confirmButtonText: 'Delete',
       denyButtonText: 'Cancel',
     };
