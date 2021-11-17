@@ -163,7 +163,9 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
   deleteConfirmation() {
     const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
       title: 'Confirm delete?',
-      message: `Are you sure you want to delete the course named "${this.course.title}"`,
+      message: `Are you sure you want to delete the course named "${this.course.title}"?`,
+      additionalDetails:
+        'Note that this will delete any chapters within this course and the exercises and submissions within those chapters!',
       confirmButtonText: 'Delete',
       denyButtonText: 'Cancel',
     };
