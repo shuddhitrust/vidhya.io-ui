@@ -29,11 +29,20 @@
           <h2 style="display: inline">
             {{ course.title }}
           </h2>
-          <span *ngIf="course.locked" class="prerequisites">
-            <mat-icon class="info-icon">info</mat-icon>
-            {{ coursePrerequisites(course) }}
+          <mat-icon
+            *ngIf="course.completed"
+            nz-tooltip="You have completed this course"
+            nzTooltipPlacement="left"
+            class="completed-icon"
+            >check</mat-icon
+          >
+          <span *ngIf="!course.completed">
+            <span *ngIf="course.locked" class="prerequisites">
+              <mat-icon class="info-icon">info</mat-icon>
+              {{ coursePrerequisites(course) }}
+            </span>
+            <p>{{ course.blurb }}</p>
           </span>
-          <p>{{ course.blurb }}</p>
 
           <mat-card-actions
             ><small

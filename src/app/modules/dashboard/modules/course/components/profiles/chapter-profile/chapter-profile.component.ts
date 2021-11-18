@@ -15,8 +15,6 @@ import {
 } from 'src/app/modules/dashboard/modules/course/state/chapters/chapter.actions';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { ActivatedRoute } from '@angular/router';
-import { ResetExerciseStateAction } from '../../../state/exercises/exercise.actions';
-import { ResetExerciseSubmissionFormAction } from '../../../state/exerciseSubmissions/exerciseSubmission.actions';
 
 type previewImage = {
   url: string;
@@ -38,11 +36,17 @@ export class ChapterProfileComponent implements OnDestroy {
   @Select(ChapterState.getChapterFormRecord)
   chapter$: Observable<Chapter>;
   chapter: Chapter;
+  @Select(ChapterState.isFetching)
+  isFetchingChapter$: Observable<boolean>;
+  isFetchingChapter: boolean;
   constructor(
     private store: Store,
     private route: ActivatedRoute,
     private auth: AuthorizationService
   ) {
+    this.isFetchingChapter$.subscribe((val) => {
+      this.isFetchingChapter = val;
+    });
     this.chapter$.subscribe((val) => {
       this.chapter = val;
     });
@@ -64,9 +68,8 @@ export class ChapterProfileComponent implements OnDestroy {
   authorizeResourceMethod(action) {
     return this.auth.authorizeResource(this.resource, action);
   }
-  ngOnDestroy(): void {
-    this.store.dispatch(new ResetExerciseStateAction());
+
+  ngOnDestroy() {
     this.store.dispatch(new ResetChapterFormAction());
-    this.store.dispatch(new ResetExerciseSubmissionFormAction());
   }
 }

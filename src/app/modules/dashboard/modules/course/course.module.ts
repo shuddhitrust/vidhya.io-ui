@@ -24,6 +24,7 @@ import { ExerciseSubmissionState } from './state/exerciseSubmissions/exerciseSub
 import { CourseRoutingModule } from './course-routing.module';
 import { AgGridModule } from 'ag-grid-angular';
 import { ExerciseRubricDialog } from 'src/app/shared/components/rubric-display/rubric-display-dialog.component';
+import { CourseInfoModalComponent } from './components/modals/course-info-modal/course-info-modal.component';
 
 const declarations = [
   CourseDashboardComponent,
@@ -34,6 +35,7 @@ const declarations = [
   AddEditCourseComponent,
   AddEditChapterComponent,
   CourseSectionModalComponent,
+  CourseInfoModalComponent,
   ExerciseRubricDialog,
 ];
 const imports = [SharedModule, AgGridModule];

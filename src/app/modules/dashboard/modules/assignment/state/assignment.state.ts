@@ -126,7 +126,6 @@ export class AssignmentState {
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
     };
-
     if (columnFiltersChanged({ fetchParamObjects, newFetchParams })) {
       patchState({
         assignments: defaultAssignmentState.assignments,

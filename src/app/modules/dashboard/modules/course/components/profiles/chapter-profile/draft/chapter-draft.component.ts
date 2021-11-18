@@ -65,7 +65,9 @@ import {
   CreateUpdateExerciseAction,
   DeleteExerciseAction,
   ReorderExercisesAction,
+  ResetExerciseStateAction,
 } from '../../../../state/exercises/exercise.actions';
+import { ResetExerciseSubmissionFormAction } from '../../../../state/exerciseSubmissions/exerciseSubmission.actions';
 const startingExerciseFormOptions = ['', ''];
 
 type previewImage = {
@@ -640,7 +642,8 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.store.dispatch(new ResetExerciseKeyStateAction());
-    this.store.dispatch(new ResetChapterFormAction());
+    this.store.dispatch(new ResetExerciseStateAction());
+    this.store.dispatch(new ResetExerciseSubmissionFormAction());
   }
 
   updateFormBeforeSubmit(form, formDirective) {

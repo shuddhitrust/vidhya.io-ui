@@ -9,6 +9,7 @@ import {
   Course,
   CourseSection,
   CourseStatusOptions,
+  ExerciseSubmissionStatusOptions,
   resources,
   RESOURCE_ACTIONS,
 } from 'src/app/shared/common/models';
@@ -48,6 +49,7 @@ import {
 } from '../../../state/courseSections/courseSection.actions';
 import { emptyCourseSectionFormRecord } from '../../../state/courseSections/courseSection.model';
 import { CourseSectionModalComponent } from '../../modals/course-section-modal/course-section-modal.component';
+import { CourseInfoModalComponent } from '../../modals/course-info-modal/course-info-modal.component';
 
 @Component({
   selector: 'app-course-profile',
@@ -151,6 +153,39 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
       queryParamsHandling: 'merge',
       skipLocationChange: false,
     });
+  }
+
+  statusIcon(card): { icon: string; iconColor: string; tooltip: string } {
+    let icon = null;
+    let iconColor = null;
+    let tooltip = '';
+    switch (card?.completionStatus) {
+      case ExerciseSubmissionStatusOptions.pending:
+        icon = 'new_releases';
+        iconColor = 'var(--orange)';
+        tooltip = 'This chapter contains new exercises!';
+        break;
+      case ExerciseSubmissionStatusOptions.submitted:
+        icon = 'done';
+        iconColor = 'var(--green)';
+        tooltip =
+          'You have submitted this chapter. Some exercises in this chapter may be awaiting grading.';
+        break;
+      case ExerciseSubmissionStatusOptions.graded:
+        icon = 'done_all';
+        iconColor = 'var(--green)';
+        tooltip = 'This chapter is fully graded!';
+        break;
+      case ExerciseSubmissionStatusOptions.returned:
+        icon = 'cancel';
+        iconColor = 'var(--red)';
+        tooltip =
+          'Some exercises in this chapter have been returned. Please follow the remarks and resubmit this chapter.';
+        break;
+      default:
+        break;
+    }
+    return { icon, iconColor, tooltip };
   }
 
   editCourse() {
@@ -277,6 +312,16 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
       }
     });
     return `To open this chapter, you must have completed ${prerequisites}`;
+  }
+
+  openCourseInfo() {
+    const dialogRef = this.dialog.open(CourseInfoModalComponent, {
+      data: {
+        course: this.course,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {});
   }
 
   openChapter(chapter) {

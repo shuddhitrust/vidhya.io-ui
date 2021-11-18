@@ -68,8 +68,13 @@ import {
   ReorderExercisesAction,
   ResetExerciseStateAction,
 } from '../../../../state/exercises/exercise.actions';
-import { CreateUpdateExerciseSubmissionsAction } from '../../../../state/exerciseSubmissions/exerciseSubmission.actions';
+import {
+  CreateUpdateExerciseSubmissionsAction,
+  ResetExerciseSubmissionFormAction,
+} from '../../../../state/exerciseSubmissions/exerciseSubmission.actions';
 import { ExerciseRubricDialog } from 'src/app/shared/components/rubric-display/rubric-display-dialog.component';
+import { ResetExerciseKeyStateAction } from '../../../../state/exerciseKeys/exerciseKey.actions';
+import { Console } from 'console';
 
 const startingExerciseFormOptions = ['', ''];
 
@@ -157,8 +162,9 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     });
     this.chapter$.subscribe((val) => {
       this.chapter = val;
-
-      this.fetchExercises();
+      if (this.chapter.id) {
+        this.fetchExercises();
+      }
     });
     this.exercises$.subscribe((val) => {
       this.exercises = sortByIndex(val.exercises);
@@ -706,8 +712,9 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.store.dispatch(new ResetExerciseStateAction());
     this.store.dispatch(new ResetChapterFormAction());
+    this.store.dispatch(new ResetExerciseStateAction());
+    this.store.dispatch(new ResetExerciseSubmissionFormAction());
   }
 
   getSubmittableExercises(): ExerciseSubmission[] {

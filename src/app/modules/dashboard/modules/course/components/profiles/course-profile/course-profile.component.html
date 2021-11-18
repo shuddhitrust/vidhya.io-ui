@@ -4,6 +4,9 @@
 
 <span *ngIf="!(isFetchingCourse$ | async)">
   <mat-card class="feed-card" style="cursor: default">
+    <mat-icon class="course-info-icon" (click)="openCourseInfo()"
+      >info</mat-icon
+    >
     <h2>{{ course?.title }}</h2>
     <p>{{ course?.description }}</p>
     <mat-card-actions>
@@ -133,6 +136,17 @@
       [ngClass]="chapter.locked ? 'feed-card locked-content' : 'feed-card'"
       (click)="openChapter(chapter)"
     >
+      <button
+        type="button"
+        class="card-button"
+        nzTooltipPlacement="left"
+        [nz-tooltip]="statusIcon(chapter).tooltip"
+        mat-icon-button
+      >
+        <mat-icon [ngStyle]="{ color: statusIcon(chapter).iconColor }">{{
+          statusIcon(chapter).icon
+        }}</mat-icon>
+      </button>
       {{ chapterTitle(chapter) }}
 
       <div *ngIf="chapter.locked" class="prerequisites">

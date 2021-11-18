@@ -1,10 +1,16 @@
-<ng-container *ngIf="showDraft(); else chapterPublishedTemplate">
-  <app-chapter-draft
-    *ngIf="authorizeResourceMethod(resourceActions.CREATE)"
-  ></app-chapter-draft>
+<ng-container *ngIf="!isFetchingChapter; else loading">
+  <ng-container *ngIf="showDraft(); else chapterPublishedTemplate">
+    <app-chapter-draft
+      *ngIf="authorizeResourceMethod(resourceActions.CREATE)"
+    ></app-chapter-draft>
+  </ng-container>
+  <ng-template #chapterPublishedTemplate>
+    <app-chapter-published
+      *ngIf="authorizeResourceMethod(resourceActions.GET)"
+    ></app-chapter-published>
+  </ng-template>
 </ng-container>
-<ng-template #chapterPublishedTemplate>
-  <app-chapter-published
-    *ngIf="authorizeResourceMethod(resourceActions.GET)"
-  ></app-chapter-published>
+
+<ng-template #loading>
+  <app-simple-loading-spinner></app-simple-loading-spinner>
 </ng-template>

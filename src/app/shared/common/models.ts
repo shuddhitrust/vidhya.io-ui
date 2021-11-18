@@ -56,7 +56,7 @@ export const startingFetchParams: FetchParams = {
   pageSize: defaultPageSize,
   offset: 0,
   searchQuery: defaultSearchParams.searchQuery,
-  columnFilters: null,
+  columnFilters: {},
 };
 
 export type CurrentMember = {
@@ -228,6 +228,9 @@ export type Course = {
   passScorePercentage?: number;
   passCompletionPercentage?: number;
   locked?: boolean;
+  completed?: boolean;
+  completionStatus?: string;
+  report?: Report;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -252,6 +255,8 @@ export type Chapter = {
   dueDate?: string;
   points?: number;
   status: ChapterStatus;
+  completed?: boolean;
+  completionStatus?: ExerciseSubmissionStatus;
   locked?: boolean;
   createdAt?: string;
   updatedAt?: string;

@@ -188,59 +188,63 @@ export class ExerciseState {
       offset: newFetchParams.offset,
     };
     patchState({ isFetching: true });
+    if (variables.chapterId) {
+      this.apollo
+        .watchQuery({
+          query: EXERCISE_QUERIES.GET_EXERCISES,
+          variables,
+          fetchPolicy,
+        })
+        .valueChanges.subscribe(
+          ({ data }: any) => {
+            const response = data.exercises;
+            newFetchParams = { ...newFetchParams };
+            let paginatedExercises = state.paginatedExercises;
+            paginatedExercises = {
+              ...paginatedExercises,
+              [pageNumber]: response?.exercises,
+            };
 
-    this.apollo
-      .watchQuery({
-        query: EXERCISE_QUERIES.GET_EXERCISES,
-        variables,
-        fetchPolicy,
-      })
-      .valueChanges.subscribe(
-        ({ data }: any) => {
-          const response = data.exercises;
-          newFetchParams = { ...newFetchParams };
-          let paginatedExercises = state.paginatedExercises;
-          paginatedExercises = {
-            ...paginatedExercises,
-            [pageNumber]: response?.exercises,
-          };
+            let exercises =
+              convertPaginatedListToNormalList(paginatedExercises);
 
-          let exercises = convertPaginatedListToNormalList(paginatedExercises);
-
-          let submissions = response.submissions;
-          if (submissions.length) {
-            submissions = exercises.map((e) => {
-              const submission = submissions.find(
-                (s) => s.exercise?.id == e.id
-              );
-              if (submission) {
-                return submission;
-              } else return emptyExerciseSubmissionFormRecord;
+            let submissions = response.submissions;
+            if (submissions.length) {
+              submissions = exercises.map((e) => {
+                const submission = submissions.find(
+                  (s) => s.exercise?.id == e.id
+                );
+                if (submission) {
+                  return submission;
+                } else return emptyExerciseSubmissionFormRecord;
+              });
+            }
+            let lastPage = null;
+            if (response.length < newFetchParams.pageSize) {
+              lastPage = newFetchParams.currentPage;
+            }
+            patchState({
+              lastPage,
+              exercises,
+              submissions,
+              paginatedExercises,
+              fetchParamObjects: state.fetchParamObjects.concat([
+                newFetchParams,
+              ]),
+              isFetching: false,
             });
+          },
+          (error) => {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(error),
+                action: 'error',
+              })
+            );
+            patchState({ isFetching: false });
           }
-          let lastPage = null;
-          if (response.length < newFetchParams.pageSize) {
-            lastPage = newFetchParams.currentPage;
-          }
-          patchState({
-            lastPage,
-            exercises,
-            submissions,
-            paginatedExercises,
-            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
-            isFetching: false,
-          });
-        },
-        (error) => {
-          this.store.dispatch(
-            new ShowNotificationAction({
-              message: getErrorMessageFromGraphQLResponse(error),
-              action: 'error',
-            })
-          );
-          patchState({ isFetching: false });
-        }
-      );
+        );
+    }
   }
 
   @Action(ExerciseSubscriptionAction)

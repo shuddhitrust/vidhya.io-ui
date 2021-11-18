@@ -390,6 +390,11 @@ export const COURSE_QUERIES = {
         passScorePercentage
         passCompletionPercentage
         locked
+        completed
+        report {
+          percentage
+          completed
+        }
         mandatoryPrerequisites {
           id
           title
@@ -410,6 +415,7 @@ export const COURSE_QUERIES = {
         description
         status
         locked
+        completed
         mandatoryPrerequisites {
           id
           title
@@ -480,6 +486,7 @@ export const CHAPTER_QUERIES = {
         points
         status
         locked
+        completed
         prerequisites {
           id
           title
@@ -517,6 +524,8 @@ export const CHAPTER_QUERIES = {
         dueDate
         points
         status
+        completionStatus
+        completed
         locked
         prerequisites {
           id
