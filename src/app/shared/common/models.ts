@@ -65,6 +65,8 @@ export type CurrentMember = {
   firstName: string;
   lastName: string;
   name: string;
+  title: string;
+  bio: string;
   email: string;
   avatar: string;
   invitecode?: string;

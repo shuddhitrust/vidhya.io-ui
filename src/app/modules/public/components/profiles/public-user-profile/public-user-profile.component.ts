@@ -5,6 +5,7 @@ import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
+  CurrentMember,
   resources,
   RESOURCE_ACTIONS,
   User,
@@ -16,6 +17,7 @@ import {
   ResetPublicMemberFormAction,
 } from '../../../state/public/public.actions';
 import { PublicState } from '../../../state/public/public.state';
+import { AuthState } from 'src/app/modules/auth/state/auth.state';
 
 @Component({
   selector: 'app-public-user-profile',
@@ -38,11 +40,17 @@ export class PublicUserProfileComponent implements OnInit, OnDestroy {
   @Select(PublicState.isFetchingFormRecord)
   isFetchingFormRecord$: Observable<boolean>;
 
+  @Select(AuthState.getCurrentMember)
+  currentMember$: Observable<CurrentMember>;
+  currentMember: CurrentMember;
   constructor(
     private location: Location,
     private router: Router,
     private store: Store
   ) {
+    this.currentMember$.subscribe((val) => {
+      this.currentMember = val;
+    });
     this.member$.subscribe((val) => {
       this.member = val;
       this.courses = this.member?.courses;
@@ -81,8 +89,14 @@ export class PublicUserProfileComponent implements OnInit, OnDestroy {
     this.location.back();
   }
 
+  allowProfileEdit() {
+    return this.currentMember.username == this.username;
+  }
+
   editMember() {
-    this.router.navigate([uiroutes.MEMBER_FORM_ROUTE.route]);
+    if (this.allowProfileEdit()) {
+      this.router.navigate([uiroutes.MEMBER_FORM_ROUTE.route]);
+    }
   }
   onClickInstitution() {
     this.router.navigate([uiroutes.INSTITUTION_PROFILE_ROUTE.route], {

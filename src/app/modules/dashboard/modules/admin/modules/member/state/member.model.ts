@@ -104,5 +104,3 @@ export const memberColumns: any[] = [
   //   tooltipField: 'lastActive',
   // },
 ];
-
-export const MemberFormCloseURL = uiroutes.OWN_PROFILE_ROUTE.route;

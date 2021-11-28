@@ -30,11 +30,16 @@
     >
       <mat-icon>chat</mat-icon>
     </button> -->
-    <button class="nav-button" mat-mini-fab color="primary" aria-label="Avatar button">
+    <button
+      class="nav-button"
+      mat-mini-fab
+      color="primary"
+      aria-label="Avatar button"
+      (click)="onAvatarClick()"
+    >
       <img
         [src]="currentMember.avatar"
         alt="user-avatar"
-        (click)="onAvatarClick()"
         id="mini-user-avatar"
       />
     </button>

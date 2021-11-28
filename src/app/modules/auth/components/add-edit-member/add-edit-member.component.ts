@@ -90,6 +90,8 @@ export class AddEditMemberComponent implements OnInit {
         lastName: this.currentMember?.lastName,
         email: this.currentMember?.email,
         avatar: this.currentMember?.avatar,
+        title: this.currentMember?.title,
+        bio: this.currentMember?.bio,
         institution: {
           id: this.currentMember?.institution?.id,
           name: this.currentMember?.institution?.name,
@@ -134,6 +136,7 @@ export class AddEditMemberComponent implements OnInit {
     this.previewPath = null;
     const formGroup = this.fb.group({
       id: [memberFormRecord?.id],
+      username: [memberFormRecord?.username],
       firstName: [memberFormRecord?.firstName, [Validators.required]],
       lastName: [memberFormRecord?.lastName, [Validators.required]],
       avatar: [memberFormRecord?.avatar, [Validators.required]],

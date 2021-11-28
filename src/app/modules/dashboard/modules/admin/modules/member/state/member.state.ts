@@ -9,7 +9,6 @@ import {
 import {
   defaultMemberState,
   emptyMemberFormRecord,
-  MemberFormCloseURL,
   MemberStateModel,
 } from './member.model';
 
@@ -31,6 +30,7 @@ import {
   User,
   FetchParams,
   startingFetchParams,
+  CurrentMember,
 } from '../../../../../../../shared/common/models';
 import { USER_MUTATIONS } from '../../../../../../../shared/api/graphql/mutations.graphql';
 import { ShowNotificationAction } from '../../../../../../../shared/state/notifications/notification.actions';
@@ -244,7 +244,9 @@ export class MemberState {
       patchState({ formSubmitting });
       const values = form.value;
 
-      const { id, ...sanitizedValues } = values;
+      // const username = values?.username;
+
+      const { id, username, ...sanitizedValues } = values;
       const variables = {
         input: sanitizedValues,
         // id: values.id, // adding id to the mutation variables if it is an update mutation
@@ -273,7 +275,9 @@ export class MemberState {
               if (firstTimeSetup) {
                 this.router.navigateByUrl(uiroutes.HOME_ROUTE.route);
               } else {
-                this.router.navigate([MemberFormCloseURL]);
+                this.router.navigate([
+                  uiroutes.MEMBER_PROFILE_ROUTE.route + '/' + username,
+                ]);
               }
             } else {
               this.store.dispatch(

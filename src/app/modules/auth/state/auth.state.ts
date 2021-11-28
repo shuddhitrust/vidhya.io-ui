@@ -466,6 +466,8 @@ export class AuthState {
       lastName: user?.lastName,
       name: user?.name,
       email: user?.email,
+      title: user?.title,
+      bio: user?.bio,
       avatar: user?.avatar,
       invitecode: user?.invitecode,
       institution: {

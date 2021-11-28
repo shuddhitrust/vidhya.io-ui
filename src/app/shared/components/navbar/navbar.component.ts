@@ -20,7 +20,7 @@ import { uiroutes } from '../../common/ui-routes';
 })
 export class NavbarComponent implements OnInit {
   dashboardRoute: string = uiroutes.DASHBOARD_ROUTE.route;
-  profileRoute: string = uiroutes.OWN_PROFILE_ROUTE.route;
+  profileRoute: string;
   accountRoute: string = uiroutes.ACCOUNT_ROUTE.route;
   supportRoute: string = uiroutes.SUPPORT_ROUTE.route;
   @Select(AuthState)
@@ -40,11 +40,12 @@ export class NavbarComponent implements OnInit {
       this.isLoggedIn = this.authState?.isLoggedIn;
       this.isFullyAuthenticated = this.authState?.isFullyAuthenticated;
       this.currentMember = this.authState?.currentMember;
+      this.profileRoute = `${uiroutes.MEMBER_PROFILE_ROUTE.route}/${this.currentMember?.username}`;
     });
   }
 
   onAvatarClick() {
-    this.router.navigateByUrl(uiroutes.OWN_PROFILE_ROUTE.route);
+    this.router.navigateByUrl(this.profileRoute);
   }
 
   onChatClick() {

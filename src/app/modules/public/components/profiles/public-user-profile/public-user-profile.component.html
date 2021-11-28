@@ -4,6 +4,15 @@
   </button>
 
   <mat-card class="member-card">
+    <button
+      mat-mini-fab
+      color="info"
+      class="profile-button"
+      *ngIf="allowProfileEdit()"
+      (click)="editMember()"
+    >
+      <mat-icon>edit</mat-icon>
+    </button>
     <div>
       <img [src]="member.avatar" class="avatar" alt="profile pic" />
     </div>
@@ -11,13 +20,13 @@
       {{ member.name }}
     </h2>
 
-    <p>
-      <span *ngIf="member?.institution?.name">{{
-        member?.institution?.name
-      }}</span>
-    </p>
     <mat-card-content>
-      <p>{{ member.title }}</p>
+      <p>
+        {{ member.title }},
+        <span *ngIf="member?.institution?.name">{{
+          member?.institution?.name
+        }}</span>
+      </p>
       <p>
         {{ member.bio }}
       </p>

@@ -38,10 +38,6 @@ export const uiroutes = {
       actions: [RESOURCE_ACTIONS.CREATE, RESOURCE_ACTIONS.UPDATE],
     },
   },
-  OWN_PROFILE_ROUTE: {
-    route: 'my-profile',
-    auth: { resource: resources.OWN_PROFILE, actions: [RESOURCE_ACTIONS.GET] },
-  },
   MEMBER_PROFILE_ROUTE: {
     route: 'profile',
     auth: { resource: null, actions: [] },
