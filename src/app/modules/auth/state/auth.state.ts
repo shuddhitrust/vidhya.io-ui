@@ -567,7 +567,11 @@ export class AuthState {
               );
               this.store.dispatch(
                 new ShowNotificationAction({
-                  message: getErrorMessageFromGraphQLResponse(response?.errors),
+                  message:
+                    getErrorMessageFromGraphQLResponse(response?.errors) ==
+                    'Please, enter valid credentials.'
+                      ? 'Your username or password is incorrect. Please check their spelling and case and then retry.'
+                      : getErrorMessageFromGraphQLResponse(response?.errors),
                   action: 'error',
                 })
               );
