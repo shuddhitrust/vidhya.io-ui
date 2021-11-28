@@ -6,11 +6,7 @@ import { Observable } from 'rxjs';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { Institution } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
-import {
-  FetchNextPublicInstitutionsAction,
-  FetchPublicInstitutionssAction,
-  ResetPublicHomePageListsAction,
-} from '../../../state/public/public.actions';
+import { FetchNextPublicInstitutionsAction } from '../../../state/public/public.actions';
 import { PublicState } from '../../../state/public/public.state';
 
 @Component({
@@ -30,7 +26,6 @@ export class InstitutionsFeedComponent {
     private router: Router,
     public dialog: MatDialog
   ) {
-    this.fetchInstitutions();
     this.institutions$.subscribe((val) => {
       this.institutions = val;
     });
@@ -38,18 +33,6 @@ export class InstitutionsFeedComponent {
 
   generateInstitutionSubtitle(institution) {
     return `${institution.location}, ${institution.city}`;
-  }
-
-  fetchInstitutions() {
-    this.store.dispatch(
-      new FetchPublicInstitutionssAction({
-        searchParams: {
-          ...defaultSearchParams,
-          pageSize: 10,
-          columnFilters: {},
-        },
-      })
-    );
   }
 
   onInstitutionScroll() {
@@ -60,9 +43,5 @@ export class InstitutionsFeedComponent {
     this.router.navigateByUrl(
       `${uiroutes.INSTITUTION_PROFILE_ROUTE.route}/${institution.code}`
     );
-  }
-
-  ngOnDestroy(): void {
-    this.store.dispatch(new ResetPublicHomePageListsAction());
   }
 }

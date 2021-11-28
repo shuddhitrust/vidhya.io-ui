@@ -1,7 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Store } from '@ngxs/store';
+import {
+  defaultSearchParams,
+  USER_ROLES_NAMES,
+} from 'src/app/shared/common/constants';
+import { MembershipStatusOptions } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
+import {
+  FetchPublicInstitutionssAction,
+  FetchPublicMembersAction,
+} from '../../state/public/public.actions';
 
 const SCHOOLS_LABEL = 'Institutions';
 const STUDENTS_LABEL = 'Learners';
@@ -17,14 +27,84 @@ export class PublicTabsComponent implements OnInit {
   params;
   Institutions = SCHOOLS_LABEL;
   Learners = STUDENTS_LABEL;
+  draftSearchQuery: string = null;
+  currentQuery: string = null;
+  learnerColumnFilters = {
+    roles: [
+      USER_ROLES_NAMES.LEARNER,
+      USER_ROLES_NAMES.CLASS_ADMIN_LEARNER,
+      USER_ROLES_NAMES.INSTITUTION_ADMIN,
+    ],
+    membershipStatusIs: [MembershipStatusOptions.APPROVED],
+  };
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private store: Store
   ) {}
 
   ngOnInit(): void {
     this.setActiveIndexFromParams();
+    this.initiateGlobalSearch();
+  }
+  currentTab() {
+    return this.tabs[this.activeTabIndex];
+  }
+
+  searchOrClear(): string {
+    return this.draftSearchQuery == this.currentQuery &&
+      this.draftSearchQuery != null
+      ? 'close'
+      : 'search';
+  }
+
+  fetchInstitutions() {
+    this.store.dispatch(
+      new FetchPublicInstitutionssAction({
+        searchParams: {
+          ...defaultSearchParams,
+          searchQuery: this.draftSearchQuery,
+          pageSize: 10,
+          columnFilters: {},
+        },
+      })
+    );
+  }
+  fetchMembers() {
+    this.store.dispatch(
+      new FetchPublicMembersAction({
+        searchParams: {
+          ...defaultSearchParams,
+          searchQuery: this.draftSearchQuery,
+          pageSize: 36,
+          columnFilters: this.learnerColumnFilters,
+        },
+      })
+    );
+  }
+  fetchQueriesForTab() {
+    const currentTab = this.currentTab();
+    switch (currentTab) {
+      case this.Institutions:
+        this.fetchInstitutions();
+        break;
+
+      case this.Learners:
+        this.fetchMembers();
+        break;
+
+      default:
+        this.fetchInstitutions();
+        break;
+    }
+  }
+  initiateGlobalSearch() {
+    if (this.searchOrClear() == 'close') {
+      this.draftSearchQuery = null;
+    }
+    this.currentQuery = this.draftSearchQuery; // Setting the draft query as the current qurey
+    this.fetchQueriesForTab();
   }
   setActiveIndexFromParams() {
     this.route.queryParams.subscribe((params) => {
@@ -36,6 +116,7 @@ export class PublicTabsComponent implements OnInit {
           this.router.navigateByUrl(uiroutes.DASHBOARD_ROUTE.route);
         }
         this.activeTabIndex = parseInt(indexByParams, 10);
+        this.fetchQueriesForTab();
       } else {
         // If there are no tabname params, inject the available ones here.
         // Do this after authorization is implemented

@@ -1,26 +1,54 @@
-<nz-tabset
-  [nzSelectedIndex]="activeTabIndex"
-  [nzSize]="'large'"
-  [nzTabBarGutter]="20"
-  [nzTabBarStyle]="{
-    'font-family': 'Hahmlet, Roboto, sans-serif;'
-  }"
-  (nzSelectedIndexChange)="onTabChange($event)"
-  nzCentered
->
-  <nz-tab [nzTitle]="Institutions">
-    <ng-template nz-tab>
-      <app-institutions-feed></app-institutions-feed>
-    </ng-template>
-  </nz-tab>
-  <nz-tab [nzTitle]="Learners">
-    <ng-template nz-tab>
-      <app-learners-feed></app-learners-feed>
-    </ng-template>
-  </nz-tab>
-  <!-- <nz-tab nzTitle="Teams">
+<div id="parent-container">
+  <mat-form-field id="search-query-field" appearance="outline">
+    <input
+      [(ngModel)]="draftSearchQuery"
+      (keyup.enter)="initiateGlobalSearch()"
+      matInput
+      placeholder="Search..."
+    />
+    <mat-icon
+      matSuffix
+      id="search-input-icon"
+      [nz-tooltip]="
+        searchOrClear() == 'search' ? 'Initiate search' : 'Clear search'
+      "
+      (click)="initiateGlobalSearch()"
+      >{{ searchOrClear() }}</mat-icon
+    >
+  </mat-form-field>
+  <nz-tabset
+    [nzSelectedIndex]="activeTabIndex"
+    [nzSize]="'large'"
+    [nzTabBarGutter]="20"
+    [nzTabBarStyle]="{
+      'font-family': 'Hahmlet, Roboto, sans-serif;'
+    }"
+    (nzSelectedIndexChange)="onTabChange($event)"
+    nzCentered
+  >
+    <nz-tab [nzTitle]="Institutions">
+      <ng-template nz-tab>
+        <ng-container *ngTemplateOutlet="searchQueryDescription"></ng-container>
+
+        <app-institutions-feed></app-institutions-feed>
+      </ng-template>
+    </nz-tab>
+    <nz-tab [nzTitle]="Learners">
+      <ng-template nz-tab>
+        <ng-container *ngTemplateOutlet="searchQueryDescription"></ng-container>
+        <app-learners-feed></app-learners-feed>
+      </ng-template>
+    </nz-tab>
+    <!-- <nz-tab nzTitle="Teams">
     <ng-template nz-tab>
       <ng-container *ngTemplateOutlet="teamListFeed"></ng-container>
       </ng-template>
       </nz-tab> -->
-</nz-tabset>
+  </nz-tabset>
+</div>
+
+<ng-template #searchQueryDescription>
+  <p style="text-align: center">
+    <small *ngIf="currentQuery">Showing results for "{{ currentQuery }}"</small>
+  </p>
+</ng-template>

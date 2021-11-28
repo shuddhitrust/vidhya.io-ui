@@ -1,10 +1,20 @@
-nz-tabset {
+h2 {
+  text-align: center;
+}
+#parent-container {
+  position: relative;
   margin-top: -10px;
   margin-bottom: 0px;
 }
+#search-query-field {
+  position: absolute;
+  right: 20px;
+  top: 0px;
+  z-index: 1;
+}
 
-h2 {
-  text-align: center;
+#search-query-field mat-icon {
+  cursor: pointer;
 }
 
 #hero-block {
@@ -20,11 +30,6 @@ h2 {
 
 #hero-logo {
   width: 50%;
-}
-
-.scroll-feed {
-  overflow: auto;
-  height: calc(100vh - 135px);
 }
 
 .cards {
@@ -67,5 +72,12 @@ h2 {
   }
   .cards {
     grid-template-columns: 1fr;
+  }
+  #search-query-field {
+    position: static;
+    display: block;
+    right: 20px;
+    top: 0px;
+    z-index: 1;
   }
 }
