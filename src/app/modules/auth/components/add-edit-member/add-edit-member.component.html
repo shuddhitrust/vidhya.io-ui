@@ -19,16 +19,15 @@
         *ngIf="memberForm.get('avatar').value"
         class="col-lg-12 col-md-12 col-sm-12"
       >
-        <img
-          [src]="previewPath"
-          alt="Your avatar"
-          class="thumbnail"
-          (click)="avatarUpdate.click()"
-        />
+        <div class="image-container" (click)="avatarUpdate.click()">
+          <img [src]="previewPath" class="thumbnail" alt="Your avatar" />
+          <div class="centered">Click here to update image</div>
+        </div>
       </div>
       <mat-hint
-        >Your photo will only be visible to those within your
-        institution.</mat-hint
+        >Your photo will only be visible to other members of
+        {{ currentMember.institution.name }} and the administrators of Shuddhi
+        Vidhya.</mat-hint
       >
       <input matInput hidden />
       <mat-label [hidden]="previewPath">Avatar</mat-label><br /><br />

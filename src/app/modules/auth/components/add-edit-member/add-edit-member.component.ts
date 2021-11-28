@@ -64,7 +64,6 @@ export class AddEditMemberComponent implements OnInit {
   groupInstitutionId: string;
   firstTimeSetup: boolean;
   currentMember: User;
-
   // Validation Constants
   titleMaxLength = 60;
   bioMaxLength = 150;
