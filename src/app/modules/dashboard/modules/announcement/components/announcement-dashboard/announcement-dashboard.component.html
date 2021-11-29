@@ -1,9 +1,15 @@
-<div class="feed-header-block">
-  <!-- <h2>Announcements</h2> -->
+<div class="floating-header-button-container">
+  <button
+    (click)="markAllAsSeen()"
+    mat-raised-button
+    color="primary"
+    nz-tooltip="Mark all the announcements as seen"
+  >
+    Mark all as seen
+  </button>
   <button
     *ngIf="showAnnouncementCreateOption()"
     (click)="createAnnouncement()"
-    class="floating-header-button-top"
     mat-icon-button
     color="primary"
   >

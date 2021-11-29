@@ -54,3 +54,9 @@ export class DeleteAnnouncementAction {
 
   constructor(public payload: idPayload) {}
 }
+
+export class MarkAllAnnouncementsSeenAction {
+  static readonly type = '[ANNOUNCEMENT] Mark all as read';
+
+  constructor() {}
+}

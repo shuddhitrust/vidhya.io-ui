@@ -15,9 +15,15 @@ import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   FetchAnnouncementsAction,
   FetchNextAnnouncementsAction,
+  MarkAllAnnouncementsSeenAction,
 } from 'src/app/modules/dashboard/modules/announcement/state/announcement.actions';
 import { AnnouncementState } from 'src/app/modules/dashboard/modules/announcement/state/announcement.state';
 import { OptionsState } from 'src/app/shared/state/options/options.state';
+import {
+  MasterConfirmationDialog,
+  MasterConfirmationDialogObject,
+} from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-announcement-dashboard',
@@ -43,6 +49,7 @@ export class AnnouncementDashboardComponent implements OnInit {
   constructor(
     private store: Store,
     private router: Router,
+    private dialog: MatDialog,
     private auth: AuthorizationService
   ) {
     this.groupOptions$.subscribe((val) => {
@@ -64,6 +71,23 @@ export class AnnouncementDashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {}
+  markAllAsSeen() {
+    const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
+      title: 'Confirm action?',
+      message: `Are you sure you want to mark all the announcements as seen?`,
+      confirmButtonText: 'Yes',
+      denyButtonText: 'No',
+    };
+    const dialogRef = this.dialog.open(MasterConfirmationDialog, {
+      data: masterDialogConfirmationObject,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result == true) {
+        this.store.dispatch(new MarkAllAnnouncementsSeenAction());
+      }
+    });
+  }
   onScroll() {
     if (!this.isFetching) {
       this.store.dispatch(new FetchNextAnnouncementsAction());

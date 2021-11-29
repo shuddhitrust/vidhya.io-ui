@@ -239,6 +239,16 @@ export const ANNOUNCEMENT_MUTATIONS = {
       }
     }
   `,
+  MARK_ANNOUNCEMENTS_SEEN: gql`
+    mutation markAnnouncementsSeen {
+      markAnnouncementsSeen {
+        ok
+        announcements {
+          id
+        }
+      }
+    }
+  `,
 };
 
 export const COURSE_MUTATIONS = {

@@ -15,6 +15,7 @@ import {
   FetchNextAnnouncementsAction,
   ForceRefetchAnnouncementsAction,
   GetAnnouncementAction,
+  MarkAllAnnouncementsSeenAction,
   ResetAnnouncementFormAction,
 } from './announcement.actions';
 import { ANNOUNCEMENT_QUERIES } from '../../../../../shared/api/graphql/queries.graphql';
@@ -455,5 +456,55 @@ export class AnnouncementState {
       announcementFormRecord: emptyAnnouncementFormRecord,
       formSubmitting: false,
     });
+  }
+
+  @Action(MarkAllAnnouncementsSeenAction)
+  markAllAnnouncementsRead({
+    getState,
+    patchState,
+  }: StateContext<AnnouncementStateModel>) {
+    this.apollo
+      .mutate({
+        mutation: ANNOUNCEMENT_MUTATIONS.MARK_ANNOUNCEMENTS_SEEN,
+      })
+      .subscribe(
+        ({ data }: any) => {
+          const response = data.markAnnouncementsSeen;
+
+          if (response.ok) {
+            const seenAnnouncementIds = response.announcements.map((a) => a.id);
+            const state = getState();
+            const existingAnnouncements = state.announcements;
+            const newAnnouncements = existingAnnouncements.map((a) => {
+              let newA = Object.assign({}, a);
+              newA.seen = seenAnnouncementIds.includes(a.id) ? true : false;
+              return newA;
+            });
+            patchState({ announcements: newAnnouncements });
+            this.store.dispatch(new GetUnreadCountAction());
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: 'Successfully marked all announcements as seen!',
+                action: 'success',
+              })
+            );
+          } else {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(response?.errors),
+                action: 'error',
+              })
+            );
+          }
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+        }
+      );
   }
 }
