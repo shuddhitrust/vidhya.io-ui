@@ -1,4 +1,5 @@
 import { emptyInstitutionFormRecord } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.model';
+import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   FetchPolicyModel,
   FetchParams,
@@ -68,4 +69,12 @@ export const defaultPublicState: PublicStateModel = {
   institutionFormId: null,
   institutionFormRecord: emptyInstitutionFormRecord,
   isFetchingInstitutions: false,
+};
+
+export const getMemberProfileLink = (member: User) => {
+  return `${uiroutes.MEMBER_PROFILE_ROUTE.route}/${member.username}`;
+};
+
+export const getInstitutionProfileLink = (institution: Institution) => {
+  return `${uiroutes.INSTITUTION_PROFILE_ROUTE.route}/${institution.code}`;
 };

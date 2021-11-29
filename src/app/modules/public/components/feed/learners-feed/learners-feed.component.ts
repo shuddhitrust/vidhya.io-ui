@@ -1,17 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import {
-  defaultSearchParams,
-  USER_ROLES_NAMES,
-} from 'src/app/shared/common/constants';
+import { User } from 'src/app/shared/common/models';
 import { generateMemberSubtitle } from 'src/app/shared/common/functions';
-import { MembershipStatusOptions, User } from 'src/app/shared/common/models';
-import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { FetchNextPublicMembersAction } from '../../../state/public/public.actions';
 import { PublicState } from '../../../state/public/public.state';
+import { Router } from '@angular/router';
+import { getMemberProfileLink } from '../../../state/public/public.model';
 
 @Component({
   selector: 'app-learners-feed',
@@ -45,8 +41,7 @@ export class PublicLearnersFeedComponent {
   }
 
   onClickLearnerCard(learner) {
-    this.router.navigateByUrl(
-      `${uiroutes.MEMBER_PROFILE_ROUTE.route}/${learner.username}`
-    );
+    const link = getMemberProfileLink(learner);
+    this.router.navigateByUrl(link);
   }
 }

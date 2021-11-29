@@ -12,6 +12,7 @@ import {
   Group,
   groupTypeOptions,
   EmptyCriterionResponse,
+  Institution,
 } from './models';
 import {
   day,
@@ -22,6 +23,7 @@ import {
   week,
   year,
 } from './constants';
+import { uiroutes } from './ui-routes';
 
 export const getOptionLabel = (
   value: string,

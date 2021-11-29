@@ -44,7 +44,7 @@ export const PUBLIC_QUERIES = {
         bio
         avatar
         institution {
-          id
+          code
           name
         }
         courses {

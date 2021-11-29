@@ -23,9 +23,9 @@
     <mat-card-content>
       <p>
         {{ member.title }},
-        <span *ngIf="member?.institution?.name">{{
+        <a (click)="onClickInstitution()" *ngIf="member?.institution?.name">{{
           member?.institution?.name
-        }}</span>
+        }}</a>
       </p>
       <p>
         {{ member.bio }}

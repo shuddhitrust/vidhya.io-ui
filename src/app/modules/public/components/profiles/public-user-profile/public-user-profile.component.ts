@@ -18,6 +18,7 @@ import {
 } from '../../../state/public/public.actions';
 import { PublicState } from '../../../state/public/public.state';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
+import { getInstitutionProfileLink } from '../../../state/public/public.model';
 
 @Component({
   selector: 'app-public-user-profile',
@@ -90,20 +91,18 @@ export class PublicUserProfileComponent implements OnInit, OnDestroy {
   }
 
   allowProfileEdit() {
-    return this.currentMember.username == this.username;
+    return this.currentMember?.username == this.username;
   }
 
   editMember() {
     if (this.allowProfileEdit()) {
-      this.router.navigate([uiroutes.MEMBER_FORM_ROUTE.route]);
+      this.router.navigateByUrl(uiroutes.MEMBER_FORM_ROUTE.route);
     }
   }
   onClickInstitution() {
-    this.router.navigate([uiroutes.INSTITUTION_PROFILE_ROUTE.route], {
-      queryParams: { id: this.member?.institution?.id },
-      queryParamsHandling: 'merge',
-      skipLocationChange: false,
-    });
+    this.router.navigateByUrl(
+      getInstitutionProfileLink(this.member.institution)
+    );
   }
 
   ngOnDestroy(): void {

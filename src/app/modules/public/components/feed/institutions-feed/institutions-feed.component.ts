@@ -3,10 +3,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { Institution } from 'src/app/shared/common/models';
-import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { FetchNextPublicInstitutionsAction } from '../../../state/public/public.actions';
+import { getInstitutionProfileLink } from '../../../state/public/public.model';
 import { PublicState } from '../../../state/public/public.state';
 
 @Component({
@@ -40,8 +39,6 @@ export class InstitutionsFeedComponent {
   }
 
   onClickInstitutionCard(institution) {
-    this.router.navigateByUrl(
-      `${uiroutes.INSTITUTION_PROFILE_ROUTE.route}/${institution.code}`
-    );
+    this.router.navigateByUrl(getInstitutionProfileLink(institution));
   }
 }
