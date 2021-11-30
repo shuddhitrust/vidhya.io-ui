@@ -1,3 +1,4 @@
+import { USER_ROLES_NAMES } from 'src/app/shared/common/constants';
 import {
   autoGenOptions,
   getOptionLabel,
@@ -104,3 +105,12 @@ export const memberColumns: any[] = [
   //   tooltipField: 'lastActive',
   // },
 ];
+
+export const LearnerColumnFilters = {
+  roles: [
+    USER_ROLES_NAMES.LEARNER,
+    USER_ROLES_NAMES.CLASS_ADMIN_LEARNER,
+    USER_ROLES_NAMES.INSTITUTION_ADMIN,
+  ],
+  membershipStatusIs: [MembershipStatusOptions.APPROVED],
+};

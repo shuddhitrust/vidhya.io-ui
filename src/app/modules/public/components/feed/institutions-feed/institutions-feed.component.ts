@@ -3,8 +3,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
+import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { Institution } from 'src/app/shared/common/models';
-import { FetchNextPublicInstitutionsAction } from '../../../state/public/public.actions';
+import {
+  FetchNextPublicInstitutionsAction,
+  FetchPublicInstitutionssAction,
+} from '../../../state/public/public.actions';
 import { getInstitutionProfileLink } from '../../../state/public/public.model';
 import { PublicState } from '../../../state/public/public.state';
 
@@ -25,11 +29,23 @@ export class InstitutionsFeedComponent {
     private router: Router,
     public dialog: MatDialog
   ) {
+    this.fetchInstitutions();
     this.institutions$.subscribe((val) => {
       this.institutions = val;
     });
   }
 
+  fetchInstitutions() {
+    this.store.dispatch(
+      new FetchPublicInstitutionssAction({
+        searchParams: {
+          ...defaultSearchParams,
+          pageSize: 10,
+          columnFilters: {},
+        },
+      })
+    );
+  }
   generateInstitutionSubtitle(institution) {
     return `${institution.location}, ${institution.city}`;
   }
