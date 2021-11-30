@@ -1,0 +1,46 @@
+<div class="feed-header-block">
+  <!-- <h2>Projects</h2> -->
+  <button
+    *ngIf="authorizeResourceMethod(resourceActions.CREATE)"
+    (click)="createProject()"
+    class="floating-header-button-top"
+    mat-icon-button
+    color="primary"
+  >
+    <mat-icon>add_circle</mat-icon>
+  </button>
+</div>
+<span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
+  <span *ngIf="(projects$ | async)?.length > 0; else feedEmpty">
+    <div
+      class="scroll-feed"
+      infiniteScroll
+      [infiniteScrollDistance]="2"
+      [infiniteScrollThrottle]="50"
+      infiniteScrollContainer=".scroll-feed"
+      [fromRoot]="true"
+      (scrolled)="onScroll()"
+    >
+      <div *ngFor="let project of projects$ | async">
+        <mat-card class="feed-card" (click)="openProject(project)">
+          <h2>{{ project.title }}</h2>
+          <p>{{ clip(project.description) }}</p>
+
+          <mat-card-actions>
+            <small style="font-style: italic">{{
+              renderProjectSubtitle(project)
+            }}</small></mat-card-actions
+          >
+        </mat-card>
+      </div>
+    </div>
+  </span>
+
+  <ng-template #feedEmpty>
+    <p class="center-title">There are no groups you are part of!</p>
+  </ng-template>
+
+  <ng-template #loading>
+    <app-simple-loading-spinner></app-simple-loading-spinner>
+  </ng-template>
+</span>

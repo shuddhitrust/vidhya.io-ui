@@ -49,6 +49,13 @@ export const uiroutes = {
       actions: [RESOURCE_ACTIONS.CREATE, RESOURCE_ACTIONS.UPDATE],
     },
   },
+  PROJECT_FORM_ROUTE: {
+    route: 'project-form',
+    auth: {
+      resource: resources.PROJECT,
+      actions: [RESOURCE_ACTIONS.CREATE, RESOURCE_ACTIONS.UPDATE],
+    },
+  },
   USER_ROLE_PROFILE_ROUTE: {
     route: 'user-role-profile',
     auth: { resource: resources.USER_ROLE, actions: [RESOURCE_ACTIONS.GET] },
