@@ -23,4 +23,4 @@ const imports = [SharedModule];
   ],
   exports: [...declarations, ...imports],
 })
-export class GroupModule {}
+export class ProjectModule {}

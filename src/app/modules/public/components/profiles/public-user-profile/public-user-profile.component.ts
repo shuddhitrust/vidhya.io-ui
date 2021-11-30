@@ -22,8 +22,8 @@ import { PublicState } from '../../../state/public/public.state';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { getInstitutionProfileLink } from '../../../state/public/public.model';
 
-const COURSE_TAB_LABEL = 'Courses';
-const PROJECT_TAB_LABEL = 'Projects';
+export const COURSE_TAB_LABEL = 'Courses';
+export const PROJECT_TAB_LABEL = 'Projects';
 @Component({
   selector: 'app-public-user-profile',
   templateUrl: './public-user-profile.component.html',

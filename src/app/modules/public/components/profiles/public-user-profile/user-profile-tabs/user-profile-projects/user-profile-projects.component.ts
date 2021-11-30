@@ -2,6 +2,8 @@ import { Component, Input } from '@angular/core';
 import { User } from 'src/app/shared/common/models';
 import { parseDateTime } from 'src/app/shared/common/functions';
 import { emptyMemberFormRecord } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.model';
+import { Router } from '@angular/router';
+import { uiroutes } from 'src/app/shared/common/ui-routes';
 
 @Component({
   selector: 'app-user-projects',
@@ -15,11 +17,13 @@ export class UserProjectsComponent {
   @Input() member: User = emptyMemberFormRecord;
   @Input() ownProfile: boolean = false;
   projects: any = [];
-  constructor() {
+  constructor(private router: Router) {
     this.projects = this.member?.projects ? this.member?.projects : [];
   }
 
-  createProject() {}
+  createProject() {
+    this.router.navigateByUrl(uiroutes.PROJECT_FORM_ROUTE.route);
+  }
 
   ngOnChanges(changes) {
     if (changes.member) {

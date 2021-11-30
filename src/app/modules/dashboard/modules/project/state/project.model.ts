@@ -1,5 +1,4 @@
-import { GROUPS } from 'src/app/modules/dashboard/dashboard.component';
-import { defaultLogos } from 'src/app/shared/common/constants';
+import { PROJECT_TAB_LABEL } from 'src/app/modules/public/components/profiles/public-user-profile/public-user-profile.component';
 import {
   FetchParams,
   FetchPolicyModel,
@@ -9,13 +8,12 @@ import { uiroutes } from 'src/app/shared/common/ui-routes';
 
 export const emptyProjectFormRecord: Project = {
   id: null,
-  avatar: defaultLogos.project,
-  name: null,
+  title: null,
+  author: null,
+  link: null,
+  course: null,
+  contributors: null,
   description: null,
-  institution: { id: null },
-  members: [],
-  admins: [],
-  projectType: null,
 };
 export interface ProjectStateModel {
   projects: Project[];
@@ -48,4 +46,4 @@ export const defaultProjectState: ProjectStateModel = {
 };
 
 export const ProjectFormCloseURL =
-  uiroutes.DASHBOARD_ROUTE.route + '?tab=' + GROUPS;
+  uiroutes.MEMBER_PROFILE_ROUTE.route + '?tab=' + PROJECT_TAB_LABEL;

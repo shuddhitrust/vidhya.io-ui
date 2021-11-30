@@ -70,7 +70,7 @@ export class ProjectState {
     const options: MatSelectOption[] = state.projects.map((i) => {
       const option: MatSelectOption = {
         value: i.id,
-        label: i.name,
+        label: i.title,
       };
       return option;
     });
@@ -221,35 +221,35 @@ export class ProjectState {
       );
   }
 
-  @Action(ProjectSubscriptionAction)
-  subscribeToProjects({
-    getState,
-    patchState,
-  }: StateContext<ProjectStateModel>) {
-    const state = getState();
-    if (!state.projectsSubscribed) {
-      this.apollo
-        .subscribe({
-          query: SUBSCRIPTIONS.project,
-        })
-        .subscribe((result: any) => {
-          const state = getState();
-          const method = result?.data?.notifyProject?.method;
-          const project = result?.data?.notifyProject?.project;
-          const { newPaginatedItems, newItemsList } =
-            paginatedSubscriptionUpdater({
-              paginatedItems: state.paginatedProjects,
-              method,
-              modifiedItem: project,
-            });
-          patchState({
-            projects: newItemsList,
-            paginatedProjects: newPaginatedItems,
-            projectsSubscribed: true,
-          });
-        });
-    }
-  }
+  // @Action(ProjectSubscriptionAction)
+  // subscribeToProjects({
+  //   getState,
+  //   patchState,
+  // }: StateContext<ProjectStateModel>) {
+  //   const state = getState();
+  //   if (!state.projectsSubscribed) {
+  //     this.apollo
+  //       .subscribe({
+  //         query: SUBSCRIPTIONS.project,
+  //       })
+  //       .subscribe((result: any) => {
+  //         const state = getState();
+  //         const method = result?.data?.notifyProject?.method;
+  //         const project = result?.data?.notifyProject?.project;
+  //         const { newPaginatedItems, newItemsList } =
+  //           paginatedSubscriptionUpdater({
+  //             paginatedItems: state.paginatedProjects,
+  //             method,
+  //             modifiedItem: project,
+  //           });
+  //         patchState({
+  //           projects: newItemsList,
+  //           paginatedProjects: newPaginatedItems,
+  //           projectsSubscribed: true,
+  //         });
+  //       });
+  //   }
+  // }
 
   @Action(GetProjectAction)
   getProject(
