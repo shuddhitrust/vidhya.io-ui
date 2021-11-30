@@ -1,6 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
-import { Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+
+import { filter } from 'rxjs/operators';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
@@ -20,6 +22,8 @@ import { PublicState } from '../../../state/public/public.state';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { getInstitutionProfileLink } from '../../../state/public/public.model';
 
+const COURSE_TAB_LABEL = 'Courses';
+const PROJECT_TAB_LABEL = 'Projects';
 @Component({
   selector: 'app-public-user-profile',
   templateUrl: './public-user-profile.component.html',
@@ -30,9 +34,13 @@ import { getInstitutionProfileLink } from '../../../state/public/public.model';
 })
 export class PublicUserProfileComponent implements OnInit, OnDestroy {
   url: string = '';
+  params: object = {};
   resource = resources.OWN_PROFILE;
   userDoesNotExist: boolean = false;
   resourceActions = RESOURCE_ACTIONS;
+
+  tabs: string[] = [COURSE_TAB_LABEL, PROJECT_TAB_LABEL];
+  activeTabIndex = 0;
   @Select(PublicState.getMemberFormRecord)
   member$: Observable<User>;
   member: any;
@@ -47,8 +55,16 @@ export class PublicUserProfileComponent implements OnInit, OnDestroy {
   constructor(
     private location: Location,
     private router: Router,
+    private route: ActivatedRoute,
     private store: Store
   ) {
+    // subscribing to changes in the URL and refetching user from it.
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        this.url = event.url;
+        this.fetchUserFromUrl();
+      });
     this.currentMember$.subscribe((val) => {
       this.currentMember = val;
     });
@@ -61,14 +77,37 @@ export class PublicUserProfileComponent implements OnInit, OnDestroy {
         this.userDoesNotExist = false;
       }
     });
+    this.setActiveIndexFromParams();
+  }
+
+  setActiveIndexFromParams() {
+    this.route.queryParams.subscribe((params) => {
+      this.params = params;
+      const tabName = params['tab'];
+      if (tabName) {
+        const indexByParams = this.getIndexFromTabName(tabName);
+        if (indexByParams === 'NaN') {
+          this.router.navigateByUrl(uiroutes.DASHBOARD_ROUTE.route);
+        }
+        this.activeTabIndex = parseInt(indexByParams, 10);
+      } else {
+        // If there are no tabname params, inject the available ones here.
+        // Do this after authorization is implemented
+      }
+    });
   }
 
   ngOnInit(): void {
     this.url = window.location.href;
+    this.fetchUserFromUrl();
+  }
+
+  fetchUserFromUrl() {
     if (this.router.url.includes(uiroutes.MEMBER_PROFILE_ROUTE.route)) {
-      this.username = this.url.split(
+      const usernameWithParams = this.url.split(
         uiroutes.MEMBER_PROFILE_ROUTE.route + '/'
       )[1];
+      this.username = usernameWithParams.split('?')[0];
       if (
         this.username &&
         this.username != 'undefined' &&
@@ -90,12 +129,12 @@ export class PublicUserProfileComponent implements OnInit, OnDestroy {
     this.location.back();
   }
 
-  allowProfileEdit() {
+  ownProfile(): boolean {
     return this.currentMember?.username == this.username;
   }
 
   editMember() {
-    if (this.allowProfileEdit()) {
+    if (this.ownProfile()) {
       this.router.navigateByUrl(uiroutes.MEMBER_FORM_ROUTE.route);
     }
   }
@@ -104,6 +143,20 @@ export class PublicUserProfileComponent implements OnInit, OnDestroy {
       getInstitutionProfileLink(this.member.institution)
     );
   }
+  onTabChange($event) {
+    const tab = this.tabs[$event];
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab },
+      queryParamsHandling: 'merge',
+      skipLocationChange: false,
+    });
+  }
+  getIndexFromTabName = (tabName: string): string => {
+    const index = this.tabs.indexOf(tabName);
+
+    return index?.toString();
+  };
 
   ngOnDestroy(): void {
     this.store.dispatch(new ResetPublicMemberFormAction());

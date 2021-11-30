@@ -14,6 +14,8 @@ import { HomeComponent } from './components/pages/home/home.component';
 import { PasswordResetComponent } from './components/pages/password-reset/password-reset.component';
 import { PrivacyComponent } from './components/pages/privacy/privacy.component';
 import { PublicUserProfileComponent } from './components/profiles/public-user-profile/public-user-profile.component';
+import { UserCoursesComponent } from './components/profiles/public-user-profile/user-profile-tabs/user-profile-courses/user-profile-courses.component';
+import { UserProjectsComponent } from './components/profiles/public-user-profile/user-profile-tabs/user-profile-projects/user-profile-projects.component';
 
 const declarations = [
   HomeComponent,
@@ -26,6 +28,8 @@ const declarations = [
   PublicLearnersFeedComponent,
   InstitutionsFeedComponent,
   InstitutionProfileComponent,
+  UserCoursesComponent,
+  UserProjectsComponent,
 ];
 
 @NgModule({

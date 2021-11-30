@@ -2,49 +2,6 @@ h2 {
   text-align: center;
 }
 
-.member-card {
-  text-align: left;
-  display: block;
-  margin: 10px auto;
-  padding: 20px;
-  border-radius: 5px;
-  width: 80%;
-  min-height: 200px;
-}
-
-.tabs-card {
-  text-align: left;
-  display: block;
-  margin: auto;
-  padding: 20px;
-  border-radius: 5px;
-  width: 80%;
-  min-height: 200px;
-}
-
-#user-not-found {
-  margin: 100px;
-  text-align: center;
-}
-
-.avatar {
-  display: inline;
-  height: 150px;
-  width: auto;
-  margin-bottom: 20px;
-  border: 3px solid var(--shuddhi-color);
-  border-radius: 5px;
-}
-
-.profile-button {
-  float: right;
-  margin: 5px 10px;
-}
-
-.icon-button {
-  cursor: pointer;
-}
-
 .legend-container {
   display: inline;
 }
@@ -136,11 +93,5 @@ h2 {
     display: block;
     margin-right: auto;
     margin-left: auto;
-  }
-  .avatar {
-    width: auto;
-    max-height: 150px;
-    display: block;
-    margin: 5px auto 20px auto;
   }
 }

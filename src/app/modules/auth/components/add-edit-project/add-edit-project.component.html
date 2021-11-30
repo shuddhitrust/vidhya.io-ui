@@ -1,0 +1,207 @@
+<button
+  mat-icon-button
+  (click)="goBack()"
+  *ngIf="!firstTimeSetup"
+  class="floating-back-button"
+>
+  <mat-icon>keyboard_backspace</mat-icon>
+</button>
+<h2 class="center-title">Member Form</h2>
+<div class="col-lg-8 col-sm-12 form-container">
+  <form
+    [formGroup]="memberForm"
+    novalidate
+    (submit)="submitForm(memberForm, formDirective)"
+    #formDirective="ngForm"
+  >
+    <div class="col-lg-3 col-md-4 col-sm-12 floating-avatar">
+      <div
+        *ngIf="memberForm.get('avatar').value"
+        class="col-lg-12 col-md-12 col-sm-12"
+      >
+        <div class="image-container" (click)="avatarUpdate.click()">
+          <img [src]="previewPath" class="thumbnail" alt="Your avatar" />
+          <div class="centered">Click here to update image</div>
+        </div>
+      </div>
+      <mat-hint
+        >Your photo will only be visible to other members of
+        {{ currentMember.institution.name }} and the administrators of Shuddhi
+        Vidhya.</mat-hint
+      >
+      <input matInput hidden />
+      <mat-label [hidden]="previewPath">Avatar</mat-label><br /><br />
+      <input
+        [hidden]="previewPath"
+        #avatarUpdate
+        id="avatar-choose-button"
+        type="file"
+        accept="image/*"
+        placeholder="Your avatar"
+        (change)="onAvatarChange($event)"
+      />
+    </div>
+    <mat-form-field class="col-lg-9 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>First Name</mat-label>
+      <input
+        matInput
+        required
+        formControlName="firstName"
+        placeholder="Your first name"
+      />
+      <small
+        class="validation-error"
+        *ngIf="
+          memberForm.get('firstName').hasError('required') &&
+          formDirective.submitted
+        "
+      >
+        First Name is required
+      </small>
+    </mat-form-field>
+
+    <mat-form-field class="col-lg-9 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Last Name</mat-label>
+      <input
+        matInput
+        required
+        formControlName="lastName"
+        placeholder="Your last name"
+      />
+      <small
+        class="validation-error"
+        *ngIf="
+          memberForm.get('lastName').hasError('required') &&
+          formDirective.submitted
+        "
+      >
+        Last Name is required
+      </small>
+    </mat-form-field>
+    <mat-form-field
+      class="col-lg-12 col-md-12 col-sm-12"
+      disabled
+      appearance="outline"
+    >
+      <mat-label>Email ID</mat-label>
+      <input
+        matInput
+        formControlName="email"
+        required
+        readonly
+        placeholder="Email ID"
+      />
+      <small
+        class="validation-error"
+        *ngIf="
+          memberForm.get('email').hasError('required') &&
+          formDirective.submitted
+        "
+      >
+        Email is required
+      </small>
+      <small
+        class="validation-error"
+        *ngIf="
+          memberForm.get('email').hasError('email') && formDirective.submitted
+        "
+      >
+        Please enter a valid email
+      </small>
+    </mat-form-field>
+
+    <mat-form-field
+      class="col-lg-12 col-md-12 col-sm-12"
+      [class.dropdoawn-loading]="isFetchingInstitutions"
+      appearance="outline"
+    >
+      <mat-label>Institution</mat-label>
+      <mat-select
+        formControlName="institution"
+        required
+        placeholder="The institution you belong to"
+      >
+        <mat-option
+          *ngFor="let institution of institutionOptions"
+          [value]="institution.value"
+          disabled
+        >
+          {{ institution.label }}
+        </mat-option>
+      </mat-select>
+      <small
+        class="validation-error"
+        *ngIf="
+          memberForm.get('institution').hasError('required') &&
+          formDirective.submitted
+        "
+      >
+        Institution is required
+      </small>
+    </mat-form-field>
+
+    <mat-form-field
+      *ngIf="createForm && groupOptions.length"
+      class="col-lg-12 col-md-12 col-sm-12"
+      [class.dropdoawn-loading]="isFetchingGroups"
+      appearance="outline"
+    >
+      <mat-label>Class</mat-label>
+      <mat-select
+        formControlName="groups"
+        placeholder="Which class you belong to"
+      >
+        <mat-option *ngFor="let group of groupOptions" [value]="group.value">
+          {{ group.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Title</mat-label>
+      <textarea
+        matInput
+        formControlName="title"
+        placeholder="Your title. Enter your class if you're a student"
+      ></textarea>
+      <small
+        class="validation-error"
+        *ngIf="
+          memberForm.get('title').hasError('maxlength') &&
+          formDirective.submitted
+        "
+      >
+        Title should be less than {{ titleMaxLength }} characters
+      </small>
+    </mat-form-field>
+
+    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Bio</mat-label>
+      <textarea
+        matInput
+        formControlName="bio"
+        placeholder="Brief bio about yourself"
+      ></textarea>
+      <small
+        class="validation-error"
+        *ngIf="
+          memberForm.get('bio').hasError('maxlength') && formDirective.submitted
+        "
+      >
+        Bio should be less than {{ bioMaxLength }} characters
+      </small>
+    </mat-form-field>
+
+    <button
+      type="submit"
+      class="floating-button-bottom"
+      mat-raised-button
+      color="primary"
+      [disabled]="(formSubmitting$ | async) === true"
+    >
+      {{ (formSubmitting$ | async) === true ? "Submitting..." : "Submit" }}
+    </button>
+  </form>
+</div>
+<br />
+<br />

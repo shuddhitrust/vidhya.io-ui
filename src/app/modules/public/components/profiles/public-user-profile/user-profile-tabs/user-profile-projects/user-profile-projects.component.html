@@ -1,0 +1,22 @@
+<button
+  *ngIf="ownProfile"
+  class="profile-button"
+  (click)="createProject()"
+  mat-icon-button
+  color="primary"
+>
+  <mat-icon>add_circle</mat-icon>
+</button>
+<span *ngIf="projects?.length > 0; else noProjects">
+  <div *ngFor="let card of projects">
+    <mat-card class="feed-card">
+      <h2 style="text-align: left">{{ card.title }}</h2>
+    </mat-card>
+  </div>
+</span>
+
+<ng-template #noProjects>
+  <p style="text-align: center">
+    {{ member.name }} has not published any projects so far
+  </p>
+</ng-template>

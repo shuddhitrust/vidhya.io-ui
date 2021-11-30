@@ -1,0 +1,29 @@
+.floating-avatar {
+  float: left;
+}
+
+.image-container {
+  position: relative;
+  text-align: center;
+  color: white;
+  cursor: pointer;
+}
+
+/* Centered text */
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background: rgba(0, 0, 0, 0.3);
+  transform: translate(-50%, -50%);
+}
+
+@media screen and (max-width: 990px) {
+  .floating-avatar {
+    float: none;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+}

@@ -150,6 +150,8 @@ export type User = {
   invitecode?: string;
   title?: string;
   bio?: string;
+  courses?: Course[];
+  projects?: Project[];
   role: { name?: string; permissions: UserPermissions };
   createdAt?: string;
   updatedAt?: string;
@@ -244,6 +246,16 @@ export type CourseSection = {
   course: any;
   createdAt?: string;
   updatedAt?: string;
+};
+
+export type Project = {
+  id: number;
+  title: string;
+  author: any;
+  description: string;
+  link: string;
+  course: any;
+  contributors: any[];
 };
 
 export type Chapter = {
