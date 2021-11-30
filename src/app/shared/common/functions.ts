@@ -188,7 +188,8 @@ export const columnFiltersChanged = ({
       compareObjects(
         lastFetchParams.columnFilters,
         newFetchParams.columnFilters
-      )
+      ) ||
+      lastFetchParams.searchQuery == newFetchParams.searchQuery
     ) {
       return false;
     }

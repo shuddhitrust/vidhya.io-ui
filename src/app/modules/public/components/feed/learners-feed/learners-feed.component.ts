@@ -20,7 +20,7 @@ import { PublicState } from '../../../state/public/public.state';
   templateUrl: './learners-feed.component.html',
   styleUrls: ['./learners-feed.component.scss'],
 })
-export class PublicLearnersFeedComponent {
+export class PublicLearnersFeedComponent implements OnInit {
   @Select(PublicState.listMembers)
   learners$: Observable<User[]>;
   @Select(PublicState.isFetchingMembers)
@@ -32,11 +32,14 @@ export class PublicLearnersFeedComponent {
     private router: Router,
     public dialog: MatDialog
   ) {
-    this.fetchMembers();
     this.learners$.subscribe((val) => {
       this.learners = val;
       // this.learners = tempUsers;
     });
+  }
+
+  ngOnInit() {
+    this.fetchMembers();
   }
 
   generateLearnerSubtitle(user) {

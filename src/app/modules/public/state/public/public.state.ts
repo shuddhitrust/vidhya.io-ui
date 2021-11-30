@@ -5,6 +5,7 @@ import { PUBLIC_QUERIES } from '../../../../shared/api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
 
 import {
+  columnFiltersChanged,
   convertPaginatedListToNormalList,
   getErrorMessageFromGraphQLResponse,
   updateFetchParams,
@@ -114,6 +115,18 @@ export class PublicState {
       newSearchQuery: searchQuery,
       newColumnFilters: columnFilters,
     });
+    if (
+      columnFiltersChanged({
+        fetchParamObjects: fetchMembersParamObjects,
+        newFetchParams,
+      })
+    ) {
+      patchState({
+        members: defaultPublicState.members,
+        paginatedPublicMembers: defaultPublicState.paginatedPublicMembers,
+        lastPagePublicMembers: defaultPublicState.lastPagePublicMembers,
+      });
+    }
     patchState({ isFetchingMembers: true });
     const variables = {
       searchField: searchQuery,
@@ -254,6 +267,20 @@ export class PublicState {
       newSearchQuery: searchQuery,
       newColumnFilters: columnFilters,
     });
+    if (
+      columnFiltersChanged({
+        fetchParamObjects: fetchInstitutionsParamObjects,
+        newFetchParams,
+      })
+    ) {
+      patchState({
+        institutions: defaultPublicState.institutions,
+        paginatedPublicInstitutions:
+          defaultPublicState.paginatedPublicInstitutions,
+        lastPagePublicInstitutions:
+          defaultPublicState.lastPagePublicInstitutions,
+      });
+    }
     patchState({ isFetchingInstitutions: true });
     const variables = {
       searchField: searchQuery,
