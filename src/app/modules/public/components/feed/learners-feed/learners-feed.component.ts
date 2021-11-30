@@ -1,13 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { User } from 'src/app/shared/common/models';
+import { LearnerColumnFilters } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.model';
+import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { generateMemberSubtitle } from 'src/app/shared/common/functions';
-import { FetchNextPublicMembersAction } from '../../../state/public/public.actions';
+import { User } from 'src/app/shared/common/models';
+import { uiroutes } from 'src/app/shared/common/ui-routes';
+import {
+  FetchNextPublicMembersAction,
+  FetchPublicMembersAction,
+  ResetPublicHomePageListsAction,
+} from '../../../state/public/public.actions';
 import { PublicState } from '../../../state/public/public.state';
-import { Router } from '@angular/router';
-import { getMemberProfileLink } from '../../../state/public/public.model';
 
 @Component({
   selector: 'app-learners-feed',
@@ -26,6 +32,7 @@ export class PublicLearnersFeedComponent {
     private router: Router,
     public dialog: MatDialog
   ) {
+    this.fetchMembers();
     this.learners$.subscribe((val) => {
       this.learners = val;
       // this.learners = tempUsers;
@@ -36,12 +43,29 @@ export class PublicLearnersFeedComponent {
     return generateMemberSubtitle(user);
   }
 
+  fetchMembers() {
+    this.store.dispatch(
+      new FetchPublicMembersAction({
+        searchParams: {
+          ...defaultSearchParams,
+          pageSize: 36,
+          columnFilters: LearnerColumnFilters,
+        },
+      })
+    );
+  }
+
   onLearnerScroll() {
     this.store.dispatch(new FetchNextPublicMembersAction());
   }
 
   onClickLearnerCard(learner) {
-    const link = getMemberProfileLink(learner);
-    this.router.navigateByUrl(link);
+    this.router.navigateByUrl(
+      `${uiroutes.MEMBER_PROFILE_ROUTE.route}/${learner.username}`
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.store.dispatch(new ResetPublicHomePageListsAction());
   }
 }

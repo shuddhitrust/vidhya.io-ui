@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
+import { LearnerColumnFilters } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.model';
 import {
   defaultSearchParams,
   USER_ROLES_NAMES,
@@ -29,14 +30,7 @@ export class PublicTabsComponent implements OnInit {
   Learners = STUDENTS_LABEL;
   draftSearchQuery: string = null;
   currentQuery: string = null;
-  learnerColumnFilters = {
-    roles: [
-      USER_ROLES_NAMES.LEARNER,
-      USER_ROLES_NAMES.CLASS_ADMIN_LEARNER,
-      USER_ROLES_NAMES.INSTITUTION_ADMIN,
-    ],
-    membershipStatusIs: [MembershipStatusOptions.APPROVED],
-  };
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -78,7 +72,7 @@ export class PublicTabsComponent implements OnInit {
           ...defaultSearchParams,
           searchQuery: this.draftSearchQuery,
           pageSize: 36,
-          columnFilters: this.learnerColumnFilters,
+          columnFilters: LearnerColumnFilters,
         },
       })
     );
