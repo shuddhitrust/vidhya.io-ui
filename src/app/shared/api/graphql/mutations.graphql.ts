@@ -262,6 +262,7 @@ export const PROJECT_MUTATIONS = {
           author {
             id
             name
+            username
           }
           description
           createdAt
@@ -279,6 +280,7 @@ export const PROJECT_MUTATIONS = {
           author {
             id
             name
+            username
           }
           description
           createdAt
@@ -293,6 +295,10 @@ export const PROJECT_MUTATIONS = {
         project {
           id
           title
+          author {
+            id
+            username
+          }
         }
       }
     }

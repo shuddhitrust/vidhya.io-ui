@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
@@ -9,6 +9,7 @@ import {
   Project,
   resources,
   RESOURCE_ACTIONS,
+  User,
 } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
@@ -27,7 +28,9 @@ import { ProjectState } from '../../state/project.state';
   ],
 })
 export class ProjectFeedComponent implements OnInit {
-  resource: string = resources.ANNOUNCEMENT;
+  @Input() author: User = null;
+  @Input() ownProfile: boolean = false;
+  resource: string = resources.PROJECT;
   resourceActions = RESOURCE_ACTIONS;
   @Select(ProjectState.listProjects)
   projects$: Observable<Project[]>;
@@ -41,19 +44,36 @@ export class ProjectFeedComponent implements OnInit {
     private router: Router,
     private auth: AuthorizationService
   ) {
-    this.store.dispatch(
-      new FetchProjectsAction({ searchParams: defaultSearchParams })
-    );
+    console.log('from project feed => ', { author: this.author });
+    this.fetchProjects();
     this.isFetching$.subscribe((val) => {
       this.isFetching = val;
     });
+  }
+  ngOnChanges(changes) {
+    console.log('from project feed ', { changes });
+    if (changes.author) {
+      this.author = changes.author.currentValue;
+      this.fetchProjects();
+    }
+  }
+  fetchProjects() {
+    console.log('Fetching projects => ', { authorId: this.author?.id });
+    const columnFilters = { author: this.author?.id };
+    if (columnFilters?.author) {
+      this.store.dispatch(
+        new FetchProjectsAction({
+          searchParams: { ...defaultSearchParams, columnFilters },
+        })
+      );
+    }
   }
   authorizeResourceMethod(action) {
     return this.auth.authorizeResource(this.resource, action);
   }
 
   renderProjectSubtitle(project: Project) {
-    return project.title;
+    return `Published here on ${this.parseDate(project.createdAt)}`;
   }
 
   clip(string) {
@@ -73,11 +93,11 @@ export class ProjectFeedComponent implements OnInit {
 
   createProject() {
     this.store.dispatch(new ResetProjectFormAction());
-    this.router.navigateByUrl(uiroutes.GROUP_FORM_ROUTE.route);
+    this.router.navigateByUrl(uiroutes.PROJECT_FORM_ROUTE.route);
   }
 
   openProject(project) {
-    this.router.navigate([uiroutes.GROUP_PROFILE_ROUTE.route], {
+    this.router.navigate([uiroutes.PROJECT_PROFILE_ROUTE.route], {
       queryParams: { id: project.id },
     });
   }

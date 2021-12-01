@@ -262,7 +262,9 @@ export type Project = {
   description: string;
   link: string;
   course: any;
-  contributors: any[];
+  contributors?: any[];
+  public: boolean;
+  createdAt?: string;
 };
 
 export type Chapter = {
@@ -438,6 +440,26 @@ const defaultActions: ResourceActions = {
   DELETE: true,
 };
 
+export const defaultResourcePermissions: UserPermissions = {
+  MODERATION: defaultActions,
+  USER_ROLE: defaultActions,
+  MEMBER: defaultActions,
+  INSTITUTION_ADMIN: defaultActions,
+  CLASS_ADMIN: defaultActions,
+  LEARNER: defaultActions,
+  INSTITUTION: defaultActions,
+  ANNOUNCEMENT: defaultActions,
+  PROJECT: defaultActions,
+  CHAPTER: defaultActions,
+  COURSE: defaultActions,
+  GROUP: defaultActions,
+  GRADING: defaultActions,
+  EXERCISE_KEY: defaultActions,
+  EXERCISE_SUBMISSION: defaultActions,
+  REPORT: defaultActions,
+  OWN_PROFILE: defaultActions,
+};
+
 export const resources = {
   MODERATION: 'MODERATION',
   USER_ROLE: 'USER_ROLE',
@@ -467,6 +489,7 @@ export type UserPermissions = {
   LEARNER: ResourceActions;
   INSTITUTION: ResourceActions;
   ANNOUNCEMENT: ResourceActions;
+  PROJECT: ResourceActions;
   CHAPTER: ResourceActions;
   COURSE: ResourceActions;
   GROUP: ResourceActions;
@@ -475,23 +498,4 @@ export type UserPermissions = {
   EXERCISE_SUBMISSION: ResourceActions;
   REPORT: ResourceActions;
   OWN_PROFILE: ResourceActions;
-};
-
-export const defaultResourcePermissions: UserPermissions = {
-  MODERATION: defaultActions,
-  USER_ROLE: defaultActions,
-  MEMBER: defaultActions,
-  INSTITUTION_ADMIN: defaultActions,
-  CLASS_ADMIN: defaultActions,
-  LEARNER: defaultActions,
-  INSTITUTION: defaultActions,
-  ANNOUNCEMENT: defaultActions,
-  CHAPTER: defaultActions,
-  COURSE: defaultActions,
-  GROUP: defaultActions,
-  GRADING: defaultActions,
-  EXERCISE_KEY: defaultActions,
-  EXERCISE_SUBMISSION: defaultActions,
-  REPORT: defaultActions,
-  OWN_PROFILE: defaultActions,
 };

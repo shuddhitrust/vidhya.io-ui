@@ -167,6 +167,7 @@ export class ProjectState {
       searchField: searchQuery,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
+      author: newFetchParams.columnFilters.author,
     };
     patchState({ isFetching: true });
     this.store.dispatch(
@@ -320,6 +321,7 @@ export class ProjectState {
             patchState({ formSubmitting: false });
 
             if (response.ok) {
+              const username = response.project?.author?.username;
               const method = updateForm
                 ? SUBSCRIPTION_METHODS.UPDATE_METHOD
                 : SUBSCRIPTION_METHODS.CREATE_METHOD;
@@ -333,7 +335,7 @@ export class ProjectState {
 
               form.reset();
               formDirective.resetForm();
-              this.router.navigateByUrl(ProjectFormCloseURL);
+              this.router.navigateByUrl(ProjectFormCloseURL(username));
               patchState({
                 paginatedProjects: newPaginatedItems,
                 projects: newItemsList,
@@ -395,7 +397,8 @@ export class ProjectState {
           const response = data.deleteProject;
 
           if (response.ok) {
-            this.router.navigateByUrl(ProjectFormCloseURL);
+            const username = response.project?.author?.username;
+            this.router.navigateByUrl(ProjectFormCloseURL(username));
             const method = SUBSCRIPTION_METHODS.DELETE_METHOD;
             const project = response.project;
             const state = getState();

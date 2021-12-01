@@ -1,9 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { User } from 'src/app/shared/common/models';
-import { parseDateTime } from 'src/app/shared/common/functions';
 import { emptyMemberFormRecord } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.model';
-import { Router } from '@angular/router';
-import { uiroutes } from 'src/app/shared/common/ui-routes';
 
 @Component({
   selector: 'app-user-projects',
@@ -13,33 +10,15 @@ import { uiroutes } from 'src/app/shared/common/ui-routes';
     './../../../../../../../shared/common/shared-styles.css',
   ],
 })
-export class UserProjectsComponent {
+export class UserProjectsComponent implements OnChanges {
   @Input() member: User = emptyMemberFormRecord;
   @Input() ownProfile: boolean = false;
-  projects: any = [];
-  constructor(private router: Router) {
-    this.projects = this.member?.projects ? this.member?.projects : [];
-  }
-
-  createProject() {
-    this.router.navigate([uiroutes.PROJECT_FORM_ROUTE.route]);
-  }
-
-  openProject(project) {
-    this.router.navigate([uiroutes.PROJECT_PROFILE_ROUTE.route], {
-      queryParams: { id: project.id },
-      queryParamsHandling: 'merge',
-      skipLocationChange: false,
-    });
-  }
+  constructor() {}
 
   ngOnChanges(changes) {
+    console.log('from ', { changes });
     if (changes.member) {
-      this.projects = this.member?.projects ? this.member?.projects : [];
+      this.member = changes.member.currentValue;
     }
-  }
-
-  parseDate(date) {
-    return parseDateTime(date);
   }
 }

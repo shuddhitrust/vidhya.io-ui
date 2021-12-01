@@ -25,7 +25,7 @@ import {
   GetProjectAction,
   ResetProjectFormAction,
 } from '../../state/project.actions';
-import { clipLongText } from 'src/app/shared/common/functions';
+import { clipLongText, parseDateTime } from 'src/app/shared/common/functions';
 
 @Component({
   selector: 'app-project-profile',
@@ -46,7 +46,7 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
   @Select(AuthState.getCurrentMember)
   currentMember$: Observable<CurrentMember>;
   currentMember: CurrentMember;
-
+  projectDoesNotExist: boolean;
   memberRows: any[] = [];
   constructor(
     public dialog: MatDialog,
@@ -58,10 +58,19 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
   ) {
     this.project$.subscribe((val) => {
       this.project = val;
+      console.log('project =>', { val });
+      if (!this.project.title) {
+        this.projectDoesNotExist = true;
+      } else {
+        this.projectDoesNotExist = false;
+      }
     });
   }
   renderProjectSubtitle(project: Project) {
-    return project.title;
+    return `Published here on ${this.parseDate(project.createdAt)}`;
+  }
+  parseDate(date) {
+    return parseDateTime(date);
   }
 
   clip(string) {

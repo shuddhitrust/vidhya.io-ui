@@ -38,6 +38,7 @@ export const PUBLIC_QUERIES = {
   GET_USER_BY_USERNAME: gql`
     query userByUsername($username: String!) {
       userByUsername(username: $username) {
+        id
         username
         name
         title
@@ -377,27 +378,37 @@ export const PROJECT_QUERIES = {
           id
           name
         }
-        message
-        institution {
+        course {
           id
+          title
         }
-        groups {
-          id
-          name
-        }
+        link
+        public
+        description
         createdAt
       }
     }
   `,
   GET_PROJECTS: gql`
-    query projects($searchField: String, $limit: Int, $offset: Int) {
-      projects(searchField: $searchField, limit: $limit, offset: $offset) {
+    query projects(
+      $searchField: String
+      $author: Int
+      $limit: Int
+      $offset: Int
+    ) {
+      projects(
+        searchField: $searchField
+        author: $author
+        limit: $limit
+        offset: $offset
+      ) {
         id
         title
         author {
           id
           name
         }
+        link
         description
         createdAt
       }

@@ -12,8 +12,8 @@ export const emptyProjectFormRecord: Project = {
   author: null,
   link: null,
   course: null,
-  contributors: null,
   description: null,
+  public: true,
 };
 export interface ProjectStateModel {
   projects: Project[];
@@ -45,5 +45,12 @@ export const defaultProjectState: ProjectStateModel = {
   errorSubmitting: false,
 };
 
-export const ProjectFormCloseURL =
-  uiroutes.MEMBER_PROFILE_ROUTE.route + '?tab=' + PROJECT_TAB_LABEL;
+export const ProjectFormCloseURL = (username) => {
+  return (
+    uiroutes.MEMBER_PROFILE_ROUTE.route +
+    '/' +
+    username +
+    '?tab=' +
+    PROJECT_TAB_LABEL
+  );
+};

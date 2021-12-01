@@ -561,7 +561,7 @@ export const generateGroupSubtitle = (group: Group): string => {
 };
 
 export const clipLongText = (string = '', length = 100) => {
-  return string.slice(0, length);
+  return string?.slice(0, length);
 };
 
 export const sanitizeCount = (count, length = 1) => {

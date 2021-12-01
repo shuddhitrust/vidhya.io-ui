@@ -1,38 +1,54 @@
 <button mat-icon-button (click)="goBack()" class="floating-back-button">
   <mat-icon>keyboard_backspace</mat-icon>
 </button>
+<div *ngIf="!projectDoesNotExist; else projectDoesNotExistTemplate">
+  <span *ngIf="!(isFetchingProject$ | async)">
+    <div class="project-card">
+      <button
+        *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
+        mat-mini-fab
+        color="warn"
+        class="profile-button"
+        (click)="deleteConfirmation()"
+      >
+        <mat-icon>delete</mat-icon>
+      </button>
+      <button
+        *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
+        mat-mini-fab
+        color="info"
+        [class.button-loading]="isFetchingProject$ | async"
+        class="profile-button"
+        (click)="editProject()"
+      >
+        <mat-icon>edit</mat-icon>
+      </button>
 
-<span *ngIf="!(isFetchingProject$ | async)">
-  <div class="project-card">
-    <button
-      *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
-      mat-mini-fab
-      color="warn"
-      class="profile-button"
-      (click)="deleteConfirmation()"
-    >
-      <mat-icon>delete</mat-icon>
-    </button>
-    <button
-      *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
-      mat-mini-fab
-      color="info"
-      [class.button-loading]="isFetchingProject$ | async"
-      class="profile-button"
-      (click)="editProject()"
-    >
-      <mat-icon>edit</mat-icon>
-    </button>
+      <h2>{{ project.title }}</h2>
+      <p>
+        <a
+          [href]="project.link"
+          alt="project link"
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+          >{{ project.link }}</a
+        >
+      </p>
+      <p>{{ clip(project?.description) }}</p>
 
-    <h2>{{ project.title }}</h2>
-    <p>{{ clip(project.description) }}</p>
-
-    <small style="font-style: italic">{{
-      renderProjectSubtitle(project)
-    }}</small>
-  </div>
-</span>
+      <small style="font-style: italic">{{
+        renderProjectSubtitle(project)
+      }}</small>
+    </div>
+  </span>
+</div>
 
 <ng-template #loading>
   <app-simple-loading-spinner></app-simple-loading-spinner>
+</ng-template>
+
+<ng-template #projectDoesNotExistTemplate>
+  <div *ngIf="!(isFetchingProject$ | async); else loading">
+    <h2 id="project-not-found">Project not found!</h2>
+  </div>
 </ng-template>

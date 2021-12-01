@@ -98,12 +98,15 @@ export class AddEditProjectComponent implements OnInit {
       course: [
         projectFormRecord.course?.id ? projectFormRecord.course?.id : null,
       ],
-      contributors: [
-        projectFormRecord.contributors ? projectFormRecord.contributors : [],
-      ],
       description: [projectFormRecord?.description, Validators.required],
+      public: [
+        projectFormRecord.public != null &&
+        projectFormRecord.public != undefined
+          ? projectFormRecord.public
+          : true,
+      ],
     });
-
+    this.description = formProject.get('description').value;
     return formProject;
   };
 
