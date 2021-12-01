@@ -22,7 +22,15 @@ export class UserProjectsComponent {
   }
 
   createProject() {
-    this.router.navigateByUrl(uiroutes.PROJECT_FORM_ROUTE.route);
+    this.router.navigate([uiroutes.PROJECT_FORM_ROUTE.route]);
+  }
+
+  openProject(project) {
+    this.router.navigate([uiroutes.PROJECT_PROFILE_ROUTE.route], {
+      queryParams: { id: project.id },
+      queryParamsHandling: 'merge',
+      skipLocationChange: false,
+    });
   }
 
   ngOnChanges(changes) {

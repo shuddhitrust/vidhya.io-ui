@@ -28,15 +28,14 @@
   >
     <nz-tab [nzTitle]="Institutions">
       <ng-template nz-tab>
-        <ng-container *ngTemplateOutlet="searchQueryDescription"></ng-container>
-
-        <app-institutions-feed></app-institutions-feed>
+        <app-institutions-feed
+          [currentQuery]="currentQuery"
+        ></app-institutions-feed>
       </ng-template>
     </nz-tab>
     <nz-tab [nzTitle]="Learners">
       <ng-template nz-tab>
-        <ng-container *ngTemplateOutlet="searchQueryDescription"></ng-container>
-        <app-learners-feed></app-learners-feed>
+        <app-learners-feed [currentQuery]="currentQuery"></app-learners-feed>
       </ng-template>
     </nz-tab>
     <!-- <nz-tab nzTitle="Teams">
@@ -46,9 +45,3 @@
       </nz-tab> -->
   </nz-tabset>
 </div>
-
-<ng-template #searchQueryDescription>
-  <p style="text-align: center">
-    <small *ngIf="currentQuery">Showing results for "{{ currentQuery }}"</small>
-  </p>
-</ng-template>

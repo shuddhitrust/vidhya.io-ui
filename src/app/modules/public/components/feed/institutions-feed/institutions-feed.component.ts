@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
@@ -18,6 +18,7 @@ import { PublicState } from '../../../state/public/public.state';
   styleUrls: ['./institutions-feed.component.scss'],
 })
 export class InstitutionsFeedComponent {
+  @Input() currentQuery: string = null;
   @Select(PublicState.listInstitutions)
   institutions$: Observable<Institution[]>;
   institutions: any[] = [];

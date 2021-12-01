@@ -104,7 +104,7 @@ export class PublicState {
     { getState, patchState }: StateContext<PublicStateModel>,
     { payload }: FetchPublicMembersAction
   ) {
-    const state = getState();
+    let state = getState();
     const { searchParams } = payload;
     const { fetchPolicy, fetchMembersParamObjects } = state;
     const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
@@ -121,6 +121,7 @@ export class PublicState {
         newFetchParams,
       })
     ) {
+      console.log('column filters have changed!');
       patchState({
         members: defaultPublicState.members,
         paginatedPublicMembers: defaultPublicState.paginatedPublicMembers,
@@ -142,11 +143,13 @@ export class PublicState {
         query: PUBLIC_QUERIES.GET_PUBLIC_USERS,
         variables,
         fetchPolicy,
+        nextFetchPolicy: 'network-only',
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
+          state = getState();
           const response = data.publicUsers.records;
-
+          console.log('new response ', { response });
           newFetchParams = { ...newFetchParams };
           let paginatedPublicMembers = state.paginatedPublicMembers;
           paginatedPublicMembers = {
@@ -256,7 +259,7 @@ export class PublicState {
     { getState, patchState }: StateContext<PublicStateModel>,
     { payload }: FetchPublicInstitutionssAction
   ) {
-    const state = getState();
+    let state = getState();
     const { searchParams } = payload;
     const { fetchPolicy, fetchInstitutionsParamObjects } = state;
     const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
@@ -296,8 +299,8 @@ export class PublicState {
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
+          state = getState();
           const response = data.publicInstitutions.records;
-
           newFetchParams = { ...newFetchParams };
           let paginatedPublicInstitutions = state.paginatedPublicInstitutions;
           paginatedPublicInstitutions = {

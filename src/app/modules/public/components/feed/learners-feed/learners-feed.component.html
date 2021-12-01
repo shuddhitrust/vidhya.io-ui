@@ -1,4 +1,9 @@
-<div *ngIf="learners?.length; else emptyListTemplate">
+<div
+  *ngIf="
+    learners?.length || (learners?.length == 0 && currentQuery);
+    else emptyListTemplate
+  "
+>
   <ng-container *ngTemplateOutlet="learnersListTemplate"></ng-container>
 </div>
 
@@ -12,6 +17,10 @@
     [fromRoot]="true"
     (scrolled)="onLearnerScroll()"
   >
+    <ng-container
+      style="display: block; text-align: center"
+      *ngTemplateOutlet="searchQueryDescription"
+    ></ng-container>
     <div class="cards">
       <div *ngFor="let learner of learners">
         <mat-card class="card" (click)="onClickLearnerCard(learner)">
@@ -48,4 +57,12 @@
     <h2>Welcome to</h2>
     <img id="hero-logo" src="assets/images/logo.svg" />
   </div>
+</ng-template>
+
+<ng-template #searchQueryDescription>
+  <p style="text-align: center">
+    <small *ngIf="currentQuery"
+      >Showing learners with "{{ currentQuery }}"</small
+    >
+  </p>
 </ng-template>

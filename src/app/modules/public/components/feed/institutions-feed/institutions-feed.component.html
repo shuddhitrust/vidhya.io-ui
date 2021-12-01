@@ -1,4 +1,9 @@
-<div *ngIf="institutions?.length; else emptyListTemplate">
+<div
+  *ngIf="
+    institutions?.length || (institutions?.length == 0 && currentQuery);
+    else emptyListTemplate
+  "
+>
   <ng-container *ngTemplateOutlet="institutionsListTemplate"></ng-container>
 </div>
 
@@ -12,6 +17,10 @@
     [fromRoot]="true"
     (scrolled)="onInstitutionScroll()"
   >
+    <ng-container
+      style="display: block"
+      *ngTemplateOutlet="searchQueryDescription"
+    ></ng-container>
     <div class="cards">
       <div *ngFor="let institution of institutions">
         <mat-card class="card" (click)="onClickInstitutionCard(institution)">
@@ -48,4 +57,12 @@
     <h2>Welcome to</h2>
     <img id="hero-logo" src="assets/images/logo.svg" />
   </div>
+</ng-template>
+
+<ng-template #searchQueryDescription>
+  <p style="text-align: center">
+    <small *ngIf="currentQuery"
+      >Showing institutions with "{{ currentQuery }}"</small
+    >
+  </p>
 </ng-template>

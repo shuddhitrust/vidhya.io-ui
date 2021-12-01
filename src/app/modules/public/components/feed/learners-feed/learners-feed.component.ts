@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
@@ -21,6 +21,7 @@ import { PublicState } from '../../../state/public/public.state';
   styleUrls: ['./learners-feed.component.scss'],
 })
 export class PublicLearnersFeedComponent implements OnInit {
+  @Input() currentQuery: string = null;
   @Select(PublicState.listMembers)
   learners$: Observable<User[]>;
   @Select(PublicState.isFetchingMembers)

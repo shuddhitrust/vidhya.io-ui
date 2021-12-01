@@ -9,7 +9,7 @@
 </button>
 <span *ngIf="projects?.length > 0; else noProjects">
   <div *ngFor="let card of projects">
-    <mat-card class="feed-card">
+    <mat-card class="feed-card" (click)="openProject(card)">
       <h2 style="text-align: left">{{ card.title }}</h2>
     </mat-card>
   </div>

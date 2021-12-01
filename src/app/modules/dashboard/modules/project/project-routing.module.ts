@@ -6,13 +6,14 @@ import {
 } from 'src/app/shared/api/authentication.guard';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { AddEditProjectComponent } from './components/add-edit-project/add-edit-project.component';
+import { ProjectProfileComponent } from './components/project-profile/project-profile.component';
 
 const routes: Routes = [
   {
-    path: uiroutes.GROUP_FORM_ROUTE.route,
-    component: AddEditProjectComponent,
-    canActivate: [AuthenticationGuard],
-    data: uiroutes.GROUP_FORM_ROUTE.auth,
+    path: uiroutes.PROJECT_PROFILE_ROUTE.route,
+    component: ProjectProfileComponent,
+    canActivate: [RegistrationFormAuthGuard],
+    data: uiroutes.PROJECT_PROFILE_ROUTE.auth,
     pathMatch: 'full',
   },
   {

@@ -177,21 +177,25 @@ export const columnFiltersChanged = ({
   fetchParamObjects: FetchParams[];
   newFetchParams: FetchParams;
 }): boolean => {
-  let result = true;
+  let result = false;
   // if (fetchParamObjects.length < 1) {
   //   return true;
   // }
 
   if (fetchParamObjects.length > 0) {
     const lastFetchParams = fetchParamObjects[fetchParamObjects.length - 1];
+    console.log('From compare columnFiltersChanged', {
+      lastFetchParams,
+      newFetchParams,
+    });
     if (
-      compareObjects(
+      !compareObjects(
         lastFetchParams.columnFilters,
         newFetchParams.columnFilters
       ) ||
-      lastFetchParams.searchQuery == newFetchParams.searchQuery
+      lastFetchParams.searchQuery != newFetchParams.searchQuery
     ) {
-      return false;
+      result = true;
     }
   }
   return result;
