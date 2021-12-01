@@ -5,7 +5,6 @@ import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 import {
   defaultReportState,
   emptyReportFormRecord,
-  ReportFormCloseURL,
   ReportStateModel,
 } from './report.model';
 
@@ -36,6 +35,8 @@ import { REPORT_QUERIES } from 'src/app/shared/api/graphql/queries.graphql';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { SUBSCRIPTIONS } from 'src/app/shared/api/graphql/subscriptions.graphql';
 import { REPORT_MUTATIONS } from 'src/app/shared/api/graphql/mutations.graphql';
+import { REPORTS } from '../../../dashboard.component';
+import { uiroutes } from 'src/app/shared/common/ui-routes';
 
 @State<ReportStateModel>({
   name: 'reportState',
@@ -297,7 +298,11 @@ export class ReportState {
               );
               form.reset();
               formDirective.resetForm();
-              this.router.navigateByUrl(ReportFormCloseURL);
+              this.router.navigate([uiroutes.DASHBOARD_ROUTE.route], {
+                queryParams: {
+                  tab: REPORTS,
+                },
+              });
               patchState({
                 reportFormRecord: emptyReportFormRecord,
                 fetchPolicy: 'network-only',
@@ -348,7 +353,11 @@ export class ReportState {
           const response = data.deleteReport;
 
           if (response.ok) {
-            this.router.navigateByUrl(ReportFormCloseURL);
+            this.router.navigate([uiroutes.DASHBOARD_ROUTE.route], {
+              queryParams: {
+                tab: REPORTS,
+              },
+            });
             this.store.dispatch(
               new ShowNotificationAction({
                 message: 'Report deleted successfully!',

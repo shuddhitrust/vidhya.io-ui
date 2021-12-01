@@ -2,7 +2,6 @@ import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 import {
   defaultAnnouncementState,
   emptyAnnouncementFormRecord,
-  AnnouncementFormCloseURL,
   AnnouncementStateModel,
 } from './announcement.model';
 
@@ -42,6 +41,8 @@ import { SUBSCRIPTIONS } from '../../../../../shared/api/graphql/subscriptions.g
 import { SearchParams } from '../../../../../shared/modules/master-grid/table.model';
 import { ToggleLoadingScreen } from '../../../../../shared/state/loading/loading.actions';
 import { GetUnreadCountAction } from '../../../state/dashboard.actions';
+import { ANNOUNCEMENTS } from '../../../dashboard.component';
+import { uiroutes } from 'src/app/shared/common/ui-routes';
 
 @State<AnnouncementStateModel>({
   name: 'announcementState',
@@ -348,7 +349,11 @@ export class AnnouncementState {
 
               form.reset();
               formDirective.resetForm();
-              this.router.navigateByUrl(AnnouncementFormCloseURL);
+              this.router.navigate([uiroutes.DASHBOARD_ROUTE.route], {
+                queryParams: {
+                  tab: ANNOUNCEMENTS,
+                },
+              });
               patchState({
                 paginatedAnnouncements: newPaginatedItems,
                 announcements: newItemsList,
@@ -409,7 +414,11 @@ export class AnnouncementState {
           const response = data.deleteAnnouncement;
 
           if (response.ok) {
-            this.router.navigateByUrl(AnnouncementFormCloseURL);
+            this.router.navigate([uiroutes.DASHBOARD_ROUTE.route], {
+              queryParams: {
+                tab: ANNOUNCEMENTS,
+              },
+            });
             const method = SUBSCRIPTION_METHODS.DELETE_METHOD;
             const announcement = response.announcement;
             const state = getState();

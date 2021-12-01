@@ -2,7 +2,6 @@ import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 import {
   defaultCourseState,
   emptyCourseFormRecord,
-  CourseFormCloseURL,
   CourseStateModel,
 } from './course.model';
 
@@ -40,6 +39,7 @@ import { ShowNotificationAction } from 'src/app/shared/state/notifications/notif
 import { SUBSCRIPTIONS } from 'src/app/shared/api/graphql/subscriptions.graphql';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { COURSE_MUTATIONS } from 'src/app/shared/api/graphql/mutations.graphql';
+import { COURSES } from 'src/app/modules/dashboard/dashboard.component';
 
 @State<CourseStateModel>({
   name: 'courseState',
@@ -276,7 +276,11 @@ export class CourseState {
               action: 'error',
             })
           );
-          this.router.navigate([uiroutes.DASHBOARD_ROUTE.route]);
+          this.router.navigate([uiroutes.DASHBOARD_ROUTE.route], {
+            queryParams: {
+              tab: COURSES,
+            },
+          });
           patchState({ isFetching: false });
         }
       );
@@ -330,7 +334,11 @@ export class CourseState {
 
               form.reset();
               formDirective.resetForm();
-              this.router.navigateByUrl(CourseFormCloseURL);
+              this.router.navigate([uiroutes.DASHBOARD_ROUTE.route], {
+                queryParams: {
+                  tab: COURSES,
+                },
+              });
               patchState({
                 paginatedCourses: newPaginatedItems,
                 courses: newItemsList,
@@ -391,7 +399,11 @@ export class CourseState {
           const response = data.deleteCourse;
 
           if (response.ok) {
-            this.router.navigateByUrl(CourseFormCloseURL);
+            this.router.navigate([uiroutes.DASHBOARD_ROUTE.route], {
+              queryParams: {
+                tab: COURSES,
+              },
+            });
             const method = SUBSCRIPTION_METHODS.DELETE_METHOD;
             const course = response.course;
             const state = getState();

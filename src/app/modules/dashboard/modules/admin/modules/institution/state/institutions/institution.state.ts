@@ -33,7 +33,10 @@ import {
   updateFetchParams,
 } from '../../../../../../../../shared/common/functions';
 import { Router } from '@angular/router';
-import { defaultSearchParams } from '../../../../../../../../shared/common/constants';
+import {
+  ADMIN_SECTION_LABELS,
+  defaultSearchParams,
+} from '../../../../../../../../shared/common/constants';
 import { SUBSCRIPTIONS } from '../../../../../../../../shared/api/graphql/subscriptions.graphql';
 import { SearchParams } from '../../../../../../../../shared/modules/master-grid/table.model';
 
@@ -286,7 +289,11 @@ export class InstitutionState {
               );
               form.reset();
               formDirective.resetForm();
-              this.router.navigateByUrl(InstitutionFormCloseURL);
+              this.router.navigate([InstitutionFormCloseURL], {
+                queryParams: {
+                  adminSection: ADMIN_SECTION_LABELS.INSTITUTIONS,
+                },
+              });
               patchState({
                 institutionFormRecord: emptyInstitutionFormRecord,
               });

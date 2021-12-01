@@ -9,7 +9,6 @@ import {
 import {
   defaultRoleState,
   emptyUserRoleFormRecord,
-  UserRoleFormCloseURL,
   UserRoleStateModel,
 } from './userRole.model';
 
@@ -25,11 +24,12 @@ import {
 } from './userRole.actions';
 import { Apollo } from 'apollo-angular';
 
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import {
   FetchParams,
   MatSelectOption,
+  resources,
   startingFetchParams,
   UserRole,
 } from 'src/app/shared/common/models';
@@ -45,6 +45,8 @@ import { ShowNotificationAction } from 'src/app/shared/state/notifications/notif
 import { SUBSCRIPTIONS } from 'src/app/shared/api/graphql/subscriptions.graphql';
 import { USER_ROLE_MUTATIONS } from 'src/app/shared/api/graphql/mutations.graphql';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
+import { UserCoursesComponent } from 'src/app/modules/public/components/profiles/public-user-profile/user-profile-tabs/user-profile-courses/user-profile-courses.component';
+import { uiroutes } from 'src/app/shared/common/ui-routes';
 
 @State<UserRoleStateModel>({
   name: 'roleState',
@@ -55,7 +57,8 @@ export class UserRoleState {
   constructor(
     private apollo: Apollo,
     private store: Store,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   @Selector()
@@ -279,6 +282,7 @@ export class UserRoleState {
           }
         : { input: sanitizedValues };
 
+      const roleName = variables.input.name;
       this.apollo
         .mutate({
           mutation: updateForm
@@ -296,7 +300,7 @@ export class UserRoleState {
             if (response.ok) {
               this.store.dispatch(
                 new ShowNotificationAction({
-                  message: `UserRole ${
+                  message: `User Role "${roleName}" ${
                     updateForm ? 'updated' : 'created'
                   } successfully!`,
                   action: 'success',
@@ -304,7 +308,9 @@ export class UserRoleState {
               );
               form.reset();
               formDirective.resetForm();
-              this.router.navigateByUrl(UserRoleFormCloseURL);
+              this.router.navigate([uiroutes.DASHBOARD_ROUTE.route], {
+                queryParams: { id: null, adminSection: resources.USER_ROLE },
+              });
               patchState({
                 userRoleFormRecord: emptyUserRoleFormRecord,
                 fetchPolicy: 'network-only',

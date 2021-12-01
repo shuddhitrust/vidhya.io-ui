@@ -53,6 +53,3 @@ export const defaultRoleState: UserRoleStateModel = {
   formSubmitting: false,
   errorSubmitting: false,
 };
-
-export const UserRoleFormCloseURL =
-  uiroutes.DASHBOARD_ROUTE.route + '?adminSection=' + resources.USER_ROLE;

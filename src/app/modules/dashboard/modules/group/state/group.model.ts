@@ -1,11 +1,9 @@
-import { GROUPS } from 'src/app/modules/dashboard/dashboard.component';
 import { defaultLogos } from 'src/app/shared/common/constants';
 import {
   FetchParams,
   FetchPolicyModel,
   Group,
 } from 'src/app/shared/common/models';
-import { uiroutes } from 'src/app/shared/common/ui-routes';
 
 export const emptyGroupFormRecord: Group = {
   id: null,
@@ -46,6 +44,3 @@ export const defaultGroupState: GroupStateModel = {
   formSubmitting: false,
   errorSubmitting: false,
 };
-
-export const GroupFormCloseURL =
-  uiroutes.DASHBOARD_ROUTE.route + '?tab=' + GROUPS;

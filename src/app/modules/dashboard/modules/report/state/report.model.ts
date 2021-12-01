@@ -39,6 +39,3 @@ export const defaultReportState: ReportStateModel = {
   formSubmitting: false,
   errorSubmitting: false,
 };
-
-export const ReportFormCloseURL =
-  'dashboard?adminSection=Institutions&tab=Reports';

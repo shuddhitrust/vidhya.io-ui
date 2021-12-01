@@ -47,7 +47,4 @@ export const defaultInstitutionState: InstitutionStateModel = {
   errorSubmitting: false,
 };
 
-export const InstitutionFormCloseURL =
-  uiroutes.DASHBOARD_ROUTE.route +
-  '?adminSection=' +
-  ADMIN_SECTION_LABELS.INSTITUTIONS;
+export const InstitutionFormCloseURL = uiroutes.DASHBOARD_ROUTE.route;

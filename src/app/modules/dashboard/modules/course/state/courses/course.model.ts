@@ -1,10 +1,8 @@
-import { COURSES } from 'src/app/modules/dashboard/dashboard.component';
 import {
   Course,
   FetchParams,
   FetchPolicyModel,
 } from 'src/app/shared/common/models';
-import { uiroutes } from 'src/app/shared/common/ui-routes';
 
 export const emptyCourseFormRecord: Course = {
   id: null,
@@ -51,6 +49,3 @@ export const defaultCourseState: CourseStateModel = {
   formSubmitting: false,
   errorSubmitting: false,
 };
-
-export const CourseFormCloseURL =
-  uiroutes.DASHBOARD_ROUTE.route + '?tab=' + COURSES;

@@ -2,7 +2,6 @@ import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 import {
   defaultGroupState,
   emptyGroupFormRecord,
-  GroupFormCloseURL,
   GroupStateModel,
 } from './group.model';
 
@@ -38,6 +37,8 @@ import { GROUP_QUERIES } from 'src/app/shared/api/graphql/queries.graphql';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { SUBSCRIPTIONS } from 'src/app/shared/api/graphql/subscriptions.graphql';
 import { GROUP_MUTATIONS } from 'src/app/shared/api/graphql/mutations.graphql';
+import { GROUPS } from '../../../dashboard.component';
+import { uiroutes } from 'src/app/shared/common/ui-routes';
 
 @State<GroupStateModel>({
   name: 'groupState',
@@ -325,7 +326,11 @@ export class GroupState {
 
               form.reset();
               formDirective.resetForm();
-              this.router.navigateByUrl(GroupFormCloseURL);
+              this.router.navigate([uiroutes.DASHBOARD_ROUTE.route], {
+                queryParams: {
+                  tab: GROUPS,
+                },
+              });
               patchState({
                 paginatedGroups: newPaginatedItems,
                 groups: newItemsList,
@@ -387,7 +392,11 @@ export class GroupState {
           const response = data.deleteGroup;
 
           if (response.ok) {
-            this.router.navigateByUrl(GroupFormCloseURL);
+            this.router.navigate([uiroutes.DASHBOARD_ROUTE.route], {
+              queryParams: {
+                tab: GROUPS,
+              },
+            });
             const method = SUBSCRIPTION_METHODS.DELETE_METHOD;
             const group = response.group;
             const state = getState();

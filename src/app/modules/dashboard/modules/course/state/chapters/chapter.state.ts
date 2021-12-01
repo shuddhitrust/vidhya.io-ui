@@ -44,7 +44,6 @@ import { defaultSearchParams } from '../../../../../../shared/common/constants';
 import { SUBSCRIPTIONS } from '../../../../../../shared/api/graphql/subscriptions.graphql';
 import { SearchParams } from '../../../../../../shared/modules/master-grid/table.model';
 import { Location } from '@angular/common';
-import { CourseFormCloseURL } from '../courses/course.model';
 import { uiroutes } from '../../../../../../shared/common/ui-routes';
 
 @State<ChapterStateModel>({

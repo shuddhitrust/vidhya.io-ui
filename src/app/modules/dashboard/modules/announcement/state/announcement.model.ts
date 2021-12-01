@@ -43,5 +43,3 @@ export const defaultAnnouncementState: AnnouncementStateModel = {
   formSubmitting: false,
   errorSubmitting: false,
 };
-
-export const AnnouncementFormCloseURL = 'dashboard?tab=Announcements';
