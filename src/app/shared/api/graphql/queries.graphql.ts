@@ -367,6 +367,44 @@ export const ANNOUNCEMENT_QUERIES = {
   `,
 };
 
+export const PROJECT_QUERIES = {
+  GET_PROJECT: gql`
+    query project($id: ID!) {
+      project(id: $id) {
+        id
+        title
+        author {
+          id
+          name
+        }
+        message
+        institution {
+          id
+        }
+        groups {
+          id
+          name
+        }
+        createdAt
+      }
+    }
+  `,
+  GET_PROJECTS: gql`
+    query projects($searchField: String, $limit: Int, $offset: Int) {
+      projects(searchField: $searchField, limit: $limit, offset: $offset) {
+        id
+        title
+        author {
+          id
+          name
+        }
+        description
+        createdAt
+      }
+    }
+  `,
+};
+
 export const COURSE_QUERIES = {
   GET_COURSE: gql`
     query course($id: ID!) {

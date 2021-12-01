@@ -248,6 +248,13 @@ export type CourseSection = {
   updatedAt?: string;
 };
 
+export type ProjectContributor = {
+  project: any;
+  contributor: any;
+  role: string;
+  description: string;
+};
+
 export type Project = {
   id: number;
   title: string;

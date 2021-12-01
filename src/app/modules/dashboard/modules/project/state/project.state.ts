@@ -34,10 +34,10 @@ import {
   updateFetchParams,
 } from 'src/app/shared/common/functions';
 import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
-import { GROUP_QUERIES } from 'src/app/shared/api/graphql/queries.graphql';
+import { PROJECT_QUERIES } from 'src/app/shared/api/graphql/queries.graphql';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { SUBSCRIPTIONS } from 'src/app/shared/api/graphql/subscriptions.graphql';
-import { GROUP_MUTATIONS } from 'src/app/shared/api/graphql/mutations.graphql';
+import { PROJECT_MUTATIONS } from 'src/app/shared/api/graphql/mutations.graphql';
 
 @State<ProjectStateModel>({
   name: 'projectState',
@@ -177,7 +177,7 @@ export class ProjectState {
     );
     this.apollo
       .watchQuery({
-        query: GROUP_QUERIES.GET_GROUPS,
+        query: PROJECT_QUERIES.GET_PROJECTS,
         variables,
         fetchPolicy,
       })
@@ -261,7 +261,7 @@ export class ProjectState {
     patchState({ isFetching: true });
     this.apollo
       .watchQuery({
-        query: GROUP_QUERIES.GET_GROUP,
+        query: PROJECT_QUERIES.GET_PROJECT,
         variables: { id },
         fetchPolicy: 'network-only',
         nextFetchPolicy: 'network-only',
@@ -308,8 +308,8 @@ export class ProjectState {
       this.apollo
         .mutate({
           mutation: updateForm
-            ? GROUP_MUTATIONS.UPDATE_GROUP
-            : GROUP_MUTATIONS.CREATE_GROUP,
+            ? PROJECT_MUTATIONS.UPDATE_PROJECT
+            : PROJECT_MUTATIONS.CREATE_PROJECT,
           variables,
         })
         .subscribe(
@@ -387,7 +387,7 @@ export class ProjectState {
     let { id } = payload;
     this.apollo
       .mutate({
-        mutation: GROUP_MUTATIONS.DELETE_GROUP,
+        mutation: PROJECT_MUTATIONS.DELETE_PROJECT,
         variables: { id },
       })
       .subscribe(

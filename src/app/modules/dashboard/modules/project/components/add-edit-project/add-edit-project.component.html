@@ -9,7 +9,7 @@
     (submit)="submitForm(projectForm, formDirective)"
     #formDirective="ngForm"
   >
-    <mat-form-field class="col-lg-9 col-md-6 col-sm-12" appearance="outline">
+    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
       <mat-label>Title</mat-label>
       <input
         matInput
@@ -27,26 +27,29 @@
         Title is required
       </small>
     </mat-form-field>
-
     <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
-      <mat-label>Description</mat-label>
+      <mat-label>Link</mat-label>
       <input
         matInput
-        formControlName="description"
+        formControlName="link"
         required
-        placeholder="Group's Description"
+        placeholder="Any link showcasing your work"
       />
-      <small
-        class="validation-error"
-        *ngIf="
-          projectForm.get('description').hasError('required') &&
-          formDirective.submitted
-        "
-      >
-        Description is required
-      </small>
     </mat-form-field>
-
+    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Course</mat-label>
+      <mat-select
+        formControlName="course"
+        placeholder="The course that this project is associated with, if any"
+      >
+        <mat-option
+          *ngFor="let course of courseOptions$ | async"
+          [value]="course.value"
+        >
+          {{ course.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
     <button
       type="submit"
       class="floating-button-bottom"
@@ -58,6 +61,15 @@
       {{ (formSubmitting$ | async) === true ? "Submitting..." : "Submit" }}
     </button>
   </form>
+
+  <h2>Description</h2>
+  <md-editor
+    name="Description"
+    [(ngModel)]="description"
+    required
+    maxlength="2000"
+  >
+  </md-editor>
 </div>
 <br />
 <br />

@@ -251,6 +251,54 @@ export const ANNOUNCEMENT_MUTATIONS = {
   `,
 };
 
+export const PROJECT_MUTATIONS = {
+  CREATE_PROJECT: gql`
+    mutation createProject($input: ProjectInput!) {
+      createProject(input: $input) {
+        ok
+        project {
+          id
+          title
+          author {
+            id
+            name
+          }
+          description
+          createdAt
+        }
+      }
+    }
+  `,
+  UPDATE_PROJECT: gql`
+    mutation updateProject($id: ID!, $input: ProjectInput!) {
+      updateProject(id: $id, input: $input) {
+        ok
+        project {
+          id
+          title
+          author {
+            id
+            name
+          }
+          description
+          createdAt
+        }
+      }
+    }
+  `,
+  DELETE_PROJECT: gql`
+    mutation deleteProject($id: ID!) {
+      deleteProject(id: $id) {
+        ok
+        project {
+          id
+          title
+        }
+      }
+    }
+  `,
+};
+
 export const COURSE_MUTATIONS = {
   CREATE_COURSE: gql`
     mutation createCourse($input: CourseInput!) {
