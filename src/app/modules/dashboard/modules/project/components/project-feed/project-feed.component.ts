@@ -44,21 +44,18 @@ export class ProjectFeedComponent implements OnInit {
     private router: Router,
     private auth: AuthorizationService
   ) {
-    console.log('from project feed => ', { author: this.author });
     this.fetchProjects();
     this.isFetching$.subscribe((val) => {
       this.isFetching = val;
     });
   }
   ngOnChanges(changes) {
-    console.log('from project feed ', { changes });
     if (changes.author) {
       this.author = changes.author.currentValue;
       this.fetchProjects();
     }
   }
   fetchProjects() {
-    console.log('Fetching projects => ', { authorId: this.author?.id });
     const columnFilters = { author: this.author?.id };
     if (columnFilters?.author) {
       this.store.dispatch(

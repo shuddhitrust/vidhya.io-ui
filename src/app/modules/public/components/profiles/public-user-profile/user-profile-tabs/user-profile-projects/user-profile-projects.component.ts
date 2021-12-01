@@ -16,7 +16,6 @@ export class UserProjectsComponent implements OnChanges {
   constructor() {}
 
   ngOnChanges(changes) {
-    console.log('from ', { changes });
     if (changes.member) {
       this.member = changes.member.currentValue;
     }

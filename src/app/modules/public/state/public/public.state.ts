@@ -121,7 +121,6 @@ export class PublicState {
         newFetchParams,
       })
     ) {
-      console.log('column filters have changed!');
       patchState({
         members: defaultPublicState.members,
         paginatedPublicMembers: defaultPublicState.paginatedPublicMembers,
@@ -149,7 +148,6 @@ export class PublicState {
         ({ data }: any) => {
           state = getState();
           const response = data.publicUsers.records;
-          console.log('new response ', { response });
           newFetchParams = { ...newFetchParams };
           let paginatedPublicMembers = state.paginatedPublicMembers;
           paginatedPublicMembers = {

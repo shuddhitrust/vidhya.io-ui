@@ -58,7 +58,6 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
   ) {
     this.project$.subscribe((val) => {
       this.project = val;
-      console.log('project =>', { val });
       if (!this.project.title) {
         this.projectDoesNotExist = true;
       } else {

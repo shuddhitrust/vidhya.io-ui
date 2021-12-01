@@ -184,10 +184,6 @@ export const columnFiltersChanged = ({
 
   if (fetchParamObjects.length > 0) {
     const lastFetchParams = fetchParamObjects[fetchParamObjects.length - 1];
-    console.log('From compare columnFiltersChanged', {
-      lastFetchParams,
-      newFetchParams,
-    });
     if (
       !compareObjects(
         lastFetchParams.columnFilters,
