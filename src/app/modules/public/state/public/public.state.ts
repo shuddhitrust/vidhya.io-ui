@@ -142,7 +142,6 @@ export class PublicState {
         query: PUBLIC_QUERIES.GET_PUBLIC_USERS,
         variables,
         fetchPolicy,
-        nextFetchPolicy: 'network-only',
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
