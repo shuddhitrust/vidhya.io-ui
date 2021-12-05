@@ -17,11 +17,13 @@ import { PublicUserProfileComponent } from './components/profiles/public-user-pr
 import { UserCoursesComponent } from './components/profiles/public-user-profile/user-profile-tabs/user-profile-courses/user-profile-courses.component';
 import { UserProjectsComponent } from './components/profiles/public-user-profile/user-profile-tabs/user-profile-projects/user-profile-projects.component';
 import { ProjectModule } from '../dashboard/modules/project/project.module';
+import { TermsConditionsComponent } from './components/pages/terms-conditions/terms-conditions.component';
 
 const declarations = [
   HomeComponent,
   PasswordResetComponent,
   PrivacyComponent,
+  TermsConditionsComponent,
   PublicUserProfileComponent,
   PublicComponent,
   ErrorPageComponent,

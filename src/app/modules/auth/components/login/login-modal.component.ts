@@ -63,6 +63,8 @@ export class LoginModalComponent implements OnInit {
   invitecodeForm: FormGroup;
   registerForm: FormGroup;
   hide = true; // variable to store show/hide password toggle
+  termsConditionsRoute: string = uiroutes.TERMS_CONDITIONS_ROUTE.route;
+  termsAgreed: boolean = false;
   @Select(AuthState)
   authState$: Observable<AuthStateModel>;
   authState: AuthStateModel;
@@ -135,6 +137,9 @@ export class LoginModalComponent implements OnInit {
   }
   toggleAuthStorage(event) {
     this.store.dispatch(new SetAuthStorage({ remember: event.checked }));
+  }
+  toggleTermsAgreed(event) {
+    this.termsAgreed = !this.termsAgreed;
   }
   setupLoginForm() {
     this.loginForm = this.fb.group({

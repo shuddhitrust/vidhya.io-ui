@@ -4,6 +4,7 @@ import { uiroutes } from './../../shared/common/ui-routes';
 import { HomeComponent } from './components/pages/home/home.component';
 import { PasswordResetComponent } from './components/pages/password-reset/password-reset.component';
 import { PrivacyComponent } from './components/pages/privacy/privacy.component';
+import { TermsConditionsComponent } from './components/pages/terms-conditions/terms-conditions.component';
 import { InstitutionProfileComponent } from './components/profiles/public-institution-profile/public-institution-profile.component';
 import { PublicUserProfileComponent } from './components/profiles/public-user-profile/public-user-profile.component';
 
@@ -27,6 +28,11 @@ const routes: Routes = [
   {
     path: uiroutes.PRIVACY_ROUTE.route,
     component: PrivacyComponent,
+    pathMatch: 'full',
+  },
+  {
+    path: uiroutes.TERMS_CONDITIONS_ROUTE.route,
+    component: TermsConditionsComponent,
     pathMatch: 'full',
   },
   {

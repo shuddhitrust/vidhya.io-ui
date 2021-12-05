@@ -27,6 +27,10 @@ export const uiroutes = {
   ACCOUNT_ROUTE: { route: 'account', auth: { resource: null, actions: [] } },
   SUPPORT_ROUTE: { route: 'support', auth: { resource: null, actions: [] } },
   PRIVACY_ROUTE: { route: 'privacy', auth: { resource: null, actions: [] } },
+  TERMS_CONDITIONS_ROUTE: {
+    route: 'terms-conditions',
+    auth: { resource: null, actions: [] },
+  },
   INSTITUTION_PROFILE_ROUTE: {
     route: 'institution',
     auth: { resource: null, actions: [] },

@@ -20,6 +20,7 @@ export class HomeComponent implements OnInit {
   url: string;
   currentYear = new Date().getFullYear();
   privacyRoute = uiroutes.PRIVACY_ROUTE.route;
+  termsConditionsRoute = uiroutes.TERMS_CONDITIONS_ROUTE.route;
   @Select(AuthState.getIsLoggedIn)
   isLoggedIn$: Observable<boolean>;
   @Select(AuthState.getCurrentMemberStatus)

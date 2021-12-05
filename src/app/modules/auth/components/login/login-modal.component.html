@@ -315,12 +315,29 @@
           Password is required
         </small>
       </mat-form-field>
+      <br />
+      <mat-checkbox
+        nz-tooltip="Check this box to indicate that you agree to our terms and conditions!"
+        nzTooltipPlacement="right"
+        color="primary"
+        [checked]="termsAgreed"
+        (change)="toggleTermsAgreed($event)"
+      >
+        I agree to the
+        <a
+          alt="Terms & Conditions"
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+          [routerLink]="termsConditionsRoute"
+          >Terms & Conditions</a
+        >
+      </mat-checkbox>
       <button
         type="submit"
         class="submit-button"
         mat-raised-button
         color="primary"
-        [disabled]="isSubmittingForm === true"
+        [disabled]="isSubmittingForm === true || !termsAgreed"
       >
         {{ isSubmittingForm === true ? "Registering..." : "Register" }}
       </button>
