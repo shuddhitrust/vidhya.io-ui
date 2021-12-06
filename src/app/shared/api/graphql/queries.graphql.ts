@@ -417,7 +417,7 @@ export const PROJECT_QUERIES = {
 };
 
 export const COURSE_QUERIES = {
-  GET_COURSE: gql`
+  GET_COURSE_PROFILE: gql`
     query course($id: ID!) {
       course(id: $id) {
         id
@@ -425,14 +425,6 @@ export const COURSE_QUERIES = {
         blurb
         description
         instructor {
-          id
-          name
-        }
-        institutions {
-          id
-          name
-        }
-        participants {
           id
           name
         }
@@ -444,9 +436,31 @@ export const COURSE_QUERIES = {
         passCompletionPercentage
         locked
         completed
-        report {
-          percentage
-          completed
+      }
+    }
+  `,
+  GET_COURSE_FORM_DETAILS: gql`
+    query course($id: ID!) {
+      course(id: $id) {
+        id
+        title
+        blurb
+        description
+        instructor {
+          id
+          name
+        }
+        startDate
+        endDate
+        creditHours
+        status
+        passScorePercentage
+        passCompletionPercentage
+        locked
+        completed
+        participants {
+          id
+          name
         }
         mandatoryPrerequisites {
           id

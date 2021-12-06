@@ -214,23 +214,25 @@
         </mat-option>
       </mat-select>
     </mat-form-field> -->
-    <ag-grid-angular
-      class="ag-theme-alpine group-member-table"
-      [rowData]="memberRows"
-      [columnDefs]="memberColumns"
-      [defaultColDef]="defaultColDef"
-      rowSelection="multiple"
-      (gridReady)="onGridReady($event)"
-      (selectionChanged)="onSelectionChanged($event)"
-      [enableCellTextSelection]="true"
-      [suppressMenuHide]="true"
-    ></ag-grid-angular>
-    <p style="margin: 10px 0px 5px 40px">
-      {{ participantCount() }}
-      of {{ memberOptions.length }} members chosen as participant{{
-        participantCount() > 1 ? "s" : ""
-      }}
-    </p>
+    <div *ngIf="!(isFetchingCourse$ | async); else loadingTemplate">
+      <ag-grid-angular
+        class="ag-theme-alpine group-member-table"
+        [rowData]="memberRows"
+        [columnDefs]="memberColumns"
+        [defaultColDef]="defaultColDef"
+        rowSelection="multiple"
+        (gridReady)="onGridReady($event)"
+        (selectionChanged)="onSelectionChanged($event)"
+        [enableCellTextSelection]="true"
+        [suppressMenuHide]="true"
+      ></ag-grid-angular>
+      <p style="margin: 10px 0px 5px 40px">
+        {{ participantCount() }}
+        of {{ memberOptions.length }} members chosen as participant{{
+          participantCount() > 1 ? "s" : ""
+        }}
+      </p>
+    </div>
     <button
       type="submit"
       class="floating-button-bottom"
@@ -244,3 +246,6 @@
 </div>
 <br />
 <br />
+<ng-template #loadingTemplate>
+  <app-simple-loading-spinner></app-simple-loading-spinner>
+</ng-template>

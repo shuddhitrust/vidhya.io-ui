@@ -45,6 +45,8 @@ export class AddEditCourseComponent implements OnInit {
   currentDate = new Date();
   @Select(CourseState.getCourseFormRecord)
   courseFormRecord$: Observable<Course>;
+  @Select(CourseState.isFetching)
+  isFetchingCourse$: Observable<boolean>;
   @Select(InstitutionState.listInstitutionOptions)
   institutionOptions$: Observable<MatSelectOption[]>;
   @Select(CourseState.formSubmitting)
@@ -192,7 +194,9 @@ export class AddEditCourseComponent implements OnInit {
       this.params = params;
       const id = params['id'];
       if (id) {
-        this.store.dispatch(new GetCourseAction({ id }));
+        this.store.dispatch(
+          new GetCourseAction({ id, fetchFormDetails: true })
+        );
       }
     });
   }

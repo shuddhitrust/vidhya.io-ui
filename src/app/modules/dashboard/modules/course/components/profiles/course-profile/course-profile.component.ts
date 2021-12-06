@@ -133,7 +133,9 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
     this.route.queryParams.subscribe((params) => {
       this.courseId = params['id'];
       if (this.courseId) {
-        this.store.dispatch(new GetCourseAction({ id: this.courseId }));
+        this.store.dispatch(
+          new GetCourseAction({ id: this.courseId, fetchFormDetails: false })
+        );
         this.store.dispatch(
           new FetchCourseSectionsAction({
             searchParams: {

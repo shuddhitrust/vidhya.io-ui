@@ -252,14 +252,17 @@ export class CourseState {
 
   @Action(GetCourseAction)
   getCourse(
-    { patchState }: StateContext<CourseStateModel>,
+    { getState, patchState }: StateContext<CourseStateModel>,
     { payload }: GetCourseAction
   ) {
-    const { id } = payload;
+    const { id, fetchFormDetails } = payload;
     patchState({ isFetching: true });
+    const query = fetchFormDetails
+      ? COURSE_QUERIES.GET_COURSE_FORM_DETAILS
+      : COURSE_QUERIES.GET_COURSE_PROFILE;
     this.apollo
       .watchQuery({
-        query: COURSE_QUERIES.GET_COURSE,
+        query,
         variables: { id },
         fetchPolicy: 'network-only',
         nextFetchPolicy: 'network-only',

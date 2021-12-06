@@ -29,7 +29,7 @@ export class ForceRefetchCoursesAction {
 export class GetCourseAction {
   static readonly type = '[COURSE] Get';
 
-  constructor(public payload: idPayload) {}
+  constructor(public payload: { id: number; fetchFormDetails: boolean }) {}
 }
 
 export class CreateUpdateCourseAction {
