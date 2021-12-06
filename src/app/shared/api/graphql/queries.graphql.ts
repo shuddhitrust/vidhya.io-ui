@@ -532,7 +532,32 @@ export const COURSE_SECTION_QUERIES = {
 };
 
 export const CHAPTER_QUERIES = {
-  GET_CHAPTER: gql`
+  GET_CHAPTER_PROFILE: gql`
+    query chapter($id: ID!) {
+      chapter(id: $id) {
+        id
+        title
+        index
+        instructions
+        course {
+          id
+          title
+          status
+        }
+        section {
+          id
+          title
+          index
+        }
+        dueDate
+        points
+        status
+        locked
+        completed
+      }
+    }
+  `,
+  GET_CHAPTER_FORM_DETAILS: gql`
     query chapter($id: ID!) {
       chapter(id: $id) {
         id
@@ -594,10 +619,6 @@ export const CHAPTER_QUERIES = {
         completionStatus
         completed
         locked
-        prerequisites {
-          id
-          title
-        }
       }
     }
   `,

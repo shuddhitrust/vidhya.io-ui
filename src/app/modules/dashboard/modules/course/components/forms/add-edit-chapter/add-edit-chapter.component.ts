@@ -121,7 +121,9 @@ export class AddEditChapterComponent implements OnInit {
       const id = params['id'];
       this.courseId = params['courseId'];
       if (id) {
-        this.store.dispatch(new GetChapterAction({ id }));
+        this.store.dispatch(
+          new GetChapterAction({ id, fetchFormDetails: true })
+        );
       }
       if (this.courseId) {
         this.store.dispatch(

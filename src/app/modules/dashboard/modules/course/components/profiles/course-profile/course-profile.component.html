@@ -151,7 +151,7 @@
 
       <div *ngIf="chapter.locked" class="prerequisites">
         <mat-icon class="info-icon">info</mat-icon>
-        {{ chapterPrerequisites(chapter) }}
+        {{ chapter.locked }}
       </div>
       <br />
       <small class="chapter-due-date" *ngIf="chapter.dueDate"

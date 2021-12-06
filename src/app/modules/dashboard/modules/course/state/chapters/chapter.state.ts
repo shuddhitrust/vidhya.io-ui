@@ -277,11 +277,15 @@ export class ChapterState {
     { patchState }: StateContext<ChapterStateModel>,
     { payload }: GetChapterAction
   ) {
+    const { id, fetchFormDetails } = payload;
     patchState({ isFetching: true });
+    const query = fetchFormDetails
+      ? CHAPTER_QUERIES.GET_CHAPTER_FORM_DETAILS
+      : CHAPTER_QUERIES.GET_CHAPTER_PROFILE;
     this.apollo
       .watchQuery({
-        query: CHAPTER_QUERIES.GET_CHAPTER,
-        variables: payload,
+        query,
+        variables: { id },
         fetchPolicy: 'network-only',
         nextFetchPolicy: 'cache-first',
       })
@@ -308,6 +312,8 @@ export class ChapterState {
     { getState, patchState }: StateContext<ChapterStateModel>,
     { payload }: CreateUpdateChapterAction
   ) {
+    {
+    }
     const state = getState();
     const { form, formDirective } = payload;
     let { formSubmitting, fetchPolicy } = state;

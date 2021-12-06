@@ -304,18 +304,6 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
     });
   }
 
-  chapterPrerequisites(chapter) {
-    let prerequisites = '';
-    chapter?.prerequisites?.forEach((c) => {
-      if (prerequisites.length) {
-        prerequisites += ', "' + c.title + '"';
-      } else {
-        prerequisites += c.title;
-      }
-    });
-    return `To open this chapter, you must have completed ${prerequisites}`;
-  }
-
   openCourseInfo() {
     const dialogRef = this.dialog.open(CourseInfoModalComponent, {
       data: {

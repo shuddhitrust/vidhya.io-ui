@@ -37,7 +37,7 @@ export class ForceRefetchChaptersAction {
 export class GetChapterAction {
   static readonly type = '[CHAPTER] Get';
 
-  constructor(public payload: idPayload) {}
+  constructor(public payload: { id: number; fetchFormDetails: boolean }) {}
 }
 
 export class CreateUpdateChapterAction {
