@@ -170,7 +170,6 @@ export class AddEditCourseComponent implements OnInit {
       participantIds.includes(m.value)
     );
     this.courseForm = formGroup;
-    this.updateSelectedRowsInParticipantTable();
   };
 
   updateSelectedRowsInParticipantTable() {
