@@ -194,6 +194,8 @@ export type Group = {
   institution: any;
   members: any[];
   admins: any[];
+  adminCount?: number;
+  memberCount?: number;
   groupType: GroupType;
   createdAt?: string;
   updatedAt?: string;

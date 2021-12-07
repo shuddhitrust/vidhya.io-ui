@@ -308,9 +308,8 @@ export const GROUP_QUERIES = {
         admins {
           name
         }
-        members {
-          id
-        }
+        adminCount
+        memberCount
         description
         createdAt
       }
