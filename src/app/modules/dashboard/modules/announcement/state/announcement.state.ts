@@ -268,12 +268,14 @@ export class AnnouncementState {
     { patchState }: StateContext<AnnouncementStateModel>,
     { payload }: GetAnnouncementAction
   ) {
-    const { id } = payload;
+    const { id, fetchFormDetails } = payload;
     patchState({ isFetching: true });
-
+    const query = fetchFormDetails
+      ? ANNOUNCEMENT_QUERIES.GET_ANNOUNCEMENT_FORM_DETAILS
+      : ANNOUNCEMENT_QUERIES.GET_ANNOUNCEMENT_PROFILE;
     this.apollo
       .watchQuery({
-        query: ANNOUNCEMENT_QUERIES.GET_ANNOUNCEMENT,
+        query,
         variables: { id },
         fetchPolicy: 'network-only',
         nextFetchPolicy: 'network-only',

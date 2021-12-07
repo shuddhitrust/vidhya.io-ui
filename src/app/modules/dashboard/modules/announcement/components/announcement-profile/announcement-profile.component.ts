@@ -64,7 +64,12 @@ export class AnnouncementProfileComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       const announcementId = params['id'];
-      this.store.dispatch(new GetAnnouncementAction({ id: announcementId }));
+      this.store.dispatch(
+        new GetAnnouncementAction({
+          id: announcementId,
+          fetchFormDetails: false,
+        })
+      );
     });
   }
 

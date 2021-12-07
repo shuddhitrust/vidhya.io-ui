@@ -29,7 +29,7 @@ export class ForceRefetchAnnouncementsAction {
 export class GetAnnouncementAction {
   static readonly type = '[ANNOUNCEMENT] Get';
 
-  constructor(public payload: idPayload) {}
+  constructor(public payload: { id: number; fetchFormDetails: boolean }) {}
 }
 
 export class CreateUpdateAnnouncementAction {

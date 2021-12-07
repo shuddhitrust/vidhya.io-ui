@@ -117,7 +117,9 @@ export class AddEditAnnouncementComponent implements OnInit {
       this.params = params;
       const id = params['id'];
       if (id) {
-        this.store.dispatch(new GetAnnouncementAction({ id }));
+        this.store.dispatch(
+          new GetAnnouncementAction({ id, fetchFormDetails: true })
+        );
       }
     });
   }

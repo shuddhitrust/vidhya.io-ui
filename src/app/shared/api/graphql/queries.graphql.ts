@@ -329,7 +329,24 @@ export const GROUP_QUERIES = {
 };
 
 export const ANNOUNCEMENT_QUERIES = {
-  GET_ANNOUNCEMENT: gql`
+  GET_ANNOUNCEMENT_PROFILE: gql`
+    query announcement($id: ID!) {
+      announcement(id: $id) {
+        id
+        title
+        author {
+          id
+          name
+        }
+        message
+        institution {
+          id
+        }
+        createdAt
+      }
+    }
+  `,
+  GET_ANNOUNCEMENT_FORM_DETAILS: gql`
     query announcement($id: ID!) {
       announcement(id: $id) {
         id
