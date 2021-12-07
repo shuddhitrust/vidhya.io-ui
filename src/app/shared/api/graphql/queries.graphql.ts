@@ -385,7 +385,27 @@ export const ANNOUNCEMENT_QUERIES = {
 };
 
 export const PROJECT_QUERIES = {
-  GET_PROJECT: gql`
+  GET_PROJECT_PROFILE: gql`
+    query project($id: ID!) {
+      project(id: $id) {
+        id
+        title
+        author {
+          id
+          name
+        }
+        course {
+          id
+          title
+        }
+        link
+        public
+        description
+        createdAt
+      }
+    }
+  `,
+  GET_PROJECT_FORM_DETAILS: gql`
     query project($id: ID!) {
       project(id: $id) {
         id

@@ -257,12 +257,14 @@ export class ProjectState {
     { patchState }: StateContext<ProjectStateModel>,
     { payload }: GetProjectAction
   ) {
-    const { id } = payload;
-
+    const { id, fetchFormDetails } = payload;
+    const query = fetchFormDetails
+      ? PROJECT_QUERIES.GET_PROJECT_FORM_DETAILS
+      : PROJECT_QUERIES.GET_PROJECT_PROFILE;
     patchState({ isFetching: true });
     this.apollo
       .watchQuery({
-        query: PROJECT_QUERIES.GET_PROJECT,
+        query,
         variables: { id },
         fetchPolicy: 'network-only',
         nextFetchPolicy: 'network-only',

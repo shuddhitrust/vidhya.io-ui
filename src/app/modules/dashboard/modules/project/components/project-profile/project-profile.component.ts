@@ -95,7 +95,9 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
     this.route.queryParams.subscribe((params) => {
       const projectId = params['id'];
 
-      this.store.dispatch(new GetProjectAction({ id: projectId }));
+      this.store.dispatch(
+        new GetProjectAction({ id: projectId, fetchFormDetails: false })
+      );
     });
   }
 

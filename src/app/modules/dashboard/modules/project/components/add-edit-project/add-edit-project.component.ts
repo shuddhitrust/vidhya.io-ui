@@ -115,7 +115,9 @@ export class AddEditProjectComponent implements OnInit {
       this.params = params;
       const id = params['id'];
       if (id) {
-        this.store.dispatch(new GetProjectAction({ id }));
+        this.store.dispatch(
+          new GetProjectAction({ id, fetchFormDetails: true })
+        );
       }
     });
   }

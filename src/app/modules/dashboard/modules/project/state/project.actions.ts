@@ -29,7 +29,7 @@ export class ForceRefetchProjectsAction {
 export class GetProjectAction {
   static readonly type = '[PROJECT] Get';
 
-  constructor(public payload: idPayload) {}
+  constructor(public payload: { id: number; fetchFormDetails: boolean }) {}
 }
 
 export class CreateUpdateProjectAction {
