@@ -46,7 +46,7 @@ export class AddEditAnnouncementComponent implements OnInit {
   message;
   @Select(AnnouncementState.getAnnouncementFormRecord)
   announcementFormRecord$: Observable<Announcement>;
-  @Select(OptionsState.listGroupAdminOptions)
+  @Select(OptionsState.listAdminGroupOptions)
   groupOptions$: Observable<MatSelectOption[]>;
   @Select(AnnouncementState.formSubmitting)
   formSubmitting$: Observable<boolean>;

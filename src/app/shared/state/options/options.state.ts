@@ -51,7 +51,7 @@ export class OptionsState {
     return [];
   }
   @Selector()
-  static listGroupAdminOptions(state: OptionsStateModel): MatSelectOption[] {
+  static listAdminGroupOptions(state: OptionsStateModel): MatSelectOption[] {
     const options = state.adminGroups.map((g) => {
       return {
         value: g.id,
@@ -79,7 +79,7 @@ export class OptionsState {
 
     this.apollo
       .watchQuery({
-        query: USER_QUERIES.GET_USERS,
+        query: USER_QUERIES.GET_USERS_OPTIONS,
         variables,
       })
       .valueChanges.subscribe(
@@ -112,7 +112,7 @@ export class OptionsState {
     patchState({ isFetchingAdminGroups });
     this.apollo
       .watchQuery({
-        query: GROUP_QUERIES.GET_ADMIN_GROUPS,
+        query: GROUP_QUERIES.GET_ADMIN_GROUP_OPTIONS,
       })
       .valueChanges.subscribe(
         (res: any) => {

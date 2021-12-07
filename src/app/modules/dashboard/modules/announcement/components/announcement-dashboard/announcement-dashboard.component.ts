@@ -43,7 +43,7 @@ export class AnnouncementDashboardComponent implements OnInit {
   @Select(AnnouncementState.isFetching)
   isFetching$: Observable<boolean>;
   isFetching: boolean;
-  @Select(OptionsState.listGroupAdminOptions)
+  @Select(OptionsState.listAdminGroupOptions)
   groupOptions$: Observable<MatSelectOption[]>;
   adminGroups = [];
   constructor(

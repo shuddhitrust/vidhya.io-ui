@@ -208,6 +208,33 @@ export const USER_QUERIES = {
       }
     }
   `,
+  GET_USERS_OPTIONS: gql`
+    query users(
+      $searchField: String
+      $membershipStatusNot: [String]
+      $membershipStatusIs: [String]
+      $roles: [String]
+      $limit: Int
+      $offset: Int
+    ) {
+      users(
+        searchField: $searchField
+        membershipStatusNot: $membershipStatusNot
+        membershipStatusIs: $membershipStatusIs
+        roles: $roles
+        limit: $limit
+        offset: $offset
+      ) {
+        records {
+          id
+          name
+          role {
+            name
+          }
+        }
+      }
+    }
+  `,
 };
 
 export const USER_ROLE_QUERIES = {
@@ -323,6 +350,15 @@ export const GROUP_QUERIES = {
         groupType
         description
         createdAt
+      }
+    }
+  `,
+  GET_ADMIN_GROUP_OPTIONS: gql`
+    query adminGroups($searchField: String, $limit: Int, $offset: Int) {
+      adminGroups(searchField: $searchField, limit: $limit, offset: $offset) {
+        id
+        name
+        groupType
       }
     }
   `,
