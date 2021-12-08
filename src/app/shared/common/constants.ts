@@ -36,6 +36,7 @@ export const USER_ROLES_NAMES = {
 };
 
 export const ADMIN_SECTION_LABELS = {
+  ISSUE: 'Issues',
   CLASS_ADMINS: 'Class Admins',
   INSTITUTIONS: 'Institutions',
   INSTITUTION_ADMINS: 'Institution Admins',

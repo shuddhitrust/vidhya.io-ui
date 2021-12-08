@@ -21,7 +21,6 @@ import { AssignmentModule } from './modules/assignment/assignment.module';
 import { GroupModule } from './modules/group/group.module';
 import { DashboardState } from './state/dashboard.state';
 import { NgxsModule } from '@ngxs/store';
-import { IssueModule } from './modules/issues/issue.module';
 // import { ChatModule } from './modules/chat/chat.module';
 
 @NgModule({
@@ -52,7 +51,6 @@ import { IssueModule } from './modules/issues/issue.module';
     GradingModule,
     GroupModule,
     ReportModule,
-    IssueModule,
     // ChatModule,
     DashboardRoutingModule,
   ],

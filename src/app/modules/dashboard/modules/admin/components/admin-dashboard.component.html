@@ -16,6 +16,7 @@
     </mat-selection-list></nz-sider
   >
   <nz-layout>
+    <app-issue-feed *ngIf="selectedEntity == issues"></app-issue-feed>
     <app-awaiting-moderation-table
       *ngIf="selectedEntity == moderation"
     ></app-awaiting-moderation-table>

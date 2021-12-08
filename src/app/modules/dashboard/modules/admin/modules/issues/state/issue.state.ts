@@ -38,7 +38,7 @@ import { ShowNotificationAction } from 'src/app/shared/state/notifications/notif
 import { SUBSCRIPTIONS } from 'src/app/shared/api/graphql/subscriptions.graphql';
 import { ISSUE_MUTATIONS } from 'src/app/shared/api/graphql/mutations.graphql';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
-import { ADMIN } from '../../../dashboard.component';
+import { ADMIN } from '../../../../../dashboard.component';
 
 @State<IssueStateModel>({
   name: 'issueState',

@@ -13,7 +13,7 @@ export class AdminDashboardComponent implements OnInit {
   @Input() params: object = {};
   opened: boolean = true;
   @Input() entities: any[] = [];
-
+  issues: string = resources.ISSUE;
   moderation: string = resources.MODERATION;
   userRoles: string = resources.USER_ROLE;
   institutions: string = resources.INSTITUTION;

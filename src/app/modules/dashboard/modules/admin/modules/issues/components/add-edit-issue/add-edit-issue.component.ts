@@ -23,8 +23,8 @@ import {
   GetIssueAction,
 } from '../../state/issue.actions';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
-import { CourseState } from '../../../course/state/courses/course.state';
-import { FetchCoursesAction } from '../../../course/state/courses/course.actions';
+import { CourseState } from '../../../../../course/state/courses/course.state';
+import { FetchCoursesAction } from '../../../../../course/state/courses/course.actions';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 
 @Component({
@@ -32,7 +32,7 @@ import { defaultSearchParams } from 'src/app/shared/common/constants';
   templateUrl: './add-edit-issue.component.html',
   styleUrls: [
     './add-edit-issue.component.scss',
-    './../../../../../../shared/common/shared-styles.css',
+    './../../../../../../../../shared/common/shared-styles.css',
   ],
 })
 export class AddEditIssueComponent implements OnInit {

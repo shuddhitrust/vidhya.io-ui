@@ -24,7 +24,7 @@ import { IssueState } from '../../state/issue.state';
   templateUrl: './issue-feed.component.html',
   styleUrls: [
     './issue-feed.component.scss',
-    './../../../../../../shared/common/shared-styles.css',
+    './../../../../../../../../shared/common/shared-styles.css',
   ],
 })
 export class IssueFeedComponent implements OnInit {

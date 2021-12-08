@@ -32,7 +32,7 @@ import { clipLongText, parseDateTime } from 'src/app/shared/common/functions';
   templateUrl: './issue-profile.component.html',
   styleUrls: [
     './issue-profile.component.scss',
-    './../../../../../../shared/common/shared-styles.css',
+    './../../../../../../../../shared/common/shared-styles.css',
   ],
 })
 export class IssueProfileComponent implements OnInit, OnDestroy {
