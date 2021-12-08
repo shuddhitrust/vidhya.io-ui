@@ -1,0 +1,45 @@
+.issue-card {
+  // text-align: center;
+  display: block;
+  margin: 10px auto;
+  padding: 20px;
+  border: 1px solid grey;
+  border-radius: 5px;
+  width: 80%;
+}
+
+#issue-not-found {
+  margin: 100px;
+  text-align: center;
+}
+
+.table-wrapper {
+  display: block;
+  margin: 10px auto;
+  width: 80%;
+}
+
+.issue-card p {
+  text-align: left;
+}
+
+.profile-button {
+  float: right;
+  margin: 5px 10px;
+}
+
+.issue-member-table {
+  height: 500px;
+  width: 75%;
+  min-width: 250px;
+  overflow: auto;
+  display: block;
+  margin: auto;
+}
+
+@media screen and (max-width: 768px) {
+  .issue-member-table {
+    width: 99%;
+    height: 300px;
+  }
+}

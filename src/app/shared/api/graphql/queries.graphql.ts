@@ -488,6 +488,78 @@ export const PROJECT_QUERIES = {
   `,
 };
 
+export const ISSUE_QUERIES = {
+  GET_ISSUE_PROFILE: gql`
+    query issue($id: ID!) {
+      issue(id: $id) {
+        id
+        link
+        description
+        resourceId
+        resourceType
+        reporter {
+          id
+          name
+        }
+        guestName
+        guestEmail
+        screenshot
+        status
+        remarks
+        createdAt
+      }
+    }
+  `,
+  GET_ISSUE_FORM_DETAILS: gql`
+    query issue($id: ID!) {
+      issue(id: $id) {
+        id
+        link
+        description
+        resourceId
+        resourceType
+        reporter {
+          id
+          name
+        }
+        guestName
+        guestEmail
+        screenshot
+        status
+        remarks
+        createdAt
+      }
+    }
+  `,
+  GET_ISSUES: gql`
+    query issues(
+      $searchField: String
+      $reporter: Int
+      $limit: Int
+      $offset: Int
+    ) {
+      issues(
+        searchField: $searchField
+        reporter: $reporter
+        limit: $limit
+        offset: $offset
+      ) {
+        id
+        link
+        resourceType
+        reporter {
+          id
+          name
+        }
+        guestName
+        status
+        description
+        createdAt
+      }
+    }
+  `,
+};
+
 export const COURSE_QUERIES = {
   GET_COURSE_PROFILE: gql`
     query course($id: ID!) {

@@ -1,0 +1,13 @@
+.floating-logo {
+  float: left;
+}
+
+@media screen and (max-width: 768px) {
+  .floating-logo {
+    float: none;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+}

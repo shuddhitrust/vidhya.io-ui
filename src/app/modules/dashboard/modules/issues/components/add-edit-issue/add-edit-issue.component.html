@@ -1,0 +1,83 @@
+<button mat-icon-button (click)="goBack()" class="floating-back-button">
+  <mat-icon>keyboard_backspace</mat-icon>
+</button>
+<h2 class="center-title">Issue Form</h2>
+<div class="col-lg-8 col-sm-12 form-container">
+  <form
+    [formGroup]="issueForm"
+    novalidate
+    (submit)="submitForm(issueForm, formDirective)"
+    #formDirective="ngForm"
+  >
+    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Link</mat-label>
+      <input matInput formControlName="link" required placeholder="Link URL" />
+      <small
+        class="validation-error"
+        *ngIf="
+          issueForm.get('link').hasError('required') && formDirective.submitted
+        "
+      >
+        Link is required
+      </small>
+    </mat-form-field>
+    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Resource ID</mat-label>
+      <input
+        matInput
+        formControlName="resourceId"
+        required
+        placeholder="Resource ID"
+      />
+      <small
+        class="validation-error"
+        *ngIf="
+          issueForm.get('resourceId').hasError('required') &&
+          formDirective.submitted
+        "
+      >
+        Resource ID is required
+      </small>
+    </mat-form-field>
+    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Resource Type</mat-label>
+      <input
+        matInput
+        formControlName="resourceType"
+        required
+        placeholder="Resource Type"
+      />
+      <small
+        class="validation-error"
+        *ngIf="
+          issueForm.get('resourceType').hasError('required') &&
+          formDirective.submitted
+        "
+      >
+        Resource Type is required
+      </small>
+    </mat-form-field>
+
+    <button
+      type="submit"
+      class="floating-button-bottom"
+      mat-raised-button
+      color="primary"
+      [class.button-loading]="(formSubmitting$ | async) === true"
+      [disabled]="(formSubmitting$ | async) === true"
+    >
+      {{ (formSubmitting$ | async) === true ? "Submitting..." : "Submit" }}
+    </button>
+  </form>
+
+  <h2>Description</h2>
+  <md-editor
+    name="Description"
+    [(ngModel)]="description"
+    required
+    maxlength="2000"
+  >
+  </md-editor>
+</div>
+<br />
+<br />

@@ -305,6 +305,39 @@ export const PROJECT_MUTATIONS = {
   `,
 };
 
+export const ISSUE_MUTATIONS = {
+  CREATE_ISSUE: gql`
+    mutation createIssue($input: IssueInput!) {
+      createIssue(input: $input) {
+        ok
+        issue {
+          id
+        }
+      }
+    }
+  `,
+  UPDATE_ISSUE: gql`
+    mutation updateIssue($id: ID!, $input: IssueInput!) {
+      updateIssue(id: $id, input: $input) {
+        ok
+        issue {
+          id
+        }
+      }
+    }
+  `,
+  DELETE_ISSUE: gql`
+    mutation deleteIssue($id: ID!) {
+      deleteIssue(id: $id) {
+        ok
+        issue {
+          id
+        }
+      }
+    }
+  `,
+};
+
 export const COURSE_MUTATIONS = {
   CREATE_COURSE: gql`
     mutation createCourse($input: CourseInput!) {

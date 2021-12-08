@@ -67,6 +67,20 @@ export const uiroutes = {
       actions: [RESOURCE_ACTIONS.CREATE, RESOURCE_ACTIONS.UPDATE],
     },
   },
+  ISSUE_PROFILE_ROUTE: {
+    route: 'issue',
+    auth: {
+      resource: null,
+      actions: [],
+    },
+  },
+  ISSUE_FORM_ROUTE: {
+    route: 'issue-form',
+    auth: {
+      resource: null,
+      actions: [],
+    },
+  },
   USER_ROLE_PROFILE_ROUTE: {
     route: 'user-role-profile',
     auth: { resource: resources.USER_ROLE, actions: [RESOURCE_ACTIONS.GET] },

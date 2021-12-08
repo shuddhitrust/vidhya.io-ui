@@ -269,6 +269,39 @@ export type Project = {
   createdAt?: string;
 };
 
+export type IssueResourceType = 'US' | 'PR' | 'IN' | 'SU' | 'CO' | 'CH';
+export const IssueResourceTypeOptions = {
+  user: 'US',
+  project: 'PR',
+  institution: 'IN',
+  submission: 'SU',
+  course: 'CO',
+  chapter: 'CH',
+};
+
+export type IssueStatusType = 'PE' | 'SU' | 'GR' | 'RE';
+export const IssueStatusTypeOptions = {
+  pending: 'PE',
+  submitted: 'SU',
+  graded: 'GR',
+  returned: 'RE',
+};
+
+export type Issue = {
+  id: number;
+  link: string;
+  description: string;
+  resourceId: string;
+  resourceType: IssueResourceType;
+  reporter?: any;
+  guestName?: string;
+  guestEmail?: string;
+  screenshot?: string;
+  status: IssueStatusType;
+  remarks?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
 export type Chapter = {
   id: number;
   title: string;
@@ -451,7 +484,6 @@ export const defaultResourcePermissions: UserPermissions = {
   LEARNER: defaultActions,
   INSTITUTION: defaultActions,
   ANNOUNCEMENT: defaultActions,
-  PROJECT: defaultActions,
   CHAPTER: defaultActions,
   COURSE: defaultActions,
   GROUP: defaultActions,
@@ -459,6 +491,8 @@ export const defaultResourcePermissions: UserPermissions = {
   EXERCISE_KEY: defaultActions,
   EXERCISE_SUBMISSION: defaultActions,
   REPORT: defaultActions,
+  PROJECT: defaultActions,
+  ISSUE: defaultActions,
   OWN_PROFILE: defaultActions,
 };
 
@@ -479,6 +513,7 @@ export const resources = {
   EXERCISE_SUBMISSION: 'EXERCISE_SUBMISSION',
   REPORT: 'REPORT',
   PROJECT: 'PROJECT',
+  ISSUE: 'ISSUE',
   OWN_PROFILE: 'OWN_PROFILE',
 };
 
@@ -491,7 +526,6 @@ export type UserPermissions = {
   LEARNER: ResourceActions;
   INSTITUTION: ResourceActions;
   ANNOUNCEMENT: ResourceActions;
-  PROJECT: ResourceActions;
   CHAPTER: ResourceActions;
   COURSE: ResourceActions;
   GROUP: ResourceActions;
@@ -499,5 +533,7 @@ export type UserPermissions = {
   EXERCISE_KEY: ResourceActions;
   EXERCISE_SUBMISSION: ResourceActions;
   REPORT: ResourceActions;
+  PROJECT: ResourceActions;
+  ISSUE: ResourceActions;
   OWN_PROFILE: ResourceActions;
 };
