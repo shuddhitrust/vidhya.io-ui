@@ -28,7 +28,7 @@ import { IssueState } from '../../state/issue.state';
   ],
 })
 export class IssueFeedComponent implements OnInit {
-  @Input() author: User = null;
+  @Input() reporter: User = null;
   @Input() ownProfile: boolean = false;
   resource: string = resources.ISSUE;
   resourceActions = RESOURCE_ACTIONS;
@@ -50,14 +50,14 @@ export class IssueFeedComponent implements OnInit {
     });
   }
   ngOnChanges(changes) {
-    if (changes.author) {
-      this.author = changes.author.currentValue;
+    if (changes.reporter) {
+      this.reporter = changes.reporter.currentValue;
       this.fetchIssues();
     }
   }
   fetchIssues() {
-    const columnFilters = { author: this.author?.id };
-    if (columnFilters?.author) {
+    const columnFilters = { reporter: this.reporter?.id };
+    if (columnFilters?.reporter) {
       this.store.dispatch(
         new FetchIssuesAction({
           searchParams: { ...defaultSearchParams, columnFilters },
