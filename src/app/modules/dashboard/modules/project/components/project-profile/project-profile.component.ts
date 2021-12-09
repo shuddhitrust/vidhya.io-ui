@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   CurrentMember,
+  IssueResourceTypeOptions,
   Project,
   resources,
   RESOURCE_ACTIONS,
@@ -98,6 +99,15 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
       this.store.dispatch(
         new GetProjectAction({ id: projectId, fetchFormDetails: false })
       );
+    });
+  }
+  reportProject() {
+    this.router.navigate([uiroutes.ISSUE_FORM_ROUTE.route], {
+      queryParams: {
+        resourceType: IssueResourceTypeOptions.user,
+        resourceId: this.project.id,
+        link: window.location.href,
+      },
     });
   }
 

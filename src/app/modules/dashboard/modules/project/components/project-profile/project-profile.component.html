@@ -39,6 +39,15 @@
       <small style="font-style: italic">{{
         renderProjectSubtitle(project)
       }}</small>
+      <button
+        nz-tooltip="Report an issue with this project"
+        mat-mini-fab
+        color="warn"
+        (click)="reportProject()"
+        class="profile-button-bottom"
+      >
+        <mat-icon>report_problem</mat-icon>
+      </button>
     </div>
   </span>
 </div>
