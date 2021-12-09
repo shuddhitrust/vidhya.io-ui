@@ -221,13 +221,14 @@ export class UserRoleState {
     { payload }: GetUserRoleAction
   ) {
     const { roleName } = payload;
+    console.log('Fetching the role for => ', { roleName });
     patchState({ isFetching: true });
     this.apollo
       .watchQuery({
         query: USER_ROLE_QUERIES.GET_USER_ROLE,
         variables: { roleName },
-        fetchPolicy: 'network-only',
-        nextFetchPolicy: 'network-only',
+        fetchPolicy: 'no-cache',
+        nextFetchPolicy: 'no-cache',
       })
       .valueChanges.subscribe(
         ({ data }: any) => {

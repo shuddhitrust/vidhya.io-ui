@@ -150,6 +150,7 @@ export class IssueState {
     { getState, patchState }: StateContext<IssueStateModel>,
     { payload }: FetchIssuesAction
   ) {
+    console.log('Fetching issues');
     let { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, fetchParamObjects } = state;
@@ -165,7 +166,7 @@ export class IssueState {
       searchField: searchQuery,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
-      author: newFetchParams.columnFilters.author,
+      // reporter: newFetchParams.columnFilters.reporter,
     };
     patchState({ isFetching: true });
     this.store.dispatch(
@@ -319,7 +320,7 @@ export class IssueState {
             patchState({ formSubmitting: false });
 
             if (response.ok) {
-              const username = response.issue?.author?.username;
+              const username = response.issue?.reporter?.username;
               const method = updateForm
                 ? SUBSCRIPTION_METHODS.UPDATE_METHOD
                 : SUBSCRIPTION_METHODS.CREATE_METHOD;
@@ -399,7 +400,7 @@ export class IssueState {
           const response = data.deleteIssue;
 
           if (response.ok) {
-            const username = response.issue?.author?.username;
+            const username = response.issue?.reporter?.username;
             this.router.navigate([uiroutes.DASHBOARD_ROUTE.route], {
               queryParams: {
                 tab: ADMIN,

@@ -56,8 +56,8 @@ export class ProjectFeedComponent implements OnInit {
     }
   }
   fetchProjects() {
-    const columnFilters = { author: this.author?.id };
-    if (columnFilters?.author) {
+    const columnFilters = { authorId: this.author?.id };
+    if (columnFilters?.authorId) {
       this.store.dispatch(
         new FetchProjectsAction({
           searchParams: { ...defaultSearchParams, columnFilters },

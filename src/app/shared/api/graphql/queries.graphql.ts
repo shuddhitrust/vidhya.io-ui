@@ -464,13 +464,13 @@ export const PROJECT_QUERIES = {
   GET_PROJECTS: gql`
     query projects(
       $searchField: String
-      $author: Int
+      $authorId: ID
       $limit: Int
       $offset: Int
     ) {
       projects(
         searchField: $searchField
-        author: $author
+        authorId: $authorId
         limit: $limit
         offset: $offset
       ) {
@@ -534,13 +534,13 @@ export const ISSUE_QUERIES = {
   GET_ISSUES: gql`
     query issues(
       $searchField: String
-      $reporter: Int
+      $reporterId: ID
       $limit: Int
       $offset: Int
     ) {
       issues(
         searchField: $searchField
-        reporter: $reporter
+        reporterId: $reporterId
         limit: $limit
         offset: $offset
       ) {

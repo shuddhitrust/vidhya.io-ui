@@ -167,7 +167,7 @@ export class ProjectState {
       searchField: searchQuery,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
-      author: newFetchParams.columnFilters.author,
+      authorId: newFetchParams.columnFilters.authorId,
     };
     patchState({ isFetching: true });
     this.store.dispatch(

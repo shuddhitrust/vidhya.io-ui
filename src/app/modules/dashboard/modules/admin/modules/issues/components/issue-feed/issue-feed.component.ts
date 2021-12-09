@@ -56,14 +56,11 @@ export class IssueFeedComponent implements OnInit {
     }
   }
   fetchIssues() {
-    const columnFilters = { reporter: this.reporter?.id };
-    if (columnFilters?.reporter) {
-      this.store.dispatch(
-        new FetchIssuesAction({
-          searchParams: { ...defaultSearchParams, columnFilters },
-        })
-      );
-    }
+    this.store.dispatch(
+      new FetchIssuesAction({
+        searchParams: defaultSearchParams,
+      })
+    );
   }
   authorizeResourceMethod(action) {
     return this.auth.authorizeResource(this.resource, action);
