@@ -27,6 +27,10 @@ import { CourseState } from '../../../../../course/state/courses/course.state';
 import { FetchCoursesAction } from '../../../../../course/state/courses/course.actions';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 
+export const ResourceTypeParamName = 'resourceType';
+export const ResourceIdParamName = 'resourceId';
+export const LinkParamName = 'link';
+
 @Component({
   selector: 'app-add-edit-issue',
   templateUrl: './add-edit-issue.component.html',
@@ -53,6 +57,9 @@ export class AddEditIssueComponent implements OnInit {
   description: string;
   @Select(CourseState.listCourseOptions)
   courseOptions$: Observable<MatSelectOption[]>;
+  resourceTypeFromParams: string = null;
+  resourceIdFromParams: string = null;
+  linkFromParams: string = null;
   constructor(
     private location: Location,
     private store: Store,
@@ -101,6 +108,7 @@ export class AddEditIssueComponent implements OnInit {
       status: [issueFormRecord?.status],
       remarks: [issueFormRecord?.remarks],
     });
+    this.setParamValuesToForm();
     this.description = formIssue.get('description').value;
     return formIssue;
   };
@@ -109,10 +117,26 @@ export class AddEditIssueComponent implements OnInit {
     this.route.queryParams.subscribe((params) => {
       this.params = params;
       const id = params['id'];
+      this.resourceTypeFromParams = params[ResourceTypeParamName];
+      this.resourceIdFromParams = params[ResourceIdParamName];
+      this.linkFromParams = params[LinkParamName];
+      this.setParamValuesToForm();
       if (id) {
         this.store.dispatch(new GetIssueAction({ id, fetchFormDetails: true }));
       }
     });
+  }
+
+  setParamValuesToForm() {
+    if (this.resourceTypeFromParams) {
+      this.issueForm.get('resourceType').setValue(this.resourceTypeFromParams);
+    }
+    if (this.resourceIdFromParams) {
+      this.issueForm.get('resourceId').setValue(this.resourceIdFromParams);
+    }
+    if (this.linkFromParams) {
+      this.issueForm.get('link').setValue(this.linkFromParams);
+    }
   }
 
   goBack() {

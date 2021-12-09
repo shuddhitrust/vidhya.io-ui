@@ -5,6 +5,7 @@ import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import {
   Institution,
+  IssueResourceTypeOptions,
   resources,
   RESOURCE_ACTIONS,
 } from 'src/app/shared/common/models';
@@ -60,6 +61,15 @@ export class InstitutionProfileComponent implements OnInit {
 
   goBack() {
     this.location.back();
+  }
+  reportInstitution() {
+    this.router.navigate([uiroutes.ISSUE_FORM_ROUTE.route], {
+      queryParams: {
+        resourceType: IssueResourceTypeOptions.institution,
+        resourceId: this.institution.code,
+        link: window.location.href,
+      },
+    });
   }
 
   ngOnInit(): void {

@@ -32,6 +32,15 @@
     <div class="markdown-container">
       <markdown [data]="chapter?.instructions"></markdown>
     </div>
+    <button
+      nz-tooltip="Report an issue with this member profile"
+      mat-mini-fab
+      color="warn"
+      (click)="reportChapter()"
+      class="profile-button-bottom"
+    >
+      <mat-icon>report_problem</mat-icon>
+    </button>
   </mat-card>
 </span>
 

@@ -67,6 +67,15 @@
         <span><i>Number of Learners</i></span> - {{ institution.learnerCount }}
       </li>
     </ul>
+    <button
+      nz-tooltip="Report an issue with this institution"
+      mat-mini-fab
+      color="warn"
+      (click)="reportInstitution()"
+      class="profile-button-bottom"
+    >
+      <mat-icon>report_problem</mat-icon>
+    </button>
   </div>
 </div>
 

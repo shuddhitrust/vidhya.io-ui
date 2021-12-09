@@ -10,6 +10,7 @@ import {
   CourseSection,
   CourseStatusOptions,
   ExerciseSubmissionStatusOptions,
+  IssueResourceTypeOptions,
   resources,
   RESOURCE_ACTIONS,
 } from 'src/app/shared/common/models';
@@ -312,6 +313,15 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result) => {});
+  }
+  reportCourse() {
+    this.router.navigate([uiroutes.ISSUE_FORM_ROUTE.route], {
+      queryParams: {
+        resourceType: IssueResourceTypeOptions.course,
+        resourceId: this.course?.id,
+        link: window.location.href,
+      },
+    });
   }
 
   openChapter(chapter) {

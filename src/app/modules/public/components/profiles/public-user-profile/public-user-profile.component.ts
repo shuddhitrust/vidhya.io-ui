@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   CurrentMember,
+  IssueResourceTypeOptions,
   resources,
   RESOURCE_ACTIONS,
   User,
@@ -137,6 +138,15 @@ export class PublicUserProfileComponent implements OnInit, OnDestroy {
     if (this.ownProfile()) {
       this.router.navigateByUrl(uiroutes.MEMBER_FORM_ROUTE.route);
     }
+  }
+  reportUser() {
+    this.router.navigate([uiroutes.ISSUE_FORM_ROUTE.route], {
+      queryParams: {
+        resourceType: IssueResourceTypeOptions.user,
+        resourceId: this.username,
+        link: window.location.href,
+      },
+    });
   }
   onClickInstitution() {
     this.router.navigateByUrl(

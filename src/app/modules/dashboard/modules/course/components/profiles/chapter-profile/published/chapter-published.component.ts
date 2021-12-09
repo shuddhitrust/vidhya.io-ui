@@ -24,6 +24,7 @@ import {
   ExerciseRubric,
   ExerciseSubmission,
   ExerciseSubmissionStatusOptions,
+  IssueResourceTypeOptions,
   MatSelectOption,
   resources,
   RESOURCE_ACTIONS,
@@ -206,6 +207,16 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     );
     this.setupTempVariables();
   }
+  reportChapter() {
+    this.router.navigate([uiroutes.ISSUE_FORM_ROUTE.route], {
+      queryParams: {
+        resourceType: IssueResourceTypeOptions.chapter,
+        resourceId: this.chapter?.id,
+        link: window.location.href,
+      },
+    });
+  }
+
   chapterTitle(chapter) {
     return ChapterTitle(chapter);
   }
