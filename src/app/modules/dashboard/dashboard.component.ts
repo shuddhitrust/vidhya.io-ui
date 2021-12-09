@@ -34,6 +34,7 @@ const tabIndexList = {
 };
 
 const adminEntities = [
+  { value: resources.ISSUE, label: ADMIN_SECTION_LABELS.ISSUE },
   { value: resources.MODERATION, label: ADMIN_SECTION_LABELS.MODERATION },
   { value: resources.USER_ROLE, label: ADMIN_SECTION_LABELS.USER_ROLES },
   { value: resources.INSTITUTION, label: ADMIN_SECTION_LABELS.INSTITUTIONS },

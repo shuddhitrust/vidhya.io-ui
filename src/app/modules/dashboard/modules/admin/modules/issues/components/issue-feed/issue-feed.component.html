@@ -1,0 +1,46 @@
+<div class="feed-header-block">
+  <!-- <h2>Issues</h2> -->
+  <button
+    *ngIf="authorizeResourceMethod(resourceActions.CREATE) && ownProfile"
+    (click)="createIssue()"
+    class="floating-header-button-top"
+    mat-icon-button
+    color="primary"
+  >
+    <mat-icon>add_circle</mat-icon>
+  </button>
+</div>
+<span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
+  <span *ngIf="(issues$ | async)?.length > 0; else feedEmpty">
+    <div
+      class="scroll-feed"
+      infiniteScroll
+      [infiniteScrollDistance]="2"
+      [infiniteScrollThrottle]="50"
+      infiniteScrollContainer=".scroll-feed"
+      [fromRoot]="true"
+      (scrolled)="onScroll()"
+    >
+      <div *ngFor="let issue of issues$ | async">
+        <mat-card class="feed-card" (click)="openIssue(issue)">
+          <h2>{{ issue.link }}</h2>
+          <p>{{ clip(issue.description) }}</p>
+
+          <mat-card-actions>
+            <small style="font-style: italic">{{
+              renderIssueSubtitle(issue)
+            }}</small></mat-card-actions
+          >
+        </mat-card>
+      </div>
+    </div>
+  </span>
+
+  <ng-template #feedEmpty>
+    <p class="center-title">There are no issues to see at the moment</p>
+  </ng-template>
+
+  <ng-template #loading>
+    <app-simple-loading-spinner></app-simple-loading-spinner>
+  </ng-template>
+</span>
