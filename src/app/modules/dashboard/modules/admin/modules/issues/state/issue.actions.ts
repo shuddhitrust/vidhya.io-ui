@@ -40,6 +40,14 @@ export class CreateUpdateIssueAction {
   ) {}
 }
 
+export class UpdateIssueStatusAction {
+  static readonly type = '[ISSUE] Update status';
+
+  constructor(
+    public payload: { id: number; status: string; remarks: string }
+  ) {}
+}
+
 export class ResetIssueFormAction {
   static readonly type = '[ISSUE] Reset Form';
 

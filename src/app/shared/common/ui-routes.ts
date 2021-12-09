@@ -81,6 +81,13 @@ export const uiroutes = {
       actions: [],
     },
   },
+  OWN_ISSUES_ROUTE: {
+    route: 'own-issues',
+    auth: {
+      resource: null,
+      actions: [],
+    },
+  },
   USER_ROLE_PROFILE_ROUTE: {
     route: 'user-role-profile',
     auth: { resource: resources.USER_ROLE, actions: [RESOURCE_ACTIONS.GET] },

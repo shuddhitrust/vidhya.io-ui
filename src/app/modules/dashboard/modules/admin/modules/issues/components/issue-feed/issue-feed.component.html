@@ -1,6 +1,6 @@
 <div class="feed-header-block">
   <!-- <h2>Issues</h2> -->
-  <button
+  <!-- <button
     *ngIf="authorizeResourceMethod(resourceActions.CREATE) && ownProfile"
     (click)="createIssue()"
     class="floating-header-button-top"
@@ -8,7 +8,46 @@
     color="primary"
   >
     <mat-icon>add_circle</mat-icon>
-  </button>
+  </button> -->
+  <div class="floating-header-button-container">
+    <mat-menu #menu="matMenu">
+      <mat-form-field class="menu-item" appearance="outline">
+        <mat-label>Group By</mat-label>
+        <mat-select [(ngModel)]="groupByFilter" (ngModelChange)="fetchIssues()">
+          <mat-option
+            *ngFor="let groupBy of groupByOptions"
+            [value]="groupBy.value"
+          >
+            {{ groupBy.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="menu-item" appearance="outline">
+        <mat-label>Status</mat-label>
+        <mat-select
+          [(ngModel)]="issueStatusFilter"
+          (ngModelChange)="fetchIssues()"
+        >
+          <mat-option
+            *ngFor="let status of issueStatusOptions"
+            [value]="status.value"
+          >
+            {{ status.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-menu>
+    <button
+      type="button"
+      mat-mini-fab
+      [matMenuTriggerFor]="menu"
+      aria-label="Filter the Grading"
+      nzTooltipPlacement="left"
+      nz-tooltip="Change the filters to adjust which type of issues you wish to view"
+    >
+      <mat-icon>filter_list</mat-icon>
+    </button>
+  </div>
 </div>
 <span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
   <span *ngIf="(issues$ | async)?.length > 0; else feedEmpty">
@@ -21,6 +60,9 @@
       [fromRoot]="true"
       (scrolled)="onScroll()"
     >
+      <p class="feed-card" *ngIf="issueStatusFilter">
+        Showing issues that are {{ renderIssueStatus(issueStatusFilter) }}
+      </p>
       <div *ngFor="let issue of issues$ | async">
         <mat-card class="feed-card" (click)="openIssue(issue)">
           <h2>{{ issue.link }}</h2>
@@ -37,7 +79,9 @@
   </span>
 
   <ng-template #feedEmpty>
-    <p class="center-title">There are no issues to see at the moment</p>
+    <p class="center-title">
+      There are no issues matching these filters at the moment
+    </p>
   </ng-template>
 
   <ng-template #loading>

@@ -23,6 +23,7 @@ export class NavbarComponent implements OnInit {
   profileRoute: string;
   accountRoute: string = uiroutes.ACCOUNT_ROUTE.route;
   supportRoute: string = uiroutes.SUPPORT_ROUTE.route;
+  ownIssuesRoute: string = uiroutes.OWN_ISSUES_ROUTE.route;
   @Select(AuthState)
   authState$: Observable<AuthStateModel>;
   authState: AuthStateModel;

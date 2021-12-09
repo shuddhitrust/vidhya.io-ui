@@ -7,6 +7,7 @@ import {
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { AddEditIssueComponent } from './components/add-edit-issue/add-edit-issue.component';
 import { IssueProfileComponent } from './components/issue-profile/issue-profile.component';
+import { OwnIssuesComponent } from './components/own-issues/own-issues.component';
 
 const routes: Routes = [
   {
@@ -21,6 +22,13 @@ const routes: Routes = [
     component: AddEditIssueComponent,
     canActivate: [RegistrationFormAuthGuard],
     data: uiroutes.ISSUE_FORM_ROUTE.auth,
+    pathMatch: 'full',
+  },
+  {
+    path: uiroutes.OWN_ISSUES_ROUTE.route,
+    component: OwnIssuesComponent,
+    canActivate: [RegistrationFormAuthGuard],
+    data: uiroutes.OWN_ISSUES_ROUTE.auth,
     pathMatch: 'full',
   },
 ];

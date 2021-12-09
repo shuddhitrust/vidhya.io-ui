@@ -2,19 +2,13 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
+import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
+import { clipLongText, parseDateTime } from 'src/app/shared/common/functions';
 import {
-  autoGenOptions,
-  clipLongText,
-  getOptionLabel,
-  parseDateTime,
-} from 'src/app/shared/common/functions';
-import {
+  CurrentMember,
   Issue,
-  IssueResourceTypeOptions,
-  IssueStatusTypeOptions,
-  MatSelectOption,
   resources,
   RESOURCE_ACTIONS,
   User,
@@ -28,26 +22,24 @@ import {
 import { IssueState } from '../../state/issue.state';
 
 @Component({
-  selector: 'app-issue-feed',
-  templateUrl: './issue-feed.component.html',
+  selector: 'app-own-issues',
+  templateUrl: './own-issues.component.html',
   styleUrls: [
-    './issue-feed.component.scss',
+    './own-issues.component.scss',
     './../../../../../../../../shared/common/shared-styles.css',
   ],
 })
-export class IssueFeedComponent implements OnInit {
+export class OwnIssuesComponent implements OnInit {
   @Input() reporter: User = null;
   @Input() ownProfile: boolean = false;
   resource: string = resources.ISSUE;
   resourceActions = RESOURCE_ACTIONS;
-  issueStatusFilter: string = null;
-  groupByFilter: string = null;
-  issueStatusOptions: MatSelectOption[] = autoGenOptions(
-    IssueStatusTypeOptions
-  );
-  groupByOptions: MatSelectOption[] = autoGenOptions(IssueResourceTypeOptions);
   @Select(IssueState.listIssues)
   issues$: Observable<Issue[]>;
+
+  @Select(AuthState.getCurrentMember)
+  currentMember$: Observable<CurrentMember>;
+  currentMember: CurrentMember;
 
   @Select(IssueState.isFetching)
   isFetching$: Observable<boolean>;
@@ -58,14 +50,13 @@ export class IssueFeedComponent implements OnInit {
     private router: Router,
     private auth: AuthorizationService
   ) {
-    this.issueStatusFilter = IssueStatusTypeOptions.pending;
+    this.currentMember$.subscribe((val) => {
+      this.currentMember = val;
+    });
     this.fetchIssues();
     this.isFetching$.subscribe((val) => {
       this.isFetching = val;
     });
-  }
-  renderIssueStatus(status) {
-    return getOptionLabel(status, this.issueStatusOptions);
   }
   ngOnChanges(changes) {
     if (changes.reporter) {
@@ -78,10 +69,7 @@ export class IssueFeedComponent implements OnInit {
       new FetchIssuesAction({
         searchParams: {
           ...defaultSearchParams,
-          columnFilters: {
-            status: this.issueStatusFilter,
-            resourceType: this.groupByFilter,
-          },
+          columnFilters: { reporterId: this.currentMember.id },
         },
       })
     );

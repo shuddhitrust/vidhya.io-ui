@@ -68,12 +68,10 @@ export class RoleProfileComponent {
     private auth: AuthorizationService
   ) {
     this.profileData = data;
-    console.log('From role profile ', { data });
     this.store.dispatch(
       new GetUserRoleAction({ roleName: this.profileData?.name })
     );
     this.userRoleFormRecord$.subscribe((val) => {
-      console.log('Getting the value from state in constructor => ', { val });
       if (val) {
         this.profileData = val;
         this.permissionsObject = this.profileData.permissions;

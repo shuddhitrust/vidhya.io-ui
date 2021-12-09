@@ -11,11 +11,13 @@ import { markedOptionsFactory } from 'src/app/shared/common/constants';
 import { HttpClient } from '@angular/common/http';
 import { LMarkdownEditorModule } from 'ngx-markdown-editor';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { OwnIssuesComponent } from './components/own-issues/own-issues.component';
 
 const declarations = [
   IssueFeedComponent,
   IssueProfileComponent,
   AddEditIssueComponent,
+  OwnIssuesComponent,
 ];
 const imports = [SharedModule, InfiniteScrollModule, LMarkdownEditorModule];
 

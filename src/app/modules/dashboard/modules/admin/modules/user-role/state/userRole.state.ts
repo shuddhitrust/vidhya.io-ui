@@ -221,7 +221,6 @@ export class UserRoleState {
     { payload }: GetUserRoleAction
   ) {
     const { roleName } = payload;
-    console.log('Fetching the role for => ', { roleName });
     patchState({ isFetching: true });
     this.apollo
       .watchQuery({

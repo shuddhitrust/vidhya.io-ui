@@ -24,6 +24,7 @@ import {
   GetIssueAction,
   IssueSubscriptionAction,
   ResetIssueFormAction,
+  UpdateIssueStatusAction,
 } from './issue.actions';
 import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
 import {
@@ -150,7 +151,6 @@ export class IssueState {
     { getState, patchState }: StateContext<IssueStateModel>,
     { payload }: FetchIssuesAction
   ) {
-    console.log('Fetching issues');
     let { searchParams } = payload;
     const state = getState();
     const { fetchPolicy, fetchParamObjects } = state;
@@ -166,7 +166,9 @@ export class IssueState {
       searchField: searchQuery,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
-      // reporter: newFetchParams.columnFilters.reporter,
+      reporter: columnFilters?.reporterId,
+      status: columnFilters?.status,
+      resourceType: columnFilters?.resourceType,
     };
     patchState({ isFetching: true });
     this.store.dispatch(
@@ -382,6 +384,62 @@ export class IssueState {
         })
       );
     }
+  }
+
+  @Action(UpdateIssueStatusAction)
+  updateIssueStatus(
+    { getState, patchState }: StateContext<IssueStateModel>,
+    { payload }: UpdateIssueStatusAction
+  ) {
+    let { id, status, remarks } = payload;
+    this.apollo
+      .mutate({
+        mutation: ISSUE_MUTATIONS.UPDATE_ISSUE_STATUS,
+        variables: { id, status, remarks },
+      })
+      .subscribe(
+        ({ data }: any) => {
+          const response = data.updateIssueStatus;
+
+          if (response.ok) {
+            const method = SUBSCRIPTION_METHODS.UPDATE_METHOD;
+            const state = getState();
+            const issue = { ...state.issueFormRecord, ...response.issue };
+            const { newPaginatedItems, newItemsList } =
+              paginatedSubscriptionUpdater({
+                paginatedItems: state.paginatedIssues,
+                method,
+                modifiedItem: issue,
+              });
+            patchState({
+              paginatedIssues: newPaginatedItems,
+              issues: newItemsList,
+              issueFormRecord: emptyIssueFormRecord,
+            });
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: 'Issue deleted successfully!',
+                action: 'success',
+              })
+            );
+          } else {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(response?.errors),
+                action: 'error',
+              })
+            );
+          }
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+        }
+      );
   }
 
   @Action(DeleteIssueAction)

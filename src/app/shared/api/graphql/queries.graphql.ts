@@ -499,6 +499,12 @@ export const ISSUE_QUERIES = {
         resourceType
         reporter {
           id
+          username
+          name
+        }
+        resolver {
+          id
+          username
           name
         }
         guestName
@@ -535,12 +541,16 @@ export const ISSUE_QUERIES = {
     query issues(
       $searchField: String
       $reporterId: ID
+      $status: String
+      $resourceType: String
       $limit: Int
       $offset: Int
     ) {
       issues(
         searchField: $searchField
         reporterId: $reporterId
+        status: $status
+        resourceType: $resourceType
         limit: $limit
         offset: $offset
       ) {

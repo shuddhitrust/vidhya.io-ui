@@ -3,7 +3,7 @@
 </button>
 <div *ngIf="!issueDoesNotExist; else issueDoesNotExistTemplate">
   <span *ngIf="!(isFetchingIssue$ | async)">
-    <div class="issue-card">
+    <mat-card class="issue-card">
       <button
         *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
         mat-mini-fab
@@ -35,10 +35,70 @@
         >
       </p>
       <p>{{ clip(issue?.description) }}</p>
-
-      <small style="font-style: italic">{{ renderIssueSubtitle(issue) }}</small>
-    </div>
+      <div *ngIf="issue?.remarks && issue?.resolver?.name">
+        <hr />
+        <p>
+          {{ issue.resolver?.name }} marked this issue as
+          {{ renderStatusLabel(issue.status) }} with the following remarks:-
+        </p>
+        <p>{{ issue?.remarks }}</p>
+        <hr />
+      </div>
+      <small
+        style="font-style: italic; cursor: pointer"
+        (click)="reporterLink()"
+        >{{ renderIssueSubtitle() }}</small
+      >
+    </mat-card>
   </span>
+</div>
+
+<div *ngIf="showIssueActions()" class="issue-card">
+  <mat-card>
+    <mat-card-content>
+      <mat-form-field
+        class="col-lg-12 col-md-12 col-sm-12"
+        required
+        appearance="outline"
+      >
+        <mat-label>Remarks</mat-label>
+        <textarea
+          matInput
+          [(ngModel)]="remarks"
+          placeholder="Explain why you're changing the status"
+        ></textarea>
+      </mat-form-field>
+    </mat-card-content>
+  </mat-card>
+  <div class="card-actions">
+    <button
+      class="col-lg-3 col-md-3 col-sm-12"
+      mat-raised-button
+      color="warn"
+      class="profile-button"
+      (click)="updateIssueStatus(issueStatusOptions.no_action)"
+    >
+      No action needed
+    </button>
+    <button
+      class="col-lg-3 col-md-3 col-sm-12"
+      mat-raised-button
+      color="secondary"
+      class="profile-button"
+      (click)="updateIssueStatus(issueStatusOptions.duplicate)"
+    >
+      Mark as duplicate
+    </button>
+    <button
+      class="col-lg-3 col-md-3 col-sm-12"
+      mat-raised-button
+      color="primary"
+      class="profile-button"
+      (click)="updateIssueStatus(issueStatusOptions.resolved)"
+    >
+      Mark as resolved
+    </button>
+  </div>
 </div>
 
 <ng-template #loading>

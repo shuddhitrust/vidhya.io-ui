@@ -326,6 +326,23 @@ export const ISSUE_MUTATIONS = {
       }
     }
   `,
+  UPDATE_ISSUE_STATUS: gql`
+    mutation updateIssueStatus($id: ID!, $status: String!, $remarks: String!) {
+      updateIssueStatus(id: $id, status: $status, remarks: $remarks) {
+        ok
+        issue {
+          id
+          status
+          remarks
+          resolver {
+            id
+            username
+            name
+          }
+        }
+      }
+    }
+  `,
   DELETE_ISSUE: gql`
     mutation deleteIssue($id: ID!) {
       deleteIssue(id: $id) {

@@ -282,9 +282,9 @@ export const IssueResourceTypeOptions = {
 export type IssueStatusType = 'PE' | 'SU' | 'GR' | 'RE';
 export const IssueStatusTypeOptions = {
   pending: 'PE',
-  submitted: 'SU',
-  graded: 'GR',
-  returned: 'RE',
+  resolved: 'RE',
+  duplicate: 'DU',
+  no_action: 'NO',
 };
 
 export type Issue = {
@@ -299,6 +299,7 @@ export type Issue = {
   screenshot?: string;
   status: IssueStatusType;
   remarks?: string;
+  resolver?: any;
   createdAt?: string;
   updatedAt?: string;
 };

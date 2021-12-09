@@ -6,8 +6,13 @@ import { Observable } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
+  autoGenOptions,
+  getOptionLabel,
+} from 'src/app/shared/common/functions';
+import {
   CurrentMember,
   Issue,
+  IssueStatusTypeOptions,
   resources,
   RESOURCE_ACTIONS,
 } from 'src/app/shared/common/models';
@@ -24,9 +29,11 @@ import {
   DeleteIssueAction,
   GetIssueAction,
   ResetIssueFormAction,
+  UpdateIssueStatusAction,
 } from '../../state/issue.actions';
 import { clipLongText, parseDateTime } from 'src/app/shared/common/functions';
-
+import { Clipboard } from '@angular/cdk/clipboard';
+import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 @Component({
   selector: 'app-issue-profile',
   templateUrl: './issue-profile.component.html',
@@ -48,11 +55,14 @@ export class IssueProfileComponent implements OnInit, OnDestroy {
   currentMember: CurrentMember;
   issueDoesNotExist: boolean;
   memberRows: any[] = [];
+  issueStatusOptions = IssueStatusTypeOptions;
+  remarks: string;
   constructor(
     public dialog: MatDialog,
     private store: Store,
     private route: ActivatedRoute,
     private location: Location,
+    public clipboard: Clipboard,
     private router: Router,
     private auth: AuthorizationService
   ) {
@@ -65,11 +75,41 @@ export class IssueProfileComponent implements OnInit, OnDestroy {
       }
     });
   }
-  renderIssueSubtitle(issue: Issue) {
-    return `Published here on ${this.parseDate(issue.createdAt)}`;
+  renderIssueSubtitle() {
+    let reporter = this.issue.reporter?.name
+      ? this.issue.reporter.name
+      : this.issue.guestName;
+    return `Reported by ${reporter} at ${this.parseDate(this.issue.createdAt)}`;
+  }
+  reporterLink() {
+    if (this.issue.reporter?.id) {
+      this.router.navigate([
+        uiroutes.MEMBER_PROFILE_ROUTE.route +
+          '/' +
+          this.issue.reporter.username,
+      ]);
+    } else {
+      this.clipboard.copy(this.issue.guestEmail);
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message: `This issue was reported by a non-registerd user. Their email ID (${this.issue.guestEmail})has been copied to your clipboard`,
+          action: 'success',
+        })
+      );
+    }
+  }
+  showIssueActions() {
+    return (
+      this.authorizeResourceMethod(this.resourceActions.UPDATE) &&
+      this.issue.status == IssueStatusTypeOptions.pending
+    );
   }
   parseDate(date) {
     return parseDateTime(date);
+  }
+
+  renderStatusLabel(status) {
+    return getOptionLabel(status, autoGenOptions(IssueStatusTypeOptions));
   }
 
   clip(string) {
@@ -105,6 +145,41 @@ export class IssueProfileComponent implements OnInit, OnDestroy {
     this.location.back();
   }
 
+  updateIssueStatus(status) {
+    if (this.remarks) {
+      const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
+        title: 'Confirm status update?',
+        message: `Are you sure you want to mark this issue as ${this.renderStatusLabel(
+          status
+        )}?`,
+        confirmButtonText: 'Yes',
+        denyButtonText: 'No',
+      };
+      const dialogRef = this.dialog.open(MasterConfirmationDialog, {
+        data: masterDialogConfirmationObject,
+      });
+
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result == true) {
+          this.store.dispatch(
+            new UpdateIssueStatusAction({
+              id: this.issue.id,
+              status,
+              remarks: this.remarks,
+            })
+          );
+        }
+      });
+    } else {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message: 'Please add remarks',
+          action: 'error',
+        })
+      );
+    }
+  }
+
   editIssue() {
     this.router.navigate([uiroutes.ISSUE_FORM_ROUTE.route], {
       queryParams: { id: this.issue.id },
@@ -124,6 +199,8 @@ export class IssueProfileComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
+      {
+      }
       if (result == true) {
         this.deleteIssue();
       }
