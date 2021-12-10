@@ -65,8 +65,8 @@
       </p>
       <div *ngFor="let issue of issues$ | async">
         <mat-card class="feed-card" (click)="openIssue(issue)">
-          <h2>{{ issue.link }}</h2>
-          <p>{{ clip(issue.description) }}</p>
+          <h2>{{ issue.title }}</h2>
+          <p>{{ clip(issue.subtitle) }}</p>
 
           <mat-card-actions>
             <small style="font-style: italic">{{

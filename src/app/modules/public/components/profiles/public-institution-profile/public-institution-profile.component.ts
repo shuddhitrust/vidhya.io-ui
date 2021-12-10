@@ -62,8 +62,12 @@ export class InstitutionProfileComponent implements OnInit {
   goBack() {
     this.location.back();
   }
+
   reportInstitution() {
-    console.log('report institution', { institution: this.institution });
+    console.log('report institution', {
+      code: this.institution.code,
+      institution: this.institution,
+    });
     this.router.navigate([uiroutes.ISSUE_FORM_ROUTE.route], {
       queryParams: {
         resourceType: IssueResourceTypeOptions.institution,

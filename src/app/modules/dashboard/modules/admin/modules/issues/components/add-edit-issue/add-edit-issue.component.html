@@ -3,6 +3,9 @@
 </button>
 <h2 class="center-title">Issue Form</h2>
 <div class="col-lg-8 col-sm-12 form-container">
+  <p *ngIf="newIssue()">
+    Please use this form to report an issue regarding this page.
+  </p>
   <form
     [formGroup]="issueForm"
     novalidate

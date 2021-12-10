@@ -116,6 +116,10 @@ export class AddEditIssueComponent implements OnInit {
     });
   }
 
+  newIssue() {
+    return !this.issueForm?.get('id')?.value;
+  }
+
   setParamValuesToForm() {
     if (this.resourceTypeFromParams) {
       this.issueForm.get('resourceType').setValue(this.resourceTypeFromParams);

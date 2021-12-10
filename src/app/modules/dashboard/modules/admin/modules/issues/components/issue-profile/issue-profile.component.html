@@ -24,7 +24,8 @@
         <mat-icon>edit</mat-icon>
       </button>
 
-      <h2>{{ issue.link }}</h2>
+      <h2>{{ issue.title }}</h2>
+      <p>{{ issue.subtitle }}</p>
       <p>
         <a
           [href]="issue.link"
@@ -34,14 +35,14 @@
           >{{ issue.link }}</a
         >
       </p>
-      <p>{{ clip(issue?.description) }}</p>
+      <p>Issue Description - "{{ issue?.description }}"</p>
       <div *ngIf="issue?.remarks && issue?.resolver?.name">
         <hr />
         <p>
           {{ issue.resolver?.name }} marked this issue as
           {{ renderStatusLabel(issue.status) }} with the following remarks:-
         </p>
-        <p>{{ issue?.remarks }}</p>
+        <p>"{{ issue?.remarks }}"</p>
         <hr />
       </div>
       <small
@@ -98,6 +99,12 @@
     >
       Mark as resolved
     </button>
+    <br />
+    <br />
+    <br />
+    <hr />
+    <h2>All issues for this resource</h2>
+    <app-issue-feed [link]="issue.link"></app-issue-feed>
   </div>
 </div>
 

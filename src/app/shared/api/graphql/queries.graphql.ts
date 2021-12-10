@@ -494,6 +494,8 @@ export const ISSUE_QUERIES = {
     query issue($id: ID!) {
       issue(id: $id) {
         id
+        title
+        subtitle
         link
         description
         resourceId
@@ -544,6 +546,7 @@ export const ISSUE_QUERIES = {
       $reporterId: ID
       $status: String
       $resourceType: String
+      $link: String
       $limit: Int
       $offset: Int
     ) {
@@ -552,10 +555,13 @@ export const ISSUE_QUERIES = {
         reporterId: $reporterId
         status: $status
         resourceType: $resourceType
+        link: $link
         limit: $limit
         offset: $offset
       ) {
         id
+        title
+        subtitle
         link
         resourceType
         reporter {

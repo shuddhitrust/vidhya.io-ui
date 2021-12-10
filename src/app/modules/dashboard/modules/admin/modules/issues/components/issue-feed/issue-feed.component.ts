@@ -36,7 +36,8 @@ import { IssueState } from '../../state/issue.state';
   ],
 })
 export class IssueFeedComponent implements OnInit {
-  @Input() reporter: User = null;
+  @Input() reporterId: number = null;
+  @Input() link: string = null;
   @Input() ownProfile: boolean = false;
   resource: string = resources.ISSUE;
   resourceActions = RESOURCE_ACTIONS;
@@ -68,8 +69,16 @@ export class IssueFeedComponent implements OnInit {
     return getOptionLabel(status, this.issueStatusOptions);
   }
   ngOnChanges(changes) {
-    if (changes.reporter) {
-      this.reporter = changes.reporter.currentValue;
+    let refetch = false;
+    if (changes.reporterId) {
+      this.reporterId = changes.reporterId.currentValue;
+      refetch = true;
+    }
+    if (changes.link) {
+      this.link = changes.link.currentValue;
+      refetch = true;
+    }
+    if (refetch) {
       this.fetchIssues();
     }
   }
@@ -81,6 +90,8 @@ export class IssueFeedComponent implements OnInit {
           columnFilters: {
             status: this.issueStatusFilter,
             resourceType: this.groupByFilter,
+            reporterId: this.reporterId,
+            link: this.link,
           },
         },
       })

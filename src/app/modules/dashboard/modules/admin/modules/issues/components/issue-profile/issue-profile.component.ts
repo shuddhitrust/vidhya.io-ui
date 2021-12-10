@@ -100,7 +100,7 @@ export class IssueProfileComponent implements OnInit, OnDestroy {
   }
   showIssueActions() {
     return (
-      this.authorizeResourceMethod(this.resourceActions.UPDATE) &&
+      this.authorizeResourceMethod(this.resourceActions.DELETE) &&
       this.issue.status == IssueStatusTypeOptions.pending
     );
   }
@@ -126,9 +126,7 @@ export class IssueProfileComponent implements OnInit, OnDestroy {
     );
   }
   authorizeResourceMethod(action) {
-    return this.auth.authorizeResource(this.resource, action, {
-      adminIds: [this.issue?.reporter?.id],
-    });
+    return this.auth.authorizeResource(this.resource, action, {});
   }
 
   ngOnInit(): void {

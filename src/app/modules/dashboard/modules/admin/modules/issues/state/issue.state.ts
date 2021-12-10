@@ -169,6 +169,7 @@ export class IssueState {
       reporterId: columnFilters?.reporterId,
       status: columnFilters?.status,
       resourceType: columnFilters?.resourceType,
+      link: columnFilters?.link,
     };
     patchState({ isFetching: true });
     this.store.dispatch(
