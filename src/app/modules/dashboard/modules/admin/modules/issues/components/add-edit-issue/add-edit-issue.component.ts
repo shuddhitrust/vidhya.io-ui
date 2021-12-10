@@ -9,12 +9,7 @@ import {
 import { Select, Store } from '@ngxs/store';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import {
-  Course,
-  CurrentMember,
-  MatSelectOption,
-  Issue,
-} from 'src/app/shared/common/models';
+import { CurrentMember, Issue } from 'src/app/shared/common/models';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { IssueState } from '../../state/issue.state';
 import { emptyIssueFormRecord } from '../../state/issue.model';
@@ -22,8 +17,6 @@ import {
   CreateUpdateIssueAction,
   GetIssueAction,
 } from '../../state/issue.actions';
-import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
-import { CourseState } from '../../../../../course/state/courses/course.state';
 import { FetchCoursesAction } from '../../../../../course/state/courses/course.actions';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 
@@ -46,17 +39,12 @@ export class AddEditIssueComponent implements OnInit {
   issueFormRecord$: Observable<Issue>;
   @Select(IssueState.formSubmitting)
   formSubmitting$: Observable<boolean>;
-  @Select(AuthState.getCurrentUserId)
-  currentUserId$: Observable<number>;
-  currentUserId: number;
   @Select(AuthState.getCurrentMember)
   currentMember$: Observable<CurrentMember>;
   currentMember: CurrentMember;
   issueFormRecord: Issue = emptyIssueFormRecord;
   issueForm: FormGroup;
   description: string;
-  @Select(CourseState.listCourseOptions)
-  courseOptions$: Observable<MatSelectOption[]>;
   resourceTypeFromParams: string = null;
   resourceIdFromParams: string = null;
   linkFromParams: string = null;
@@ -66,44 +54,45 @@ export class AddEditIssueComponent implements OnInit {
     private route: ActivatedRoute,
     private fb: FormBuilder
   ) {
-    this.fetchCourses();
-    this.currentUserId$.subscribe((val) => {
-      this.currentUserId = val;
-    });
+    this.issueForm = this.setupIssueFormIssue();
+
     this.currentMember$.subscribe((val) => {
       this.currentMember = val;
     });
-
-    this.issueForm = this.setupIssueFormIssue();
     this.issueFormRecord$.subscribe((val) => {
       this.issueFormRecord = val;
       this.issueForm = this.setupIssueFormIssue(this.issueFormRecord);
     });
   }
-
-  fetchCourses() {
-    this.store.dispatch(
-      new FetchCoursesAction({ searchParams: defaultSearchParams })
-    );
+  guestForm() {
+    return !this.currentMember?.id;
   }
 
   setupIssueFormIssue = (
     issueFormRecord: Issue = emptyIssueFormRecord
   ): FormGroup => {
+    const reporterId = this.guestForm()
+      ? null
+      : issueFormRecord?.reporter?.id
+      ? issueFormRecord?.reporter?.id
+      : this.currentMember?.id;
+
+    let reporterValidators = this.guestForm() ? [] : [Validators.required];
+    let guestNameValidators = this.guestForm() ? [Validators.required] : [];
+    let guestEmailValidators = [Validators.email];
+    if (this.guestForm()) {
+      guestEmailValidators.push(Validators.required);
+    }
+
     const formIssue = this.fb.group({
       id: [issueFormRecord?.id],
       link: [issueFormRecord?.link, Validators.required],
       description: [issueFormRecord?.description, Validators.required],
-      reporter: [
-        issueFormRecord?.reporter?.id
-          ? issueFormRecord?.reporter?.id
-          : this.currentUserId,
-        Validators.required,
-      ],
+      reporter: [reporterId, reporterValidators],
       resourceId: [issueFormRecord?.resourceId],
       resourceType: [issueFormRecord?.resourceType],
-      guestName: [issueFormRecord?.guestName],
-      guestEmail: [issueFormRecord?.guestEmail],
+      guestName: [issueFormRecord?.guestName, guestNameValidators],
+      guestEmail: [issueFormRecord?.guestEmail, guestEmailValidators],
       screenshot: [issueFormRecord?.screenshot],
       status: [issueFormRecord?.status],
       remarks: [issueFormRecord?.remarks],
@@ -144,6 +133,7 @@ export class AddEditIssueComponent implements OnInit {
   }
 
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {
+    console.log('form upon submission', { form });
     form.get('description').setValue(this.description);
     this.store.dispatch(new CreateUpdateIssueAction({ form, formDirective }));
   }

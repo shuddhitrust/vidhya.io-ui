@@ -98,6 +98,7 @@ export const PUBLIC_QUERIES = {
       publicInstitution(code: $code) {
         id
         name
+        code
         location
         city
         website

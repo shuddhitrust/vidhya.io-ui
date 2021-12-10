@@ -214,6 +214,9 @@ export type Institution = {
   invitecode?: string;
   createdAt?: string;
   updatedAt?: string;
+  learnerCount?: number;
+  completed?: number;
+  percentage?: number;
 };
 
 export type Course = {

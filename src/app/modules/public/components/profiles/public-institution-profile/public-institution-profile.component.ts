@@ -31,7 +31,7 @@ export class InstitutionProfileComponent implements OnInit {
   params: object = {};
   @Select(PublicState.getInstitutionFormRecord)
   institutionFormRecord$: Observable<Institution>;
-  institution: any;
+  institution: Institution;
 
   @Select(PublicState.isFetchingFormRecord)
   isFetchingFormRecord$: Observable<boolean>;
@@ -63,6 +63,7 @@ export class InstitutionProfileComponent implements OnInit {
     this.location.back();
   }
   reportInstitution() {
+    console.log('report institution', { institution: this.institution });
     this.router.navigate([uiroutes.ISSUE_FORM_ROUTE.route], {
       queryParams: {
         resourceType: IssueResourceTypeOptions.institution,

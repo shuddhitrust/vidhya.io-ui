@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AddEditIssueComponent } from '../dashboard/modules/admin/modules/issues/components/add-edit-issue/add-edit-issue.component';
 import { uiroutes } from './../../shared/common/ui-routes';
 import { HomeComponent } from './components/pages/home/home.component';
 import { PasswordResetComponent } from './components/pages/password-reset/password-reset.component';
@@ -19,6 +20,11 @@ const routes: Routes = [
     path: `${uiroutes.MEMBER_PROFILE_ROUTE.route}/:username`,
     component: PublicUserProfileComponent,
     pathMatch: 'full',
+  },
+  {
+    path: uiroutes.ISSUE_FORM_ROUTE.route,
+    component: AddEditIssueComponent,
+    pathMatch: 'prefix',
   },
   {
     path: `${uiroutes.INSTITUTION_PROFILE_ROUTE.route}/:code`,
