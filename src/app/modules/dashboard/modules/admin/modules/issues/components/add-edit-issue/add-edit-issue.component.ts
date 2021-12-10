@@ -179,7 +179,7 @@ export class AddEditIssueComponent implements OnInit {
       this.store.dispatch(
         new ToggleLoadingScreen({
           showLoadingScreen: true,
-          message: 'Uploading image...',
+          message: 'Uploading your screenshot...',
         })
       );
       const formData = new FormData();
