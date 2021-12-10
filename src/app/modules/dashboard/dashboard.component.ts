@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
+import { resourceUsage } from 'process';
 import { Observable } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { ADMIN_SECTION_LABELS } from 'src/app/shared/common/constants';
@@ -146,7 +147,11 @@ export class DashboardComponent implements OnInit {
   }
 
   authorizeResourceMethod(resource, action = '*') {
-    return this.auth.authorizeResource(resource, action);
+    if (resource == resources.ISSUE) {
+      return this.auth.authorizeResource(resource, RESOURCE_ACTIONS.LIST);
+    } else {
+      return this.auth.authorizeResource(resource, action);
+    }
   }
 
   onTabChange($event) {
