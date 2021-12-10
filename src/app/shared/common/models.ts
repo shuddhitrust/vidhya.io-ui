@@ -10,6 +10,11 @@ export type idPayload = {
   id: number;
 };
 
+export type PreviewImage = {
+  url: string;
+  file: any;
+};
+
 /*
 Fetch policy to be used when making Graphql queries via AWS Amplify Client
 */

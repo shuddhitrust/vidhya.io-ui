@@ -26,6 +26,7 @@ import {
   ExerciseSubmissionStatusOptions,
   IssueResourceTypeOptions,
   MatSelectOption,
+  PreviewImage,
   resources,
   RESOURCE_ACTIONS,
   SubmissionRubric,
@@ -88,11 +89,6 @@ const questionTypeDescriptions = {
     'Participant will be expected to upload files. They may upload multiple files, but must at least upload one file to mark this exercise as complete.',
   [ExerciseQuestionTypeOptions.link]:
     'Participant will be expected to enter a link',
-};
-
-type previewImage = {
-  url: string;
-  file: any;
 };
 
 @Component({
@@ -301,7 +297,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     return authorized && submissionAllowed;
   }
 
-  isSubmissionRetgurned(submission: ExerciseSubmission) {
+  isSubmissionReturned(submission: ExerciseSubmission) {
     return submission.status === ExerciseSubmissionStatusOptions.returned;
   }
 
@@ -482,7 +478,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
   // The method that gets the file from the input and queues it for upload
   addImageFileToSubmission(event, exercise) {
     if (event.target.files.length > 0) {
-      let previewImageObject: previewImage = { file: null, url: null };
+      let previewImageObject: PreviewImage = { file: null, url: null };
       const file = event.target.files[0];
       const fileValid = file.type.startsWith('image/');
       if (fileValid) {

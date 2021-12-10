@@ -9,7 +9,11 @@ import {
 import { Select, Store } from '@ngxs/store';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { CurrentMember, Issue } from 'src/app/shared/common/models';
+import {
+  CurrentMember,
+  Issue,
+  PreviewImage,
+} from 'src/app/shared/common/models';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { IssueState } from '../../state/issue.state';
 import { emptyIssueFormRecord } from '../../state/issue.model';
@@ -19,6 +23,9 @@ import {
 } from '../../state/issue.actions';
 import { FetchCoursesAction } from '../../../../../course/state/courses/course.actions';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
+import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
+import { UploadService } from 'src/app/shared/api/upload.service';
+import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
 
 export const ResourceTypeParamName = 'resourceType';
 export const ResourceIdParamName = 'resourceId';
@@ -42,9 +49,11 @@ export class AddEditIssueComponent implements OnInit {
   @Select(AuthState.getCurrentMember)
   currentMember$: Observable<CurrentMember>;
   currentMember: CurrentMember;
+  screenshotPreview: PreviewImage = { file: null, url: null };
   issueFormRecord: Issue = emptyIssueFormRecord;
   issueForm: FormGroup;
   description: string;
+  screenshot: string;
   resourceTypeFromParams: string = null;
   resourceIdFromParams: string = null;
   linkFromParams: string = null;
@@ -52,7 +61,8 @@ export class AddEditIssueComponent implements OnInit {
     private location: Location,
     private store: Store,
     private route: ActivatedRoute,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private uploadService: UploadService
   ) {
     this.issueForm = this.setupIssueFormIssue();
 
@@ -136,9 +146,83 @@ export class AddEditIssueComponent implements OnInit {
     this.location.back();
   }
 
+  // The method that gets the file from the input and queues it for upload
+  addImageFileToIssue(event) {
+    if (event.target.files.length > 0) {
+      const file = event.target.files[0];
+      const fileValid = file.type.startsWith('image/');
+      if (fileValid) {
+        this.screenshotPreview.file = file;
+
+        const reader = new FileReader();
+        reader.onload = () => {
+          const url = reader.result as string;
+          this.screenshotPreview.url = url;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        event.target.value = null;
+        this.store.dispatch(
+          new ShowNotificationAction({
+            message: 'Please upload only images',
+            action: 'error',
+          })
+        );
+      }
+    }
+  }
+
+  // The method that actually uploads the file to the server and initiates the addition of the url to the submission
+  async uploadImage(form, formDirective) {
+    const file = this.screenshotPreview.file;
+    if (file) {
+      this.store.dispatch(
+        new ToggleLoadingScreen({
+          showLoadingScreen: true,
+          message: 'Uploading image...',
+        })
+      );
+      const formData = new FormData();
+      formData.append('file', file);
+      this.uploadService.upload(formData).subscribe(
+        (res) => {
+          this.store.dispatch(
+            new ToggleLoadingScreen({
+              showLoadingScreen: false,
+              message: '',
+            })
+          );
+          this.screenshot = res.secure_url;
+          this.submitForm(form, formDirective);
+        },
+        (err) => {
+          this.store.dispatch(
+            new ToggleLoadingScreen({
+              showLoadingScreen: false,
+              message: '',
+            })
+          );
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message:
+                'Something went wrong while uploading the reference images!',
+              action: 'error',
+            })
+          );
+        }
+      );
+    }
+  }
+
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {
-    console.log('form upon submission', { form });
-    form.get('description').setValue(this.description);
-    this.store.dispatch(new CreateUpdateIssueAction({ form, formDirective }));
+    if (this.screenshotPreview.file && !this.screenshot) {
+      this.uploadImage(form, formDirective);
+    } else {
+      form.get('description').setValue(this.description);
+      if (this.screenshot) {
+        form.get('screenshot').setValue(this.screenshot);
+      }
+      this.store.dispatch(new CreateUpdateIssueAction({ form, formDirective }));
+    }
   }
 }

@@ -36,6 +36,19 @@
         >
       </p>
       <p>Issue Description - "{{ issue?.description }}"</p>
+      <img
+        *ngIf="issue.screenshot"
+        [src]="issue.screenshot"
+        alt="Screenshot of the issue"
+        class="thumbnail"
+        (click)="showExpandedImage(issue.screenshot)"
+      />
+      <hr />
+      <p>
+        The current status of this issue is "{{
+          renderStatusLabel(issue.status)
+        }}"
+      </p>
       <div *ngIf="issue?.remarks && issue?.resolver?.name">
         <hr />
         <p>
@@ -47,6 +60,7 @@
       </div>
       <small
         style="font-style: italic; cursor: pointer"
+        [nz-tooltip]="issue.guestEmail"
         (click)="reporterLink()"
         >{{ renderIssueSubtitle() }}</small
       >

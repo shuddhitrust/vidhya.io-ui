@@ -34,6 +34,7 @@ import {
 import { clipLongText, parseDateTime } from 'src/app/shared/common/functions';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
+import { ImageDisplayDialog } from 'src/app/shared/components/image-display/image-display-dialog.component';
 @Component({
   selector: 'app-issue-profile',
   templateUrl: './issue-profile.component.html',
@@ -92,7 +93,7 @@ export class IssueProfileComponent implements OnInit, OnDestroy {
       this.clipboard.copy(this.issue.guestEmail);
       this.store.dispatch(
         new ShowNotificationAction({
-          message: `This issue was reported by a non-registerd user. Their email ID (${this.issue.guestEmail})has been copied to your clipboard`,
+          message: `This issue was reported by a non-registerd user. \n\n Their email ID (${this.issue.guestEmail}) has been copied to your clipboard`,
           action: 'success',
         })
       );
@@ -106,6 +107,16 @@ export class IssueProfileComponent implements OnInit, OnDestroy {
   }
   parseDate(date) {
     return parseDateTime(date);
+  }
+
+  showExpandedImage(image) {
+    const dialogRef = this.dialog.open(ImageDisplayDialog, {
+      data: {
+        image,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {});
   }
 
   renderStatusLabel(status) {

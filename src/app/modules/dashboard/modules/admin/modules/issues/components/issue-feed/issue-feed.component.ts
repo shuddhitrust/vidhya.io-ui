@@ -106,6 +106,37 @@ export class IssueFeedComponent implements OnInit {
     return `Reported by ${reporter} at ${this.parseDate(issue.createdAt)}`;
   }
 
+  statusIcon(issue): { icon: string; iconColor: string; tooltip: string } {
+    let icon = null;
+    let iconColor = null;
+    let tooltip = '';
+    switch (issue?.status) {
+      case IssueStatusTypeOptions.pending:
+        icon = 'new_releases';
+        iconColor = 'var(--orange)';
+        tooltip = 'This  issue is pending resolution';
+        break;
+      case IssueStatusTypeOptions.resolved:
+        icon = 'done_all';
+        iconColor = 'var(--green)';
+        tooltip = `This issue was resolved`;
+        break;
+      case IssueStatusTypeOptions.duplicate:
+        icon = 'dns';
+        iconColor = 'var(--red)';
+        tooltip = `This issue was marked as a duplicate`;
+        break;
+      case IssueStatusTypeOptions.no_action:
+        icon = 'error';
+        iconColor = 'var(--red)';
+        tooltip = `This issue was marked as not needing any action`;
+        break;
+      default:
+        break;
+    }
+    return { icon, iconColor, tooltip };
+  }
+
   clip(string) {
     return clipLongText(string, 200);
   }

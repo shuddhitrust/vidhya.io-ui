@@ -71,7 +71,18 @@
           <mat-card-actions>
             <small style="font-style: italic">{{
               renderIssueSubtitle(issue)
-            }}</small></mat-card-actions
+            }}</small>
+            <button
+              type="button"
+              class="card-button"
+              nzTooltipPlacement="left"
+              [nz-tooltip]="statusIcon(issue).tooltip"
+              mat-icon-button
+            >
+              <mat-icon [ngStyle]="{ color: statusIcon(issue).iconColor }">{{
+                statusIcon(issue).icon
+              }}</mat-icon>
+            </button></mat-card-actions
           >
         </mat-card>
       </div>
