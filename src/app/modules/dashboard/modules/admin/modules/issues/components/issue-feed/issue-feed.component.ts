@@ -36,7 +36,8 @@ import { IssueState } from '../../state/issue.state';
   ],
 })
 export class IssueFeedComponent implements OnInit {
-  @Input() reporter: User = null;
+  @Input() reporterId: number = null;
+  @Input() link: string = null;
   @Input() ownProfile: boolean = false;
   resource: string = resources.ISSUE;
   resourceActions = RESOURCE_ACTIONS;
@@ -68,8 +69,16 @@ export class IssueFeedComponent implements OnInit {
     return getOptionLabel(status, this.issueStatusOptions);
   }
   ngOnChanges(changes) {
-    if (changes.reporter) {
-      this.reporter = changes.reporter.currentValue;
+    let refetch = false;
+    if (changes.reporterId) {
+      this.reporterId = changes.reporterId.currentValue;
+      refetch = true;
+    }
+    if (changes.link) {
+      this.link = changes.link.currentValue;
+      refetch = true;
+    }
+    if (refetch) {
       this.fetchIssues();
     }
   }
@@ -81,6 +90,8 @@ export class IssueFeedComponent implements OnInit {
           columnFilters: {
             status: this.issueStatusFilter,
             resourceType: this.groupByFilter,
+            reporterId: this.reporterId,
+            link: this.link,
           },
         },
       })
@@ -93,6 +104,37 @@ export class IssueFeedComponent implements OnInit {
   renderIssueSubtitle(issue: Issue) {
     let reporter = issue.reporter?.name ? issue.reporter.name : issue.guestName;
     return `Reported by ${reporter} at ${this.parseDate(issue.createdAt)}`;
+  }
+
+  statusIcon(issue): { icon: string; iconColor: string; tooltip: string } {
+    let icon = null;
+    let iconColor = null;
+    let tooltip = '';
+    switch (issue?.status) {
+      case IssueStatusTypeOptions.pending:
+        icon = 'new_releases';
+        iconColor = 'var(--orange)';
+        tooltip = 'This  issue is pending resolution';
+        break;
+      case IssueStatusTypeOptions.resolved:
+        icon = 'done_all';
+        iconColor = 'var(--green)';
+        tooltip = `This issue was resolved`;
+        break;
+      case IssueStatusTypeOptions.duplicate:
+        icon = 'dns';
+        iconColor = 'var(--red)';
+        tooltip = `This issue was marked as a duplicate`;
+        break;
+      case IssueStatusTypeOptions.no_action:
+        icon = 'error';
+        iconColor = 'var(--red)';
+        tooltip = `This issue was marked as not needing any action`;
+        break;
+      default:
+        break;
+    }
+    return { icon, iconColor, tooltip };
   }
 
   clip(string) {

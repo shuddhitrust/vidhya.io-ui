@@ -16,7 +16,6 @@ import { OwnIssuesComponent } from './components/own-issues/own-issues.component
 const declarations = [
   IssueFeedComponent,
   IssueProfileComponent,
-  AddEditIssueComponent,
   OwnIssuesComponent,
 ];
 const imports = [SharedModule, InfiniteScrollModule, LMarkdownEditorModule];

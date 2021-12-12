@@ -3,6 +3,9 @@
 </button>
 <h2 class="center-title">Issue Form</h2>
 <div class="col-lg-8 col-sm-12 form-container">
+  <p *ngIf="newIssue()">
+    Please use this form to report any issues in the page you were just in.
+  </p>
   <form
     [formGroup]="issueForm"
     novalidate
@@ -11,7 +14,13 @@
   >
     <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
       <mat-label>Link</mat-label>
-      <input matInput formControlName="link" required placeholder="Link URL" />
+      <input
+        matInput
+        readonly
+        formControlName="link"
+        required
+        placeholder="Link URL"
+      />
       <small
         class="validation-error"
         *ngIf="
@@ -21,6 +30,62 @@
         Link is required
       </small>
     </mat-form-field>
+
+    <mat-form-field
+      *ngIf="this.guestForm()"
+      class="col-lg-12 col-md-12 col-sm-12"
+      appearance="outline"
+    >
+      <mat-label>Your Name</mat-label>
+      <input
+        matInput
+        formControlName="guestName"
+        required
+        placeholder="Enter your name"
+      />
+      <small
+        class="validation-error"
+        *ngIf="
+          issueForm.get('guestName').hasError('required') &&
+          formDirective.submitted
+        "
+      >
+        Name is required
+      </small>
+    </mat-form-field>
+
+    <mat-form-field
+      *ngIf="this.guestForm()"
+      class="col-lg-12 col-md-12 col-sm-12"
+      appearance="outline"
+    >
+      <mat-label>Your Email</mat-label>
+      <input
+        matInput
+        formControlName="guestEmail"
+        required
+        placeholder="Enter your Email ID"
+      />
+      <small
+        class="validation-error"
+        *ngIf="
+          issueForm.get('guestEmail').hasError('required') &&
+          formDirective.submitted
+        "
+      >
+        Name is required
+      </small>
+      <small
+        class="validation-error"
+        *ngIf="
+          issueForm.get('guestEmail').hasError('email') &&
+          formDirective.submitted
+        "
+      >
+        Please enter a valid email
+      </small>
+    </mat-form-field>
+
     <!-- <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
       <mat-label>Resource ID</mat-label>
       <input
@@ -70,8 +135,18 @@
     </button>
   </form>
 
+  <p>Screenshot of the issue (Optional):-</p>
+  <input
+    id="logo-choose-button"
+    type="file"
+    accept="image/*"
+    placeholder="Image upload"
+    (change)="addImageFileToIssue($event)"
+  />
+  <br />
+  <br />
   <h2>Description</h2>
-  <p>Pleae describe the issue with this page that you would like to report</p>
+  <p>Please describe the issue with this page that you would like to report</p>
   <md-editor
     name="Description"
     [(ngModel)]="description"

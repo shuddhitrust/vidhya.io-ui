@@ -166,9 +166,10 @@ export class IssueState {
       searchField: searchQuery,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
-      reporter: columnFilters?.reporterId,
+      reporterId: columnFilters?.reporterId,
       status: columnFilters?.status,
       resourceType: columnFilters?.resourceType,
+      link: columnFilters?.link,
     };
     patchState({ isFetching: true });
     this.store.dispatch(

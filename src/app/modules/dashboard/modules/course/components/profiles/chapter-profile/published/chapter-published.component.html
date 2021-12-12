@@ -182,7 +182,7 @@
       <div
         *ngIf="
           disableExerciseModification(question) ||
-          isSubmissionRetgurned(response)
+          isSubmissionReturned(response)
         "
         class="col-lg-3 col-md-4 col-sm-12 floating-logo"
       >
@@ -265,6 +265,7 @@
         <input
           matInput
           [disabled]="disableExerciseModification(question)"
+          (paste)="linkPasted($event)"
           (keydown)="sanitizeLink($event)"
           (keyup)="updateExerciseSubmissionLink(question)"
           [(ngModel)]="tempLinks[question.id]"

@@ -28,15 +28,23 @@ export class PublicComponent {
   showHomePage() {
     // Make sure to add the routes of other components that are allowed to be shown when not logged in fully
     const routes = [
-      uiroutes.PRIVACY_ROUTE.route,
-      uiroutes.TERMS_CONDITIONS_ROUTE.route,
       uiroutes.MEMBER_FORM_ROUTE.route,
       uiroutes.PASSWORD_RESET_ROUTE.route,
+      uiroutes.ISSUE_FORM_ROUTE.route,
+      uiroutes.PRIVACY_ROUTE.route,
+      uiroutes.TERMS_CONDITIONS_ROUTE.route,
       uiroutes.MEMBER_PROFILE_ROUTE.route,
       uiroutes.INSTITUTION_PROFILE_ROUTE.route,
       uiroutes.ERROR_ROUTE.route,
     ];
     return this.currentRouteNoteEquals(routes);
+  }
+
+  routeIs(route) {
+    const url = this.router.url;
+    const mainroute = url.split('?')[0];
+
+    return mainroute.includes(route);
   }
 
   /**
@@ -47,43 +55,46 @@ export class PublicComponent {
   showUnprotectedPage(route) {
     switch (route) {
       case uiroutes.PASSWORD_RESET_ROUTE.route:
-        if (this.router.url.includes(uiroutes.PASSWORD_RESET_ROUTE.route)) {
+        if (this.routeIs(uiroutes.PASSWORD_RESET_ROUTE.route)) {
           return true;
         }
         break;
       case uiroutes.MEMBER_PROFILE_ROUTE.route:
-        if (this.router.url.includes(uiroutes.MEMBER_PROFILE_ROUTE.route)) {
+        if (this.routeIs(uiroutes.MEMBER_PROFILE_ROUTE.route)) {
+          return true;
+        }
+        break;
+      case uiroutes.ISSUE_FORM_ROUTE.route:
+        if (this.routeIs(uiroutes.ISSUE_FORM_ROUTE.route)) {
           return true;
         }
         break;
       case uiroutes.INSTITUTION_PROFILE_ROUTE.route:
-        if (
-          this.router.url.includes(uiroutes.INSTITUTION_PROFILE_ROUTE.route)
-        ) {
+        if (this.routeIs(uiroutes.INSTITUTION_PROFILE_ROUTE.route)) {
           return true;
         }
         break;
       case uiroutes.PRIVACY_ROUTE.route:
-        if (this.router.url.includes(uiroutes.PRIVACY_ROUTE.route)) {
+        if (this.routeIs(uiroutes.PRIVACY_ROUTE.route)) {
           return true;
         }
         break;
       case uiroutes.TERMS_CONDITIONS_ROUTE.route:
-        if (this.router.url.includes(uiroutes.TERMS_CONDITIONS_ROUTE.route)) {
+        if (this.routeIs(uiroutes.TERMS_CONDITIONS_ROUTE.route)) {
           return true;
         }
         break;
       case uiroutes.MEMBER_FORM_ROUTE.route:
         if (
           this.firstTimeSetup &&
-          this.currentRoute().includes(uiroutes.MEMBER_FORM_ROUTE.route)
+          this.routeIs(uiroutes.MEMBER_FORM_ROUTE.route)
         ) {
           return true;
         }
         break;
 
       case uiroutes.HOME_ROUTE.route:
-        if (this.currentRoute() == uiroutes.HOME_ROUTE.route) {
+        if (this.routeIs(uiroutes.HOME_ROUTE.route)) {
           return true;
         }
         break;

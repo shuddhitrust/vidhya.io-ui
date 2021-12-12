@@ -10,6 +10,11 @@ export type idPayload = {
   id: number;
 };
 
+export type PreviewImage = {
+  url: string;
+  file: any;
+};
+
 /*
 Fetch policy to be used when making Graphql queries via AWS Amplify Client
 */
@@ -214,6 +219,9 @@ export type Institution = {
   invitecode?: string;
   createdAt?: string;
   updatedAt?: string;
+  learnerCount?: number;
+  completed?: number;
+  percentage?: number;
 };
 
 export type Course = {
@@ -271,6 +279,7 @@ export type Project = {
 
 export type IssueResourceType = 'US' | 'PR' | 'IN' | 'SU' | 'CO' | 'CH';
 export const IssueResourceTypeOptions = {
+  all: null,
   user: 'US',
   project: 'PR',
   institution: 'IN',
@@ -281,6 +290,7 @@ export const IssueResourceTypeOptions = {
 
 export type IssueStatusType = 'PE' | 'SU' | 'GR' | 'RE';
 export const IssueStatusTypeOptions = {
+  all: null,
   pending: 'PE',
   resolved: 'RE',
   duplicate: 'DU',
@@ -302,6 +312,8 @@ export type Issue = {
   resolver?: any;
   createdAt?: string;
   updatedAt?: string;
+  title?: string;
+  subtitle?: string;
 };
 export type Chapter = {
   id: number;

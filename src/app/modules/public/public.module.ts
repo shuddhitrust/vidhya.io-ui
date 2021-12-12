@@ -18,10 +18,12 @@ import { UserCoursesComponent } from './components/profiles/public-user-profile/
 import { UserProjectsComponent } from './components/profiles/public-user-profile/user-profile-tabs/user-profile-projects/user-profile-projects.component';
 import { ProjectModule } from '../dashboard/modules/project/project.module';
 import { TermsConditionsComponent } from './components/pages/terms-conditions/terms-conditions.component';
+import { AddEditIssueComponent } from '../dashboard/modules/admin/modules/issues/components/add-edit-issue/add-edit-issue.component';
 
 const declarations = [
   HomeComponent,
   PasswordResetComponent,
+  AddEditIssueComponent,
   PrivacyComponent,
   TermsConditionsComponent,
   PublicUserProfileComponent,
