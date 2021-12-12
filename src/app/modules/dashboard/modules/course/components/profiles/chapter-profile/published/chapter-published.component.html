@@ -265,6 +265,7 @@
         <input
           matInput
           [disabled]="disableExerciseModification(question)"
+          (paste)="linkPasted($event)"
           (keydown)="sanitizeLink($event)"
           (keyup)="updateExerciseSubmissionLink(question)"
           [(ngModel)]="tempLinks[question.id]"

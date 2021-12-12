@@ -420,6 +420,11 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     this.exerciseSubmissions = newExerciseSubmissions;
   }
 
+  linkPasted(event) {
+    this.sanitizeLink(event);
+    this.updateExerciseSubmissionLink(event);
+  }
+
   sanitizeLink(event) {
     return preventSpaces(event);
   }
