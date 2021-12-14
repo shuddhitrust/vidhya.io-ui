@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: ${{matrix.node-version}}
           build: npm run build:testing
-          start: npm start:testing
+          start: npm run start:testing
           wait-on: http://localhost:4200
 
       - name: Merge staging -> master
