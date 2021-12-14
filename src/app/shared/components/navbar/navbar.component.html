@@ -14,7 +14,12 @@
   </mat-toolbar>
 </p>
 <ng-template #loggedOutMenu>
-  <button mat-stroked-button color="primary" (click)="login()">
+  <button
+    data-cy="login-button"
+    mat-stroked-button
+    color="primary"
+    (click)="login()"
+  >
     <mat-icon>logout</mat-icon>&nbsp;
     <span>Login</span>
   </button>

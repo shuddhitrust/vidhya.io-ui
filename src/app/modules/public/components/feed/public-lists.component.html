@@ -1,4 +1,4 @@
-<div id="parent-container">
+<div data-cy="parent-container">
   <mat-form-field id="search-query-field" appearance="outline">
     <input
       [(ngModel)]="draftSearchQuery"
@@ -33,7 +33,7 @@
         ></app-institutions-feed>
       </ng-template>
     </nz-tab>
-    <nz-tab [nzTitle]="Learners">
+    <nz-tab data-cy="learnersTab" [nzTitle]="Learners">
       <ng-template nz-tab>
         <app-learners-feed [currentQuery]="currentQuery"></app-learners-feed>
       </ng-template>
