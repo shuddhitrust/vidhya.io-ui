@@ -2,22 +2,36 @@ name: End-to-end tests
 on:
   push:
     branches:
-      - master
+      - staging
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [14]
-        machines: [1, 2, 3]
+        machines: [1, 2]
     steps:
       - name: Checkout
         uses: actions/checkout@v1
 
       - name: Cypress run
+        continue-on-error: false
         uses: cypress-io/github-action@v1
         with:
           node-version: ${{matrix.node-version}}
-          build: npm run build:production
-          start: npm start
+          build: npm run build:testing
+          start: npm start:testing
           wait-on: http://localhost:4200
+
+  sync-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Merge staging -> master
+        uses: devmasx/merge-branch@v1
+        with:
+          type: now
+          from_branch: staging
+          target_branch: master
+          github_token: ${{ secrets.GITHUB_TOKEN }}
