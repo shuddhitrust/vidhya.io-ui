@@ -12,11 +12,11 @@ jobs:
         machines: [1, 2]
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
       - name: Cypress run
         continue-on-error: false
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2
         with:
           node-version: ${{matrix.node-version}}
           build: npm run build:testing
