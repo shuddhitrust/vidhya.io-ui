@@ -23,13 +23,8 @@ jobs:
           start: npm start:testing
           wait-on: http://localhost:4200
 
-  sync-branch:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-
       - name: Merge staging -> master
-        uses: devmasx/merge-branch@v1
+        uses: devmasx/merge-branch@master
         with:
           type: now
           from_branch: staging
