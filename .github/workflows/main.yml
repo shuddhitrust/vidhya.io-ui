@@ -17,12 +17,14 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Start server
-        run: npm run start:testing
-
       - name: Cypress run
         uses: cypress-io/github-action@v2
-        # wait-on: http://localhost:4200
+        continue-on-error: false
+        uses: cypress-io/github-action@v1
+        with:
+          start: npm run start:testing
+          wait-on: http://localhost:4200
+          wait-on-timeout: 120
 
       - name: Merge staging -> master
         uses: devmasx/merge-branch@master
