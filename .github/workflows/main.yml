@@ -21,6 +21,7 @@ jobs:
         uses: cypress-io/github-action@v2
         continue-on-error: false
         with:
+          browser: firefox
           start: npm run start:testing
           wait-on: http://localhost:4200
           wait-on-timeout: 500
