@@ -138,6 +138,9 @@
             "staging": {
               "browserTarget": "vidhya-ui:build:staging"
             },
+            "testing": {
+              "browserTarget": "vidhya-ui:build:testing"
+            },
             "production": {
               "browserTarget": "vidhya-ui:build:production"
             },
