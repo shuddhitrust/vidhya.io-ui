@@ -18,8 +18,8 @@ jobs:
         continue-on-error: false
         uses: cypress-io/github-action@v2
         with:
-          build: npm run build:testing
-          start: npm run start:testing
+          build: npm run build:production
+          start: npm start
           wait-on: http://localhost:4200
 
       - name: Merge staging -> master
