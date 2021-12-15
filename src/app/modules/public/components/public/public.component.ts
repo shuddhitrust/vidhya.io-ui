@@ -29,6 +29,7 @@ export class PublicComponent {
     // Make sure to add the routes of other components that are allowed to be shown when not logged in fully
     const routes = [
       uiroutes.MEMBER_FORM_ROUTE.route,
+      uiroutes.PROJECT_PROFILE_ROUTE.route,
       uiroutes.PASSWORD_RESET_ROUTE.route,
       uiroutes.ISSUE_FORM_ROUTE.route,
       uiroutes.PRIVACY_ROUTE.route,
@@ -61,6 +62,11 @@ export class PublicComponent {
         break;
       case uiroutes.MEMBER_PROFILE_ROUTE.route:
         if (this.routeIs(uiroutes.MEMBER_PROFILE_ROUTE.route)) {
+          return true;
+        }
+        break;
+      case uiroutes.PROJECT_PROFILE_ROUTE.route:
+        if (this.routeIs(uiroutes.PROJECT_PROFILE_ROUTE.route)) {
           return true;
         }
         break;
