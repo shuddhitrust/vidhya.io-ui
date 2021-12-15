@@ -20,7 +20,6 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v2
         continue-on-error: false
-        uses: cypress-io/github-action@v1
         with:
           start: npm run start:testing
           wait-on: http://localhost:4200
