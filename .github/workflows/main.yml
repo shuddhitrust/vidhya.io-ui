@@ -6,21 +6,19 @@ on:
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [14]
-        machines: [1, 2]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Install node
+        uses: actions/setup-node@v2
+        with:
+          node:version: "14"
+
+      - name: Install dependencies
+        run: npm install
 
       - name: Cypress run
-        continue-on-error: false
-        uses: cypress-io/github-action@v1
-        with:
-          build: npm run build:testing
-          start: npm run start:testing
-          wait-on: http://localhost:4200
+        uses: cypress-io/github-action@v2
 
       - name: Merge staging -> master
         uses: devmasx/merge-branch@master
