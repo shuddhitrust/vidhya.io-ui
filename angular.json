@@ -75,6 +75,16 @@
               ],
               "outputHashing": "all"
             },
+            "testing": {
+              "buildOptimizer": true,
+              "optimization": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.testing.ts"
+                }
+              ]
+            },
             "production": {
               "buildOptimizer": true,
               "optimization": true,
@@ -114,6 +124,9 @@
           "configurations": {
             "staging": {
               "browserTarget": "vidhya-ui:build:staging"
+            },
+            "testing": {
+              "browserTarget": "vidhya-ui:build:testing"
             },
             "production": {
               "browserTarget": "vidhya-ui:build:production"
