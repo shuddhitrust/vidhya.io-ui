@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
 describe("Testing Public Module...", () => {
-  before(() => {
+  beforeEach(() => {
     cy.fixture("routes").as("routes");
   });
 
