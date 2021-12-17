@@ -1,0 +1,19 @@
+{
+  "institution": {
+    "name": "Shuddhi Vidhya",
+    "code": "shuddhividhya",
+    "location": "Chennai",
+    "city": "Chennai",
+    "website": "https://shuddhitrust.org",
+    "phone": null,
+    "logo": "https://i.imgur.com/dPO1MlY.png",
+    "bio": "Committed to doing what is necessary",
+    "invitecode": "9301911365",
+    "searchField": null,
+    "active": true
+  },
+  "learner": {},
+  "course": {},
+  "chapter": {},
+  "submission": {}
+}
