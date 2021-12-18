@@ -69,5 +69,25 @@
     "updated_at": "2021-09-28T10:44:22.462Z",
     "groups": [],
     "user_permissions": []
+  },
+  "newUser": {
+    "id": null,
+    "password": "testpassword",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "newuser",
+    "first_name": "New",
+    "last_name": "User",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2021-09-02T12:56:14.210Z",
+    "name": "New User",
+    "email": "new.user@gmail.com",
+    "avatar": "https://i.imgur.com/KHtECqa.png",
+    "institution": 1,
+    "role": "Learner",
+    "title": "New User Account",
+    "bio": "A new account",
+    "membership_status": "UI"
   }
 }

@@ -1,14 +1,12 @@
 /// <reference types="cypress" />
 
 describe("Testing Auth Module...", () => {
-  before(() => {
+  beforeEach(() => {
+    cy.fixture("routes").as("routes");
     cy.window().then((win) => {
       win.sessionStorage.clear();
       win.localStorage.clear();
     });
-  });
-  beforeEach(() => {
-    cy.fixture("routes").as("routes");
   });
 
   it("Clicking login button shows login dialog box", () => {
@@ -34,9 +32,52 @@ describe("Testing Auth Module...", () => {
         cy.get("[data-cy=username-field]").type(existing.admin.username);
         cy.get("[data-cy=password-field]").type(existing.admin.password);
         cy.get("[data-cy=login-submit-button]").click();
-        cy.waitFor(100);
         cy.get("[data-cy=login-dialog-box]").should("not.be.visible");
         cy.get(".hot-toast-message").contains("Logged in successfully!");
+      });
+    });
+  });
+
+  it("Registration dialog box works", () => {
+    cy.get("@routes").then((routes) => {
+      cy.visit(routes.HOME_ROUTE.route);
+      cy.get("[data-cy=login-button]").click();
+      cy.get("[data-cy=registration-link]").contains("Register").click();
+      cy.get("[data-cy=invitecode-dialog-box]").should("be.visible");
+      cy.get("[data-cy=dialog-box-title]").contains("Enter Invite Code");
+    });
+  });
+
+  it("New user is able to register successfully", () => {
+    cy.get("@routes").then((routes) => {
+      cy.visit(routes.HOME_ROUTE.route);
+      cy.get("[data-cy=login-button]").click();
+      cy.get("[data-cy=registration-link]").contains("Register").click();
+      cy.fixture("existing-records").then((existing) => {
+        cy.get("[data-cy=invitecode-field]").type(
+          existing.institution.invitecode
+        );
+        cy.get("[data-cy=verify-invitation").click();
+        cy.get("[data-cy=registration-dialog-box]").should("be.visible");
+        cy.get("[data-cy=dialog-box-title]").contains("Register");
+        cy.get("[data-cy=registration-username-field]").type(
+          existing.newUser.username
+        );
+        cy.get("[data-cy=registration-email-field]").type(
+          existing.newUser.email
+        );
+        cy.get("[data-cy=registration-password-field]").type(
+          existing.newUser.password
+        );
+        cy.get("[data-cy=registration-password-confirmation-field]").type(
+          existing.newUser.password
+        );
+        cy.get("[data-cy=tnc-agreement-checkbox]").check();
+        cy.get("[data-cy=register-submit-button]").click();
+        cy.get("[data-cy=registration-dialog-box]").should("not.be.visible");
+        cy.get(".hot-toast-message").contains(
+          "Registered successfully! Check your email inbox to fully activate your account."
+        );
       });
     });
   });
