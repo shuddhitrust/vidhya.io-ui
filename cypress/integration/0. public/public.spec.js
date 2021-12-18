@@ -1,6 +1,12 @@
 /// <reference types="cypress" />
 
 describe("Testing Public Module...", () => {
+  before(() => {
+    cy.window().then((win) => {
+      win.sessionStorage.clear();
+      win.localStorage.clear();
+    });
+  });
   beforeEach(() => {
     cy.fixture("routes").as("routes");
   });
