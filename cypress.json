@@ -1,6 +1,6 @@
 {
   "baseUrl": "http://localhost:4200",
-  "defaultCommandTimeout": 10000,
+  "defaultCommandTimeout": 50000,
   "env": {
     "apiUrl": "https://vidhya-io-testing.herokuapp.com/graphql/"
   },
