@@ -1,6 +1,7 @@
 {
   "projectId": "69dtqh",
   "baseUrl": "http://localhost:4200",
+  "chromeWebSecurity": true,
   "defaultCommandTimeout": 100000,
   "env": {
     "apiUrl": "https://vidhya-io-testing.herokuapp.com/graphql/"
