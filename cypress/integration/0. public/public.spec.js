@@ -2,10 +2,7 @@
 
 describe("Testing Public Module...", () => {
   before(() => {
-    cy.window().then((win) => {
-      win.sessionStorage.clear();
-      win.localStorage.clear();
-    });
+    cy.logout();
   });
   beforeEach(() => {
     cy.fixture("routes").as("routes");

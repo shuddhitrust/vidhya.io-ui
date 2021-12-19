@@ -1,12 +1,12 @@
 /// <reference types="cypress" />
 
 describe("Testing Auth Module...", () => {
+  before(() => {
+    cy.deleteNewUser();
+  });
   beforeEach(() => {
     cy.fixture("routes").as("routes");
-    cy.window().then((win) => {
-      win.sessionStorage.clear();
-      win.localStorage.clear();
-    });
+    cy.logout();
   });
 
   it("Clicking login button shows login dialog box", () => {
@@ -72,7 +72,7 @@ describe("Testing Auth Module...", () => {
         cy.get("[data-cy=registration-password-confirmation-field]").type(
           existing.newUser.password
         );
-        cy.get("[data-cy=tnc-agreement-checkbox]").check();
+        cy.get(".mat-checkbox-inner-container > input").check({ force: true });
         cy.get("[data-cy=register-submit-button]").click();
         cy.get("[data-cy=registration-dialog-box]").should("not.be.visible");
         cy.get(".hot-toast-message").contains(
@@ -80,5 +80,9 @@ describe("Testing Auth Module...", () => {
         );
       });
     });
+  });
+  after(() => {
+    cy.deleteNewUser();
+    cy.logout();
   });
 });
