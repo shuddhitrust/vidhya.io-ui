@@ -19,12 +19,27 @@ jobs:
 
       - name: Cypress run
         uses: cypress-io/github-action@v2
+      - uses: actions/upload-artifact@v2
+              if: failure()
+              with:
+                name: cypress-screenshots
+                path: cypress/screenshots
+            # Test run video was always captured, so this action uses "always()" condition
+            - uses: actions/upload-artifact@v2
+              if: always()
+              with:
+                name: cypress-videos
+                path: cypress/videos
         continue-on-error: false
         with:
           browser: firefox
+          record: true
           start: npm run start:testing
           wait-on: http://localhost:4200
           wait-on-timeout: 500
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Merge staging -> master
         uses: devmasx/merge-branch@master
