@@ -1,7 +1,7 @@
 {
   "baseUrl": "http://localhost:4200",
   "env": {
-    "apiUrl": "http://localhost:8000/graphql/"
+    "apiUrl": "https://vidhya-io-testing.herokuapp.com/graphql/"
   },
   "retries": {
     "runMode": 3,
