@@ -1,0 +1,63 @@
+[
+  {
+    "id": 1,
+    "title": "How does the Internet work?",
+    "instructions": "Watch the video about how the internet functions - https://youtu.be/x3c1ih2NJEg\n\nOnce done, answer the following question(s) and click on submit.",
+    "index": 1,
+    "course": 2,
+    "section": 1,
+    "due_date": null,
+    "points": 2,
+    "status": "PU",
+    "searchField": "how does the internet work?watch the video about how the internet functions - https://youtu.be/x3c1ih2njeg\n\nonce done, answer the following question(s) and click on submit.",
+    "active": true,
+    "created_at": "2021-08-30T13:39:19.963Z",
+    "updated_at": "2021-10-15T05:34:38.454Z"
+  },
+  {
+    "id": 2,
+    "title": "Internet & Email Quiz",
+    "instructions": "This quiz is based on the 2 videos posted in the previous chapters.\n\nWatch those videos carefully before submitting this quiz for maximum points.",
+    "index": 3,
+    "course": 2,
+    "section": 1,
+    "due_date": null,
+    "points": 10,
+    "status": "PU",
+    "searchField": "internet & email quizthis quiz is based on the 2 videos posted in the previous chapters.\n\nwatch those videos carefully before submitting this quiz for maximum points.",
+    "active": true,
+    "created_at": "2021-08-30T13:43:20.110Z",
+    "updated_at": "2021-10-15T05:34:39.569Z"
+  },
+
+  {
+    "id": 88,
+    "title": "JS Demo Project 4 - Build a multiplication table generator ",
+    "instructions": "English - https://youtu.be/docXyYb7IVY\n\nTamil - https://youtu.be/yDttduYi1ws\n\nOnce you've finished watching the video, answer the question(s) below and click submit.",
+    "index": 4,
+    "course": 1,
+    "section": 31,
+    "due_date": null,
+    "points": 20,
+    "status": "PU",
+    "searchField": "js demo project 4 - build a multiplication table generator english - https://youtu.be/docxyyb7ivy\n\ntamil - https://youtu.be/ydttduyi1ws\n\nonce you've finished watching the video, answer the question(s) below and click submit.",
+    "active": true,
+    "created_at": "2021-11-14T15:31:31.311Z",
+    "updated_at": "2021-11-14T16:09:44.163Z"
+  },
+  {
+    "id": 90,
+    "title": "JS Demo Project 5 - Build a disco Lights Effect Generator in the browser",
+    "instructions": "English - https://youtu.be/s-ppAPlc124\n\nTamil - https://youtu.be/eg4sSsY80SI\n\nOnce you've finished watching the video, answer the question(s) below and click submit.\n\n**Hint** - Look into JS method ```\nsetInterval()\n```",
+    "index": 5,
+    "course": 1,
+    "section": 31,
+    "due_date": null,
+    "points": 10,
+    "status": "PU",
+    "searchField": "js demo project 5 - build a disco lights effect generator in the browserenglish - https://youtu.be/s-ppaplc124\n\ntamil - https://youtu.be/eg4sssy80si\n\nonce you've finished watching the video, answer the question(s) below and click submit.\n\n**hint** - look into js method ```\nsetinterval()\n```",
+    "active": true,
+    "created_at": "2021-11-14T15:45:47.671Z",
+    "updated_at": "2021-11-14T16:10:23.993Z"
+  }
+]

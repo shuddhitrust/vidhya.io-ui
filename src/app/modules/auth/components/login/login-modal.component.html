@@ -23,9 +23,9 @@
   LOGIN FORM
  -->
 <ng-template #loginTemplate>
-  <div mat-dialog-content class="login-dialog-box">
+  <div data-cy="login-dialog-box" mat-dialog-content class="login-dialog-box">
     <mat-card-header class="form-title">
-      <mat-card-title>Login</mat-card-title>
+      <mat-card-title data-cy="dialog-box-title">Login</mat-card-title>
     </mat-card-header>
     <form
       [formGroup]="loginForm"
@@ -36,6 +36,7 @@
       <mat-form-field
         class="col-lg-12 col-md-12 col-sm-12"
         appearance="outline"
+        data-cy="username-field"
       >
         <mat-label>Username</mat-label>
         <input
@@ -60,6 +61,7 @@
       <mat-form-field
         class="col-lg-12 col-md-12 col-sm-12"
         appearance="outline"
+        data-cy="password-field"
       >
         <mat-label>Password</mat-label>
         <input
@@ -94,10 +96,12 @@
         color="primary"
         [checked]="rememberMe"
         (change)="toggleAuthStorage($event)"
+        data-cy="remember-me-checkbox"
       >
         Remember me on this device
       </mat-checkbox>
       <button
+        data-cy="login-submit-button"
         type="submit"
         class="submit-button"
         mat-raised-button
@@ -109,13 +113,20 @@
     </form>
     <div class="secondary-auth-options">
       <p
+        data-cy="login-issues-link"
         class="link-button"
         style="color: var(--red)"
         (click)="showTroubleSigningIn()"
       >
         Help! I am unable to login!
       </p>
-      <p class="link-button" (click)="showRegister()">Register</p>
+      <p
+        data-cy="registration-link"
+        class="link-button"
+        (click)="showRegister()"
+      >
+        Register
+      </p>
     </div>
   </div>
 </ng-template>
@@ -124,9 +135,15 @@
   INVITECODE FORM
  -->
 <ng-template #invitecodeTemplate>
-  <div mat-dialog-content class="invitecode-dialog-box">
+  <div
+    data-cy="invitecode-dialog-box"
+    mat-dialog-content
+    class="invitecode-dialog-box"
+  >
     <mat-card-header class="form-title">
-      <mat-card-title>Enter Invite Code</mat-card-title>
+      <mat-card-title data-cy="dialog-box-title"
+        >Enter Invite Code</mat-card-title
+      >
     </mat-card-header>
     <form
       [formGroup]="invitecodeForm"
@@ -135,6 +152,7 @@
       (submit)="verifyInvitecode(invitecodeForm)"
     >
       <mat-form-field
+        data-cy="invitecode-field"
         class="col-lg-12 col-md-12 col-sm-12"
         appearance="outline"
       >
@@ -167,6 +185,7 @@
         </small>
       </mat-form-field>
       <button
+        data-cy="verify-invitation"
         type="submit"
         class="submit-button"
         mat-raised-button
@@ -177,7 +196,6 @@
       </button>
     </form>
     <div class="secondary-auth-options">
-      <p class="link-button" (click)="showForgotPassword()">Forgot password?</p>
       <p class="link-button" (click)="showLogin()">Login</p>
     </div>
     <mat-dialog-actions class="card-actions"> </mat-dialog-actions>
@@ -188,9 +206,13 @@
   REGISTER FORM, WHERE USERNAME, EMAIL AND PASSWORD ARE STORED 
 -->
 <ng-template #registerTemplate>
-  <div mat-dialog-content class="register-dialog-box">
+  <div
+    data-cy="registration-dialog-box"
+    mat-dialog-content
+    class="register-dialog-box"
+  >
     <mat-card-header class="form-title">
-      <mat-card-title>Register</mat-card-title>
+      <mat-card-title data-cy="dialog-box-title">Register</mat-card-title>
     </mat-card-header>
     <form
       [formGroup]="registerForm"
@@ -201,6 +223,7 @@
       <mat-form-field
         class="col-lg-12 col-md-12 col-sm-12"
         appearance="outline"
+        data-cy="registration-username-field"
       >
         <mat-label>Username</mat-label>
         <input
@@ -233,6 +256,8 @@
       <mat-form-field
         class="col-lg-12 col-md-12 col-sm-12"
         appearance="outline"
+        data-cy="registration-email-field"
+
       >
         <mat-label>Email ID</mat-label>
         <input
@@ -265,6 +290,8 @@
       <mat-form-field
         class="col-lg-12 col-md-12 col-sm-12"
         appearance="outline"
+        data-cy="registration-password-field"
+
       >
         <mat-label>Password</mat-label>
         <input
@@ -287,6 +314,8 @@
       <mat-form-field
         class="col-lg-12 col-md-12 col-sm-12"
         appearance="outline"
+        data-cy="registration-password-confirmation-field"
+
       >
         <mat-label>Confirm</mat-label>
         <input
@@ -322,6 +351,8 @@
         color="primary"
         [checked]="termsAgreed"
         (change)="toggleTermsAgreed($event)"
+        data-cy="tnc-agreement-checkbox"
+
       >
         I agree to the
         <a
@@ -333,6 +364,7 @@
         >
       </mat-checkbox>
       <button
+        data-cy="register-submit-button"
         type="submit"
         class="submit-button"
         mat-raised-button
@@ -343,7 +375,6 @@
       </button>
     </form>
     <div class="secondary-auth-options">
-      <p class="link-button" (click)="showForgotPassword()">Forgot password?</p>
       <p class="link-button" (click)="showLogin()">Login</p>
     </div>
     <mat-dialog-actions class="card-actions"> </mat-dialog-actions>
@@ -354,7 +385,11 @@
   GET EMAIL FOR SENDING PASSWORD RESET EMAIL
  -->
 <ng-template #forgotPasswordTemplate>
-  <div mat-dialog-content class="email-input-dialog-box">
+  <div
+    data-cy="password-reset-dialog-box"
+    mat-dialog-content
+    class="email-input-dialog-box"
+  >
     <mat-card-header class="form-title">
       <mat-card-title>Send Password Reset Email</mat-card-title>
       <hr />
@@ -426,7 +461,11 @@
   GET EMAIL FOR RESENDING ACTIVATION EMAIL
  -->
 <ng-template #resendActivationEmailTemplate>
-  <div mat-dialog-content class="email-input-dialog-box">
+  <div
+    data-cy="resend-activation-dialog-box"
+    mat-dialog-content
+    class="email-input-dialog-box"
+  >
     <mat-card-header class="form-title">
       <mat-card-title>Resend activation Email</mat-card-title>
       <br />
@@ -499,7 +538,11 @@
   CHOOSE REASON FOR LOGIN ISSUES
  -->
 <ng-template #troubleSigningInTemplate>
-  <div mat-dialog-content class="email-input-dialog-box">
+  <div
+    data-cy="login-issues-dialog-box"
+    mat-dialog-content
+    class="email-input-dialog-box"
+  >
     <mat-card-header class="form-title">
       <mat-card-title>What issue are you having?</mat-card-title>
     </mat-card-header>

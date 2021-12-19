@@ -1,0 +1,824 @@
+[
+  {
+    "name": "Class Admin",
+    "description": "Access to all class administration related screens",
+    "priority": 3,
+    "permissions": {
+      "GROUP": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "ISSUE": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "COURSE": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "MEMBER": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": true
+      },
+      "REPORT": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "CHAPTER": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "GRADING": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "LEARNER": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": true
+      },
+      "PROJECT": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "USER_ROLE": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "MODERATION": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": true
+      },
+      "CLASS_ADMIN": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": true
+      },
+      "INSTITUTION": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "OWN_PROFILE": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "ANNOUNCEMENT": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": false
+      },
+      "EXERCISE_KEY": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "INSTITUTION_ADMIN": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "EXERCISE_SUBMISSION": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      }
+    },
+    "searchField": "class adminaccess to all class administration related screens",
+    "active": true,
+    "created_at": "2021-08-11T09:24:15.123Z",
+    "updated_at": "2021-12-09T04:17:52.074Z"
+  },
+  {
+    "name": "Class Admin Learner",
+    "description": "Access to all class administration related screens + Learner role",
+    "priority": 3,
+    "permissions": {
+      "GROUP": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "ISSUE": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "COURSE": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "MEMBER": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": true
+      },
+      "REPORT": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "CHAPTER": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "GRADING": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "LEARNER": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": true
+      },
+      "PROJECT": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "USER_ROLE": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "MODERATION": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": true
+      },
+      "CLASS_ADMIN": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": true
+      },
+      "INSTITUTION": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "OWN_PROFILE": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "ANNOUNCEMENT": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": false
+      },
+      "EXERCISE_KEY": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "INSTITUTION_ADMIN": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "EXERCISE_SUBMISSION": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": false,
+        "UPDATE": false
+      }
+    },
+    "searchField": "class admin learneraccess to all class administration related screens + learner role",
+    "active": true,
+    "created_at": "2021-09-22T05:12:05.585Z",
+    "updated_at": "2021-12-09T04:17:44.079Z"
+  },
+  {
+    "name": "Grader",
+    "description": "For individuals who only grade",
+    "priority": 1,
+    "permissions": {
+      "GROUP": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "ISSUE": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "COURSE": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "MEMBER": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "REPORT": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": true
+      },
+      "CHAPTER": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "GRADING": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": false,
+        "UPDATE": true
+      },
+      "LEARNER": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "PROJECT": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "USER_ROLE": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "MODERATION": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "CLASS_ADMIN": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "INSTITUTION": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "OWN_PROFILE": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": true
+      },
+      "ANNOUNCEMENT": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "EXERCISE_KEY": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "INSTITUTION_ADMIN": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "EXERCISE_SUBMISSION": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": true
+      }
+    },
+    "searchField": "graderfor individuals who only grade",
+    "active": true,
+    "created_at": "2021-08-22T14:14:41.553Z",
+    "updated_at": "2021-12-09T12:42:59.238Z"
+  },
+  {
+    "name": "Institution Admin",
+    "description": "Role of the administrators of the institution",
+    "priority": 2,
+    "permissions": {
+      "GROUP": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "ISSUE": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "COURSE": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "MEMBER": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": true
+      },
+      "REPORT": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "CHAPTER": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "GRADING": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "LEARNER": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": true
+      },
+      "PROJECT": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "USER_ROLE": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "MODERATION": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": true
+      },
+      "CLASS_ADMIN": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": true
+      },
+      "INSTITUTION": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": true
+      },
+      "OWN_PROFILE": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": false,
+        "UPDATE": true
+      },
+      "ANNOUNCEMENT": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": false
+      },
+      "EXERCISE_KEY": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "INSTITUTION_ADMIN": {
+        "GET": true,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": true
+      },
+      "EXERCISE_SUBMISSION": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      }
+    },
+    "searchField": "institution adminrole of the administrators of the institution",
+    "active": true,
+    "created_at": "2021-08-09T10:29:05.211Z",
+    "updated_at": "2021-12-09T04:12:45.489Z"
+  },
+  {
+    "name": "Learner",
+    "description": "Student user role",
+    "priority": 4,
+    "permissions": {
+      "GROUP": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "ISSUE": {
+        "GET": true,
+        "LIST": false,
+        "CREATE": true,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "COURSE": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "MEMBER": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "REPORT": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": true,
+        "DELETE": false,
+        "UPDATE": true
+      },
+      "CHAPTER": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "GRADING": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "LEARNER": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "PROJECT": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "USER_ROLE": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "MODERATION": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "CLASS_ADMIN": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "INSTITUTION": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "OWN_PROFILE": {
+        "GET": true,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": true
+      },
+      "ANNOUNCEMENT": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "EXERCISE_KEY": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "INSTITUTION_ADMIN": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": false,
+        "DELETE": false,
+        "UPDATE": false
+      },
+      "EXERCISE_SUBMISSION": {
+        "GET": false,
+        "LIST": false,
+        "CREATE": true,
+        "DELETE": false,
+        "UPDATE": false
+      }
+    },
+    "searchField": "learnerstudent user role",
+    "active": true,
+    "created_at": "2021-08-22T14:13:31.834Z",
+    "updated_at": "2021-12-10T11:39:16.690Z"
+  },
+  {
+    "name": "Super Admin",
+    "description": "Has all the access",
+    "priority": 0,
+    "permissions": {
+      "GROUP": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "ISSUE": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "COURSE": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "MEMBER": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "REPORT": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "CHAPTER": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "GRADING": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "LEARNER": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "PROJECT": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "USER_ROLE": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "MODERATION": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "CLASS_ADMIN": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "INSTITUTION": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "OWN_PROFILE": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "ANNOUNCEMENT": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "EXERCISE_KEY": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "INSTITUTION_ADMIN": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      },
+      "EXERCISE_SUBMISSION": {
+        "GET": true,
+        "LIST": true,
+        "CREATE": true,
+        "DELETE": true,
+        "UPDATE": true
+      }
+    },
+    "searchField": null,
+    "active": true,
+    "created_at": "2021-07-25T11:42:28.252Z",
+    "updated_at": "2021-12-09T04:08:01.984Z"
+  }
+]

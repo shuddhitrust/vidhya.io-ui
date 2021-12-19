@@ -12,19 +12,23 @@ jobs:
       - name: Install node
         uses: actions/setup-node@v2
         with:
-          node:version: "14"
+          node-version: "14"
 
       - name: Install dependencies
         run: npm install
 
       - name: Cypress run
         uses: cypress-io/github-action@v2
-        continue-on-error: false
+        continue-on-error: true
         with:
           browser: firefox
+          record: true
           start: npm run start:testing
           wait-on: http://localhost:4200
           wait-on-timeout: 500
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Merge staging -> master
         uses: devmasx/merge-branch@master

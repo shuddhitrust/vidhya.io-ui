@@ -23,3 +23,32 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+Cypress.Commands.add("logout", () => {
+  cy.window().then((win) => {
+    win.sessionStorage.clear();
+    win.localStorage.clear();
+  });
+});
+
+Cypress.Commands.add("deleteNewUser", () => {
+  const apiUrl = Cypress.env("apiUrl");
+
+  cy.request({
+    method: "POST",
+    url: apiUrl,
+    body: {
+      operationName: "cyDeleteNewUser",
+      variables: null,
+      query: `
+          query cyDeleteNewUser {
+            cyDeleteNewUser {
+              ok
+            }
+          }
+        `,
+    },
+  }).then((res) => {
+    console.log(res.body);
+  });
+});

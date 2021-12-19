@@ -1,0 +1,104 @@
+{
+  "ERROR_ROUTE": {
+    "route": "error"
+  },
+  "HOME_ROUTE": {
+    "route": ""
+  },
+  "ACTIVATE_ACCOUNT_ROUTE": {
+    "route": "activate"
+  },
+  "REGISTER_ROUTE": {
+    "route": "register"
+  },
+  "PASSWORD_RESET_ROUTE": {
+    "route": "password-reset"
+  },
+  "RESEND_ACTIVATION_EMAIL_ROUTE": {
+    "route": "resend-activatioin-email"
+  },
+  "DASHBOARD_ROUTE": {
+    "route": "dashboard"
+  },
+  "PROFILE_ROUTE": {
+    "route": "profile"
+  },
+  "ACCOUNT_ROUTE": {
+    "route": "account"
+  },
+  "SUPPORT_ROUTE": {
+    "route": "support"
+  },
+  "PRIVACY_ROUTE": {
+    "route": "privacy"
+  },
+  "TERMS_CONDITIONS_ROUTE": {
+    "route": "terms-conditions"
+  },
+  "INSTITUTION_PROFILE_ROUTE": {
+    "route": "institution"
+  },
+  "INSTITUTION_FORM_ROUTE": {
+    "route": "institution-form"
+  },
+  "MEMBER_PROFILE_ROUTE": {
+    "route": "profile"
+  },
+  "MEMBER_FORM_ROUTE": {
+    "route": "member-form"
+  },
+  "PROJECT_PROFILE_ROUTE": {
+    "route": "project"
+  },
+  "PROJECT_FORM_ROUTE": {
+    "route": "project-form"
+  },
+  "ISSUE_PROFILE_ROUTE": {
+    "route": "issue"
+  },
+  "ISSUE_FORM_ROUTE": {
+    "route": "issue-form"
+  },
+  "OWN_ISSUES_ROUTE": {
+    "route": "own-issues"
+  },
+  "USER_ROLE_PROFILE_ROUTE": {
+    "route": "user-role-profile"
+  },
+  "USER_ROLE_FORM_ROUTE": {
+    "route": "user-role-form"
+  },
+  "GROUP_PROFILE_ROUTE": {
+    "route": "group"
+  },
+  "GROUP_FORM_ROUTE": {
+    "route": "group-form"
+  },
+  "GRADING_PROFILE_ROUTE": {
+    "route": "grading"
+  },
+  "GRADING_FORM_ROUTE": {
+    "route": "grading-form"
+  },
+  "ANNOUNCEMENT_PROFILE_ROUTE": {
+    "route": "announcement"
+  },
+  "ANNOUNCEMENT_FORM_ROUTE": {
+    "route": "announcement-form"
+  },
+  "COURSE_PROFILE_ROUTE": {
+    "route": "course"
+  },
+  "COURSE_FORM_ROUTE": {
+    "route": "course-form"
+  },
+  "CHAPTER_PROFILE_ROUTE": {
+    "route": "chapter"
+  },
+  "CHAPTER_FORM_ROUTE": {
+    "route": "chapter-form"
+  },
+  "CHAT_ROUTE": {
+    "route": "chat"
+  }
+}
