@@ -196,14 +196,20 @@
       </button>
     </form>
     <div class="secondary-auth-options">
-      <p class="link-button" (click)="showLogin()">Login</p>
+      <p
+        data-cy="go-to-login-dialog-box"
+        class="link-button"
+        (click)="showLogin()"
+      >
+        Login
+      </p>
     </div>
     <mat-dialog-actions class="card-actions"> </mat-dialog-actions>
   </div>
 </ng-template>
 
 <!-- 
-  REGISTER FORM, WHERE USERNAME, EMAIL AND PASSWORD ARE STORED 
+  REGISTER FORM, WHERE USERNAME, EMAIL AND PASSWORD ARE ACQUIRED 
 -->
 <ng-template #registerTemplate>
   <div
@@ -257,7 +263,6 @@
         class="col-lg-12 col-md-12 col-sm-12"
         appearance="outline"
         data-cy="registration-email-field"
-
       >
         <mat-label>Email ID</mat-label>
         <input
@@ -291,7 +296,6 @@
         class="col-lg-12 col-md-12 col-sm-12"
         appearance="outline"
         data-cy="registration-password-field"
-
       >
         <mat-label>Password</mat-label>
         <input
@@ -315,7 +319,6 @@
         class="col-lg-12 col-md-12 col-sm-12"
         appearance="outline"
         data-cy="registration-password-confirmation-field"
-
       >
         <mat-label>Confirm</mat-label>
         <input
@@ -352,7 +355,6 @@
         [checked]="termsAgreed"
         (change)="toggleTermsAgreed($event)"
         data-cy="tnc-agreement-checkbox"
-
       >
         I agree to the
         <a
@@ -375,7 +377,13 @@
       </button>
     </form>
     <div class="secondary-auth-options">
-      <p class="link-button" (click)="showLogin()">Login</p>
+      <p
+        class="link-button"
+        data-cy="go-to-login-dialog-box"
+        (click)="showLogin()"
+      >
+        Login
+      </p>
     </div>
     <mat-dialog-actions class="card-actions"> </mat-dialog-actions>
   </div>
@@ -391,7 +399,9 @@
     class="email-input-dialog-box"
   >
     <mat-card-header class="form-title">
-      <mat-card-title>Send Password Reset Email</mat-card-title>
+      <mat-card-title data-cy="dialog-box-title"
+        >Send Password Reset Email</mat-card-title
+      >
       <hr />
       <mat-card-subtitle style="text-align: left"
         ><p>
@@ -410,6 +420,7 @@
       <mat-form-field
         class="col-lg-12 col-md-12 col-sm-12"
         appearance="outline"
+        data-cy="email-field"
       >
         <mat-label>Email ID</mat-label>
         <input
@@ -439,6 +450,7 @@
         </small>
       </mat-form-field>
       <button
+        data-cy="send-password-reset-email-button"
         class="submit-button"
         mat-raised-button
         color="primary"
@@ -452,7 +464,13 @@
       </button>
     </form>
     <div class="secondary-auth-options">
-      <p class="link-button" (click)="showLogin()">Login</p>
+      <p
+        class="link-button"
+        data-cy="go-to-login-dialog-box"
+        (click)="showLogin()"
+      >
+        Login
+      </p>
     </div>
   </div>
 </ng-template>
@@ -467,7 +485,9 @@
     class="email-input-dialog-box"
   >
     <mat-card-header class="form-title">
-      <mat-card-title>Resend activation Email</mat-card-title>
+      <mat-card-title data-cy="dialog-box-title"
+        >Resend activation Email</mat-card-title
+      >
       <br />
       <hr />
       <mat-card-subtitle style="text-align: left"
@@ -487,6 +507,7 @@
       <mat-form-field
         class="col-lg-12 col-md-12 col-sm-12"
         appearance="outline"
+        data-cy="email-field"
       >
         <mat-label>Email ID</mat-label>
         <input
@@ -516,6 +537,7 @@
         </small>
       </mat-form-field>
       <button
+        data-cy="send-activation-email-button"
         class="submit-button"
         mat-raised-button
         color="primary"
@@ -529,7 +551,13 @@
       </button>
     </form>
     <div class="secondary-auth-options">
-      <p class="link-button" (click)="showLogin()">Login</p>
+      <p
+        class="link-button"
+        data-cy="go-to-login-dialog-box"
+        (click)="showLogin()"
+      >
+        Login
+      </p>
     </div>
   </div>
 </ng-template>
@@ -544,19 +572,37 @@
     class="email-input-dialog-box"
   >
     <mat-card-header class="form-title">
-      <mat-card-title>What issue are you having?</mat-card-title>
+      <mat-card-title data-cy="dialog-box-title"
+        >What issue are you having?</mat-card-title
+      >
     </mat-card-header>
     <hr />
-    <button (click)="showResendActivation()" mat-raised-button color="primary">
+    <button
+      data-cy="activation-email-resend-button"
+      (click)="showResendActivation()"
+      mat-raised-button
+      color="primary"
+    >
       I did not receive my account activation email
     </button>
     <hr />
-    <button (click)="showForgotPassword()" mat-raised-button color="primary">
+    <button
+      data-cy="forgot-password-button"
+      (click)="showForgotPassword()"
+      mat-raised-button
+      color="primary"
+    >
       I forgot my password
     </button>
     <hr />
     <div class="secondary-auth-options">
-      <p class="link-button" (click)="showLogin()">Login</p>
+      <p
+        data-cy="go-to-login-dialog-box"
+        class="link-button"
+        (click)="showLogin()"
+      >
+        Login
+      </p>
     </div>
   </div>
 </ng-template>

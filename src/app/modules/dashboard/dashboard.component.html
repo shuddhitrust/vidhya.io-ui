@@ -11,7 +11,11 @@
   "
   nzCentered
 >
-  <nz-tab [nzTitle]="ADMIN" *ngIf="visibleTabs.includes(ADMIN)">
+  <nz-tab
+    data-cy="admin-tab"
+    [nzTitle]="ADMIN"
+    *ngIf="visibleTabs.includes(ADMIN)"
+  >
     <ng-template nz-tab>
       <div class="mat-tab">
         <app-admin-dashboard
