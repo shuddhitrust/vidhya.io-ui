@@ -84,3 +84,47 @@ Cypress.Commands.add("loginLearner", () => {
     });
   });
 });
+
+Cypress.Commands.add("createGlobalAnnouncement", () => {
+  const apiUrl = Cypress.env("apiUrl");
+
+  cy.request({
+    method: "POST",
+    url: apiUrl,
+    body: {
+      operationName: "cyCreateGlobalAnnouncement",
+      variables: null,
+      query: `
+          query cyCreateGlobalAnnouncement {
+            cyCreateGlobalAnnouncement {
+              ok
+            }
+          }
+        `,
+    },
+  }).then((res) => {
+    console.log(res.body);
+  });
+});
+
+Cypress.Commands.add("deleteCreatedGlobalAnnouncement", () => {
+  const apiUrl = Cypress.env("apiUrl");
+
+  cy.request({
+    method: "POST",
+    url: apiUrl,
+    body: {
+      operationName: "cyDeleteGlobalAnnouncement",
+      variables: null,
+      query: `
+          query cyDeleteGlobalAnnouncement {
+            cyDeleteGlobalAnnouncement {
+              ok
+            }
+          }
+        `,
+    },
+  }).then((res) => {
+    console.log(res.body);
+  });
+});

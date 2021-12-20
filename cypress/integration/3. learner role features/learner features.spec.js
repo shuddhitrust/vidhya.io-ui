@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-describe("Learner Features", () => {
+describe("Learner Features: Dashboard", () => {
   before(() => {
     cy.loginLearner();
   });
@@ -22,11 +22,32 @@ describe("Learner Features", () => {
     });
   });
 
-  it("All necessary features exist in Announcements tab", () => {
-    cy.get("@routes").then((routes) => {
-      cy.visit(routes.DASHBOARD_ROUTE.route + "?tab=Announcements");
-      cy.get("[data-cy=mark-all-as-seen-button]").should("be.visible");
-      cy.get("[data-cy=add-announcement-button]").should("not.exist");
+  describe("Learner Features: Announcements", () => {
+    before(() => {
+      cy.loginLearner();
+      cy.createGlobalAnnouncement();
+    });
+    beforeEach(() => {
+      cy.fixture("routes").as("routes");
+    });
+    it("All necessary features exist in Announcements tab", () => {
+      cy.get("@routes").then((routes) => {
+        cy.visit(routes.DASHBOARD_ROUTE.route + "?tab=Announcements");
+        cy.get("[data-cy=mark-all-as-seen-button]").should("be.visible");
+        cy.get("[data-cy=add-announcement-button]").should("not.exist");
+        cy.get('[data-cy="announcement-cards"] > :nth-child(1)').click();
+        // cy.get('[data-cy="announcement-cards"] > :nth-child(1)').click();
+        cy.get('[data-cy="announcement-title"]').should("exist");
+        cy.fixture("existing-records").then((existing) => {
+          cy.get('[data-cy="announcement-title"]').contains(
+            existing.newAnnouncement.title
+          );
+        });
+      });
+    });
+
+    after(() => {
+      cy.deleteCreatedGlobalAnnouncement();
     });
   });
 

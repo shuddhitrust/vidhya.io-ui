@@ -89,5 +89,13 @@
     "title": "New User Account",
     "bio": "A new account",
     "membership_status": "UI"
+  },
+  "newAnnouncement": {
+    "id": null,
+    "title": "New Test Announcement",
+    "author": 2,
+    "message": "This is a test message for the test announcement",
+    "institution": 1,
+    "recipients_global": true
   }
 }
