@@ -52,3 +52,35 @@ Cypress.Commands.add("deleteNewUser", () => {
     console.log(res.body);
   });
 });
+
+Cypress.Commands.add("loginSuperAdmin", () => {
+  cy.logout();
+  cy.fixture("routes").as("routes");
+  cy.get("@routes").then((routes) => {
+    cy.visit(routes.HOME_ROUTE.route);
+    cy.get("[data-cy=login-button]").click();
+    cy.fixture("existing-records").then((existing) => {
+      cy.get("[data-cy=username-field]").type(existing.admin.username);
+      cy.get("[data-cy=password-field]").type(existing.admin.password);
+      cy.get("[data-cy=login-submit-button]").click();
+      cy.get("[data-cy=login-dialog-box]").should("not.exist");
+      cy.get(".hot-toast-message").contains("Logged in successfully!");
+    });
+  });
+});
+
+Cypress.Commands.add("loginLearner", () => {
+  cy.logout();
+  cy.fixture("routes").as("routes");
+  cy.get("@routes").then((routes) => {
+    cy.visit(routes.HOME_ROUTE.route);
+    cy.get("[data-cy=login-button]").click();
+    cy.fixture("existing-records").then((existing) => {
+      cy.get("[data-cy=username-field]").type(existing.learner.username);
+      cy.get("[data-cy=password-field]").type(existing.learner.password);
+      cy.get("[data-cy=login-submit-button]").click();
+      cy.get("[data-cy=login-dialog-box]").should("not.exist");
+      cy.get(".hot-toast-message").contains("Logged in successfully!");
+    });
+  });
+});

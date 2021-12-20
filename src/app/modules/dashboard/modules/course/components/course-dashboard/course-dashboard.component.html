@@ -1,6 +1,7 @@
 <div class="feed-header-block">
   <!-- <h2>Courses</h2> -->
   <button
+    data-cy="add-course-button"
     *ngIf="authorizeResourceMethod(resourceActions.CREATE)"
     (click)="createCourse()"
     class="floating-header-button-top"

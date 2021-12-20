@@ -1,5 +1,6 @@
 <div class="floating-header-button-container">
   <button
+    data-cy="mark-all-as-seen-button"
     (click)="markAllAsSeen()"
     mat-raised-button
     color="primary"
@@ -8,6 +9,7 @@
     Mark all as seen
   </button>
   <button
+    data-cy="add-announcement-button"
     *ngIf="showAnnouncementCreateOption()"
     (click)="createAnnouncement()"
     mat-icon-button
