@@ -36,7 +36,7 @@ export class SubscriptionsState {
     this.isFullyAuthenticated$.subscribe((val) => {
       if (this.isFullyAuthenticated == false && val) {
         this.isFullyAuthenticated = val;
-        // this.store.dispatch(new InitiateSubscriptionsAction());
+        this.store.dispatch(new InitiateSubscriptionsAction());
       }
     });
   }

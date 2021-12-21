@@ -19,12 +19,12 @@ import { AuthState } from 'src/app/modules/auth/state/auth.state';
 const uri = environment.graphql_endpoint;
 let token = sessionStorage.getItem(localStorageKeys.AUTH_TOKEN_KEY);
 
-// let ws = new WebSocketLink({
-//   uri: `${environment.websocket_graphql_endpoint}?token=${token}`,
-//   options: {
-//     reconnect: true,
-//   },
-// });
+let ws = new WebSocketLink({
+  uri: `${environment.websocket_graphql_endpoint}?token=${token}`,
+  options: {
+    reconnect: true,
+  },
+});
 
 // @NgModule()
 // export class TokenUpdater {
@@ -47,7 +47,7 @@ let token = sessionStorage.getItem(localStorageKeys.AUTH_TOKEN_KEY);
 //   }
 // }
 
-export function createApollo(httpLink: HttpLink) {
+export function createApollo(httpLink: HttpLink): ApolloClientOptions<any> {
   const http = httpLink.create({
     uri,
     // withCredentials: true,
@@ -55,24 +55,22 @@ export function createApollo(httpLink: HttpLink) {
 
   /**
    * This is for usage while subscriptions are enabled
+   * Split the Apollo link to route differently based on the operation type.
    */
-  // /**
-  //  * Split the Apollo link to route differently based on the operation type.
-  //  */
-  // const link: ApolloLink = split(
-  //   // split based on operation type
-  //   ({ query }) => {
-  //     let definition = getMainDefinition(query);
-  //     return (
-  //       definition.kind === 'OperationDefinition' &&
-  //       definition.operation === 'subscription'
-  //     );
-  //   },
-  //   ws,
-  //   http
-  // );
+  const link: ApolloLink = split(
+    // split based on operation type
+    ({ query }) => {
+      let definition = getMainDefinition(query);
+      return (
+        definition.kind === 'OperationDefinition' &&
+        definition.operation === 'subscription'
+      );
+    },
+    ws,
+    http
+  );
 
-  const link = http; // This is for usage while disabling subscriptions
+  // const link = http; // This is for usage while disabling subscriptions
 
   const opts: ApolloClientOptions<any> = {
     link,
