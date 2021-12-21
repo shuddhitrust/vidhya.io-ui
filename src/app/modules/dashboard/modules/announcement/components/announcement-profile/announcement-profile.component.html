@@ -13,7 +13,7 @@
     >
       <mat-icon>delete</mat-icon>
     </button>
-    <h2>{{ announcement.title }}</h2>
+    <h2 data-cy="announcement-title">{{ announcement.title }}</h2>
     <div class="markdown-container">
       <markdown [data]="announcement?.message"></markdown>
     </div>

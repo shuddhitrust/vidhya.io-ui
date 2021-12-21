@@ -63,7 +63,7 @@ Cypress.Commands.add("loginSuperAdmin", () => {
       cy.get("[data-cy=username-field]").type(existing.admin.username);
       cy.get("[data-cy=password-field]").type(existing.admin.password);
       cy.get("[data-cy=login-submit-button]").click();
-      cy.get("[data-cy=login-dialog-box]").should("not.be.visible");
+      cy.get("[data-cy=login-dialog-box]").should("not.exist");
       cy.get(".hot-toast-message").contains("Logged in successfully!");
     });
   });
@@ -75,10 +75,100 @@ Cypress.Commands.add("loginLearner", () => {
   cy.get("@routes").then((routes) => {
     cy.visit(routes.HOME_ROUTE.route);
     cy.get("[data-cy=login-button]").click();
-    cy.get("[data-cy=username-field]").type(existing.learner.username);
-    cy.get("[data-cy=password-field]").type(existing.learner.password);
-    cy.get("[data-cy=login-submit-button]").click();
-    cy.get("[data-cy=login-dialog-box]").should("not.be.visible");
-    cy.get(".hot-toast-message").contains("Logged in successfully!");
+    cy.fixture("existing-records").then((existing) => {
+      cy.get("[data-cy=username-field]").type(existing.learner.username);
+      cy.get("[data-cy=password-field]").type(existing.learner.password);
+      cy.get("[data-cy=login-submit-button]").click();
+      cy.get("[data-cy=login-dialog-box]").should("not.exist");
+      cy.get(".hot-toast-message").contains("Logged in successfully!");
+    });
+  });
+});
+
+Cypress.Commands.add("createGlobalAnnouncement", () => {
+  const apiUrl = Cypress.env("apiUrl");
+
+  cy.request({
+    method: "POST",
+    url: apiUrl,
+    body: {
+      operationName: "cyCreateGlobalAnnouncement",
+      variables: null,
+      query: `
+          query cyCreateGlobalAnnouncement {
+            cyCreateGlobalAnnouncement {
+              ok
+            }
+          }
+        `,
+    },
+  }).then((res) => {
+    console.log(res.body);
+  });
+});
+
+Cypress.Commands.add("deleteCreatedGlobalAnnouncement", () => {
+  const apiUrl = Cypress.env("apiUrl");
+
+  cy.request({
+    method: "POST",
+    url: apiUrl,
+    body: {
+      operationName: "cyDeleteGlobalAnnouncement",
+      variables: null,
+      query: `
+          query cyDeleteGlobalAnnouncement {
+            cyDeleteGlobalAnnouncement {
+              ok
+            }
+          }
+        `,
+    },
+  }).then((res) => {
+    console.log(res.body);
+  });
+});
+
+Cypress.Commands.add("addLearnerToCourse", () => {
+  const apiUrl = Cypress.env("apiUrl");
+
+  cy.request({
+    method: "POST",
+    url: apiUrl,
+    body: {
+      operationName: "cyAddLearnerToCourse",
+      variables: null,
+      query: `
+          query cyAddLearnerToCourse {
+            cyAddLearnerToCourse {
+              ok
+            }
+          }
+        `,
+    },
+  }).then((res) => {
+    console.log(res.body);
+  });
+});
+
+Cypress.Commands.add("clearLearnerExerciseSubmissions", () => {
+  const apiUrl = Cypress.env("apiUrl");
+
+  cy.request({
+    method: "POST",
+    url: apiUrl,
+    body: {
+      operationName: "cyClearLearnerExerciseSubmissions",
+      variables: null,
+      query: `
+          query cyClearLearnerExerciseSubmissions {
+            cyClearLearnerExerciseSubmissions {
+              ok
+            }
+          }
+        `,
+    },
+  }).then((res) => {
+    console.log(res.body);
   });
 });

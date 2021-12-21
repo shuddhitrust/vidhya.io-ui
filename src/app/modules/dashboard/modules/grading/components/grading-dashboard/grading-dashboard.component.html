@@ -10,6 +10,7 @@
   <div class="feed-header-block">
     <div class="floating-header-button-container">
       <mat-form-field
+        data-cy="search-query-input"
         appearance="outline"
         class="floating-header"
         style="margin: 5px 10px"
@@ -77,6 +78,7 @@
         </mat-form-field>
       </mat-menu>
       <button
+        data-cy="search-filter-menu-button"
         type="button"
         mat-mini-fab
         [matMenuTriggerFor]="menu"
