@@ -805,14 +805,8 @@ export const CHAT_MESSAGE_MUTATIONS = {
                 avatar
               }
               createdAt
-              seenBy {
-                id
-                name
-              }
+              seen
               createdAt
-              seenBy {
-                name
-              }
             }
           }
         }

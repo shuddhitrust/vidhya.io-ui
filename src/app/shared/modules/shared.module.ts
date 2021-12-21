@@ -26,7 +26,12 @@ const declarations = [SimpleLoadingSpinnerComponent];
   declarations,
   imports: [
     ...imports,
-    NgxsModule.forFeature([OptionsState, NotificationState, LoadingState]),
+    NgxsModule.forFeature([
+      OptionsState,
+      SubscriptionsState,
+      NotificationState,
+      LoadingState,
+    ]),
   ],
   exports: [...imports, ...declarations],
 })

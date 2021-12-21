@@ -10,6 +10,7 @@ import {
   RESOURCE_ACTIONS,
   UserPermissions,
 } from 'src/app/shared/common/models';
+import { InitiateSubscriptionsAction } from 'src/app/shared/state/subscriptions/subscriptions.actions';
 import { uiroutes } from '../../shared/common/ui-routes';
 import { AuthState } from '../auth/state/auth.state';
 import { GetUnreadCountAction } from './state/dashboard.actions';
@@ -71,6 +72,10 @@ export class DashboardComponent implements OnInit {
   @Select(DashboardState.getUnreadCount)
   unreadCount$: Observable<unreadCountType>;
   unreadCount: unreadCountType;
+
+  @Select(AuthState.getIsFullyAuthenticated)
+  isFullyAuthenticated$: Observable<boolean>;
+  isFullyAuthenticated: boolean = false;
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -84,6 +89,18 @@ export class DashboardComponent implements OnInit {
       this.unreadCount = val;
     });
     this.store.dispatch(new GetUnreadCountAction());
+
+    this.isFullyAuthenticated$.subscribe((val) => {
+      if (this.isFullyAuthenticated == false && val) {
+        this.isFullyAuthenticated = val;
+        this.store.dispatch(
+          new InitiateSubscriptionsAction({
+            authorizeResource: this.auth.authorizeResource,
+            isFullyAuthenticated: this.isFullyAuthenticated,
+          })
+        );
+      }
+    });
   }
 
   ngOnInit(): void {

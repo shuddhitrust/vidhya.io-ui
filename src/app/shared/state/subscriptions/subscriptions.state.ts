@@ -29,29 +29,20 @@ import { ReportSubscriptionAction } from 'src/app/modules/dashboard/modules/repo
 })
 @Injectable()
 export class SubscriptionsState {
-  @Select(AuthState.getIsFullyAuthenticated)
-  isFullyAuthenticated$: Observable<boolean>;
-  isFullyAuthenticated: boolean = false;
-  constructor(private auth: AuthorizationService, private store: Store) {
-    this.isFullyAuthenticated$.subscribe((val) => {
-      if (this.isFullyAuthenticated == false && val) {
-        this.isFullyAuthenticated = val;
-        this.store.dispatch(new InitiateSubscriptionsAction());
-      }
-    });
-  }
-
+  constructor(private store: Store) {}
   @Action(InitiateSubscriptionsAction)
-  initiateSubscriptions({
-    getState,
-    patchState,
-  }: StateContext<SubscriptionsStateModel>) {
+  initiateSubscriptions(
+    { getState, patchState }: StateContext<SubscriptionsStateModel>,
+    { payload }: InitiateSubscriptionsAction
+  ) {
+    const { authorizeResource, isFullyAuthenticated } = payload;
     const authorizeResourceListMethod = (resource) => {
-      return this.auth.authorizeResource(resource, RESOURCE_ACTIONS.LIST);
+      return authorizeResource(resource, RESOURCE_ACTIONS.LIST);
     };
     const state = getState();
     const { subscriptionsInitiated } = state;
-    if (!subscriptionsInitiated && this.isFullyAuthenticated) {
+    console.log('Initializing subscriptions!');
+    if (!subscriptionsInitiated && isFullyAuthenticated) {
       if (authorizeResourceListMethod(resources.ANNOUNCEMENT)) {
         this.store.dispatch(new AnnouncementSubscriptionAction());
       }
