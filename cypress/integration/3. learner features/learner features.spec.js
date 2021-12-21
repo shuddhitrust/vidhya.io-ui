@@ -69,7 +69,48 @@ describe("Learner Features: Courses", () => {
     });
   });
 
-  after(() => {
-    cy.deleteCreatedGlobalAnnouncement();
+  it("All necessary features exist in Chapter profile page", () => {
+    cy.get("@routes").then((routes) => {
+      cy.fixture("existing-records").then((existing) => {
+        cy.visit(
+          routes.COURSE_PROFILE_ROUTE.route + "?id=" + existing.course.id
+        );
+        cy.get(":nth-child(1) > :nth-child(2) > .mat-card").click();
+        cy.get('[data-cy="chapter-title"]').should("exist");
+      });
+    });
+  });
+});
+
+describe("Learner Features: Exercise Submissions work", () => {
+  before(() => {
+    cy.loginLearner();
+    cy.addLearnerToCourse();
+    cy.clearLearnerExerciseSubmissions();
+  });
+  beforeEach(() => {
+    cy.fixture("routes").as("routes");
+  });
+  it("All necessary features exist in Course profile page", () => {
+    cy.get("@routes").then((routes) => {
+      cy.fixture("existing-records").then((existing) => {
+        cy.visit(
+          routes.COURSE_PROFILE_ROUTE.route + "?id=" + existing.course.id
+        );
+        cy.get(":nth-child(1) > :nth-child(2) > .mat-card").click();
+        cy.get("[data-cy=option]").click({ multiple: true });
+        // if (cy.get("[data-cy=answer]").exists()) {
+        //   cy.get("[data-cy=answer]").then((els) => {
+        //     [...els].forEach((el) => cy.wrap(el).type("Test answer"));
+        //   });
+        // }
+
+        // cy.get("[data-cy=link]").then((els) => {
+        //   [...els].forEach((el) => cy.wrap(el).type("http://test.link"));
+        // });
+        cy.get("[data-cy=submit-exercises]").click();
+        cy.get(".hot-toast-message").contains("success");
+      });
+    });
   });
 });

@@ -71,10 +71,10 @@
     "user_permissions": []
   },
   "course": {
-    "id": 1,
-    "title": "Introduction to JavaScript Fundamentals",
-    "blurb": "This is an introductory course on the fundamentals of JavaScript",
-    "description": "In this course we will look at the basics of JavaScript and gradually build up to a point where you are able to write simple code in JavaScript and accomplish some of the basic features necessary to integrate JavaScript into a websites.",
+    "id": 2,
+    "title": "Web Development Course",
+    "blurb": "This course aims to help you learn how to build simple static websites using HTML and CSS",
+    "description": "Learn HTML and CSS, the fundamental tools used to build any website. With this knowledge you will have the necessary foundation to learn more advanced concepts of web development. ",
     "instructor": 2,
     "start_date": "2021-09-01T18:30:00.000Z",
     "end_date": null,
@@ -82,10 +82,10 @@
     "pass_score_percentage": 100,
     "pass_completion_percentage": 75,
     "status": "PU",
-    "searchField": "introduction to javascript fundamentalsthis is an introductory course on the fundamentals of javascriptin this course we will look at the basics of javascript and gradually build up to a point where you are able to write simple code in javascript and accomplish some of the basic features necessary to integrate javascript into a websites.",
+    "searchField": "web development coursethis course aims to help you learn how to build simple static websites using html and csslearn html and css, the fundamental tools used to build any website. with this knowledge you will have the necessary foundation to learn more advanced concepts of web development. ",
     "active": true,
-    "created_at": "2021-08-31T11:20:34.257Z",
-    "updated_at": "2021-11-29T12:46:48.604Z"
+    "created_at": "2021-08-30T13:07:50.637Z",
+    "updated_at": "2021-11-29T12:46:36.310Z"
   },
   "newUser": {
     "id": null,

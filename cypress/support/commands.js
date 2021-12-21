@@ -150,3 +150,25 @@ Cypress.Commands.add("addLearnerToCourse", () => {
     console.log(res.body);
   });
 });
+
+Cypress.Commands.add("clearLearnerExerciseSubmissions", () => {
+  const apiUrl = Cypress.env("apiUrl");
+
+  cy.request({
+    method: "POST",
+    url: apiUrl,
+    body: {
+      operationName: "cyClearLearnerExerciseSubmissions",
+      variables: null,
+      query: `
+          query cyClearLearnerExerciseSubmissions {
+            cyClearLearnerExerciseSubmissions {
+              ok
+            }
+          }
+        `,
+    },
+  }).then((res) => {
+    console.log(res.body);
+  });
+});
