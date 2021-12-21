@@ -12,13 +12,13 @@ describe("Super Admin User Features", () => {
     cy.get("@routes").then((routes) => {
       cy.visit(routes.DASHBOARD_ROUTE.route);
       cy.get("[data-cy=dashboard-tabs]").should("be.visible");
-      cy.get("[data-cy=dashboard-tabs]").contains("Admin");
-      cy.get("[data-cy=dashboard-tabs]").contains("Announcements");
-      cy.get("[data-cy=dashboard-tabs]").contains("Assignments");
-      cy.get("[data-cy=dashboard-tabs]").contains("Courses");
-      cy.get("[data-cy=dashboard-tabs]").contains("Groups");
-      cy.get("[data-cy=dashboard-tabs]").contains("Grading");
-      cy.get("[data-cy=dashboard-tabs]").contains("Reports");
+      cy.get("[.ant-tabs-nav-wrap]").contains("Admin");
+      cy.get("[.ant-tabs-nav-wrap]").contains("Announcements");
+      cy.get("[.ant-tabs-nav-wrap]").contains("Assignments");
+      cy.get("[.ant-tabs-nav-wrap]").contains("Courses");
+      cy.get("[.ant-tabs-nav-wrap]").contains("Groups");
+      cy.get("[.ant-tabs-nav-wrap]").contains("Grading");
+      cy.get("[.ant-tabs-nav-wrap]").contains("Reports");
     });
   });
 
@@ -26,14 +26,14 @@ describe("Super Admin User Features", () => {
     cy.get("@routes").then((routes) => {
       cy.visit(routes.DASHBOARD_ROUTE.route);
       cy.get("[data-cy=dashboard-tabs]").should("be.visible");
-      cy.get("[data-cy=dashboard-tabs]").contains("Issues");
-      cy.get("[data-cy=dashboard-tabs]").contains("Moderation");
-      cy.get("[data-cy=dashboard-tabs]").contains("User Roles");
-      cy.get("[data-cy=dashboard-tabs]").contains("Institutions");
-      cy.get("[data-cy=dashboard-tabs]").contains("Members");
-      cy.get("[data-cy=dashboard-tabs]").contains("Institution Admins");
-      cy.get("[data-cy=dashboard-tabs]").contains("Class Admins");
-      cy.get("[data-cy=dashboard-tabs]").contains("Learners");
+      cy.get("[.ant-tabs-nav-wrap]").contains("Issues");
+      cy.get("[.ant-tabs-nav-wrap]").contains("Moderation");
+      cy.get("[.ant-tabs-nav-wrap]").contains("User Roles");
+      cy.get("[.ant-tabs-nav-wrap]").contains("Institutions");
+      cy.get("[.ant-tabs-nav-wrap]").contains("Members");
+      cy.get("[.ant-tabs-nav-wrap]").contains("Institution Admins");
+      cy.get("[.ant-tabs-nav-wrap]").contains("Class Admins");
+      cy.get("[.ant-tabs-nav-wrap]").contains("Learners");
     });
   });
 

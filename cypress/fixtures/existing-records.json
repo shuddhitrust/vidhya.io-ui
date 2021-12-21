@@ -70,6 +70,23 @@
     "groups": [],
     "user_permissions": []
   },
+  "course": {
+    "id": 1,
+    "title": "Introduction to JavaScript Fundamentals",
+    "blurb": "This is an introductory course on the fundamentals of JavaScript",
+    "description": "In this course we will look at the basics of JavaScript and gradually build up to a point where you are able to write simple code in JavaScript and accomplish some of the basic features necessary to integrate JavaScript into a websites.",
+    "instructor": 2,
+    "start_date": "2021-09-01T18:30:00.000Z",
+    "end_date": null,
+    "credit_hours": 3,
+    "pass_score_percentage": 100,
+    "pass_completion_percentage": 75,
+    "status": "PU",
+    "searchField": "introduction to javascript fundamentalsthis is an introductory course on the fundamentals of javascriptin this course we will look at the basics of javascript and gradually build up to a point where you are able to write simple code in javascript and accomplish some of the basic features necessary to integrate javascript into a websites.",
+    "active": true,
+    "created_at": "2021-08-31T11:20:34.257Z",
+    "updated_at": "2021-11-29T12:46:48.604Z"
+  },
   "newUser": {
     "id": null,
     "password": "testpassword",

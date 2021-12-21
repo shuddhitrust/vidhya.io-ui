@@ -128,3 +128,25 @@ Cypress.Commands.add("deleteCreatedGlobalAnnouncement", () => {
     console.log(res.body);
   });
 });
+
+Cypress.Commands.add("addLearnerToCourse", () => {
+  const apiUrl = Cypress.env("apiUrl");
+
+  cy.request({
+    method: "POST",
+    url: apiUrl,
+    body: {
+      operationName: "cyAddLearnerToCourse",
+      variables: null,
+      query: `
+          query cyAddLearnerToCourse {
+            cyAddLearnerToCourse {
+              ok
+            }
+          }
+        `,
+    },
+  }).then((res) => {
+    console.log(res.body);
+  });
+});
