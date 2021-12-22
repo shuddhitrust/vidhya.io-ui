@@ -507,6 +507,7 @@ export const defaultResourcePermissions: UserPermissions = {
   PROJECT: defaultActions,
   ISSUE: defaultActions,
   OWN_PROFILE: defaultActions,
+  CHAT: defaultActions,
 };
 
 export const resources = {
@@ -528,6 +529,7 @@ export const resources = {
   PROJECT: 'PROJECT',
   ISSUE: 'ISSUE',
   OWN_PROFILE: 'OWN_PROFILE',
+  CHAT: 'CHAT',
 };
 
 export type UserPermissions = {
@@ -549,4 +551,5 @@ export type UserPermissions = {
   PROJECT: ResourceActions;
   ISSUE: ResourceActions;
   OWN_PROFILE: ResourceActions;
+  CHAT: ResourceActions;
 };

@@ -247,21 +247,24 @@ export class AnnouncementState {
           query: SUBSCRIPTIONS.announcement,
         })
         .subscribe((result: any) => {
-          console.log('received a new result => ', { result });
-          const state = getState();
-          const method = result?.data?.notifyAnnouncement?.method;
-          const announcement = result?.data?.notifyAnnouncement?.announcement;
-          const { newPaginatedItems, newItemsList } =
-            paginatedSubscriptionUpdater({
-              paginatedItems: state.paginatedAnnouncements,
-              method,
-              modifiedItem: announcement,
+          const response = result?.data?.notifyAnnouncement;
+          if (response) {
+            console.log('received a new result => ', { result });
+            const state = getState();
+            const method = response.method;
+            const announcement = result?.data?.notifyAnnouncement?.announcement;
+            const { newPaginatedItems, newItemsList } =
+              paginatedSubscriptionUpdater({
+                paginatedItems: state.paginatedAnnouncements,
+                method,
+                modifiedItem: announcement,
+              });
+            patchState({
+              announcements: newItemsList,
+              paginatedAnnouncements: newPaginatedItems,
+              announcementsSubscribed: true,
             });
-          patchState({
-            announcements: newItemsList,
-            paginatedAnnouncements: newPaginatedItems,
-            announcementsSubscribed: true,
-          });
+          }
         });
     }
   }
