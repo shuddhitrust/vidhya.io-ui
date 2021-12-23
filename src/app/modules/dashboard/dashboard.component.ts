@@ -4,7 +4,10 @@ import { Select, Store } from '@ngxs/store';
 import { resourceUsage } from 'process';
 import { Observable } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
-import { ADMIN_SECTION_LABELS } from 'src/app/shared/common/constants';
+import {
+  ADMIN_SECTION_LABELS,
+  localStorageKeys,
+} from 'src/app/shared/common/constants';
 import {
   resources,
   RESOURCE_ACTIONS,
@@ -93,12 +96,23 @@ export class DashboardComponent implements OnInit {
     this.isFullyAuthenticated$.subscribe((val) => {
       if (this.isFullyAuthenticated == false && val) {
         this.isFullyAuthenticated = val;
-        this.store.dispatch(
-          new InitiateSubscriptionsAction({
-            authorizeResource: this.auth.authorizeResource,
+        if (this.isFullyAuthenticated) {
+          console.log('from dashboard constructor => ', {
             isFullyAuthenticated: this.isFullyAuthenticated,
-          })
-        );
+            localStorageToken: localStorage.getItem(
+              localStorageKeys.AUTH_TOKEN_KEY
+            ),
+            sessionStorageToken: sessionStorage.getItem(
+              localStorageKeys.AUTH_TOKEN_KEY
+            ),
+          });
+          this.store.dispatch(
+            new InitiateSubscriptionsAction({
+              authorizeResource: this.auth.authorizeResource,
+              isFullyAuthenticated: this.isFullyAuthenticated,
+            })
+          );
+        }
       }
     });
   }

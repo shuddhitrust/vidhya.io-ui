@@ -90,9 +90,9 @@ export class SubscriptionsState {
       if (authorizeResourceListMethod(resources.REPORT)) {
         this.store.dispatch(new ReportSubscriptionAction());
       }
+      patchState({
+        subscriptionsInitiated: true,
+      });
     }
-    patchState({
-      subscriptionsInitiated: true,
-    });
   }
 }
