@@ -43,6 +43,7 @@ import { ToggleLoadingScreen } from '../../../../../shared/state/loading/loading
 import { GetUnreadCountAction } from '../../../state/dashboard.actions';
 import { ANNOUNCEMENTS } from '../../../dashboard.component';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
+import { Console } from 'console';
 
 @State<AnnouncementStateModel>({
   name: 'announcementState',
@@ -239,26 +240,31 @@ export class AnnouncementState {
     patchState,
   }: StateContext<AnnouncementStateModel>) {
     const state = getState();
+    console.log('Announcement subscription started...');
     if (!state.announcementsSubscribed) {
       this.apollo
         .subscribe({
           query: SUBSCRIPTIONS.announcement,
         })
         .subscribe((result: any) => {
-          const state = getState();
-          const method = result?.data?.notifyAnnouncement?.method;
-          const announcement = result?.data?.notifyAnnouncement?.announcement;
-          const { newPaginatedItems, newItemsList } =
-            paginatedSubscriptionUpdater({
-              paginatedItems: state.paginatedAnnouncements,
-              method,
-              modifiedItem: announcement,
+          const response = result?.data?.notifyAnnouncement;
+          if (response) {
+            console.log('received a new result => ', { result });
+            const state = getState();
+            const method = response.method;
+            const announcement = result?.data?.notifyAnnouncement?.announcement;
+            const { newPaginatedItems, newItemsList } =
+              paginatedSubscriptionUpdater({
+                paginatedItems: state.paginatedAnnouncements,
+                method,
+                modifiedItem: announcement,
+              });
+            patchState({
+              announcements: newItemsList,
+              paginatedAnnouncements: newPaginatedItems,
+              announcementsSubscribed: true,
             });
-          patchState({
-            announcements: newItemsList,
-            paginatedAnnouncements: newPaginatedItems,
-            announcementsSubscribed: true,
-          });
+          }
         });
     }
   }

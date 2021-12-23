@@ -35,7 +35,7 @@ export const getOptionLabel = (
   } else return undefined;
 };
 
-export const convertPaginatedListToNormalList = (paginatedObject) => {
+export const convertPaginatedListToNormalList = (paginatedObject): any[] => {
   const keys = Object.keys(paginatedObject).sort();
   let finalArray = [];
   keys.forEach((key) => {
@@ -96,6 +96,7 @@ export const paginatedSubscriptionUpdater = ({
   pk?: string;
 }) => {
   let newPaginatedItems = {};
+  let newItemsList = [];
   if (modifiedItem && method) {
     if (method == SUBSCRIPTION_METHODS.CREATE_METHOD) {
       newPaginatedItems = Object.assign({}, paginatedItems);
@@ -133,8 +134,8 @@ export const paginatedSubscriptionUpdater = ({
         newPaginatedItems[page] = pageList;
       }
     }
+    newItemsList = convertPaginatedListToNormalList(newPaginatedItems);
   }
-  const newItemsList = convertPaginatedListToNormalList(newPaginatedItems);
 
   return { newPaginatedItems, newItemsList };
 };

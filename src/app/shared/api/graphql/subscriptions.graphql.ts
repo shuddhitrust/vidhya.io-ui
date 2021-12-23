@@ -65,11 +65,7 @@ export const SUBSCRIPTIONS = {
             avatar
           }
           message
-          seenBy {
-            id
-            firstName
-            lastName
-          }
+          seen
           createdAt
         }
         method
@@ -298,9 +294,7 @@ export const SUBSCRIPTIONS = {
             lastName
             avatar
           }
-          seenBy {
-            id
-          }
+          seen
           createdAt
         }
         method

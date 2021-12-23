@@ -42,7 +42,7 @@
     >
       {{ group?.members?.length }}
     </button>
-    <h2>{{ group.name }}</h2>
+    <h2 data-cy="group-name">{{ group.name }}</h2>
     <p>{{ clip(group.description) }}</p>
 
     <small style="font-style: italic">{{ renderGroupSubtitle(group) }}</small>
