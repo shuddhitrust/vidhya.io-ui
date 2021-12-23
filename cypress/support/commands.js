@@ -129,6 +129,50 @@ Cypress.Commands.add("deleteCreatedGlobalAnnouncement", () => {
   });
 });
 
+Cypress.Commands.add("createLearnerGroup", () => {
+  const apiUrl = Cypress.env("apiUrl");
+
+  cy.request({
+    method: "POST",
+    url: apiUrl,
+    body: {
+      operationName: "cyCreateLearnerGroup",
+      variables: null,
+      query: `
+          query cyCreateLearnerGroup {
+            cyCreateLearnerGroup {
+              ok
+            }
+          }
+        `,
+    },
+  }).then((res) => {
+    console.log(res.body);
+  });
+});
+
+Cypress.Commands.add("deleteCreatedLearnerGroup", () => {
+  const apiUrl = Cypress.env("apiUrl");
+
+  cy.request({
+    method: "POST",
+    url: apiUrl,
+    body: {
+      operationName: "cyDeleteLearnerGroup",
+      variables: null,
+      query: `
+          query cyDeleteLearnerGroup {
+            cyDeleteLearnerGroup {
+              ok
+            }
+          }
+        `,
+    },
+  }).then((res) => {
+    console.log(res.body);
+  });
+});
+
 Cypress.Commands.add("addLearnerToCourse", () => {
   const apiUrl = Cypress.env("apiUrl");
 

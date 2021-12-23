@@ -114,5 +114,13 @@
     "message": "This is a test message for the test announcement",
     "institution": 1,
     "recipients_global": true
+  },
+  "newGroup": {
+    "id": null,
+    "name": "New Test Group",
+    "avatar": "https://i.imgur.com/hNdMk4c.png",
+    "description": "This is a test message for the test announcement",
+    "institution": 1,
+    "group_type": "CL"
   }
 }

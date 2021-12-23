@@ -114,3 +114,28 @@ describe("Learner Features: Exercise Submissions work", () => {
     });
   });
 });
+
+describe("Learner Features: Groups", () => {
+  before(() => {
+    cy.loginLearner();
+    cy.createLearnerGroup();
+  });
+  beforeEach(() => {
+    cy.fixture("routes").as("routes");
+  });
+  it("All necessary features exist in Groups tab", () => {
+    cy.get("@routes").then((routes) => {
+      cy.visit(routes.DASHBOARD_ROUTE.route + "?tab=Groups");
+      cy.get("[data-cy=add-group-button]").should("not.exist");
+      cy.get('[data-cy="group-cards"] > :nth-child(1)').click();
+      cy.get('[data-cy="group-name"]').should("exist");
+      cy.fixture("existing-records").then((existing) => {
+        cy.get('[data-cy="group-name"]').contains(existing.newGroup.name);
+      });
+    });
+  });
+
+  after(() => {
+    cy.deleteCreatedLearnerGroup();
+  });
+});

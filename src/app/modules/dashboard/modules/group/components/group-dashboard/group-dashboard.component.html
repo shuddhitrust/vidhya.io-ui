@@ -14,6 +14,7 @@
 <span *ngIf="authorizeResourceMethod(resourceActions.LIST)">
   <span *ngIf="(groups$ | async)?.length > 0; else feedEmpty">
     <div
+      data-cy="group-cards"
       class="scroll-feed"
       infiniteScroll
       [infiniteScrollDistance]="2"
