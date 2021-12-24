@@ -19,7 +19,7 @@ jobs:
 
       - name: Cypress run
         uses: cypress-io/github-action@v2
-        continue-on-error: true
+        continue-on-error: false
         with:
           browser: firefox
           record: true
