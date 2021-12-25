@@ -579,7 +579,8 @@ export const SanitizeSubmissionRubricToServer = (submissions) => {
       let newC = Object.assign({}, EmptyCriterionResponse);
       newC.id = c.id ? c.id : null;
       newC.criterion = c.criterion?.id ? c.criterion?.id : null;
-      newC.exercise = c.exercise?.id ? c.exercise?.id : null;
+      newC.exercise = s.exercise ? s.exercise : null;
+      newC.exerciseSubmission = s.id ? s.id : null;
       newC.participant = c.participant?.id ? c.participant?.id : null;
       newC.remarks = c.remarks ? c.remarks : null;
       newC.remarker = c.remarker?.id ? c.remarker?.id : null;

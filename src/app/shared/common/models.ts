@@ -353,6 +353,7 @@ export type CriterionResponse = {
   id: number;
   criterion: Criterion;
   exercise: Exercise;
+  exerciseSubmission: ExerciseSubmission;
   participant: any;
   remarks: string;
   remarker: any;
@@ -363,6 +364,7 @@ export const EmptyCriterionResponse = {
   id: null,
   criterion: null,
   exercise: null,
+  exerciseSubmission: null,
   participant: null,
   remarks: null,
   remarker: null,
