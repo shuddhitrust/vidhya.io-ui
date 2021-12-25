@@ -29,19 +29,19 @@ export function createApollo(httpLink: HttpLink): ApolloClientOptions<any> {
     },
   });
 
-  const link = split(
-    ({ query }) => {
-      const data = getMainDefinition(query);
-      return (
-        data.kind === 'OperationDefinition' && data.operation === 'subscription'
-      );
-    },
-    ws,
-    http
-  );
+  // const link = split(
+  //   ({ query }) => {
+  //     const data = getMainDefinition(query);
+  //     return (
+  //       data.kind === 'OperationDefinition' && data.operation === 'subscription'
+  //     );
+  //   },
+  //   ws,
+  //   http
+  // );
 
   return {
-    link: link,
+    link: http,
     cache: new InMemoryCache(),
   };
 }
