@@ -53,22 +53,36 @@
     <div class="col-lg-12 col-md-12 col-sm-12">
       <mat-label><h2>Recipients</h2></mat-label>
       <mat-checkbox
-        *ngIf="ShowGlobalRecipients()"
+        *ngIf="showPublic()"
         type="checkbox"
-        (change)="recipientsChanged('recipientsGlobal')"
-        [formControlName]="recipientsGlobal"
-        >Global (Anyone who uses the platform)
-      </mat-checkbox>
-      <br />
-      <mat-checkbox
-        type="checkbox"
-        (change)="recipientsChanged('recipientsInstitution')"
-        [formControlName]="recipientsInstitution"
-        >Everyone within my institution</mat-checkbox
+        [formControlName]="public"
+        (change)="recipientsChanged(public)"
+        >Public</mat-checkbox
       >
       <br />
+      <span *ngIf="!isPublic()">
+        <mat-checkbox
+          *ngIf="ShowGlobalRecipients()"
+          type="checkbox"
+          (change)="recipientsChanged(recipientsGlobal)"
+          [formControlName]="recipientsGlobal"
+          >Global (Anyone who uses the platform)
+        </mat-checkbox>
+        <br />
+        <mat-checkbox
+          type="checkbox"
+          (change)="recipientsChanged(recipientsInstitution)"
+          [formControlName]="recipientsInstitution"
+          >Everyone within my institution</mat-checkbox
+        >
+        <br />
+      </span>
     </div>
-    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+    <mat-form-field
+      *ngIf="!isPublic()"
+      class="col-lg-12 col-md-12 col-sm-12"
+      appearance="outline"
+    >
       <mat-label>Group(s)</mat-label>
       <mat-select
         multiple

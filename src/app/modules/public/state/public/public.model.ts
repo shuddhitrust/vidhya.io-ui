@@ -1,10 +1,12 @@
 import { emptyInstitutionFormRecord } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.model';
+import { emptyAnnouncementFormRecord } from 'src/app/modules/dashboard/modules/announcement/state/announcement.model';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   FetchPolicyModel,
   FetchParams,
   User,
   Institution,
+  Announcement,
 } from '../../../../shared/common/models';
 
 export interface MemberInput {
@@ -49,6 +51,14 @@ export interface PublicStateModel {
   institutionFormId: string;
   institutionFormRecord: Institution;
   isFetchingInstitutions: boolean;
+  // News
+  news: Announcement[];
+  paginatedNews: any;
+  lastNewsPage: number;
+  newsSubscribed: boolean;
+  fetchParamObjects: FetchParams[];
+  newsRecord: Announcement;
+  isFetchingNews: boolean;
 }
 
 export const defaultPublicState: PublicStateModel = {
@@ -69,6 +79,14 @@ export const defaultPublicState: PublicStateModel = {
   institutionFormId: null,
   institutionFormRecord: emptyInstitutionFormRecord,
   isFetchingInstitutions: false,
+  // News
+  news: [],
+  paginatedNews: [],
+  lastNewsPage: null,
+  newsSubscribed: false,
+  fetchParamObjects: [],
+  newsRecord: emptyAnnouncementFormRecord,
+  isFetchingNews: false,
 };
 
 export const getMemberProfileLink = (member: User) => {

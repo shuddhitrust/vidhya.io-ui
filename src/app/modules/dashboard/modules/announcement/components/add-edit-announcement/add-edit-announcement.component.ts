@@ -41,6 +41,7 @@ export class AddEditAnnouncementComponent implements OnInit {
   formSubmitting: boolean = false;
   recipientsGlobal = 'recipientsGlobal';
   recipientsInstitution = 'recipientsInstitution';
+  public = 'public';
   groups = 'groups';
   params: object = {};
   message;
@@ -102,6 +103,7 @@ export class AddEditAnnouncementComponent implements OnInit {
           : this.currentMemberInstitutionId,
         Validators.required,
       ],
+      public: [announcementFormRecord?.public, Validators.required],
       message: [announcementFormRecord?.message, Validators.required],
       [this.recipientsGlobal]: [
         this.announcementFormRecord?.[this.recipientsGlobal],
@@ -122,6 +124,14 @@ export class AddEditAnnouncementComponent implements OnInit {
         );
       }
     });
+  }
+
+  showPublic() {
+    return this.currentMember.role.name == USER_ROLES_NAMES.SUPER_ADMIN;
+  }
+
+  isPublic() {
+    return this.announcementForm.get('public').value;
   }
 
   recipientsChanged(field) {
@@ -146,6 +156,9 @@ export class AddEditAnnouncementComponent implements OnInit {
       result = true;
     }
     if (this.announcementForm.get(this.recipientsInstitution).value == true) {
+      result = true;
+    }
+    if (this.announcementForm.get(this.public).value == true) {
       result = true;
     }
     if (this.announcementForm.get(this.groups).value.length > 0) {

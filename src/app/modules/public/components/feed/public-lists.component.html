@@ -26,6 +26,11 @@
     (nzSelectedIndexChange)="onTabChange($event)"
     nzCentered
   >
+    <nz-tab [nzTitle]="News">
+      <ng-template nz-tab>
+        <app-news-feed [currentQuery]="currentQuery"></app-news-feed>
+      </ng-template>
+    </nz-tab>
     <nz-tab [nzTitle]="Institutions">
       <ng-template nz-tab>
         <app-institutions-feed

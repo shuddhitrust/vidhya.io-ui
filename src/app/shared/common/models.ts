@@ -181,6 +181,7 @@ export type Announcement = {
   id: number;
   title: string;
   author: any;
+  public: boolean;
   message: string;
   institution: any;
   recipientsGlobal?: boolean;

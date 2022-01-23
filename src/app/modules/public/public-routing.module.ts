@@ -7,6 +7,7 @@ import { PasswordResetComponent } from './components/pages/password-reset/passwo
 import { PrivacyComponent } from './components/pages/privacy/privacy.component';
 import { TermsConditionsComponent } from './components/pages/terms-conditions/terms-conditions.component';
 import { InstitutionProfileComponent } from './components/profiles/public-institution-profile/public-institution-profile.component';
+import { NewsProfileComponent } from './components/profiles/public-news-profile/public-news-profile.component';
 import { PublicUserProfileComponent } from './components/profiles/public-user-profile/public-user-profile.component';
 
 /**
@@ -29,6 +30,11 @@ const routes: Routes = [
   {
     path: `${uiroutes.INSTITUTION_PROFILE_ROUTE.route}/:code`,
     component: InstitutionProfileComponent,
+    pathMatch: 'full',
+  },
+  {
+    path: `${uiroutes.NEWS_PROFILE_ROUTE.route}`,
+    component: NewsProfileComponent,
     pathMatch: 'full',
   },
   {

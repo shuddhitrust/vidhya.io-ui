@@ -19,6 +19,11 @@ import { UserProjectsComponent } from './components/profiles/public-user-profile
 import { ProjectModule } from '../dashboard/modules/project/project.module';
 import { TermsConditionsComponent } from './components/pages/terms-conditions/terms-conditions.component';
 import { AddEditIssueComponent } from '../dashboard/modules/admin/modules/issues/components/add-edit-issue/add-edit-issue.component';
+import { PublicNewsFeedComponent } from './components/feed/news-feed/news-feed.component';
+import { NewsProfileComponent } from './components/profiles/public-news-profile/public-news-profile.component';
+import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
+import { HttpClient } from '@angular/common/http';
+import { markedOptionsFactory } from 'src/app/shared/common/constants';
 
 const declarations = [
   HomeComponent,
@@ -32,7 +37,9 @@ const declarations = [
   PublicTabsComponent,
   PublicLearnersFeedComponent,
   InstitutionsFeedComponent,
+  PublicNewsFeedComponent,
   InstitutionProfileComponent,
+  NewsProfileComponent,
   UserCoursesComponent,
   UserProjectsComponent,
 ];
@@ -45,6 +52,13 @@ const declarations = [
     AuthModule,
     ProjectModule,
     PublicRoutingModule,
+    MarkdownModule.forRoot({
+      loader: HttpClient,
+      markedOptions: {
+        provide: MarkedOptions,
+        useFactory: markedOptionsFactory,
+      },
+    }),
     NgxsModule.forFeature([PublicState]),
   ],
 })

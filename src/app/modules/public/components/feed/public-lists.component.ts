@@ -10,10 +10,12 @@ import {
 import { MembershipStatusOptions } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
+  FetchNewsAction,
   FetchPublicInstitutionssAction,
   FetchPublicMembersAction,
 } from '../../state/public/public.actions';
 
+const NEWS_LABEL = 'News';
 const SCHOOLS_LABEL = 'Institutions';
 const STUDENTS_LABEL = 'Learners';
 
@@ -23,9 +25,10 @@ const STUDENTS_LABEL = 'Learners';
   styleUrls: ['./public-lists.component.scss'],
 })
 export class PublicTabsComponent implements OnInit {
-  tabs = [SCHOOLS_LABEL, STUDENTS_LABEL];
+  tabs = [NEWS_LABEL, SCHOOLS_LABEL, STUDENTS_LABEL];
   activeTabIndex = 0;
   params;
+  News = NEWS_LABEL;
   Institutions = SCHOOLS_LABEL;
   Learners = STUDENTS_LABEL;
   draftSearchQuery: string = null;
@@ -51,6 +54,18 @@ export class PublicTabsComponent implements OnInit {
       this.draftSearchQuery != null
       ? 'close'
       : 'search';
+  }
+
+  fetchNews() {
+    this.store.dispatch(
+      new FetchNewsAction({
+        searchParams: {
+          ...defaultSearchParams,
+          searchQuery: this.draftSearchQuery,
+          pageSize: 10,
+        },
+      })
+    );
   }
 
   fetchInstitutions() {
@@ -82,6 +97,10 @@ export class PublicTabsComponent implements OnInit {
     switch (currentTab) {
       case this.Institutions:
         this.fetchInstitutions();
+        break;
+
+      case this.News:
+        this.fetchNews();
         break;
 
       case this.Learners:

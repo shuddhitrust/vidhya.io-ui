@@ -8,10 +8,12 @@ import {
   columnFiltersChanged,
   convertPaginatedListToNormalList,
   getErrorMessageFromGraphQLResponse,
+  paginatedSubscriptionUpdater,
   updateFetchParams,
 } from 'src/app/shared/common/functions';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import {
+  Announcement,
   Institution,
   startingFetchParams,
   User,
@@ -19,16 +21,24 @@ import {
 import { defaultPublicState, PublicStateModel } from './public.model';
 import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
 import {
+  FetchNewsAction,
+  FetchNextNewsAction,
   FetchNextPublicInstitutionsAction,
   FetchNextPublicMembersAction,
   FetchPublicInstitutionssAction,
   FetchPublicMembersAction,
+  ForceRefetchNewsAction,
   GetMemberByUsernameAction,
+  GetNewsAction,
   GetPublicInstitutionAction,
+  ResetNewsProfileAction,
   ResetPublicHomePageListsAction,
   ResetPublicInstitutionFormAction,
   ResetPublicMemberFormAction,
 } from './public.actions';
+import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
+import { SUBSCRIPTIONS } from 'src/app/shared/api/graphql/subscriptions.graphql';
+import { AnnouncementSubscriptionAction } from 'src/app/modules/dashboard/modules/announcement/state/announcement.actions';
 
 @State<PublicStateModel>({
   name: 'publicState',
@@ -71,6 +81,21 @@ export class PublicState {
   @Selector()
   static isFetchingFormRecord(state: PublicStateModel): boolean {
     return state.isFetchingFormRecord;
+  }
+
+  @Selector()
+  static listNews(state: PublicStateModel): Announcement[] {
+    return state.news;
+  }
+
+  @Selector()
+  static isFetchingNews(state: PublicStateModel): boolean {
+    return state.isFetchingNews;
+  }
+
+  @Selector()
+  static getNewsRecord(state: PublicStateModel): Announcement {
+    return state.newsRecord;
   }
 
   @Action(FetchNextPublicMembersAction)
@@ -366,6 +391,209 @@ export class PublicState {
       );
   }
 
+  @Action(ForceRefetchNewsAction)
+  forceRefetchAnnouncements({
+    getState,
+    patchState,
+  }: StateContext<PublicStateModel>) {
+    const state = getState();
+    let previousFetchParams =
+      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    previousFetchParams = previousFetchParams
+      ? previousFetchParams
+      : startingFetchParams;
+    const pageNumber = previousFetchParams?.currentPage;
+    const previousSearchParams: SearchParams = {
+      pageNumber,
+      pageSize: previousFetchParams?.pageSize,
+      searchQuery: previousFetchParams?.searchQuery,
+      columnFilters: previousFetchParams?.columnFilters,
+    };
+    patchState({ fetchPolicy: 'network-only' });
+    this.store.dispatch(
+      new FetchNewsAction({ searchParams: previousSearchParams })
+    );
+  }
+
+  @Action(FetchNextNewsAction)
+  fetchNextAnnouncements({ getState }: StateContext<PublicStateModel>) {
+    const state = getState();
+    const lastPageNumber = state.lastNewsPage;
+    let previousFetchParams =
+      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+    previousFetchParams = previousFetchParams
+      ? previousFetchParams
+      : startingFetchParams;
+    const pageNumber = previousFetchParams.currentPage + 1;
+    const newSearchParams: SearchParams = {
+      pageNumber,
+      pageSize: previousFetchParams.pageSize,
+      searchQuery: previousFetchParams.searchQuery,
+      columnFilters: previousFetchParams.columnFilters,
+    };
+    if (
+      !lastPageNumber ||
+      (lastPageNumber != null && pageNumber <= lastPageNumber)
+    ) {
+      this.store.dispatch(
+        new FetchNewsAction({ searchParams: newSearchParams })
+      );
+    }
+  }
+
+  @Action(FetchNewsAction)
+  fetchNews(
+    { getState, patchState }: StateContext<PublicStateModel>,
+    { payload }: FetchNewsAction
+  ) {
+    let { searchParams } = payload;
+    const state = getState();
+    const { fetchPolicy, fetchParamObjects } = state;
+    const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
+    let newFetchParams = updateFetchParams({
+      fetchParamObjects,
+      newPageNumber: pageNumber,
+      newPageSize: pageSize,
+      newSearchQuery: searchQuery,
+      newColumnFilters: columnFilters,
+    });
+    const variables = {
+      searchField: searchQuery,
+      limit: newFetchParams.pageSize,
+      offset: newFetchParams.offset,
+    };
+    patchState({ isFetchingNews: true });
+    this.store.dispatch(
+      new ToggleLoadingScreen({
+        message: 'Fetching news...',
+        showLoadingScreen: true,
+      })
+    );
+    this.apollo
+      .watchQuery({
+        query: PUBLIC_QUERIES.GET_PUBLIC_NEWS,
+        variables,
+        fetchPolicy,
+      })
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          this.store.dispatch(
+            new ToggleLoadingScreen({
+              showLoadingScreen: false,
+            })
+          );
+          const response = data.publicAnnouncements;
+          newFetchParams = { ...newFetchParams };
+          let paginatedNews = state.paginatedNews;
+          paginatedNews = {
+            ...paginatedNews,
+            [pageNumber]: response,
+          };
+          let news = convertPaginatedListToNormalList(paginatedNews);
+          let lastNewsPage = null;
+          if (response.length < newFetchParams.pageSize) {
+            lastNewsPage = newFetchParams.currentPage;
+          }
+          patchState({
+            lastNewsPage,
+            news,
+            paginatedNews,
+            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
+            isFetchingNews: false,
+          });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetchingNews: false });
+        }
+      );
+  }
+
+  @Action(AnnouncementSubscriptionAction)
+  subscribeToAnnouncements({
+    getState,
+    patchState,
+  }: StateContext<PublicStateModel>) {
+    const state = getState();
+    console.log('Announcement subscription started...');
+    if (!state.newsSubscribed) {
+      this.apollo
+        .subscribe({
+          query: SUBSCRIPTIONS.announcement,
+        })
+        .subscribe((result: any) => {
+          const response = result?.data?.notifyAnnouncement;
+          if (response) {
+            console.log('received a new result => ', { result });
+            const state = getState();
+            const method = response.method;
+            const announcement = result?.data?.notifyAnnouncement?.announcement;
+            const { newPaginatedItems, newItemsList } =
+              paginatedSubscriptionUpdater({
+                paginatedItems: state.paginatedNews,
+                method,
+                modifiedItem: announcement,
+              });
+            patchState({
+              news: newItemsList,
+              paginatedNews: newPaginatedItems,
+              newsSubscribed: true,
+            });
+          }
+        });
+    }
+  }
+
+  @Action(GetNewsAction)
+  getAnnouncement(
+    { patchState }: StateContext<PublicStateModel>,
+    { payload }: GetNewsAction
+  ) {
+    const { id } = payload;
+    patchState({ isFetchingNews: true });
+    const query = PUBLIC_QUERIES.GET_PUBLIC_NEWS_ITEM;
+    this.apollo
+      .watchQuery({
+        query,
+        variables: { id },
+        fetchPolicy: 'network-only',
+        nextFetchPolicy: 'network-only',
+      })
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          const response = data.publicAnnouncement;
+          patchState({
+            newsRecord: response,
+            isFetchingNews: false,
+            fetchPolicy: 'network-only',
+          });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetchingNews: false });
+        }
+      );
+  }
+
+  @Action(ResetNewsProfileAction)
+  resetPublicNewsProfileAction({ patchState }: StateContext<PublicStateModel>) {
+    patchState({
+      isFetchingNews: false,
+      newsRecord: defaultPublicState.newsRecord,
+    });
+  }
+
+  // *********************************
   @Action(ResetPublicInstitutionFormAction)
   resetPublicInstitutionFormAction({
     patchState,
