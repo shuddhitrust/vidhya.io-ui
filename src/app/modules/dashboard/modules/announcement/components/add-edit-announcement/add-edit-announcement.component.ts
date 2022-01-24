@@ -29,6 +29,11 @@ import { ShowNotificationAction } from 'src/app/shared/state/notifications/notif
 import { OptionsState } from 'src/app/shared/state/options/options.state';
 import { FetchAdminGroupOptions } from 'src/app/shared/state/options/options.actions';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
+import { ImageDisplayDialog } from 'src/app/shared/components/image-display/image-display-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
+import { UploadService } from 'src/app/shared/api/upload.service';
+import { Clipboard } from '@angular/cdk/clipboard';
 @Component({
   selector: 'app-add-edit-announcement',
   templateUrl: './add-edit-announcement.component.html',
@@ -44,7 +49,25 @@ export class AddEditAnnouncementComponent implements OnInit {
   public = 'public';
   groups = 'groups';
   params: object = {};
-  message;
+  images: string[] = [
+    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
+    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
+    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
+    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
+    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
+    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
+    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
+    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
+    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
+    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
+    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
+    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
+    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
+    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
+    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
+  ];
+  uploadingImages: boolean = false;
+  message: string = '';
   @Select(AnnouncementState.getAnnouncementFormRecord)
   announcementFormRecord$: Observable<Announcement>;
   @Select(OptionsState.listAdminGroupOptions)
@@ -67,7 +90,10 @@ export class AddEditAnnouncementComponent implements OnInit {
     private location: Location,
     private store: Store,
     private route: ActivatedRoute,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    public dialog: MatDialog,
+    private uploadService: UploadService,
+    public clipboard: Clipboard
   ) {
     this.store.dispatch(new FetchAdminGroupOptions());
     this.currentUserId$.subscribe((val) => {
@@ -104,6 +130,8 @@ export class AddEditAnnouncementComponent implements OnInit {
         Validators.required,
       ],
       public: [announcementFormRecord?.public, Validators.required],
+      image: [announcementFormRecord?.image],
+      blurb: [announcementFormRecord?.blurb],
       message: [announcementFormRecord?.message, Validators.required],
       [this.recipientsGlobal]: [
         this.announcementFormRecord?.[this.recipientsGlobal],
@@ -114,6 +142,70 @@ export class AddEditAnnouncementComponent implements OnInit {
       [this.groups]: [announcementFormRecord?.[this.groups]],
     });
   };
+
+  // The method that actually uploads the file to the server and initiates the addition of the url to the submission
+  async uploadImage(event) {
+    if (event.target.files.length > 0) {
+      const file = event.target.files[0];
+      this.store.dispatch(
+        new ToggleLoadingScreen({
+          showLoadingScreen: true,
+          message: 'Uploading image...',
+        })
+      );
+      const formData = new FormData();
+      formData.append('file', file);
+      this.uploadService.upload(formData).subscribe(
+        (res) => {
+          const url = res.secure_url;
+          this.store.dispatch(
+            new ToggleLoadingScreen({
+              showLoadingScreen: false,
+              message: '',
+            })
+          );
+          // We update the images in the response form with the new array
+          this.images.push(url);
+          // and also add the link to the image in the message
+          this.message = this.message.concat(
+            `![image ${this.images.length}](${url})`
+          );
+        },
+        (err) => {
+          this.store.dispatch(
+            new ToggleLoadingScreen({
+              showLoadingScreen: false,
+              message: '',
+            })
+          );
+          this.uploadingImages = false;
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: 'Something went wrong while uploading the image!',
+              action: 'error',
+            })
+          );
+        }
+      );
+    }
+  }
+
+  showExpandedImage(image) {
+    const dialogRef = this.dialog.open(ImageDisplayDialog, {
+      data: {
+        image,
+      },
+    });
+    this.clipboard.copy(image);
+    this.store.dispatch(
+      new ShowNotificationAction({
+        message: 'Image URL copied to clipboard!',
+        action: 'success',
+      })
+    );
+    dialogRef.afterClosed().subscribe((result) => {});
+  }
+
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       this.params = params;

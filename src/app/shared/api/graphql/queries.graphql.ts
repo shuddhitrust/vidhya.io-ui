@@ -142,6 +142,8 @@ export const PUBLIC_QUERIES = {
           id
           name
         }
+        image
+        blurb
         message
         institution {
           id
@@ -163,6 +165,8 @@ export const PUBLIC_QUERIES = {
           id
           name
         }
+        image
+        blurb
         message
         seen
         createdAt
@@ -411,6 +415,8 @@ export const ANNOUNCEMENT_QUERIES = {
           id
           name
         }
+        image
+        blurb
         message
         institution {
           id
@@ -449,6 +455,8 @@ export const ANNOUNCEMENT_QUERIES = {
           id
           name
         }
+        image
+        blurb
         message
         seen
         createdAt

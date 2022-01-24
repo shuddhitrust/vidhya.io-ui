@@ -28,28 +28,6 @@
       </small>
     </mat-form-field>
 
-    <!-- <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
-      <mat-label>Message</mat-label>
-      <textarea
-        formControlName="message"
-        required
-        placeholder="Announcement message"
-        matInput
-        cdkTextareaAutosize
-        cdkAutosizeMinRows="1"
-        cdkAutosizeMaxRows="10"
-      ></textarea>
-      <small
-        class="validation-error"
-        *ngIf="
-          announcementForm.get('message').hasError('required') &&
-          formDirective.submitted
-        "
-      >
-        Message is required
-      </small>
-    </mat-form-field> -->
-
     <div class="col-lg-12 col-md-12 col-sm-12">
       <mat-label><h2>Recipients</h2></mat-label>
       <mat-checkbox
@@ -98,6 +76,24 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
+
+    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Featured Image</mat-label>
+      <input
+        matInput
+        formControlName="image"
+        placeholder="URL of Image to show in the feed"
+      />
+    </mat-form-field>
+
+    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Blurb</mat-label>
+      <input
+        matInput
+        formControlName="blurb"
+        placeholder="Blurb to show in the feed"
+      />
+    </mat-form-field>
     <button
       type="submit"
       class="floating-button-bottom"
@@ -118,6 +114,26 @@
     maxlength="2000"
   >
   </md-editor>
+  <p>Include images</p>
+  <input
+    data-cy="image"
+    id="logo-choose-button"
+    type="file"
+    accept="image/*"
+    placeholder="Image upload"
+    (change)="uploadImage($event)"
+  />
+  <hr />
+  <div class="images-container">
+    <span *ngFor="let image of images; let i = index">
+      <img
+        [src]="image"
+        alt="Exercise submission"
+        class="image-tile"
+        (click)="showExpandedImage(image)"
+      />
+    </span>
+  </div>
 </div>
 <br />
 <br />

@@ -182,6 +182,8 @@ export type Announcement = {
   title: string;
   author: any;
   public: boolean;
+  image: string;
+  blurb: string;
   message: string;
   institution: any;
   recipientsGlobal?: boolean;

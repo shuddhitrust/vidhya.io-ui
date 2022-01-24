@@ -1,0 +1,17 @@
+.images-container {
+  width: 100%;
+  max-height: 200px;
+  overflow: auto;
+}
+
+.image-tile {
+  width: auto;
+  height: auto;
+  max-height: 200px;
+  min-height: 100px;
+  min-width: 100px;
+  max-width: 200px;
+  padding: 10px;
+  cursor: pointer;
+  display: inline;
+}

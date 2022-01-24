@@ -19,15 +19,22 @@
   >
     <div *ngFor="let item of news$ | async">
       <mat-card
-        *ngIf="item.seen"
         class="feed-card"
+        style="background-repeat: no-repeat; background-size: auto"
+        [style.backgroundImage]="item.image ? 'url(' + item.image + ')' : null"
+        [style.backgroundSize]="item.image ? 'cover' : null"
+        [style.color]="item.image ? 'white' : 'black'"
+        [style.height]="item.image ? '300px' : null"
         (click)="onClickNewsCard(item)"
       >
-        <div>
+        <div
+          [style.backgroundColor]="item.image ? 'rgba(0,0,0,.8)' : null"
+          [style.padding]="item.image ? '10px' : null"
+        >
           <p>
             <b>{{ item.title }}</b>
           </p>
-          <p>{{ clip(item?.message) }}</p>
+          <p>{{ item.blurb ? clip(item?.blurb) : clip(item?.message) }}</p>
           <p>
             <small
               ><i
