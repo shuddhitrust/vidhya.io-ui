@@ -70,8 +70,8 @@ h2 {
   font-weight: bold;
 }
 
-.image-text h1,
-h2 {
+.image-text > h1,
+.image-text > h2 {
   color: white;
 }
 

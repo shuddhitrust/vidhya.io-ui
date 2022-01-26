@@ -38,7 +38,6 @@ export class PublicNewsFeedComponent implements OnInit {
   ) {
     this.news$.subscribe((val) => {
       this.news = val;
-      // this.learners = tempUsers;
     });
   }
 

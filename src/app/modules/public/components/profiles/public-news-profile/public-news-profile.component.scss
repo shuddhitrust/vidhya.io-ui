@@ -23,6 +23,7 @@ h2 {
 
 .markdown {
   font-size: 1.5em;
+  line-height: 1.5em;
 }
 
 .markdown > p > img {
@@ -38,4 +39,10 @@ h2 {
 .profile-button {
   float: right;
   margin: 5px 10px;
+}
+
+@media screen and (max-width: 800px) {
+  .announcement-card {
+    width: 100%;
+  }
 }
