@@ -12,17 +12,25 @@
     <div id="homeCarousel" class="carousel slide" data-ride="carousel">
       <div class="carousel-inner">
         <ng-container *ngFor="let item of news; index as i">
-          <div [class]="slideClass(i)" data-interval="4000">
+          <div
+            [class]="slideClass(i)"
+            (click)="onClickNewsCard(item)"
+            data-interval="6000"
+          >
+            <span class="image-text date">
+              <h2>{{ parseDate(item.createdAt) }}</h2>
+            </span>
             <img
               [src]="item.image ? item.image : '/assets/images/logo.svg'"
-              class="center"
+              class="slideshow-image"
               alt="News feature image"
             />
-            <div class="caption">
+            <span class="image-text caption">
+              <h1>{{ item.title }}</h1>
               <p>
-                <b>{{ parseDate(item.createdAt) }}</b> - {{ item.blurb }}
+                {{ item.blurb }}
               </p>
-            </div>
+            </span>
           </div>
         </ng-container>
       </div>

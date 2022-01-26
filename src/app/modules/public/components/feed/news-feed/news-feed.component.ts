@@ -4,7 +4,11 @@ import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
-import { clipLongText, parseDateTime } from 'src/app/shared/common/functions';
+import {
+  clipLongText,
+  parseDate,
+  parseDateTime,
+} from 'src/app/shared/common/functions';
 import { Announcement } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
@@ -62,7 +66,7 @@ export class PublicNewsFeedComponent implements OnInit {
   }
 
   parseDate(date) {
-    return parseDateTime(date);
+    return parseDate(date);
   }
 
   slideClass(i) {

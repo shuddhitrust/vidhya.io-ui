@@ -49,23 +49,7 @@ export class AddEditAnnouncementComponent implements OnInit {
   public = 'public';
   groups = 'groups';
   params: object = {};
-  images: string[] = [
-    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
-    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
-    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
-    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
-    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
-    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
-    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
-    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
-    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
-    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
-    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
-    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
-    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
-    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
-    'https://media0.giphy.com/media/dQj2Cp0Gw8uLC/giphy.gif?cid=8942bed4d2d7431c4f0746f814af53753ed5d2fc6572af5b&rid=giphy.gif&ct=g',
-  ];
+  images: string[] = [];
   uploadingImages: boolean = false;
   message: string = '';
   @Select(AnnouncementState.getAnnouncementFormRecord)

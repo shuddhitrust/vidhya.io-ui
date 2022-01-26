@@ -240,7 +240,7 @@ export const updateFetchParams = ({
   return Object.assign({}, newFetchParams);
 };
 
-export const parseDateTime = (dateTime: string): string => {
+export const parseDate = (dateTime: string): string => {
   if (dateTime === null) {
     return 'Never';
   }
@@ -262,6 +262,16 @@ export const parseDateTime = (dateTime: string): string => {
   const m = newDate.getMonth();
   const d = newDate.getDate();
   const y = newDate.getFullYear();
+
+  // we get the text name of the month by using the value of m to find the corresponding month name
+  const mlong = months[m];
+
+  const fullDate = `${d} ${mlong} ${y}`;
+  return fullDate;
+};
+
+export const parseDateTime = (dateTime: string): string => {
+  const newDate = new Date(dateTime);
   const h = newDate.getHours();
   const min = newDate.getMinutes();
   let adjustedmin = min.toString();
@@ -269,10 +279,7 @@ export const parseDateTime = (dateTime: string): string => {
     adjustedmin = `0${min}`;
   }
 
-  // we get the text name of the month by using the value of m to find the corresponding month name
-  const mlong = months[m];
-
-  const fullDate = `${d} ${mlong} ${y}, ${h}:${adjustedmin} Hrs`;
+  const fullDate = `${parseDate(dateTime)}, ${h}:${adjustedmin} Hrs`;
   return fullDate;
 };
 

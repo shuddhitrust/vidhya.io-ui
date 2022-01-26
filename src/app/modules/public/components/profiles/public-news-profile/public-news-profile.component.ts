@@ -21,6 +21,7 @@ import {
   GetNewsAction,
   ResetNewsProfileAction,
 } from '../../../state/public/public.actions';
+import { generateMemberProfileLink } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.model';
 
 @Component({
   selector: 'app-public-news-profile',
@@ -43,6 +44,7 @@ export class NewsProfileComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     private location: Location,
     private route: ActivatedRoute,
+    private router: Router,
     private store: Store,
     private auth: AuthorizationService
   ) {
@@ -95,6 +97,10 @@ export class NewsProfileComponent implements OnInit, OnDestroy {
 
   parseDate(date) {
     return parseDateTime(date);
+  }
+
+  authorLink() {
+    this.router.navigate([generateMemberProfileLink(this.newsRecord.author)]);
   }
 
   deleteAnnouncement() {

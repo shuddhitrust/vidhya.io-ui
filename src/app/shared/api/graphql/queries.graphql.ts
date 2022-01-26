@@ -141,6 +141,7 @@ export const PUBLIC_QUERIES = {
         author {
           id
           name
+          username
         }
         image
         blurb

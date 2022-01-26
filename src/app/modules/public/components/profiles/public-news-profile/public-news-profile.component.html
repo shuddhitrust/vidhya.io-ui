@@ -15,10 +15,10 @@
     </button>
     <h2 data-cy="news-title">{{ newsRecord?.title }}</h2>
     <div class="markdown-container">
-      <markdown [data]="newsRecord?.message"></markdown>
+      <markdown class="markdown" [data]="newsRecord?.message"></markdown>
     </div>
     <small class="left" style="font-style: italic"
-      >Posted by {{ newsRecord?.author?.name }} at
+      >Posted by <a (click)="authorLink()">{{ newsRecord?.author?.name }}</a> at
       {{ parseDate(newsRecord?.createdAt) }}</small
     >
   </div>
