@@ -151,9 +151,7 @@ export class AddEditAnnouncementComponent implements OnInit {
           // We update the images in the response form with the new array
           this.images.push(url);
           // and also add the link to the image in the message
-          this.message = this.message.concat(
-            `<img src="${url}" alt="image ${this.images.length}" width="100%" height="auto" />`
-          );
+          this.pushImageToMessage(url);
         },
         (err) => {
           this.store.dispatch(
@@ -172,6 +170,13 @@ export class AddEditAnnouncementComponent implements OnInit {
         }
       );
     }
+  }
+
+  // When a new image is uploaded, we add it to the message at the bottom
+  pushImageToMessage(url) {
+    this.message = this.message.concat(
+      `<br /><br /><img src="${url}" alt="image ${this.images.length}" width="100%" height="auto" /><br /><br />`
+    );
   }
 
   showExpandedImage(image) {
