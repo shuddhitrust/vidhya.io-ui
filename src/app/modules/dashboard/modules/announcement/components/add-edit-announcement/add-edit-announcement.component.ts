@@ -152,7 +152,7 @@ export class AddEditAnnouncementComponent implements OnInit {
           this.images.push(url);
           // and also add the link to the image in the message
           this.message = this.message.concat(
-            `![image ${this.images.length}](${url})`
+            `<img src="${url}" alt="image ${this.images.length}" width="100%" height="auto" />`
           );
         },
         (err) => {
