@@ -1,5 +1,63 @@
+h1 {
+  // background: rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 1);
+  font-size: 2em;
+  font-weight: bold;
+  text-align: center;
+}
+
 h2 {
   text-align: center;
+}
+
+#homeCarousel-wrapper {
+  width: 100%;
+  //   padding: 20px;
+  //   background: rgba(0, 0, 0);
+  // background: rgba(0, 153, 255, .7);
+}
+
+#homeCarousel {
+  max-width: 95vw;
+  height: auto;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  //   background: rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.2);
+  height: 50%;
+  margin-top: 75px;
+}
+
+.carousel-item {
+  height: 90vh;
+  max-width: 90vw;
+  height: auto;
+}
+.caption {
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: rgba(0, 0, 0, 0.1);
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  // padding: 10px;
+  text-align: left;
+  font-size: 1.5em;
+  font-style: italic;
+  color: black;
+  //   color: white;
 }
 
 #hero-block {

@@ -65,6 +65,10 @@ export class PublicNewsFeedComponent implements OnInit {
     return parseDateTime(date);
   }
 
+  slideClass(i) {
+    return i == 0 ? 'carousel-item active' : 'carousel-item';
+  }
+
   onClickNewsCard(news) {
     this.router.navigate([uiroutes.NEWS_PROFILE_ROUTE.route], {
       queryParams: { id: news.id },
