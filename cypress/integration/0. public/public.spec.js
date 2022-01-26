@@ -8,9 +8,10 @@ describe("Testing Public Module...", () => {
     cy.fixture("routes").as("routes");
   });
 
-  it("Displays the institution and learners tabs", () => {
+  it("Displays the news, institution and learners tabs", () => {
     cy.get("@routes").then((routes) => {
       cy.visit(routes.HOME_ROUTE.route);
+      cy.get("[data-cy=parent-container]").contains("News");
       cy.get("[data-cy=parent-container]").contains("Institutions");
       cy.get("[data-cy=parent-container]").contains("Learners");
     });
@@ -62,8 +63,9 @@ describe("Testing Public Module...", () => {
   it("Displays copyright text on home page", () => {
     cy.get("@routes").then((routes) => {
       cy.visit(routes.HOME_ROUTE.route);
+      const currentYear = new Date().getFullYear();
       cy.get(".footer").contains(
-        "Copyright © 2021 Shuddhi Vidhya Initiative, Shuddhi Trust, All Rights Reserved"
+        `Copyright © ${currentYear} Shuddhi Vidhya Initiative, Shuddhi Trust, All Rights Reserved`
       );
     });
   });

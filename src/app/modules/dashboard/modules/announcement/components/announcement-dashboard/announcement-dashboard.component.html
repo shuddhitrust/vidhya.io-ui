@@ -34,6 +34,7 @@
         <mat-card
           *ngIf="!announcement.seen"
           class="feed-card"
+          [style.backgroundImage]="'url(' + announcement.image + ')'"
           (click)="openAnnouncement(announcement)"
         >
           <h2>

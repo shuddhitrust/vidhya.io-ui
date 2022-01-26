@@ -133,6 +133,47 @@ export const PUBLIC_QUERIES = {
       }
     }
   `,
+  GET_PUBLIC_NEWS_ITEM: gql`
+    query publicAnnouncement($id: ID!) {
+      publicAnnouncement(id: $id) {
+        id
+        title
+        author {
+          id
+          name
+          username
+        }
+        image
+        blurb
+        message
+        institution {
+          id
+        }
+        createdAt
+      }
+    }
+  `,
+  GET_PUBLIC_NEWS: gql`
+    query publicAnnouncements($searchField: String, $limit: Int, $offset: Int) {
+      publicAnnouncements(
+        searchField: $searchField
+        limit: $limit
+        offset: $offset
+      ) {
+        id
+        title
+        author {
+          id
+          name
+        }
+        image
+        blurb
+        message
+        seen
+        createdAt
+      }
+    }
+  `,
 };
 
 export const DASHBOARD_MUTATIONS = {
@@ -375,6 +416,8 @@ export const ANNOUNCEMENT_QUERIES = {
           id
           name
         }
+        image
+        blurb
         message
         institution {
           id
@@ -413,6 +456,8 @@ export const ANNOUNCEMENT_QUERIES = {
           id
           name
         }
+        image
+        blurb
         message
         seen
         createdAt

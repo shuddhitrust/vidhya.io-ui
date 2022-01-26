@@ -114,3 +114,7 @@ export const LearnerColumnFilters = {
   ],
   membershipStatusIs: [MembershipStatusOptions.APPROVED],
 };
+
+export const generateMemberProfileLink = (member: User): string => {
+  return `${uiroutes.MEMBER_PROFILE_ROUTE.route}/${member.username}`;
+};

@@ -42,6 +42,13 @@ export const uiroutes = {
       actions: [RESOURCE_ACTIONS.CREATE, RESOURCE_ACTIONS.UPDATE],
     },
   },
+  NEWS_PROFILE_ROUTE: {
+    route: 'news',
+    auth: {
+      resource: null,
+      actions: [],
+    },
+  },
   MEMBER_PROFILE_ROUTE: {
     route: 'profile',
     auth: { resource: null, actions: [] },

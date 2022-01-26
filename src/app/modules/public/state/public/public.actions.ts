@@ -37,14 +37,44 @@ export class FetchNextPublicInstitutionsAction {
   constructor() {}
 }
 
+export class FetchNewsAction {
+  static readonly type = '[PUBLIC] Fetch News';
+
+  constructor(public payload: { searchParams: SearchParams }) {}
+}
+
+export class ForceRefetchNewsAction {
+  static readonly type = '[PUBLIC] Force Fetch News';
+
+  constructor() {}
+}
+
+export class FetchNextNewsAction {
+  static readonly type = '[PUBLIC] Fetch Next News';
+
+  constructor() {}
+}
+
+export class GetNewsAction {
+  static readonly type = '[PUBLIC] Get News';
+
+  constructor(public payload: { id: number }) {}
+}
+
 export class GetPublicInstitutionAction {
   static readonly type = '[PUBLIC] Get Institution';
 
   constructor(public payload: { code: string }) {}
 }
 
+export class ResetNewsProfileAction {
+  static readonly type = '[PUBLIC] Reset News Profile';
+
+  constructor() {}
+}
+
 export class ResetPublicInstitutionFormAction {
-  static readonly type = '[PUBLIC] Reset Institution Form';
+  static readonly type = '[PUBLIC] Reset Institution Profile';
 
   constructor() {}
 }

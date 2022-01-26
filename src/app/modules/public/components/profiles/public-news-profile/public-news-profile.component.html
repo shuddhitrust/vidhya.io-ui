@@ -1,0 +1,29 @@
+<button mat-icon-button (click)="goBack()" class="floating-back-button">
+  <mat-icon>keyboard_backspace</mat-icon>
+</button>
+
+<span *ngIf="!(isFetching$ | async)">
+  <div class="announcement-card">
+    <button
+      *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
+      mat-mini-fab
+      color="warn"
+      class="profile-button"
+      (click)="deleteConfirmation()"
+    >
+      <mat-icon>delete</mat-icon>
+    </button>
+    <h2 data-cy="news-title">{{ newsRecord?.title }}</h2>
+    <div class="markdown-container">
+      <markdown class="markdown" [data]="newsRecord?.message"></markdown>
+    </div>
+    <small class="left" style="font-style: italic"
+      >Posted by <a (click)="authorLink()">{{ newsRecord?.author?.name }}</a> at
+      {{ parseDate(newsRecord?.createdAt) }}</small
+    >
+  </div>
+</span>
+
+<ng-template #loading>
+  <app-simple-loading-spinner></app-simple-loading-spinner>
+</ng-template>

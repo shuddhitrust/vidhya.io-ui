@@ -29,6 +29,11 @@ import { ShowNotificationAction } from 'src/app/shared/state/notifications/notif
 import { OptionsState } from 'src/app/shared/state/options/options.state';
 import { FetchAdminGroupOptions } from 'src/app/shared/state/options/options.actions';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
+import { ImageDisplayDialog } from 'src/app/shared/components/image-display/image-display-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
+import { UploadService } from 'src/app/shared/api/upload.service';
+import { Clipboard } from '@angular/cdk/clipboard';
 @Component({
   selector: 'app-add-edit-announcement',
   templateUrl: './add-edit-announcement.component.html',
@@ -41,9 +46,12 @@ export class AddEditAnnouncementComponent implements OnInit {
   formSubmitting: boolean = false;
   recipientsGlobal = 'recipientsGlobal';
   recipientsInstitution = 'recipientsInstitution';
+  public = 'public';
   groups = 'groups';
   params: object = {};
-  message;
+  images: string[] = [];
+  uploadingImages: boolean = false;
+  message: string = '';
   @Select(AnnouncementState.getAnnouncementFormRecord)
   announcementFormRecord$: Observable<Announcement>;
   @Select(OptionsState.listAdminGroupOptions)
@@ -66,7 +74,10 @@ export class AddEditAnnouncementComponent implements OnInit {
     private location: Location,
     private store: Store,
     private route: ActivatedRoute,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    public dialog: MatDialog,
+    private uploadService: UploadService,
+    public clipboard: Clipboard
   ) {
     this.store.dispatch(new FetchAdminGroupOptions());
     this.currentUserId$.subscribe((val) => {
@@ -102,6 +113,9 @@ export class AddEditAnnouncementComponent implements OnInit {
           : this.currentMemberInstitutionId,
         Validators.required,
       ],
+      public: [announcementFormRecord?.public, Validators.required],
+      image: [announcementFormRecord?.image],
+      blurb: [announcementFormRecord?.blurb],
       message: [announcementFormRecord?.message, Validators.required],
       [this.recipientsGlobal]: [
         this.announcementFormRecord?.[this.recipientsGlobal],
@@ -112,6 +126,75 @@ export class AddEditAnnouncementComponent implements OnInit {
       [this.groups]: [announcementFormRecord?.[this.groups]],
     });
   };
+
+  // The method that actually uploads the file to the server and initiates the addition of the url to the submission
+  async uploadImage(event) {
+    if (event.target.files.length > 0) {
+      const file = event.target.files[0];
+      this.store.dispatch(
+        new ToggleLoadingScreen({
+          showLoadingScreen: true,
+          message: 'Uploading image...',
+        })
+      );
+      const formData = new FormData();
+      formData.append('file', file);
+      this.uploadService.upload(formData).subscribe(
+        (res) => {
+          const url = res.secure_url;
+          this.store.dispatch(
+            new ToggleLoadingScreen({
+              showLoadingScreen: false,
+              message: '',
+            })
+          );
+          // We update the images in the response form with the new array
+          this.images.push(url);
+          // and also add the link to the image in the message
+          this.pushImageToMessage(url);
+        },
+        (err) => {
+          this.store.dispatch(
+            new ToggleLoadingScreen({
+              showLoadingScreen: false,
+              message: '',
+            })
+          );
+          this.uploadingImages = false;
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: 'Something went wrong while uploading the image!',
+              action: 'error',
+            })
+          );
+        }
+      );
+    }
+  }
+
+  // When a new image is uploaded, we add it to the message at the bottom
+  pushImageToMessage(url) {
+    this.message = this.message.concat(
+      `<br /><br /><img src="${url}" alt="image ${this.images.length}" width="100%" height="auto" /><br /><br />`
+    );
+  }
+
+  showExpandedImage(image) {
+    const dialogRef = this.dialog.open(ImageDisplayDialog, {
+      data: {
+        image,
+      },
+    });
+    this.clipboard.copy(image);
+    this.store.dispatch(
+      new ShowNotificationAction({
+        message: 'Image URL copied to clipboard!',
+        action: 'success',
+      })
+    );
+    dialogRef.afterClosed().subscribe((result) => {});
+  }
+
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       this.params = params;
@@ -122,6 +205,14 @@ export class AddEditAnnouncementComponent implements OnInit {
         );
       }
     });
+  }
+
+  showPublic() {
+    return this.currentMember.role.name == USER_ROLES_NAMES.SUPER_ADMIN;
+  }
+
+  isPublic() {
+    return this.announcementForm.get('public').value;
   }
 
   recipientsChanged(field) {
@@ -146,6 +237,9 @@ export class AddEditAnnouncementComponent implements OnInit {
       result = true;
     }
     if (this.announcementForm.get(this.recipientsInstitution).value == true) {
+      result = true;
+    }
+    if (this.announcementForm.get(this.public).value == true) {
       result = true;
     }
     if (this.announcementForm.get(this.groups).value.length > 0) {

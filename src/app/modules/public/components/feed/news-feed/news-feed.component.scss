@@ -1,0 +1,153 @@
+h1 {
+  // background: rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 1);
+  font-size: 2em;
+  font-weight: bold;
+  text-align: center;
+}
+
+h2 {
+  text-align: center;
+}
+
+#homeCarousel-wrapper {
+  width: 100%;
+  //   padding: 20px;
+  //   background: rgba(0, 0, 0);
+  // background: rgba(0, 153, 255, .7);
+}
+
+#homeCarousel {
+  max-width: 95vw;
+  height: auto;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  //   background: rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.2);
+  height: 50%;
+  margin-top: 75px;
+}
+
+.carousel-item {
+  height: 100%;
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.slideshow-image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  height: auto;
+  aspect-ratio: auto;
+  max-width: 90vw;
+  // max-height: 60vh;
+}
+
+.date {
+  top: 10px;
+  left: 10px;
+  font-size: 2em;
+}
+.date h2 {
+  font-weight: bolder;
+}
+.image-text {
+  background-color: rgba(0, 0, 0, 0.3);
+  position: absolute;
+  text-align: left;
+  font-size: 1.5em;
+  padding: 20px;
+  color: white;
+  font-weight: bold;
+}
+
+.image-text > h1,
+.image-text > h2 {
+  color: white;
+}
+
+.caption {
+  bottom: 5px;
+  left: 10px;
+  width: 100%;
+  font-style: italic;
+}
+
+#hero-block {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  text-align: center;
+  height: 50vh;
+  width: 50vw;
+  display: block;
+  margin: 100px auto;
+  padding: 100px;
+}
+
+#hero-logo {
+  width: 50%;
+}
+
+.scroll-feed {
+  overflow: auto;
+  height: calc(100vh - 150px);
+}
+
+.cards {
+  display: grid;
+  margin: 0px auto;
+  padding: 5px;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: 20px;
+  align-items: stretch;
+  width: 95vw;
+  margin-bottom: 50px;
+}
+.card {
+  cursor: pointer;
+}
+.user-not-found {
+  margin: 100px;
+  border: 1px solid #ccc;
+  box-shadow: 2px 2px 6px 0px rgba(0, 0, 0, 0.3);
+}
+
+@media screen and (max-width: 1250px) {
+  #hero-logo {
+    width: 75%;
+  }
+  .cards {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  #hero-block {
+    width: 100%;
+    margin-top: 20px;
+    padding: 20px;
+  }
+
+  #hero-logo {
+    width: 80%;
+  }
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .image-text {
+    position: static;
+    display: block;
+    font-size: 1em;
+    padding: 10px;
+  }
+}
