@@ -9,6 +9,7 @@ export const emptyAnnouncementFormRecord: Announcement = {
   title: null,
   author: null,
   public: false,
+  views: null,
   image: null,
   blurb: null,
   message: null,
