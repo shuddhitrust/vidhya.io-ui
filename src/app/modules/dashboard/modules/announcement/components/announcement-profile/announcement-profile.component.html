@@ -16,7 +16,7 @@
     <h2 data-cy="announcement-title">{{ announcement?.title }}</h2>
     <p>
       <small class="left">Viewed {{ announcement.views }} times</small>
-      <small style="float: right; font-style: italic"
+      <small class="infoText"
         >Posted by
         <a (click)="authorLink()">{{ announcement?.author?.name }}</a> at
         {{ parseDate(announcement?.createdAt) }}</small
