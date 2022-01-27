@@ -1,6 +1,6 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import {
@@ -25,6 +25,7 @@ import {
   MasterConfirmationDialog,
   MasterConfirmationDialogObject,
 } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
+import { generateMemberProfileLink } from '../../../admin/modules/member/state/member.model';
 
 @Component({
   selector: 'app-announcement-profile',
@@ -41,14 +42,15 @@ export class AnnouncementProfileComponent implements OnInit, OnDestroy {
   announcement$: Observable<Announcement>;
   announcement: Announcement;
   @Select(AnnouncementState.isFetching)
-  isFetchingAnnouncement$: Observable<boolean>;
+  isFetching$: Observable<boolean>;
 
   constructor(
     public dialog: MatDialog,
     private location: Location,
     private route: ActivatedRoute,
     private store: Store,
-    private auth: AuthorizationService
+    private auth: AuthorizationService,
+    private router: Router
   ) {
     this.announcement$.subscribe((val) => {
       this.announcement = val;
@@ -97,6 +99,10 @@ export class AnnouncementProfileComponent implements OnInit, OnDestroy {
 
   parseDate(date) {
     return parseDateTime(date);
+  }
+
+  authorLink() {
+    this.router.navigate([generateMemberProfileLink(this.announcement.author)]);
   }
 
   deleteAnnouncement() {

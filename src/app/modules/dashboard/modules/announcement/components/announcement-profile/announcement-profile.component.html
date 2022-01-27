@@ -2,7 +2,7 @@
   <mat-icon>keyboard_backspace</mat-icon>
 </button>
 
-<span *ngIf="!(isFetchingAnnouncement$ | async)">
+<span *ngIf="!(isFetching$ | async)">
   <div class="announcement-card">
     <button
       *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
@@ -13,15 +13,21 @@
     >
       <mat-icon>delete</mat-icon>
     </button>
-    <h2 data-cy="announcement-title">{{ announcement.title }}</h2>
+    <h2 data-cy="announcement-title">{{ announcement?.title }}</h2>
+    <p>
+      <small class="left">Viewed {{ announcement.views }} times</small>
+      <small style="float: right; font-style: italic"
+        >Posted by
+        <a (click)="authorLink()">{{ announcement?.author?.name }}</a> at
+        {{ parseDate(announcement?.createdAt) }}</small
+      >
+    </p>
+    <hr />
     <div class="markdown-container">
-      <markdown [data]="announcement?.message"></markdown>
+      <markdown class="markdown" [data]="announcement?.message"></markdown>
     </div>
-    <small class="left" style="font-style: italic"
-      >Posted by {{ announcement?.author?.name }} at
-      {{ parseDate(announcement.createdAt) }}</small
-    >
   </div>
+  <app-scroll-top></app-scroll-top>
 </span>
 
 <ng-template #loading>
