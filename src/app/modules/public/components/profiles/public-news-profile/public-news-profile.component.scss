@@ -2,6 +2,11 @@ h2 {
   text-align: center;
 }
 
+.center {
+  display: block;
+  margin: auto;
+}
+
 .announcement-card {
   text-align: center;
   display: block;
@@ -39,6 +44,18 @@ h2 {
 .profile-button {
   float: right;
   margin: 5px 10px;
+}
+
+.scroll-to-top {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  opacity: 0;
+  transition: all 0.2s ease-in-out;
+}
+.show-scrollTop {
+  opacity: 1;
+  transition: all 0.2s ease-in-out;
 }
 
 @media screen and (max-width: 800px) {

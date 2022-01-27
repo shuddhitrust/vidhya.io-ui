@@ -10,6 +10,7 @@ import { OptionsState } from '../state/options/options.state';
 import { NotificationState } from '../state/notifications/notification.state';
 import { LoadingState } from '../state/loading/loading.state';
 import { SubscriptionsState } from '../state/subscriptions/subscriptions.state';
+import { ScrollTopComponent } from '../components/scroll-to-top/scroll-to-top.component';
 
 const imports = [
   CommonModule,
@@ -20,7 +21,7 @@ const imports = [
   InfiniteScrollModule,
 ];
 
-const declarations = [SimpleLoadingSpinnerComponent];
+const declarations = [SimpleLoadingSpinnerComponent, ScrollTopComponent];
 
 @NgModule({
   declarations,

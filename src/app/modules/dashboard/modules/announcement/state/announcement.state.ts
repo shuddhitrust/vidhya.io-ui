@@ -283,8 +283,7 @@ export class AnnouncementState {
       .watchQuery({
         query,
         variables: { id },
-        fetchPolicy: 'network-only',
-        nextFetchPolicy: 'network-only',
+        fetchPolicy: 'cache-first',
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
@@ -292,7 +291,6 @@ export class AnnouncementState {
           patchState({
             announcementFormRecord: response,
             isFetching: false,
-            fetchPolicy: 'network-only',
           });
         },
         (error) => {

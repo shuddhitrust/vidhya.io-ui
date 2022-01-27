@@ -62,7 +62,6 @@ export class NewsProfileComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       const newsId = params['id'];
-      console.log('From ngOninit of ', { newsId });
       if (newsId) {
         this.store.dispatch(
           new GetNewsAction({

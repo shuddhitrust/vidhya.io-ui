@@ -14,14 +14,20 @@
       <mat-icon>delete</mat-icon>
     </button>
     <h2 data-cy="news-title">{{ newsRecord?.title }}</h2>
+    <p>
+      <small class="left">Viewed {{ newsRecord.views }} times</small>
+      <small style="float: right; font-style: italic"
+        >Posted by
+        <a (click)="authorLink()">{{ newsRecord?.author?.name }}</a> at
+        {{ parseDate(newsRecord?.createdAt) }}</small
+      >
+    </p>
+    <hr />
     <div class="markdown-container">
       <markdown class="markdown" [data]="newsRecord?.message"></markdown>
     </div>
-    <small class="left" style="font-style: italic"
-      >Posted by <a (click)="authorLink()">{{ newsRecord?.author?.name }}</a> at
-      {{ parseDate(newsRecord?.createdAt) }}</small
-    >
   </div>
+  <app-scroll-top></app-scroll-top>
 </span>
 
 <ng-template #loading>

@@ -550,19 +550,19 @@ export class PublicState {
   }
 
   @Action(GetNewsAction)
-  getAnnouncement(
+  getPublicAnnouncement(
     { patchState }: StateContext<PublicStateModel>,
     { payload }: GetNewsAction
   ) {
     const { id } = payload;
     patchState({ isFetchingNews: true });
     const query = PUBLIC_QUERIES.GET_PUBLIC_NEWS_ITEM;
+    console.log('Making request for public news item ');
     this.apollo
       .watchQuery({
         query,
         variables: { id },
-        fetchPolicy: 'network-only',
-        nextFetchPolicy: 'network-only',
+        fetchPolicy: 'cache-first',
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
@@ -570,7 +570,6 @@ export class PublicState {
           patchState({
             newsRecord: response,
             isFetchingNews: false,
-            fetchPolicy: 'network-only',
           });
         },
         (error) => {

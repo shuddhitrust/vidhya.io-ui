@@ -138,16 +138,17 @@ export const PUBLIC_QUERIES = {
       publicAnnouncement(id: $id) {
         id
         title
-        author {
-          id
-          name
-          username
-        }
+        views
         image
         blurb
         message
         institution {
           id
+        }
+        author {
+          id
+          name
+          username
         }
         createdAt
       }
@@ -412,15 +413,17 @@ export const ANNOUNCEMENT_QUERIES = {
       announcement(id: $id) {
         id
         title
-        author {
-          id
-          name
-        }
+        views
         image
         blurb
         message
         institution {
           id
+        }
+        author {
+          id
+          name
+          username
         }
         createdAt
       }

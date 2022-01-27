@@ -182,6 +182,7 @@ export type Announcement = {
   title: string;
   author: any;
   public: boolean;
+  views: number;
   image: string;
   blurb: string;
   message: string;
