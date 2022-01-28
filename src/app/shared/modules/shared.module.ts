@@ -15,6 +15,7 @@ import { AnnouncementProfileRendererComponent } from '../components/announcement
 import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 import { HttpClient } from '@angular/common/http';
 import { markedOptionsFactory } from '../common/constants';
+import { ShareButtonComponent } from '../components/share-button/share-button.component';
 
 const imports = [
   CommonModule,
@@ -29,6 +30,7 @@ const declarations = [
   SimpleLoadingSpinnerComponent,
   ScrollTopComponent,
   AnnouncementProfileRendererComponent,
+  ShareButtonComponent,
 ];
 
 @NgModule({
