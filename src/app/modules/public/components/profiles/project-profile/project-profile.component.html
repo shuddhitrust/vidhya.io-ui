@@ -25,6 +25,14 @@
       </button>
 
       <h2>{{ project.title }}</h2>
+      <small>
+        Published here on
+        {{ parseDate(project.createdAt) }} by
+        <a (click)="authorLink()"
+          ><b>{{ project.author.name }}</b></a
+        >
+      </small>
+      <hr />
       <p>
         <a
           [href]="project.link"
@@ -36,9 +44,6 @@
       </p>
       <p>{{ project?.description }}</p>
 
-      <small style="font-style: italic">{{
-        renderProjectSubtitle(project)
-      }}</small>
       <button
         nz-tooltip="Report an issue with this project"
         mat-mini-fab

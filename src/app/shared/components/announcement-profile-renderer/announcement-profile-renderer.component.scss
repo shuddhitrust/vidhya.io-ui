@@ -1,0 +1,62 @@
+h2 {
+  text-align: center;
+}
+
+.center {
+  display: block;
+  margin: auto;
+}
+
+.announcement-card {
+  text-align: center;
+  display: block;
+  margin: 10px auto;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 5px;
+  width: 80%;
+}
+.markdown-container {
+  height: 100%;
+  padding: 20px;
+}
+
+h2 {
+  font-size: 2em;
+  font-weight: bold;
+}
+
+.markdown {
+  font-size: 1.5em;
+  line-height: 1.5em;
+}
+
+.markdown > p > img {
+  max-width: 100px;
+  height: auto;
+}
+
+.announcement-card,
+.left {
+  text-align: left;
+}
+
+.infoText {
+  float: right;
+}
+
+.profile-button {
+  float: right;
+  margin: 5px 10px;
+}
+
+@media screen and (max-width: 800px) {
+  .announcement-card {
+    width: 100%;
+  }
+
+  .infoText {
+    float: none;
+    display: block;
+  }
+}
