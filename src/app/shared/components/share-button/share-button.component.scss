@@ -1,0 +1,17 @@
+.scroll-to-top {
+  // position: static;
+  display: block;
+  margin: 20px;
+  bottom: 20px;
+  // opacity: 0;
+  transition: all 0.2s ease-in-out;
+}
+.show-scrollTop {
+  opacity: 1;
+  transition: all 0.2s ease-in-out;
+}
+
+.center {
+  display: block;
+  margin: auto;
+}

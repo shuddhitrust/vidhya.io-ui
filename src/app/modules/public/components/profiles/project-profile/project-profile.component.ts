@@ -13,27 +13,28 @@ import {
   RESOURCE_ACTIONS,
 } from 'src/app/shared/common/models';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
-import { OptionsState } from 'src/app/shared/state/options/options.state';
 import { FetchMemberOptionsByInstitution } from 'src/app/shared/state/options/options.actions';
 import {
   MasterConfirmationDialog,
   MasterConfirmationDialogObject,
 } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
-import { ProjectState } from '../../state/project.state';
+
+import { clipLongText, parseDateTime } from 'src/app/shared/common/functions';
+import { ProjectState } from 'src/app/modules/dashboard/modules/project/state/project.state';
 import {
   DeleteProjectAction,
   GetProjectAction,
   ResetProjectFormAction,
-} from '../../state/project.actions';
-import { clipLongText, parseDateTime } from 'src/app/shared/common/functions';
+} from 'src/app/modules/dashboard/modules/project/state/project.actions';
+import { generateMemberProfileLink } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.model';
 
 @Component({
   selector: 'app-project-profile',
   templateUrl: './project-profile.component.html',
   styleUrls: [
     './project-profile.component.scss',
-    './../../../../../../shared/common/shared-styles.css',
+    './../../../../../shared/common/shared-styles.css',
   ],
 })
 export class ProjectProfileComponent implements OnInit, OnDestroy {
@@ -66,9 +67,7 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
       }
     });
   }
-  renderProjectSubtitle(project: Project) {
-    return `Published here on ${this.parseDate(project.createdAt)}`;
-  }
+
   parseDate(date) {
     return parseDateTime(date);
   }
@@ -76,6 +75,11 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
   clip(string) {
     return clipLongText(string, 100);
   }
+
+  authorLink() {
+    this.router.navigate([generateMemberProfileLink(this.project.author)]);
+  }
+
   fetchMemberOptions() {
     this.currentMember$.subscribe((val) => {
       this.currentMember = val;
@@ -86,6 +90,7 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
       })
     );
   }
+
   authorizeResourceMethod(action) {
     return this.auth.authorizeResource(this.resource, action, {
       adminIds: [this.project?.author?.id],

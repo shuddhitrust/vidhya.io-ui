@@ -1,35 +1,4 @@
-<button mat-icon-button (click)="goBack()" class="floating-back-button">
-  <mat-icon>keyboard_backspace</mat-icon>
-</button>
-
-<span *ngIf="!(isFetching$ | async)">
-  <div class="announcement-card">
-    <button
-      *ngIf="authorizeResourceMethod(resourceActions.DELETE)"
-      mat-mini-fab
-      color="warn"
-      class="profile-button"
-      (click)="deleteConfirmation()"
-    >
-      <mat-icon>delete</mat-icon>
-    </button>
-    <h2 data-cy="announcement-title">{{ announcement?.title }}</h2>
-    <p>
-      <small class="left">Viewed {{ announcement.views }} times</small>
-      <small style="float: right; font-style: italic"
-        >Posted by
-        <a (click)="authorLink()">{{ announcement?.author?.name }}</a> at
-        {{ parseDate(announcement?.createdAt) }}</small
-      >
-    </p>
-    <hr />
-    <div class="markdown-container">
-      <markdown class="markdown" [data]="announcement?.message"></markdown>
-    </div>
-  </div>
-  <app-scroll-top></app-scroll-top>
-</span>
-
-<ng-template #loading>
-  <app-simple-loading-spinner></app-simple-loading-spinner>
-</ng-template>
+<app-announcement-profile-renderer
+  [announcement]="announcement"
+  [isFetching$]="isFetching$"
+></app-announcement-profile-renderer>

@@ -175,7 +175,9 @@ export class AddEditAnnouncementComponent implements OnInit {
   // When a new image is uploaded, we add it to the message at the bottom
   pushImageToMessage(url) {
     this.message = this.message.concat(
-      `<br /><br /><img src="${url}" alt="image ${this.images.length}" width="100%" height="auto" /><br /><br />`
+      `<br /><img src="${url}" alt="image ${this.images.length}" width="100%" height="auto" /><br /><br />
+
+`
     );
   }
 

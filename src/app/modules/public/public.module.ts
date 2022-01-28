@@ -21,9 +21,7 @@ import { TermsConditionsComponent } from './components/pages/terms-conditions/te
 import { AddEditIssueComponent } from '../dashboard/modules/admin/modules/issues/components/add-edit-issue/add-edit-issue.component';
 import { PublicNewsFeedComponent } from './components/feed/news-feed/news-feed.component';
 import { NewsProfileComponent } from './components/profiles/public-news-profile/public-news-profile.component';
-import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
-import { HttpClient } from '@angular/common/http';
-import { markedOptionsFactory } from 'src/app/shared/common/constants';
+import { ProjectProfileComponent } from './components/profiles/project-profile/project-profile.component';
 
 const declarations = [
   HomeComponent,
@@ -32,6 +30,7 @@ const declarations = [
   PrivacyComponent,
   TermsConditionsComponent,
   PublicUserProfileComponent,
+  ProjectProfileComponent,
   PublicComponent,
   ErrorPageComponent,
   PublicTabsComponent,
@@ -52,13 +51,6 @@ const declarations = [
     AuthModule,
     ProjectModule,
     PublicRoutingModule,
-    MarkdownModule.forRoot({
-      loader: HttpClient,
-      markedOptions: {
-        provide: MarkedOptions,
-        useFactory: markedOptionsFactory,
-      },
-    }),
     NgxsModule.forFeature([PublicState]),
   ],
 })
