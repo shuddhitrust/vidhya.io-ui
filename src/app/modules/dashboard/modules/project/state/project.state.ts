@@ -258,32 +258,34 @@ export class ProjectState {
     { payload }: GetProjectAction
   ) {
     const { id, fetchFormDetails } = payload;
-    const query = fetchFormDetails
-      ? PROJECT_QUERIES.GET_PROJECT_FORM_DETAILS
-      : PROJECT_QUERIES.GET_PROJECT_PROFILE;
-    patchState({ isFetching: true });
-    this.apollo
-      .watchQuery({
-        query,
-        variables: { id },
-        fetchPolicy: 'network-only',
-        nextFetchPolicy: 'network-only',
-      })
-      .valueChanges.subscribe(
-        ({ data }: any) => {
-          const response = data.project;
-          patchState({ projectFormRecord: response, isFetching: false });
-        },
-        (error) => {
-          this.store.dispatch(
-            new ShowNotificationAction({
-              message: getErrorMessageFromGraphQLResponse(error),
-              action: 'error',
-            })
-          );
-          patchState({ isFetching: false });
-        }
-      );
+    if (id) {
+      const query = fetchFormDetails
+        ? PROJECT_QUERIES.GET_PROJECT_FORM_DETAILS
+        : PROJECT_QUERIES.GET_PROJECT_PROFILE;
+      patchState({ isFetching: true });
+      this.apollo
+        .watchQuery({
+          query,
+          variables: { id },
+          fetchPolicy: 'network-only',
+          nextFetchPolicy: 'network-only',
+        })
+        .valueChanges.subscribe(
+          ({ data }: any) => {
+            const response = data.project;
+            patchState({ projectFormRecord: response, isFetching: false });
+          },
+          (error) => {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(error),
+                action: 'error',
+              })
+            );
+            patchState({ isFetching: false });
+          }
+        );
+    }
   }
 
   @Action(CreateUpdateProjectAction)
