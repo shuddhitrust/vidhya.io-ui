@@ -478,6 +478,7 @@ export const PROJECT_QUERIES = {
         author {
           id
           name
+          username
         }
         course {
           id
