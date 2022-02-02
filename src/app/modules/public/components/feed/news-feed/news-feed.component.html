@@ -8,6 +8,10 @@
 </div>
 
 <ng-template #newsListTemplate>
+  <ng-container
+    style="display: block"
+    *ngTemplateOutlet="searchQueryDescription"
+  ></ng-container>
   <div id="homeCarousel-wrapper">
     <div id="homeCarousel" class="carousel slide" data-ride="carousel">
       <div class="carousel-inner">
@@ -111,7 +115,7 @@
 <ng-template #searchQueryDescription>
   <p style="text-align: center">
     <small *ngIf="currentQuery"
-      >Showing learners with "{{ currentQuery }}"</small
+      >Showing news items with "{{ currentQuery }}"</small
     >
   </p>
 </ng-template>
