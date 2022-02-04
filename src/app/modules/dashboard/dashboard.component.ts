@@ -97,12 +97,12 @@ export class DashboardComponent implements OnInit {
       if (this.isFullyAuthenticated == false && val) {
         this.isFullyAuthenticated = val;
         if (this.isFullyAuthenticated) {
-          // this.store.dispatch(
-          //   new InitiateSubscriptionsAction({
-          //     authorizeResource: this.auth.authorizeResource,
-          //     isFullyAuthenticated: this.isFullyAuthenticated,
-          //   })
-          // );
+          this.store.dispatch(
+            new InitiateSubscriptionsAction({
+              authorizeResource: this.auth.authorizeResource,
+              isFullyAuthenticated: this.isFullyAuthenticated,
+            })
+          );
         }
       }
     });

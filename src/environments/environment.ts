@@ -2,8 +2,9 @@
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
-const api_endpoint = 'http://localhost:8000';
-const websocket_api_endpoint = 'ws://localhost:8000';
+const base_url = '159.223.34.203';
+const api_endpoint = `http://${base_url}`;
+const websocket_api_endpoint = `ws://${base_url}`;
 const cloudinary_endpoint = 'https://api.cloudinary.com/v1_1/ragav-dev';
 const cloudinary_preset = 'cljckgq2';
 
