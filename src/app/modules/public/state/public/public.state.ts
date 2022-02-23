@@ -131,7 +131,7 @@ export class PublicState {
   ) {
     let state = getState();
     const { searchParams } = payload;
-    const { fetchPolicy, fetchMembersParamObjects } = state;
+    const { fetchMembersParamObjects } = state;
     const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({
       fetchParamObjects: fetchMembersParamObjects,
@@ -166,7 +166,7 @@ export class PublicState {
       .watchQuery({
         query: PUBLIC_QUERIES.GET_PUBLIC_USERS,
         variables,
-        fetchPolicy,
+        fetchPolicy: 'cache-first',
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
@@ -317,7 +317,7 @@ export class PublicState {
       .watchQuery({
         query: PUBLIC_QUERIES.GET_PUBLIC_INSTITUTIONS,
         variables,
-        fetchPolicy,
+        fetchPolicy: 'cache-first',
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
@@ -473,7 +473,7 @@ export class PublicState {
       .watchQuery({
         query: PUBLIC_QUERIES.GET_PUBLIC_NEWS,
         variables,
-        fetchPolicy,
+        fetchPolicy: 'cache-first',
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
