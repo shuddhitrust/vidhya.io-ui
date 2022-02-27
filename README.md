@@ -18,6 +18,12 @@ The following instructions assumes that you are attempting to setup the project 
 3. [Setup Node using NVM](https://stackabuse.com/using-nvm-to-install-node/)
 4. Setup Angular CLI globally `npm install -g @angular/cli`
 
+## Starting Project
+
+1. Ensure that you are in the `dev` branch.
+2. cd into the ui repo.
+3. Execute `npm start`
+
 ## Project Setup
 
 1. Create the new project with `ng new vidhya-ui` and use the following options for configuration:-
