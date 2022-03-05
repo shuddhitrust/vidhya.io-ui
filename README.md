@@ -17,6 +17,7 @@ The following instructions assumes that you are attempting to setup the project 
 2. [Setup Docker Compose](https://docs.docker.com/compose/install/)
 3. [Setup Node using NVM](https://stackabuse.com/using-nvm-to-install-node/)
 4. Setup Angular CLI globally `npm install -g @angular/cli`
+5. Run `npm install`
 
 ## Starting Project
 
