@@ -36,6 +36,9 @@ import {
   SetAuthStorage,
   GetAuthStorage,
   UpdateTokenExpiry,
+  GenerateEmailOTPAction,
+  VerifyEmailOTPAction,
+  ResetEmailVerificationParamsAction,
 } from './auth.actions';
 import { Apollo } from 'apollo-angular';
 
@@ -660,6 +663,7 @@ export class AuthState {
     let state = getState();
     const { form, formDirective } = payload;
     let { isSubmittingForm } = state;
+    console.log('register form', { form: form.value });
     if (form.valid) {
       this.store.dispatch(
         new ToggleLoadingScreen({
@@ -951,10 +955,21 @@ export class AuthState {
     }
   }
 
-  @Action(PasswordResetAction)
-  passwordReset(
+  @Action(ResetEmailVerificationParamsAction)
+  resetEmailVerificationParamsAction({
+    patchState,
+  }: StateContext<AuthStateModel>) {
+    patchState({
+      isEmailOTPGenerated: false,
+      isEmailVerified: false,
+      verificationEmail: null,
+    });
+  }
+
+  @Action(GenerateEmailOTPAction)
+  generateEmailOTPAction(
     { getState, patchState }: StateContext<AuthStateModel>,
-    { payload }: PasswordResetAction
+    { payload }: GenerateEmailOTPAction
   ) {
     const state = getState();
     const { form, formDirective } = payload;
@@ -965,25 +980,26 @@ export class AuthState {
       patchState({ isSubmittingForm });
       this.apollo
         .mutate({
-          mutation: AUTH_MUTATIONS.PASSWORD_RESET,
+          mutation: AUTH_MUTATIONS.GENERATE_EMAIL_OTP,
           variables: {
-            token: values.token,
-            newPassword1: values.newPassword1,
-            newPassword2: values.newPassword2,
+            email: values.email,
           },
         })
         .subscribe(
           ({ data }: any) => {
-            const response = data.passwordReset;
+            const response = data.generateEmailOtp;
             isSubmittingForm = false;
             patchState({ isSubmittingForm });
 
-            if (response.success) {
-              form.reset();
-              formDirective.resetForm();
+            if (response.ok) {
+              patchState({
+                isEmailOTPGenerated: true,
+                verificationEmail: values.email,
+              });
               this.store.dispatch(
                 new ShowNotificationAction({
-                  message: 'Password reset successfully!',
+                  message:
+                    'Emailed verification code successfully. Please check your inbox.',
                   action: 'success',
                 })
               );
@@ -991,6 +1007,73 @@ export class AuthState {
               this.store.dispatch(
                 new ShowNotificationAction({
                   message: getErrorMessageFromGraphQLResponse(response?.errors),
+                  action: 'error',
+                })
+              );
+            }
+          },
+          (error) => {
+            console.error('There was an error ', error);
+            isSubmittingForm = false;
+            patchState({ isSubmittingForm });
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: 'There was an error in submitting your form!',
+                action: 'error',
+              })
+            );
+          }
+        );
+    } else {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message:
+            'Please make sure there are no errors in the form before attempting to submit!',
+          action: 'error',
+        })
+      );
+    }
+  }
+
+  @Action(VerifyEmailOTPAction)
+  verifyEmailOTPAction(
+    { getState, patchState }: StateContext<AuthStateModel>,
+    { payload }: VerifyEmailOTPAction
+  ) {
+    const state = getState();
+    const { form, formDirective } = payload;
+    let { isSubmittingForm } = state;
+    if (form.valid) {
+      isSubmittingForm = true;
+      const values = form.value;
+      patchState({ isSubmittingForm });
+      this.apollo
+        .mutate({
+          mutation: AUTH_MUTATIONS.VERIFY_EMAIL_OTP,
+          variables: {
+            email: values.email,
+            otp: values.otp,
+          },
+        })
+        .subscribe(
+          ({ data }: any) => {
+            const response = data.verifyEmailOtp;
+            isSubmittingForm = false;
+            patchState({ isSubmittingForm });
+
+            if (response.ok) {
+              patchState({ isEmailVerified: true });
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message:
+                    'Your email has been verified successfully. You can now register for an account.',
+                  action: 'success',
+                })
+              );
+            } else {
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message: 'Incorrect OTP. Please enter the correct OTP',
                   action: 'error',
                 })
               );

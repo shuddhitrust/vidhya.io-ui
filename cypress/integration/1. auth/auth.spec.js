@@ -58,25 +58,25 @@ describe("Auth Module: Registration Feature", () => {
         existing.institution.invitecode
       );
       cy.get("[data-cy=verify-invitation").click();
-      cy.get("[data-cy=registration-dialog-box]").should("be.visible");
-      cy.get("[data-cy=dialog-box-title]").contains("Register");
-      cy.get("[data-cy=registration-username-field]").type(
-        existing.newUser.username
-      );
-      cy.get("[data-cy=registration-email-field]").type(existing.newUser.email);
-      cy.get("[data-cy=registration-password-field]").type(
-        existing.newUser.password
-      );
-      cy.get("[data-cy=registration-password-confirmation-field]").type(
-        existing.newUser.password
-      );
-      cy.get(".mat-checkbox-inner-container > input").check({ force: true });
-      cy.get("[data-cy=go-to-login-dialog-box]").should("be.visible");
-      cy.get("[data-cy=register-submit-button]").click();
-      cy.get("[data-cy=registration-dialog-box]").should("not.be.visible");
-      cy.get(".hot-toast-message").contains(
-        "Registered successfully! Check your email inbox to fully activate your account."
-      );
+      cy.get("[data-cy=generate-email-otp-dialog-box]").should("be.visible");
+      cy.get("[data-cy=dialog-box-title]").contains("Verify your email ID");
+      // cy.get("[data-cy=registration-username-field]").type(
+      //   existing.newUser.username
+      // );
+      // cy.get("[data-cy=registration-email-field]").type(existing.newUser.email);
+      // cy.get("[data-cy=registration-password-field]").type(
+      //   existing.newUser.password
+      // );
+      // cy.get("[data-cy=registration-password-confirmation-field]").type(
+      //   existing.newUser.password
+      // );
+      // cy.get(".mat-checkbox-inner-container > input").check({ force: true });
+      // cy.get("[data-cy=go-to-login-dialog-box]").should("be.visible");
+      // cy.get("[data-cy=register-submit-button]").click();
+      // cy.get("[data-cy=registration-dialog-box]").should("not.be.visible");
+      // cy.get(".hot-toast-message").contains(
+      //   "Registered successfully! Check your email inbox to fully activate your account."
+      // );
     });
   });
   after(() => {
