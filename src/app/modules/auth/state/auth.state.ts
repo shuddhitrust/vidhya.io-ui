@@ -663,7 +663,6 @@ export class AuthState {
     let state = getState();
     const { form, formDirective } = payload;
     let { isSubmittingForm } = state;
-    console.log('register form', { form: form.value });
     if (form.valid) {
       this.store.dispatch(
         new ToggleLoadingScreen({
