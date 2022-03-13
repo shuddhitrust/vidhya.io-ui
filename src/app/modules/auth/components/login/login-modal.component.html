@@ -7,6 +7,12 @@
 <span *ngIf="showDialog == INVITECODE">
   <ng-container *ngTemplateOutlet="invitecodeTemplate"></ng-container>
 </span>
+<span *ngIf="showDialog == GENERATE_EMAIL_OTP">
+  <ng-container *ngTemplateOutlet="generateEmailOTPTemplate"></ng-container>
+</span>
+<span *ngIf="showDialog == VERIFY_EMAIL_OTP">
+  <ng-container *ngTemplateOutlet="verifyEmailOTPTemplate"></ng-container>
+</span>
 <span *ngIf="showDialog == TROUBLE_SIGNING_IN">
   <ng-container *ngTemplateOutlet="troubleSigningInTemplate"></ng-container>
 </span>
@@ -145,6 +151,12 @@
         >Enter Invite Code</mat-card-title
       >
     </mat-card-header>
+    <hr />
+    <mat-card-subtitle style="text-align: left"
+      ><p>
+        Enter the invitecode you received from your institution
+      </p></mat-card-subtitle
+    >
     <form
       [formGroup]="invitecodeForm"
       novalidate
@@ -209,6 +221,164 @@
 </ng-template>
 
 <!-- 
+  ENTER EMAIL TO GENERATE EMAIL OTP
+ -->
+<ng-template #generateEmailOTPTemplate>
+  <div
+    data-cy="generate-email-otp-dialog-box"
+    mat-dialog-content
+    class="email-input-dialog-box"
+  >
+    <mat-card-header class="form-title">
+      <mat-card-title data-cy="dialog-box-title"
+        >Verify your email ID</mat-card-title
+      >
+    </mat-card-header>
+    <hr />
+    <mat-card-subtitle style="text-align: left"
+      ><p>Enter your email ID to have it verified</p></mat-card-subtitle
+    >
+    <form
+      [formGroup]="emailForm"
+      novalidate
+      #formDirective="ngForm"
+      (submit)="generateEmailOTP(emailForm, formDirective)"
+    >
+      <mat-form-field
+        class="col-lg-12 col-md-12 col-sm-12"
+        appearance="outline"
+        data-cy="email-field"
+      >
+        <mat-label>Email ID</mat-label>
+        <input
+          autofocus
+          matInput
+          formControlName="email"
+          (keyup)="preventSpaces($event)"
+          required
+          placeholder="Email ID"
+        />
+        <small
+          class="validation-error"
+          *ngIf="
+            emailForm.get('email').hasError('required') &&
+            formDirective.submitted
+          "
+        >
+          Email is required
+        </small>
+        <small
+          class="validation-error"
+          *ngIf="
+            emailForm.get('email').hasError('email') && formDirective.submitted
+          "
+        >
+          Please enter a valid email
+        </small>
+      </mat-form-field>
+      <button
+        data-cy="send-password-reset-email-button"
+        class="submit-button"
+        mat-raised-button
+        color="primary"
+        [disabled]="isSubmittingForm === true"
+      >
+        {{
+          isSubmittingForm === true
+            ? "Emailing verificaiton code..."
+            : "Verify Email"
+        }}
+      </button>
+    </form>
+    <div class="secondary-auth-options">
+      <p
+        class="link-button"
+        data-cy="go-to-login-dialog-box"
+        (click)="showLogin()"
+      >
+        Login
+      </p>
+    </div>
+  </div>
+</ng-template>
+
+<!-- 
+  ENTER EMAIL OTP TO HAVE IT VERIFIED
+ -->
+<ng-template #verifyEmailOTPTemplate>
+  <div
+    data-cy="verify-email-otp-dialog-box"
+    mat-dialog-content
+    class="email-input-dialog-box"
+  >
+    <mat-card-header class="form-title">
+      <mat-card-title data-cy="dialog-box-title"
+        >Verify Email OTP</mat-card-title
+      >
+    </mat-card-header>
+    <hr />
+    <mat-card-subtitle style="text-align: left">
+      <p>
+        Check the email OTP that you received in your email inbox and enter it
+        below
+      </p>
+    </mat-card-subtitle>
+    <form
+      [formGroup]="emailForm"
+      novalidate
+      #formDirective="ngForm"
+      (submit)="verifyEmailOTP(emailForm, formDirective)"
+    >
+      <mat-form-field
+        class="col-lg-12 col-md-12 col-sm-12"
+        appearance="outline"
+        data-cy="otp-field"
+      >
+        <mat-label>Email OTP</mat-label>
+        <input
+          autofocus
+          matInput
+          formControlName="otp"
+          (keyup)="preventSpaces($event)"
+          required
+          placeholder="Email OTP"
+        />
+      </mat-form-field>
+      <mat-card-subtitle style="text-align: left">
+        <p>
+          The email ID you provided is <b>{{ emailForm.get("email").value }}</b
+          >. If you wish to change this,
+          <a (click)="initiateEmailVerification()"><i>click here</i></a
+          >.
+        </p></mat-card-subtitle
+      >
+      <button
+        data-cy="send-password-reset-email-button"
+        class="submit-button"
+        mat-raised-button
+        color="primary"
+        [disabled]="isSubmittingForm === true"
+      >
+        {{
+          isSubmittingForm === true
+            ? "Verifying Email OTP..."
+            : "Verify Email OTP"
+        }}
+      </button>
+    </form>
+    <div class="secondary-auth-options">
+      <p
+        class="link-button"
+        data-cy="go-to-login-dialog-box"
+        (click)="showLogin()"
+      >
+        Login
+      </p>
+    </div>
+  </div>
+</ng-template>
+
+<!-- 
   REGISTER FORM, WHERE USERNAME, EMAIL AND PASSWORD ARE ACQUIRED 
 -->
 <ng-template #registerTemplate>
@@ -219,6 +389,12 @@
   >
     <mat-card-header class="form-title">
       <mat-card-title data-cy="dialog-box-title">Register</mat-card-title>
+      <br />
+      <mat-card-subtitle style="text-align: left">
+        <p>
+          Your email ID "{{ emailForm.get("email").value }}" is verified.
+        </p></mat-card-subtitle
+      >
     </mat-card-header>
     <form
       [formGroup]="registerForm"
@@ -262,39 +438,6 @@
       <mat-form-field
         class="col-lg-12 col-md-12 col-sm-12"
         appearance="outline"
-        data-cy="registration-email-field"
-      >
-        <mat-label>Email ID</mat-label>
-        <input
-          matInput
-          formControlName="email"
-          (keyup)="preventSpaces($event)"
-          required
-          placeholder="Email ID"
-        />
-        <small
-          class="validation-error"
-          *ngIf="
-            registerForm.get('email').hasError('required') &&
-            formDirective.submitted
-          "
-        >
-          Email is required
-        </small>
-        <small
-          class="validation-error"
-          *ngIf="
-            registerForm.get('email').hasError('email') &&
-            formDirective.submitted
-          "
-        >
-          Please enter a valid email
-        </small>
-      </mat-form-field>
-
-      <mat-form-field
-        class="col-lg-12 col-md-12 col-sm-12"
-        appearance="outline"
         data-cy="registration-password-field"
       >
         <mat-label>Password</mat-label>
@@ -320,7 +463,7 @@
         appearance="outline"
         data-cy="registration-password-confirmation-field"
       >
-        <mat-label>Confirm</mat-label>
+        <mat-label>Confirm Password</mat-label>
         <input
           matInput
           [type]="hide ? 'password' : 'text'"

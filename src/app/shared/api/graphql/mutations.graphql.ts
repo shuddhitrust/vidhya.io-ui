@@ -853,6 +853,20 @@ export const AUTH_MUTATIONS = {
       }
     }
   `,
+  GENERATE_EMAIL_OTP: gql`
+    mutation generateEmailOtp($email: String!) {
+      generateEmailOtp(email: $email) {
+        ok
+      }
+    }
+  `,
+  VERIFY_EMAIL_OTP: gql`
+    mutation verifyEmailOtp($email: String!, $otp: String!) {
+      verifyEmailOtp(email: $email, otp: $otp) {
+        ok
+      }
+    }
+  `,
   ADD_INVITECODE: gql`
     mutation addInvitecode($invitecode: String!, $email: String!) {
       addInvitecode(invitecode: $invitecode, email: $email) {

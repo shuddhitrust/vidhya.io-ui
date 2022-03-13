@@ -59,6 +59,27 @@ export class LoginAction {
   ) {}
 }
 
+export class ResetEmailVerificationParamsAction {
+  static readonly type = '[AUTH] Reset Email Verification Params';
+  constructor() {}
+}
+
+export class GenerateEmailOTPAction {
+  static readonly type = '[AUTH] Generate Email OTP';
+
+  constructor(
+    public payload: { form: FormGroup; formDirective: FormGroupDirective }
+  ) {}
+}
+
+export class VerifyEmailOTPAction {
+  static readonly type = '[AUTH] Veritfy Email OTP';
+
+  constructor(
+    public payload: { form: FormGroup; formDirective: FormGroupDirective }
+  ) {}
+}
+
 export class SendPasswordResetEmailAction {
   static readonly type = '[AUTH] Send Password Reset Email';
 

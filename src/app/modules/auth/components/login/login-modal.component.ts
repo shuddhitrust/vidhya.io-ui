@@ -29,15 +29,20 @@ import { localStorageKeys } from 'src/app/shared/common/constants';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { AuthStateModel } from 'src/app/modules/auth/state/auth.model';
 import {
+  GenerateEmailOTPAction,
   LoginAction,
   RegisterAction,
   ResendActivationEmailAction,
+  ResetEmailVerificationParamsAction,
   SendPasswordResetEmailAction,
   SetAuthStorage,
+  VerifyEmailOTPAction,
   VerifyInvitecodeAction,
 } from 'src/app/modules/auth/state/auth.actions';
 
 const INVITECODE = 'INVITECODE';
+const GENERATE_EMAIL_OTP = 'GENERATE_EMAIL_OTP';
+const VERIFY_EMAIL_OTP = 'VERIFY_EMAIL_OTP';
 const REGISTER = 'REGISTER';
 const LOGIN = 'LOGIN';
 const FORGOT_PASSWORD = 'FORGOT_PASSWORD';
@@ -52,11 +57,14 @@ const RESEND_ACTIVATION_EMAIL = 'RESEND_ACTIVATION_EMAIL';
 export class LoginModalComponent implements OnInit {
   url: string;
   INVITECODE = INVITECODE;
+  GENERATE_EMAIL_OTP = GENERATE_EMAIL_OTP;
+  VERIFY_EMAIL_OTP = VERIFY_EMAIL_OTP;
   REGISTER = REGISTER;
   LOGIN = LOGIN;
   TROUBLE_SIGNING_IN = TROUBLE_SIGNING_IN;
   FORGOT_PASSWORD = FORGOT_PASSWORD;
   RESEND_ACTIVATION_EMAIL = RESEND_ACTIVATION_EMAIL;
+  registration: boolean = false;
   showDialog: string = LOGIN;
   loginForm: FormGroup;
   emailForm: FormGroup;
@@ -69,6 +77,8 @@ export class LoginModalComponent implements OnInit {
   authState$: Observable<AuthStateModel>;
   authState: AuthStateModel;
   invited: string;
+  isEmailVerified: boolean = false;
+  isEmailOTPGenerated: boolean = false;
   isLoggedIn: boolean = false;
   isSubmittingForm: boolean = false;
   closeLoginForm: boolean = false;
@@ -90,7 +100,13 @@ export class LoginModalComponent implements OnInit {
     this.authState$.subscribe((val) => {
       this.authState = val;
       this.invited = this.authState?.currentMember?.invitecode;
+      this.isEmailOTPGenerated = this.authState?.isEmailOTPGenerated;
+      this.isEmailVerified = this.authState?.isEmailVerified;
       this.isLoggedIn = this.authState?.isLoggedIn;
+      this.emailForm.get('email').setValue(this.authState?.verificationEmail);
+      this.registerForm
+        .get('email')
+        .setValue(this.authState?.verificationEmail);
       if (this.isLoggedIn) {
         this.closeDialog();
       }
@@ -104,8 +120,10 @@ export class LoginModalComponent implements OnInit {
       // if (this.isLoggedIn) {
       //   this.closeDialog();
       // }
-      if (this.invited && this.showDialog == INVITECODE) {
-        this.showDialog = REGISTER;
+      if (this.registration) {
+        this.showRegister();
+      } else {
+        this.showLogin();
       }
     });
   }
@@ -133,6 +151,7 @@ export class LoginModalComponent implements OnInit {
   setupForgotPasswordForm() {
     this.emailForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
+      otp: [''],
     });
   }
   toggleAuthStorage(event) {
@@ -167,10 +186,14 @@ export class LoginModalComponent implements OnInit {
   setupRegisterForm() {
     this.registerForm = this.fb.group({
       username: ['', Validators.required],
-      email: ['', Validators.required],
+      email: [this.emailForm.get('email').value, Validators.required],
       password1: ['', Validators.required],
       password2: ['', Validators.required],
     });
+  }
+
+  resetEmailVerificationParams() {
+    this.store.dispatch(new ResetEmailVerificationParamsAction());
   }
 
   closeDialog(): void {
@@ -202,14 +225,37 @@ export class LoginModalComponent implements OnInit {
       new ResendActivationEmailAction({ form, formDirective })
     );
   }
+  initiateEmailVerification() {
+    this.emailForm.get('email').setValue(null);
+    this.resetEmailVerificationParams();
+  }
+
+  generateEmailOTP(form: FormGroup, formDirective: FormGroupDirective) {
+    this.store.dispatch(new GenerateEmailOTPAction({ form, formDirective }));
+  }
+
+  verifyEmailOTP(form: FormGroup, formDirective: FormGroupDirective) {
+    this.store.dispatch(new VerifyEmailOTPAction({ form, formDirective }));
+    this.setupRegisterForm();
+  }
 
   showLogin() {
+    this.registration = false;
     this.showDialog = LOGIN;
   }
 
   showRegister() {
+    this.registration = true;
     if (this.invited) {
-      this.showDialog = REGISTER;
+      if (this.isEmailVerified) {
+        this.showDialog = REGISTER;
+      } else {
+        if (this.isEmailOTPGenerated) {
+          this.showDialog = VERIFY_EMAIL_OTP;
+        } else {
+          this.showDialog = GENERATE_EMAIL_OTP;
+        }
+      }
     } else {
       this.showDialog = INVITECODE;
     }

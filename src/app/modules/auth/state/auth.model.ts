@@ -18,6 +18,9 @@ export interface AuthStateModel {
   isSubmittingForm: boolean;
   closeLoginForm: boolean;
   isLoggedIn: boolean;
+  verificationEmail: string;
+  isEmailOTPGenerated: boolean;
+  isEmailVerified: boolean;
   lastLogin: string;
   isFullyAuthenticated: boolean;
   isFetchingCurrentMember: boolean;
@@ -36,6 +39,9 @@ export const defaultAuthState: AuthStateModel = {
   isSubmittingForm: false,
   closeLoginForm: false,
   isLoggedIn: false,
+  verificationEmail: null,
+  isEmailOTPGenerated: false,
+  isEmailVerified: false,
   lastLogin: null,
   isFullyAuthenticated: false,
   isFetchingCurrentMember: false,
