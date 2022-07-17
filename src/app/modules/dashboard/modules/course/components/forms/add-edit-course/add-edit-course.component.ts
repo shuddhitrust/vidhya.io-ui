@@ -132,7 +132,6 @@ export class AddEditCourseComponent implements OnInit {
   onGridReady(params) {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
-    this.updateSelectedRowsInParticipantTable();
     // this.autoSizeAllColumns();
   }
 
@@ -187,7 +186,10 @@ export class AddEditCourseComponent implements OnInit {
     const instructorOption = [{ value: courseFormRecord?.instructor?.id, label: courseFormRecord?.instructor?.name + ' (Instructor)' }]
     this.graderOptions = this.graderOptions.filter(o => o.value != courseFormRecord?.instructor?.id) // Remove the instructor if it exists already
     this.graderOptions = instructorOption.concat(this.graderOptions)
+    //
+    // Selecting the participants in the participants table
     this.courseForm = formGroup;
+    this.updateSelectedRowsInParticipantTable();
   };
 
   updateSelectedRowsInParticipantTable() {
