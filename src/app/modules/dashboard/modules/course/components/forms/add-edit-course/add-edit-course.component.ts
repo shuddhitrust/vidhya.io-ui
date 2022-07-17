@@ -142,7 +142,6 @@ export class AddEditCourseComponent implements OnInit {
   };
 
   setupCourseFormGroup = (courseFormRecord: Course = emptyCourseFormRecord) => {
-    console.log('course form => ', courseFormRecord)
     const participantIds = courseFormRecord?.participants?.map((p) => p.id);
     const graderIds = courseFormRecord?.graders?.map((p) => p.id);    
     const formGroup = this.fb.group({
