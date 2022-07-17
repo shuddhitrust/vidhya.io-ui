@@ -668,6 +668,10 @@ export const COURSE_QUERIES = {
         passCompletionPercentage
         locked
         completed
+        graders {
+          id
+          name
+        }
         participants {
           id
           name

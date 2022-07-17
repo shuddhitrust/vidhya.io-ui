@@ -28,11 +28,12 @@ export const defaultLogos = {
 export const defaultSearchParams = new SearchParams();
 
 export const USER_ROLES_NAMES = {
-  SUPER_ADMIN: 'Super Admin',
-  INSTITUTION_ADMIN: 'Institution Admin',
-  CLASS_ADMIN: 'Class Admin',
-  CLASS_ADMIN_LEARNER: 'Class Admin Learner',
-  LEARNER: 'Learner',
+  SUPER_ADMIN: "Super Admin",
+  INSTITUTION_ADMIN: "Institution Admin",
+  CLASS_ADMIN: "Class Admin",
+  LEARNER: "Learner",
+  CLASS_ADMIN_LEARNER: "Class Admin Learner",
+  GRADER: "Grader"
 };
 
 export const ADMIN_SECTION_LABELS = {

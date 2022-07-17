@@ -13,6 +13,7 @@ export const emptyCourseFormRecord: Course = {
   instructor: null,
   institutions: [],
   participants: [],
+  graders: [],
   mandatoryPrerequisites: [],
   recommendedPrerequisites: [],
   startDate: null,

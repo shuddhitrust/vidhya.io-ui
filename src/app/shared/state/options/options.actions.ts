@@ -8,3 +8,9 @@ export class FetchAdminGroupOptions {
 
   constructor() {}
 }
+
+export class FetchGraders {
+  static readonly type = '[MEMBER] Fetch members with the role of graders';
+
+  constructor() {}
+}

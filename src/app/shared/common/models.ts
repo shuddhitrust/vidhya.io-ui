@@ -237,6 +237,7 @@ export type Course = {
   instructor: any;
   institutions?: any[];
   participants?: any[];
+  graders?: any[];
   mandatoryPrerequisites?: any[];
   recommendedPrerequisites?: any[];
   startDate?: string;

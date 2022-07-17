@@ -14,7 +14,7 @@ import { InstitutionState } from 'src/app/modules/dashboard/modules/admin/module
 import { FetchInstitutionsAction } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.actions';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { OptionsState } from 'src/app/shared/state/options/options.state';
-import { FetchMemberOptionsByInstitution } from 'src/app/shared/state/options/options.actions';
+import { FetchGraders, FetchMemberOptionsByInstitution } from 'src/app/shared/state/options/options.actions';
 import { DefaultColDef } from 'src/app/shared/modules/master-grid/table.config';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { CourseState } from '../../../state/courses/course.state';
@@ -63,9 +63,14 @@ export class AddEditCourseComponent implements OnInit {
   @Select(OptionsState.listMembersByInstitution)
   memberOptions$: Observable<MatSelectOption[]>;
   memberOptions: MatSelectOption[];
+  @Select(OptionsState.listGraders)
+  graderOptions$: Observable<MatSelectOption[]>;
+  graderOptions: MatSelectOption[];
   @Select(OptionsState.getIsFetchingMembersByInstitution)
   isFetchingMembers$: Observable<boolean>;
-  isFetchingMembers: boolean;
+  @Select(OptionsState.getIsFetchingGraders)
+  isFetchingGraders$: Observable<boolean>;
+  isFetchingGraders: boolean;
   courseFormRecord: Course = emptyCourseFormRecord;
   courseForm: FormGroup;
   @Select(AuthState.getCurrentMemberInstitutionId)
@@ -89,11 +94,17 @@ export class AddEditCourseComponent implements OnInit {
       this.memberOptions = options;
       this.memberRows = this.memberOptions;
     });
+    this.graderOptions$.subscribe((options) => {
+      this.graderOptions = options;
+    });       
     this.store.dispatch(
       new FetchMemberOptionsByInstitution({
         memberInstitutionId: this.memberInstitutionId,
       })
     );
+    this.store.dispatch(
+      new FetchGraders()
+    )    
     this.store.dispatch(
       new FetchInstitutionsAction({ searchParams: defaultSearchParams })
     );
@@ -132,7 +143,9 @@ export class AddEditCourseComponent implements OnInit {
   };
 
   setupCourseFormGroup = (courseFormRecord: Course = emptyCourseFormRecord) => {
+    console.log('course form => ', courseFormRecord)
     const participantIds = courseFormRecord?.participants?.map((p) => p.id);
+    const graderIds = courseFormRecord?.graders?.map((p) => p.id);    
     const formGroup = this.fb.group({
       id: [courseFormRecord?.id],
       instructor: [
@@ -165,10 +178,15 @@ export class AddEditCourseComponent implements OnInit {
       passCompletionPercentage: [courseFormRecord?.passCompletionPercentage],
       creditHours: [courseFormRecord?.creditHours],
       participants: [participantIds],
+      graders: [graderIds]
     });
     this.participantRows = this.memberOptions.filter((m) =>
-      participantIds.includes(m.value)
+      participantIds?.includes(m.value)
     );
+    // Modifying the grader options
+    const instructorOption = [{ value: courseFormRecord?.instructor?.id, label: courseFormRecord?.instructor?.name + ' (Instructor)' }]
+    this.graderOptions = this.graderOptions.filter(o => o.value != courseFormRecord?.instructor?.id) // Remove the instructor if it exists already
+    this.graderOptions = instructorOption.concat(this.graderOptions)
     this.courseForm = formGroup;
   };
 
