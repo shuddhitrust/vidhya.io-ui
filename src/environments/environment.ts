@@ -8,6 +8,7 @@
 const baseUrl = 'localhost:8000';
 // const baseUrl = 'vidhya-io-staging.herokuapp.com';
 // const baseUrl = 'vidhya-io-live-replica.herokuapp.com';
+// const baseUrl = '156.67.208.64';
 
 const api_endpoint = `http://${baseUrl}`;
 const websocket_api_endpoint = `ws://${baseUrl}/`;
