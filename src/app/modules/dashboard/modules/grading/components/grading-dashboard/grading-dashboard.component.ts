@@ -403,6 +403,8 @@ export class GradingDashboardComponent implements OnInit {
       `<span class="title-search-description">${searchDescription}</span>` +
       '</span>';
     const doNotShowTitle = !this.showGroupCards && !this.currentCard.title; // When we are showing submissions directly, like in the case of having a submission filter from the URL params.
+    // If we are showing the graded submissions, we need to inform the user that the results only show records from the past 60 days
+
     return doNotShowTitle ? '' : finalTitle;
   }
 
@@ -436,6 +438,14 @@ export class GradingDashboardComponent implements OnInit {
         },
       })
     );
+    if (this.submissionStatusFilter == exerciseSubmissionStatusTypes.graded && !this.searchQueryFilter) {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message: 'Graded submissions shown here are only from the past 60 days. To view older graded submissions, use a specific search query.',
+          action: 'warning',
+          autoClose: false
+        }))
+    }
   }
 
   fetchNextGradingGroups() {
@@ -456,6 +466,7 @@ export class GradingDashboardComponent implements OnInit {
       })
     );
   }
+
   fetchNextExerciseSubmissions() {
     if (!this.isFetching) {
       this.store.dispatch(new FetchNextExerciseSubmissionsAction());
