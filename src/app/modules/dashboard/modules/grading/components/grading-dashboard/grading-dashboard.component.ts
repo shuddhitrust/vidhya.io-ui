@@ -66,6 +66,7 @@ import { ExerciseSubmissionService } from '../../../course/state/exerciseSubmiss
 import { Clipboard } from '@angular/cdk/clipboard';
 import { GRADING } from 'src/app/modules/dashboard/dashboard.component';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
+import { ClearServerCacheAction } from 'src/app/modules/dashboard/state/dashboard.actions';
 
 /**
  * URL Param Labels for filters
@@ -814,6 +815,26 @@ export class GradingDashboardComponent implements OnInit {
             grading: true,
             bulkauto: true,
           })
+        );
+      }
+    });
+  }
+
+  clearServerSideCache() {
+    const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
+      title: 'Confirm clearing of server cache?',
+      message: `If you don't know what this is, please press cancel! Are you sure you want to clear all cache stored in the server?"`,
+      confirmButtonText: 'Clear server cache',
+      denyButtonText: 'Cancel',
+    };
+    const dialogRef = this.dialog.open(MasterConfirmationDialog, {
+      data: masterDialogConfirmationObject,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result == true) {
+        this.store.dispatch(
+          new ClearServerCacheAction()
         );
       }
     });

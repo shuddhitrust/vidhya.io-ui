@@ -1004,3 +1004,14 @@ export const AUTH_MUTATIONS = {
     }
   `,
 };
+
+
+export const ADMIN_MUTATIONS = {
+  CLEAR_SERVER_CACHE: gql`
+    mutation clearServerCache {
+      clearServerCache {
+        ok
+      }
+    }
+  `,  
+}

@@ -117,6 +117,14 @@
         >
           Auto Grade
         </button>
+                <button
+          mat-menu-item
+          (click)="clearServerSideCache()"
+          nzTooltipPlacement="left"
+          nz-tooltip="This will clear server side caching so that all requests are stored freshly."
+        >
+          Clear Server Cache
+        </button>
       </mat-menu>
       <button
         *ngIf="showBulkAction()"
