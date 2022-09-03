@@ -231,7 +231,6 @@ export type Institution = {
 export type Course = {
   id: number;
   title: string;
-  index: number;
   blurb: string;
   description: string;
   instructor: any;
@@ -257,7 +256,6 @@ export type Course = {
 export type PublicCourse = {
   id: number;
   title: string;
-  index: number;
   blurb: string;
   description: string;
   instructor: any;

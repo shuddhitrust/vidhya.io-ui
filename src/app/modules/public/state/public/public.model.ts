@@ -37,7 +37,6 @@ export const emptyMemberFormRecord: User = {
 export const emptyPublicCourseFormRecord: PublicCourse = {
   id: null,
   title: null,
-  index: null,
   blurb: null,
   description: null,
   instructor: null,
