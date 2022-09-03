@@ -22,6 +22,7 @@ import { AddEditIssueComponent } from '../dashboard/modules/admin/modules/issues
 import { PublicNewsFeedComponent } from './components/feed/news-feed/news-feed.component';
 import { NewsProfileComponent } from './components/profiles/public-news-profile/public-news-profile.component';
 import { ProjectProfileComponent } from './components/profiles/project-profile/project-profile.component';
+import { CoursesFeedComponent } from './components/feed/courses-feed/courses-feed.component';
 
 const declarations = [
   HomeComponent,
@@ -41,6 +42,7 @@ const declarations = [
   NewsProfileComponent,
   UserCoursesComponent,
   UserProjectsComponent,
+  CoursesFeedComponent
 ];
 
 @NgModule({

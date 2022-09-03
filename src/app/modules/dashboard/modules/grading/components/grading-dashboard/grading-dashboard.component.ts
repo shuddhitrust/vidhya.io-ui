@@ -186,15 +186,6 @@ export class GradingDashboardComponent implements OnInit {
     this.gradingGroups$.subscribe((val) => {
       this.gradingGroups = val;
       this.currentCard = emptyGradingGroup;
-      // If we are showing the graded submissions, we need to inform the user that the results only show records from the past 60 days
-      if (this.submissionStatusFilter == exerciseSubmissionStatusTypes.graded && !this.searchQueryFilter) {
-        this.store.dispatch(
-          new ShowNotificationAction({
-            message: 'Graded submissions shown here are only from the past 60 days. To view older graded submissions, use a specific search query.',
-            action: 'warning',
-            autoClose: false
-          }))
-      }
     });
     this.isFetchingGradingGroup$.subscribe((val) => {
       this.isFetchingGradingGroup = val;
@@ -279,6 +270,19 @@ export class GradingDashboardComponent implements OnInit {
   }
   parseDateTime(date) {
     return parseDateTime(date);
+  }
+
+  submissionStatusFilterChanged() {
+    // If we are showing the graded submissions, we need to inform the user that the results only show records from the past 60 days
+    if (this.submissionStatusFilter == exerciseSubmissionStatusTypes.graded && !this.searchQueryFilter) {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message: 'Graded submissions shown here are only from the past 60 days. To view older graded submissions, use a specific search query.',
+          action: 'warning',
+          autoClose: false
+        }))
+    }
+    this.fetchGradingGroups()
   }
 
   updateGradingGroupByFilter() {

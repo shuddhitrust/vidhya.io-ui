@@ -1,0 +1,11 @@
+.scroll-feed {
+  overflow: auto;
+  height: calc(100vh - 190px);
+}
+
+.completed-icon {
+  float: right;
+  color: white;
+  background: var(--green);
+  border-radius: 99px;
+}

@@ -18,6 +18,7 @@ import {
 const NEWS_LABEL = 'News';
 const SCHOOLS_LABEL = 'Institutions';
 const STUDENTS_LABEL = 'Learners';
+const COURSES_LABEL = 'Courses';
 
 @Component({
   selector: 'app-public-lists',
@@ -25,10 +26,11 @@ const STUDENTS_LABEL = 'Learners';
   styleUrls: ['./public-lists.component.scss'],
 })
 export class PublicTabsComponent implements OnInit {
-  tabs = [NEWS_LABEL, SCHOOLS_LABEL, STUDENTS_LABEL];
+  tabs = [NEWS_LABEL, COURSES_LABEL, SCHOOLS_LABEL, STUDENTS_LABEL];
   activeTabIndex = 0;
   params;
   News = NEWS_LABEL;
+  Courses = COURSES_LABEL;
   Institutions = SCHOOLS_LABEL;
   Learners = STUDENTS_LABEL;
   draftSearchQuery: string = null;

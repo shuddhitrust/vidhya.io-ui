@@ -15,6 +15,7 @@ import { ShowNotificationAction } from 'src/app/shared/state/notifications/notif
 import {
   Announcement,
   Institution,
+  PublicCourse,
   startingFetchParams,
   User,
 } from 'src/app/shared/common/models';
@@ -23,8 +24,10 @@ import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
 import {
   FetchNewsAction,
   FetchNextNewsAction,
+  FetchNextPublicCoursesAction,
   FetchNextPublicInstitutionsAction,
   FetchNextPublicMembersAction,
+  FetchPublicCoursesAction,
   FetchPublicInstitutionssAction,
   FetchPublicMembersAction,
   ForceRefetchNewsAction,
@@ -94,8 +97,23 @@ export class PublicState {
   }
 
   @Selector()
-  static getNewsRecord(state: PublicStateModel): Announcement {
-    return state.newsRecord;
+  static getNewsRecord(state: PublicStateModel): PublicCourse {
+    return state.courseRecord;
+  }
+
+  @Selector()
+  static listPublicCourses(state: PublicStateModel): PublicCourse[] {
+    return state.courses;
+  }
+
+  @Selector()
+  static isFetchingPublicCourses(state: PublicStateModel): boolean {
+    return state.isFetchingCourses;
+  }
+
+  @Selector()
+  static getPublicCourseRecord(state: PublicStateModel): PublicCourse {
+    return state.courseRecord;
   }
 
   @Action(FetchNextPublicMembersAction)
@@ -392,13 +410,13 @@ export class PublicState {
   }
 
   @Action(ForceRefetchNewsAction)
-  forceRefetchAnnouncements({
+  forceRefetchNews({
     getState,
     patchState,
   }: StateContext<PublicStateModel>) {
     const state = getState();
     let previousFetchParams =
-      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+      state.fetchParamNewsObjects[state.fetchParamNewsObjects.length - 1];
     previousFetchParams = previousFetchParams
       ? previousFetchParams
       : startingFetchParams;
@@ -416,11 +434,11 @@ export class PublicState {
   }
 
   @Action(FetchNextNewsAction)
-  fetchNextAnnouncements({ getState }: StateContext<PublicStateModel>) {
+  fetchNextNews({ getState }: StateContext<PublicStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastNewsPage;
     let previousFetchParams =
-      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+      state.fetchParamNewsObjects[state.fetchParamNewsObjects.length - 1];
     previousFetchParams = previousFetchParams
       ? previousFetchParams
       : startingFetchParams;
@@ -448,10 +466,10 @@ export class PublicState {
   ) {
     let { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, fetchParamObjects } = state;
+    const { fetchPolicy, fetchParamNewsObjects } = state;
     const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({
-      fetchParamObjects,
+      fetchParamObjects: fetchParamNewsObjects,
       newPageNumber: pageNumber,
       newPageSize: pageSize,
       newSearchQuery: searchQuery,
@@ -498,7 +516,7 @@ export class PublicState {
             lastNewsPage,
             news,
             paginatedNews,
-            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
+            fetchParamNewsObjects: state.fetchParamNewsObjects.concat([newFetchParams]),
             isFetchingNews: false,
           });
         },
@@ -592,6 +610,112 @@ export class PublicState {
     });
   }
 
+  @Action(FetchNextPublicCoursesAction)
+  fetchNextPublicCourses({ getState }: StateContext<PublicStateModel>) {
+    const state = getState();
+    const lastPageNumber = state.lastPagePublicMembers;
+    let previousFetchParams =
+      state.fetchMembersParamObjects[state.fetchMembersParamObjects.length - 1];
+    previousFetchParams = previousFetchParams
+      ? previousFetchParams
+      : startingFetchParams;
+    const pageNumber = previousFetchParams.currentPage + 1;
+    const newSearchParams: SearchParams = {
+      pageNumber,
+      pageSize: previousFetchParams.pageSize,
+      searchQuery: previousFetchParams.searchQuery,
+      columnFilters: previousFetchParams.columnFilters,
+    };
+    if (
+      !lastPageNumber ||
+      (lastPageNumber != null && pageNumber <= lastPageNumber)
+    ) {
+      this.store.dispatch(
+        new FetchPublicCoursesAction({ searchParams: newSearchParams })
+      );
+    }
+  }
+
+  @Action(FetchPublicCoursesAction)
+  fetchPublicCourses(
+    { getState, patchState }: StateContext<PublicStateModel>,
+    { payload }: FetchPublicMembersAction
+  ) {
+    let state = getState();
+    const { searchParams } = payload;
+    const { fetchCoursesParamObjects } = state;
+    const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
+    let newFetchParams = updateFetchParams({
+      fetchParamObjects: fetchCoursesParamObjects,
+      newPageNumber: pageNumber,
+      newPageSize: pageSize,
+      newSearchQuery: searchQuery,
+      newColumnFilters: columnFilters,
+    });
+    if (
+      columnFiltersChanged({
+        fetchParamObjects: fetchCoursesParamObjects,
+        newFetchParams,
+      })
+    ) {
+      patchState({
+        courses: defaultPublicState.courses,
+        paginatedPublicCourses: defaultPublicState.paginatedPublicCourses,
+        lastPagePublicCourses: defaultPublicState.lastPagePublicCourses,
+      });
+    }
+    patchState({ isFetchingCourses: true });
+    const variables = {
+      searchField: searchQuery,
+      limit: newFetchParams.pageSize,
+      offset: newFetchParams.offset,
+    };
+
+    this.apollo
+      .watchQuery({
+        query: PUBLIC_QUERIES.GET_PUBLIC_COURSES,
+        variables,
+        fetchPolicy: 'cache-first',
+      })
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          state = getState();
+          const response = data.publicCourses.records;
+          newFetchParams = { ...newFetchParams };
+          let paginatedPublicCourses = state.paginatedPublicCourses;
+          paginatedPublicCourses = {
+            ...paginatedPublicCourses,
+            [pageNumber]: response,
+          };
+          let courses = convertPaginatedListToNormalList(
+            paginatedPublicCourses
+          );
+          let lastPagePublicCourses = null;
+          if (response.length < newFetchParams.pageSize) {
+            lastPagePublicCourses = newFetchParams.currentPage;
+          }
+          patchState({
+            courses,
+            paginatedPublicCourses,
+            lastPagePublicCourses,
+            fetchCoursesParamObjects: state.fetchCoursesParamObjects.concat([
+              newFetchParams,
+            ]),
+            isFetchingCourses: false,
+          });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetchingCourses: false });
+        }
+      );
+  }
+
   // *********************************
   @Action(ResetPublicInstitutionFormAction)
   resetPublicInstitutionFormAction({
@@ -617,3 +741,4 @@ export class PublicState {
     });
   }
 }
+

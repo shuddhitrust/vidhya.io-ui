@@ -7,6 +7,7 @@ import {
   User,
   Institution,
   Announcement,
+  PublicCourse,
 } from '../../../../shared/common/models';
 
 export interface MemberInput {
@@ -33,6 +34,22 @@ export const emptyMemberFormRecord: User = {
   institution: null,
 };
 
+export const emptyPublicCourseFormRecord: PublicCourse = {
+  id: null,
+  title: null,
+  index: null,
+  blurb: null,
+  description: null,
+  instructor: null,
+  mandatoryPrerequisites: [],
+  recommendedPrerequisites: [],
+  startDate: null,
+  endDate: null,
+  creditHours: null,
+  createdAt: null,
+  updatedAt: null,
+}
+
 export interface PublicStateModel {
   members: User[];
   lastPagePublicMembers: number;
@@ -55,10 +72,18 @@ export interface PublicStateModel {
   news: Announcement[];
   paginatedNews: any;
   lastNewsPage: number;
+  fetchParamNewsObjects: FetchParams[];  
   newsSubscribed: boolean;
-  fetchParamObjects: FetchParams[];
   newsRecord: Announcement;
   isFetchingNews: boolean;
+  // Courses
+  courses: PublicCourse[];
+  paginatedPublicCourses: any;
+  lastPagePublicCourses: number;
+  fetchCoursesParamObjects: FetchParams[];
+  coursesSubscribed: boolean;
+  courseRecord: PublicCourse;
+  isFetchingCourses: boolean;
 }
 
 export const defaultPublicState: PublicStateModel = {
@@ -84,9 +109,17 @@ export const defaultPublicState: PublicStateModel = {
   paginatedNews: [],
   lastNewsPage: null,
   newsSubscribed: false,
-  fetchParamObjects: [],
+  fetchParamNewsObjects: [],
   newsRecord: emptyAnnouncementFormRecord,
   isFetchingNews: false,
+  // Courses
+  courses: [],
+  paginatedPublicCourses: [],
+  lastPagePublicCourses: null,
+  fetchCoursesParamObjects: [],
+  coursesSubscribed: false,
+  courseRecord: emptyPublicCourseFormRecord,
+  isFetchingCourses: false,
 };
 
 export const getMemberProfileLink = (member: User) => {

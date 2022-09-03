@@ -13,6 +13,18 @@ export class FetchNextPublicMembersAction {
   constructor() {}
 }
 
+export class FetchPublicCoursesAction {
+  static readonly type = '[PUBLIC] Public Fetch Courses';
+
+  constructor(public payload: { searchParams: SearchParams }) {}
+}
+
+export class FetchNextPublicCoursesAction {
+  static readonly type = '[PUBLIC] Fetch Next Courses';
+
+  constructor() {}
+}
+
 export class GetMemberByUsernameAction {
   static readonly type = '[PUBLIC] Get Member by username';
 

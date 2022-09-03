@@ -52,7 +52,7 @@
           <mat-label>Status</mat-label>
           <mat-select
             [(ngModel)]="submissionStatusFilter"
-            (ngModelChange)="fetchGradingGroups()"
+            (ngModelChange)="submissionStatusFilterChanged()"
           >
             <mat-option
               *ngFor="let status of exerciseSubmissionStatusOptions"

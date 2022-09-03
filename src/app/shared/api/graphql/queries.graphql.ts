@@ -175,6 +175,53 @@ export const PUBLIC_QUERIES = {
       }
     }
   `,
+  GET_PUBLIC_COURSE_ITEM: gql`
+    query publicCourse($id: ID!) {
+      publicCourse(id: $id) {
+          id,
+          title,
+          blurb,
+          description,
+          instructor {
+            id
+            name
+          },
+          mandatoryPrerequisites {
+            id,
+            title
+          },
+          recommendedPrerequisites {
+            id,
+            title
+          },
+          startDate,
+          endDate,
+          creditHours,
+          createdAt,
+          updatedAt,
+      }
+    }
+  `,
+  GET_PUBLIC_COURSES: gql`
+    query publicCourses($searchField: String, $limit: Int, $offset: Int) {
+      publicCourses(
+        searchField: $searchField
+        limit: $limit
+        offset: $offset
+      ) {
+        records {
+          id,
+          title,
+          blurb,
+          instructor {
+            id,
+            name
+          }
+        },
+        total
+      }
+    }
+  `,
 };
 
 export const DASHBOARD_MUTATIONS = {

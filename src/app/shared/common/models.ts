@@ -254,6 +254,22 @@ export type Course = {
   updatedAt?: string;
 };
 
+export type PublicCourse = {
+  id: number;
+  title: string;
+  index: number;
+  blurb: string;
+  description: string;
+  instructor: any;
+  mandatoryPrerequisites?: any[];
+  recommendedPrerequisites?: any[];
+  startDate?: string;
+  endDate?: string;
+  creditHours?: number;
+  createdAt?: string;
+  updatedAt?: string;  
+}
+
 export type CourseSection = {
   id: number;
   title: string;
