@@ -33,6 +33,7 @@ import {
   ForceRefetchNewsAction,
   GetMemberByUsernameAction,
   GetNewsAction,
+  GetPublicCourseAction,
   GetPublicInstitutionAction,
   ResetNewsProfileAction,
   ResetPublicHomePageListsAction,
@@ -114,6 +115,11 @@ export class PublicState {
   @Selector()
   static getPublicCourseRecord(state: PublicStateModel): PublicCourse {
     return state.courseRecord;
+  }
+
+  @Selector()
+  static getIsFetchingPublicCourseRecord(state: PublicStateModel): boolean {
+    return state.isFetchingCourseRecord;
   }
 
   @Action(FetchNextPublicMembersAction)
@@ -712,6 +718,40 @@ export class PublicState {
             })
           );
           patchState({ isFetchingCourses: false });
+        }
+      );
+  }
+
+  @Action(GetPublicCourseAction)
+  getPublicCourse(
+    { patchState }: StateContext<PublicStateModel>,
+    { payload }: GetPublicCourseAction
+  ) {
+    const { id } = payload;
+    patchState({ isFetchingCourseRecord: true });
+    this.apollo
+      .watchQuery({
+        query: PUBLIC_QUERIES.GET_PUBLIC_COURSE_ITEM,
+        variables: { id },
+        fetchPolicy: 'network-only',
+        nextFetchPolicy: 'network-only',
+      })
+      .valueChanges.subscribe(
+        ({ data }: any) => {
+          const response = data.publicCourse;
+          patchState({
+            courseRecord: response,
+            isFetchingCourseRecord: false,
+          });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetchingCourseRecord: false });
         }
       );
   }

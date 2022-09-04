@@ -230,9 +230,11 @@ export type Institution = {
 
 export type Course = {
   id: number;
+  index: number;
   title: string;
   blurb: string;
   description: string;
+  video?: string;
   instructor: any;
   institutions?: any[];
   participants?: any[];
@@ -255,9 +257,11 @@ export type Course = {
 
 export type PublicCourse = {
   id: number;
+  index: number;
   title: string;
   blurb: string;
   description: string;
+  video?: string;
   instructor: any;
   mandatoryPrerequisites?: any[];
   recommendedPrerequisites?: any[];

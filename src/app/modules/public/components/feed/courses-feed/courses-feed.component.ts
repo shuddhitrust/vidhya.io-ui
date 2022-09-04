@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
@@ -14,6 +15,7 @@ import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { FetchNextPublicCoursesAction, FetchPublicCoursesAction } from '../../../state/public/public.actions';
 import { PublicState } from '../../../state/public/public.state';
+import { CourseDisplayComponent } from './course-dialog/course-display.component';
 
 @Component({
   selector: 'app-courses-feed',
@@ -35,6 +37,7 @@ export class CoursesFeedComponent implements OnInit {
   constructor(
     private store: Store,
     private router: Router,
+    private dialog: MatDialog
   ) {
     this.store.dispatch(
       new FetchPublicCoursesAction({ searchParams: {...defaultSearchParams, searchQuery: this.currentQuery} })
@@ -66,5 +69,13 @@ export class CoursesFeedComponent implements OnInit {
 
   openCourse(course) {
     console.log('Show public course dialog box')
+
+    const dialogRef = this.dialog.open(CourseDisplayComponent, {
+      data: {
+        courseId: course.id
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {});    
   }
 }

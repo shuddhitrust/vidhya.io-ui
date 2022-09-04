@@ -183,7 +183,7 @@ export const PUBLIC_QUERIES = {
           blurb,
           description,
           instructor {
-            id
+            username
             name
           },
           mandatoryPrerequisites {

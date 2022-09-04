@@ -1,0 +1,20 @@
+<div mat-dialog-content class="dialog-box">
+  <mat-icon class="close-button" (click)="closeDialog()">close</mat-icon>
+  <mat-card-header>
+    <mat-card-title>{{course.title}}</mat-card-title>
+    <small *ngIf="course?.instructor?.username">Instructed by <a [routerLink]="instructorProfileLink(course.instructor)">{{course.instructor?.name}}</a></small>
+  </mat-card-header>
+  <mat-card *ngIf="!(isFetchingCourse$ | async); else loadingTemplate">
+    <mat-card-content class="dialog-content">
+      <p>{{course.description}}</p>
+<iframe #iframeContainer loading="lazy" style="max-width: 560px; width: 90vw; height: 500px" [src]="generateVideoUrl(course.video)?.url"
+  [srcdoc]="generateVideoUrl(course.video)?.srcdoc" frameborder="0"
+  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen
+   ></iframe>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<ng-template #loadingTemplate>
+  <app-simple-loading-spinner loadingMessage="Fetching course..."></app-simple-loading-spinner>
+</ng-template>

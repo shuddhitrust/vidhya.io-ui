@@ -6,8 +6,10 @@ import {
 
 export const emptyCourseFormRecord: Course = {
   id: null,
+  index: null,
   title: null,
   blurb: null,
+  video: null,
   description: null,
   instructor: null,
   institutions: [],

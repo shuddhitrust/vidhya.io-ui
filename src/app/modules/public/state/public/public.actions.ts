@@ -19,6 +19,12 @@ export class FetchPublicCoursesAction {
   constructor(public payload: { searchParams: SearchParams }) {}
 }
 
+export class GetPublicCourseAction {
+  static readonly type = '[PUBLIC] Get Public Course';
+
+  constructor(public payload: { id: number }) {}
+}
+
 export class FetchNextPublicCoursesAction {
   static readonly type = '[PUBLIC] Fetch Next Courses';
 

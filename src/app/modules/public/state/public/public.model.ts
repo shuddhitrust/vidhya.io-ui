@@ -36,9 +36,11 @@ export const emptyMemberFormRecord: User = {
 
 export const emptyPublicCourseFormRecord: PublicCourse = {
   id: null,
+  index: null,
   title: null,
   blurb: null,
   description: null,
+  video: null,
   instructor: null,
   mandatoryPrerequisites: [],
   recommendedPrerequisites: [],
@@ -82,6 +84,7 @@ export interface PublicStateModel {
   fetchCoursesParamObjects: FetchParams[];
   coursesSubscribed: boolean;
   courseRecord: PublicCourse;
+  isFetchingCourseRecord: boolean;
   isFetchingCourses: boolean;
 }
 
@@ -118,6 +121,7 @@ export const defaultPublicState: PublicStateModel = {
   fetchCoursesParamObjects: [],
   coursesSubscribed: false,
   courseRecord: emptyPublicCourseFormRecord,
+  isFetchingCourseRecord: false,
   isFetchingCourses: false,
 };
 
