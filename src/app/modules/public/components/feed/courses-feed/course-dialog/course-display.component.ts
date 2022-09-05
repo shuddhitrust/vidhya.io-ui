@@ -50,7 +50,7 @@ export class CourseDisplayComponent implements AfterViewInit {
     this.course$.subscribe((val) => {
       if (val) {
         this.course = val;
-        if (this.course.video.startsWith('https://www.youtube.com/embed/')) {
+        if (this.course?.video?.startsWith('https://www.youtube.com/embed/')) {
           this.video = this.generateVideoUrl(this.course.video);
         } else {
           // @ts-ignore
@@ -73,15 +73,12 @@ export class CourseDisplayComponent implements AfterViewInit {
     const allvideos = this.iframeContainer?._results?.map(
       (iframe) => iframe.nativeElement
     );
-    console.log(' all videos => ', allvideos);
     allvideos?.forEach((iframe) => {
       iframe?.addEventListener('load', function (event) {
         const new_style_element = document.createElement('style');
-        console.log('new_style_element => ', new_style_element);
         new_style_element.textContent =
           '{padding:0;margin:0;overflow:hidden}html,body{height:100%; overflow: hidden;}img,span{position:absolute;width:100%;top:0;bottom:0;margin:auto}span{height:1.5em;text-align:center;font:48px/1.5 sans-serif;color:white;text-shadow:0 0 0.5em black}';
         iframe.contentDocument.head.appendChild(new_style_element);
-        console.log('iframe head => ', iframe.contentDocument.head);
       });
     });
   };
