@@ -31,10 +31,20 @@
   margin-top: 30px;
 }
 
+.video-iframe {
+  max-width: 560px;
+  width: 90vw;
+  height: 500px;
+}
+
 @media screen and (max-width: 480px) {
   .dialog-box {
     width: 100%;
     height: auto;
+  }
+
+  .video-iframe {
+    width: 100%;
   }
 }
 
