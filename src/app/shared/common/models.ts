@@ -230,7 +230,7 @@ export type Institution = {
 
 export type Course = {
   id: number;
-  index: number;
+  index: string;
   title: string;
   blurb: string;
   description: string;
@@ -257,7 +257,7 @@ export type Course = {
 
 export type PublicCourse = {
   id: number;
-  index: number;
+  index: string;
   title: string;
   blurb: string;
   description: string;
@@ -269,8 +269,8 @@ export type PublicCourse = {
   endDate?: string;
   creditHours?: number;
   createdAt?: string;
-  updatedAt?: string;  
-}
+  updatedAt?: string;
+};
 
 export type CourseSection = {
   id: number;

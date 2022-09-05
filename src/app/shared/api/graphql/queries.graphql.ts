@@ -178,46 +178,44 @@ export const PUBLIC_QUERIES = {
   GET_PUBLIC_COURSE_ITEM: gql`
     query publicCourse($id: ID!) {
       publicCourse(id: $id) {
-          id,
-          title,
-          blurb,
-          description,
-          instructor {
-            username
-            name
-          },
-          mandatoryPrerequisites {
-            id,
-            title
-          },
-          recommendedPrerequisites {
-            id,
-            title
-          },
-          startDate,
-          endDate,
-          creditHours,
-          createdAt,
-          updatedAt,
+        id
+        title
+        video
+        blurb
+        description
+        instructor {
+          username
+          name
+        }
+        mandatoryPrerequisites {
+          id
+          title
+        }
+        recommendedPrerequisites {
+          id
+          title
+        }
+        startDate
+        endDate
+        creditHours
+        createdAt
+        updatedAt
       }
     }
   `,
   GET_PUBLIC_COURSES: gql`
     query publicCourses($searchField: String, $limit: Int, $offset: Int) {
-      publicCourses(
-        searchField: $searchField
-        limit: $limit
-        offset: $offset
-      ) {
+      publicCourses(searchField: $searchField, limit: $limit, offset: $offset) {
         records {
-          id,
-          title,
-          blurb,
+          id
+          index
+          title
+          blurb
           instructor {
-            id,
+            id
             name
           }
-        },
+        }
         total
       }
     }
@@ -678,9 +676,11 @@ export const COURSE_QUERIES = {
     query course($id: ID!) {
       course(id: $id) {
         id
+        index
         title
         blurb
         description
+        video
         instructor {
           id
           name
@@ -700,9 +700,11 @@ export const COURSE_QUERIES = {
     query course($id: ID!) {
       course(id: $id) {
         id
+        index
         title
         blurb
         description
+        video
         instructor {
           id
           name
@@ -734,6 +736,7 @@ export const COURSE_QUERIES = {
     query courses($searchField: String, $limit: Int, $offset: Int) {
       courses(searchField: $searchField, limit: $limit, offset: $offset) {
         id
+        index
         title
         blurb
         instructor {

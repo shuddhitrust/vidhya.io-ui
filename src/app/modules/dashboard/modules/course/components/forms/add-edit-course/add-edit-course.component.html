@@ -29,6 +29,14 @@
     </mat-form-field>
 
     <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Index</mat-label>
+      <input
+        matInput
+        formControlName="index"
+        placeholder="Index; the order in which it appears in the feed"
+      />
+    </mat-form-field>
+    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
       <mat-label>Blurb</mat-label>
       <input
         matInput
@@ -65,6 +73,21 @@
         Description is required
       </small>
     </mat-form-field>
+
+    <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+      <mat-label>Video</mat-label>
+      <input
+        matInput
+        formControlName="video"
+        placeholder="YouTube Video embed link"
+      />
+      <small class="validation-error" style="color: gray">
+        Go to the video on YouTube and click on 'share' and select the 'embed'
+        option to get the Embed code. In it, copy the value in the 'src'
+        attribute. Paste the link here.
+      </small>
+    </mat-form-field>
+    <br />
 
     <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
       <mat-label>Institutions</mat-label>
@@ -168,8 +191,11 @@
 
     <mat-form-field class="col-lg-6 col-md-12 col-sm-12" appearance="outline">
       <mat-label>Graders</mat-label>
-      <mat-select multiple formControlName="graders"
-        placeholder="Graders for this course">
+      <mat-select
+        multiple
+        formControlName="graders"
+        placeholder="Graders for this course"
+      >
         <mat-option *ngFor="let grader of graderOptions" [value]="grader.value">
           {{ grader.label }}
         </mat-option>
