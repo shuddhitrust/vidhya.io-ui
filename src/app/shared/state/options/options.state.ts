@@ -40,7 +40,7 @@ export class OptionsState {
     });
 
     return options;
-  }  
+  }
 
   @Selector()
   static getIsFetchingMembersByInstitution(state: OptionsStateModel): boolean {
@@ -50,7 +50,7 @@ export class OptionsState {
   @Selector()
   static getIsFetchingGraders(state: OptionsStateModel): boolean {
     return state.isFetchingGraders;
-  }  
+  }
 
   @Selector()
   static listClassesByInstitution(state: OptionsStateModel): MatSelectOption[] {
@@ -94,11 +94,11 @@ export class OptionsState {
     };
 
     this.apollo
-      .watchQuery({
+      .query({
         query: USER_QUERIES.GET_USERS_OPTIONS,
         variables,
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           patchState({ isFetchingMembersByInstitution: false });
           const response = data.users.records;
@@ -118,20 +118,18 @@ export class OptionsState {
   }
 
   @Action(FetchGraders)
-  fetchGraders(
-    { patchState }: StateContext<OptionsStateModel>,
-  ) {
+  fetchGraders({ patchState }: StateContext<OptionsStateModel>) {
     patchState({ isFetchingGraders: true });
     const variables = {
-      roles: [USER_ROLES_NAMES.GRADER, USER_ROLES_NAMES.SUPER_ADMIN]
+      roles: [USER_ROLES_NAMES.GRADER, USER_ROLES_NAMES.SUPER_ADMIN],
     };
 
     this.apollo
-      .watchQuery({
+      .query({
         query: USER_QUERIES.GET_USERS_OPTIONS,
         variables,
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           patchState({ isFetchingGraders: false });
           const response = data.users.records;
@@ -148,7 +146,7 @@ export class OptionsState {
           );
         }
       );
-  }  
+  }
 
   @Action(FetchAdminGroupOptions)
   fetchGroupsByInstitution({
@@ -160,10 +158,10 @@ export class OptionsState {
     isFetchingAdminGroups = true;
     patchState({ isFetchingAdminGroups });
     this.apollo
-      .watchQuery({
+      .query({
         query: GROUP_QUERIES.GET_ADMIN_GROUP_OPTIONS,
       })
-      .valueChanges.subscribe(
+      .subscribe(
         (res: any) => {
           isFetchingAdminGroups = false;
           adminGroups = res?.data?.adminGroups;

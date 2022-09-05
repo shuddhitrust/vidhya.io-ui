@@ -425,7 +425,7 @@ export class AuthState {
         })
       );
       patchState({ isFetchingCurrentMember: true });
-      this.apollo.watchQuery({ query: AUTH_QUERIES.ME }).valueChanges.subscribe(
+      this.apollo.query({ query: AUTH_QUERIES.ME }).subscribe(
         ({ data }: any) => {
           patchState({ isFetchingCurrentMember: false });
 

@@ -187,12 +187,12 @@ export class AnnouncementState {
       })
     );
     this.apollo
-      .watchQuery({
+      .query({
         query: ANNOUNCEMENT_QUERIES.GET_ANNOUNCEMENTS,
         variables,
-        fetchPolicy,
+        // fetchPolicy,
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           this.store.dispatch(
             new ToggleLoadingScreen({
@@ -279,12 +279,12 @@ export class AnnouncementState {
       ? ANNOUNCEMENT_QUERIES.GET_ANNOUNCEMENT_FORM_DETAILS
       : ANNOUNCEMENT_QUERIES.GET_ANNOUNCEMENT_PROFILE;
     this.apollo
-      .watchQuery({
+      .query({
         query,
         variables: { id },
         fetchPolicy: 'cache-first',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.announcement;
           patchState({

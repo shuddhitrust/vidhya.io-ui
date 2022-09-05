@@ -156,12 +156,12 @@ export class UserRoleState {
     };
 
     this.apollo
-      .watchQuery({
+      .query({
         query: USER_ROLE_QUERIES.GET_USER_ROLES,
         variables,
-        fetchPolicy,
+        // fetchPolicy,
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.userRoles.records;
           const totalCount = data.userRoles.total ? data.userRoles.total : 0;
@@ -223,13 +223,12 @@ export class UserRoleState {
     const { roleName } = payload;
     patchState({ isFetching: true });
     this.apollo
-      .watchQuery({
+      .query({
         query: USER_ROLE_QUERIES.GET_USER_ROLE,
         variables: { roleName },
         fetchPolicy: 'no-cache',
-        nextFetchPolicy: 'no-cache',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           let response = data.userRole;
 

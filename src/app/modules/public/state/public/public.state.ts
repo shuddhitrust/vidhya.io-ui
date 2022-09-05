@@ -99,9 +99,6 @@ export class PublicState {
 
   @Selector()
   static getNewsRecord(state: PublicStateModel): Announcement {
-    console.log('from the selector for getNewsRecord', {
-      record: state.newsRecord,
-    });
     return state.newsRecord;
   }
 
@@ -190,12 +187,12 @@ export class PublicState {
     };
 
     this.apollo
-      .watchQuery({
+      .query({
         query: PUBLIC_QUERIES.GET_PUBLIC_USERS,
         variables,
         fetchPolicy: 'cache-first',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           state = getState();
           const response = data.publicUsers.records;
@@ -242,12 +239,12 @@ export class PublicState {
     const { username } = payload;
     patchState({ isFetchingFormRecord: true });
     this.apollo
-      .watchQuery({
+      .query({
         query: PUBLIC_QUERIES.GET_USER_BY_USERNAME,
         variables: { username },
         fetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.userByUsername;
           patchState({
@@ -341,12 +338,12 @@ export class PublicState {
     };
 
     this.apollo
-      .watchQuery({
+      .query({
         query: PUBLIC_QUERIES.GET_PUBLIC_INSTITUTIONS,
         variables,
         fetchPolicy: 'cache-first',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           state = getState();
           const response = data.publicInstitutions.records;
@@ -392,13 +389,12 @@ export class PublicState {
     const { code } = payload;
     patchState({ isFetchingFormRecord: true });
     this.apollo
-      .watchQuery({
+      .query({
         query: PUBLIC_QUERIES.GET_PUBLIC_INSTITUTION,
         variables: { code },
         fetchPolicy: 'network-only',
-        nextFetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.publicInstitution;
           patchState({
@@ -494,12 +490,12 @@ export class PublicState {
       })
     );
     this.apollo
-      .watchQuery({
+      .query({
         query: PUBLIC_QUERIES.GET_PUBLIC_NEWS,
         variables,
         fetchPolicy: 'cache-first',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           this.store.dispatch(
             new ToggleLoadingScreen({
@@ -582,17 +578,15 @@ export class PublicState {
     const { id } = payload;
     patchState({ isFetchingNews: true });
     const query = PUBLIC_QUERIES.GET_PUBLIC_NEWS_ITEM;
-    console.log('Making request for public news item ');
     this.apollo
-      .watchQuery({
+      .query({
         query,
         variables: { id },
         fetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.publicAnnouncement;
-          console.log('updating the newsrecord in public state', { response });
           patchState({
             newsRecord: response,
             isFetchingNews: false,
@@ -680,12 +674,12 @@ export class PublicState {
     };
 
     this.apollo
-      .watchQuery({
+      .query({
         query: PUBLIC_QUERIES.GET_PUBLIC_COURSES,
         variables,
         fetchPolicy: 'cache-first',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           state = getState();
           const response = data.publicCourses.records;
@@ -732,13 +726,12 @@ export class PublicState {
     const { id } = payload;
     patchState({ isFetchingCourseRecord: true });
     this.apollo
-      .watchQuery({
+      .query({
         query: PUBLIC_QUERIES.GET_PUBLIC_COURSE_ITEM,
         variables: { id },
         fetchPolicy: 'network-only',
-        nextFetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.publicCourse;
           patchState({

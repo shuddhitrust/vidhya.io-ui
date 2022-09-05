@@ -201,12 +201,12 @@ export class ChapterState {
     patchState({ isFetching: true });
 
     this.apollo
-      .watchQuery({
+      .query({
         query: CHAPTER_QUERIES.GET_CHAPTERS,
         variables,
-        fetchPolicy,
+        // fetchPolicy,
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.chapters;
 
@@ -283,13 +283,12 @@ export class ChapterState {
       ? CHAPTER_QUERIES.GET_CHAPTER_FORM_DETAILS
       : CHAPTER_QUERIES.GET_CHAPTER_PROFILE;
     this.apollo
-      .watchQuery({
+      .query({
         query,
         variables: { id },
         fetchPolicy: 'network-only',
-        nextFetchPolicy: 'cache-first',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.chapter;
           patchState({ chapterFormRecord: response, isFetching: false });

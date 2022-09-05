@@ -300,12 +300,12 @@ export class ChatState {
       offset: newFetchParams.offset,
     };
     this.apollo
-      .watchQuery({
+      .query({
         query: CHAT_QUERIES.GET_CHATS,
         variables,
         fetchPolicy,
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.chats;
 
@@ -413,12 +413,12 @@ export class ChatState {
     const { id } = payload;
     patchState({ isFetching: true });
     this.apollo
-      .watchQuery({
+      .query({
         query: CHAT_QUERIES.GET_CHAT,
         variables: { id },
         fetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.chat;
 
@@ -655,12 +655,12 @@ export class ChatState {
       offset: newFetchParams.offset,
     };
     this.apollo
-      .watchQuery({
+      .query({
         query: CHAT_QUERIES.GET_CHAT_MESSAGES,
         variables,
         fetchPolicy,
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.chatMessages;
           newFetchParams = { ...newFetchParams };

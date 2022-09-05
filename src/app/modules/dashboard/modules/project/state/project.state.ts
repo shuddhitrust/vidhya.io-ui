@@ -177,12 +177,12 @@ export class ProjectState {
       })
     );
     this.apollo
-      .watchQuery({
+      .query({
         query: PROJECT_QUERIES.GET_PROJECTS,
         variables,
-        fetchPolicy,
+        // fetchPolicy,
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           this.store.dispatch(
             new ToggleLoadingScreen({
@@ -264,13 +264,12 @@ export class ProjectState {
         : PROJECT_QUERIES.GET_PROJECT_PROFILE;
       patchState({ isFetching: true });
       this.apollo
-        .watchQuery({
+        .query({
           query,
           variables: { id },
           fetchPolicy: 'network-only',
-          nextFetchPolicy: 'network-only',
         })
-        .valueChanges.subscribe(
+        .subscribe(
           ({ data }: any) => {
             const response = data.project;
             patchState({ projectFormRecord: response, isFetching: false });

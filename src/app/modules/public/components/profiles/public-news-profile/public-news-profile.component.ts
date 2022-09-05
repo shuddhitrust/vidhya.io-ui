@@ -63,7 +63,6 @@ export class NewsProfileComponent implements OnInit, OnDestroy {
     this.route.queryParams.subscribe((params) => {
       const newsId = params['id'];
       if (newsId) {
-        console.log('dispatching news action for get news ');
         this.store.dispatch(
           new GetNewsAction({
             id: newsId,
