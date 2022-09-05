@@ -99,6 +99,9 @@ export class PublicState {
 
   @Selector()
   static getNewsRecord(state: PublicStateModel): Announcement {
+    console.log('from the selector for getNewsRecord', {
+      record: state.newsRecord,
+    });
     return state.newsRecord;
   }
 
@@ -552,7 +555,6 @@ export class PublicState {
         .subscribe((result: any) => {
           const response = result?.data?.notifyAnnouncement;
           if (response) {
-            console.log('received a new result => ', { result });
             const state = getState();
             const method = response.method;
             const announcement = result?.data?.notifyAnnouncement?.announcement;
@@ -590,6 +592,7 @@ export class PublicState {
       .valueChanges.subscribe(
         ({ data }: any) => {
           const response = data.publicAnnouncement;
+          console.log('updating the newsrecord in public state', { response });
           patchState({
             newsRecord: response,
             isFetchingNews: false,

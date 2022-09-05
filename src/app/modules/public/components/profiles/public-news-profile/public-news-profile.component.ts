@@ -50,7 +50,6 @@ export class NewsProfileComponent implements OnInit, OnDestroy {
   ) {
     this.newsRecord$.subscribe((val) => {
       this.newsRecord = val;
-      console.log('news record from state => ', { val });
     });
   }
 
@@ -64,6 +63,7 @@ export class NewsProfileComponent implements OnInit, OnDestroy {
     this.route.queryParams.subscribe((params) => {
       const newsId = params['id'];
       if (newsId) {
+        console.log('dispatching news action for get news ');
         this.store.dispatch(
           new GetNewsAction({
             id: newsId,

@@ -40,11 +40,7 @@ export class AnnouncementProfileRendererComponent {
     private router: Router,
     private store: Store,
     private auth: AuthorizationService
-  ) {
-    console.log('announcement from profile renderer=> ', {
-      announcement: this.announcement,
-    });
-  }
+  ) {}
 
   authorizeResourceMethod(action) {
     return this.auth.authorizeResource(this.resource, action, {

@@ -249,7 +249,6 @@ export class AnnouncementState {
         .subscribe((result: any) => {
           const response = result?.data?.notifyAnnouncement;
           if (response) {
-            console.log('received a new result => ', { result });
             const state = getState();
             const method = response.method;
             const announcement = result?.data?.notifyAnnouncement?.announcement;

@@ -3,7 +3,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { FetchNextProjectsAction, FetchProjectsAction } from 'src/app/modules/dashboard/modules/project/state/project.actions';
+import {
+  FetchNextProjectsAction,
+  FetchProjectsAction,
+} from 'src/app/modules/dashboard/modules/project/state/project.actions';
 import { ProjectState } from 'src/app/modules/dashboard/modules/project/state/project.state';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import {
@@ -48,10 +51,10 @@ export class PublicNewsFeedComponent implements OnInit {
       this.news = val;
     });
 
-    this.isFetchingProjects$.subscribe(val => {
+    this.isFetchingProjects$.subscribe((val) => {
       this.isFetchingProjects = val;
-    })
-    
+    });
+
     this.fetchProjects();
     this.isFetching$.subscribe((val) => {
       this.isFetching = val;
@@ -105,17 +108,18 @@ export class PublicNewsFeedComponent implements OnInit {
     this.store.dispatch(new ResetPublicHomePageListsAction());
   }
 
-
   fetchProjects() {
-      this.store.dispatch(
-        new FetchProjectsAction({
-          searchParams: { ...defaultSearchParams },
-        })
-      );
+    this.store.dispatch(
+      new FetchProjectsAction({
+        searchParams: { ...defaultSearchParams },
+      })
+    );
   }
 
   renderProjectSubtitle(project: Project) {
-    return `Published here on ${this.parseDate(project.createdAt)} by ${project.author.name}`;
+    return `Published here on ${this.parseDate(project.createdAt)} by ${
+      project.author.name
+    }`;
   }
 
   openProject(project) {
