@@ -13,20 +13,21 @@ import {
 } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
-import { FetchNextPublicCoursesAction, FetchPublicCoursesAction } from '../../../state/public/public.actions';
+import {
+  FetchNextPublicCoursesAction,
+  FetchPublicCoursesAction,
+} from '../../../state/public/public.actions';
 import { PublicState } from '../../../state/public/public.state';
 import { CourseDisplayComponent } from './course-dialog/course-display.component';
 
 @Component({
   selector: 'app-courses-feed',
   templateUrl: './courses-feed.component.html',
-  styleUrls: [
-    './courses-feed.component.scss',
-  ],
+  styleUrls: ['./courses-feed.component.scss'],
 })
 export class CoursesFeedComponent implements OnInit {
   @Input()
-  currentQuery: string=null;
+  currentQuery: string = null;
   @Select(PublicState.listPublicCourses)
   courses$: Observable<PublicCourse[]>;
 
@@ -40,7 +41,12 @@ export class CoursesFeedComponent implements OnInit {
     private dialog: MatDialog
   ) {
     this.store.dispatch(
-      new FetchPublicCoursesAction({ searchParams: {...defaultSearchParams, searchQuery: this.currentQuery} })
+      new FetchPublicCoursesAction({
+        searchParams: {
+          ...defaultSearchParams,
+          searchQuery: this.currentQuery,
+        },
+      })
     );
     this.isFetching$.subscribe((val) => {
       this.isFetching = val;
@@ -68,14 +74,12 @@ export class CoursesFeedComponent implements OnInit {
   }
 
   openCourse(course) {
-    console.log('Show public course dialog box')
-
     const dialogRef = this.dialog.open(CourseDisplayComponent, {
       data: {
-        courseId: course.id
+        courseId: course.id,
       },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});    
+    dialogRef.afterClosed().subscribe((result) => {});
   }
 }
