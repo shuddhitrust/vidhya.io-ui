@@ -50,6 +50,7 @@ export class NewsProfileComponent implements OnInit, OnDestroy {
   ) {
     this.newsRecord$.subscribe((val) => {
       this.newsRecord = val;
+      console.log('news record from state => ', { val });
     });
   }
 

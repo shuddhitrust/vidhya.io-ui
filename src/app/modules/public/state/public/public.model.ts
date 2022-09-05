@@ -49,7 +49,7 @@ export const emptyPublicCourseFormRecord: PublicCourse = {
   creditHours: null,
   createdAt: null,
   updatedAt: null,
-}
+};
 
 export interface PublicStateModel {
   members: User[];
@@ -73,7 +73,7 @@ export interface PublicStateModel {
   news: Announcement[];
   paginatedNews: any;
   lastNewsPage: number;
-  fetchParamNewsObjects: FetchParams[];  
+  fetchNewsParamObjects: FetchParams[];
   newsSubscribed: boolean;
   newsRecord: Announcement;
   isFetchingNews: boolean;
@@ -111,7 +111,7 @@ export const defaultPublicState: PublicStateModel = {
   paginatedNews: [],
   lastNewsPage: null,
   newsSubscribed: false,
-  fetchParamNewsObjects: [],
+  fetchNewsParamObjects: [],
   newsRecord: emptyAnnouncementFormRecord,
   isFetchingNews: false,
   // Courses

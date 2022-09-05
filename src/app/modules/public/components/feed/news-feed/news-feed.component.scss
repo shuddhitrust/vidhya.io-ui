@@ -16,7 +16,13 @@ h3 {
 
 small {
   font-weight: bold;
-  font-size: .8em;
+  font-size: 0.8em;
+}
+
+.news-date-block {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  padding: 5px;
 }
 
 .scroll-container {
@@ -28,7 +34,6 @@ small {
   height: 95%;
 }
 
-
 /* Float four columns side by side */
 .column {
   float: left;
@@ -38,7 +43,9 @@ small {
 }
 
 /* Remove extra left and right margins, due to padding in columns */
-.row {margin: 0 -5px;}
+.row {
+  margin: 0 -5px;
+}
 
 /* Clear floats after the columns */
 .row:after {
@@ -53,23 +60,22 @@ small {
     width: 100%;
     display: block;
     margin-bottom: 10px;
-    height:95vh;
+    height: 95vh;
     overflow-y: scroll;
   }
 }
 
 #homeCarousel-wrapper {
-    padding: 10px;
+  padding: 10px;
 }
 
 .home-project-feed {
-  float:right;
+  float: right;
   height: 100%;
 }
 
 #homeCarousel {
   display: block;
-
 }
 
 .carousel-control-prev,
@@ -151,7 +157,7 @@ small {
 
 @media screen and (max-width: 768px) {
   .column {
-      margin-bottom: 100px;
+    margin-bottom: 100px;
   }
 
   .scroll-feed {
@@ -165,8 +171,8 @@ small {
   #homeCarousel {
     max-width: 95vw;
     height: auto;
-    display: block;   
-    float: none; 
+    display: block;
+    float: none;
   }
   #home-project-feed {
     width: 95vw;

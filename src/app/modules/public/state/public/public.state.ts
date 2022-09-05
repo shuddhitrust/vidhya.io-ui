@@ -98,8 +98,8 @@ export class PublicState {
   }
 
   @Selector()
-  static getNewsRecord(state: PublicStateModel): PublicCourse {
-    return state.courseRecord;
+  static getNewsRecord(state: PublicStateModel): Announcement {
+    return state.newsRecord;
   }
 
   @Selector()
@@ -416,13 +416,10 @@ export class PublicState {
   }
 
   @Action(ForceRefetchNewsAction)
-  forceRefetchNews({
-    getState,
-    patchState,
-  }: StateContext<PublicStateModel>) {
+  forceRefetchNews({ getState, patchState }: StateContext<PublicStateModel>) {
     const state = getState();
     let previousFetchParams =
-      state.fetchParamNewsObjects[state.fetchParamNewsObjects.length - 1];
+      state.fetchNewsParamObjects[state.fetchNewsParamObjects.length - 1];
     previousFetchParams = previousFetchParams
       ? previousFetchParams
       : startingFetchParams;
@@ -444,7 +441,7 @@ export class PublicState {
     const state = getState();
     const lastPageNumber = state.lastNewsPage;
     let previousFetchParams =
-      state.fetchParamNewsObjects[state.fetchParamNewsObjects.length - 1];
+      state.fetchNewsParamObjects[state.fetchNewsParamObjects.length - 1];
     previousFetchParams = previousFetchParams
       ? previousFetchParams
       : startingFetchParams;
@@ -472,10 +469,10 @@ export class PublicState {
   ) {
     let { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, fetchParamNewsObjects } = state;
+    const { fetchPolicy, fetchNewsParamObjects } = state;
     const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({
-      fetchParamObjects: fetchParamNewsObjects,
+      fetchParamObjects: fetchNewsParamObjects,
       newPageNumber: pageNumber,
       newPageSize: pageSize,
       newSearchQuery: searchQuery,
@@ -522,7 +519,9 @@ export class PublicState {
             lastNewsPage,
             news,
             paginatedNews,
-            fetchParamNewsObjects: state.fetchParamNewsObjects.concat([newFetchParams]),
+            fetchNewsParamObjects: state.fetchNewsParamObjects.concat([
+              newFetchParams,
+            ]),
             isFetchingNews: false,
           });
         },
@@ -586,7 +585,7 @@ export class PublicState {
       .watchQuery({
         query,
         variables: { id },
-        fetchPolicy: 'cache-first',
+        fetchPolicy: 'network-only',
       })
       .valueChanges.subscribe(
         ({ data }: any) => {
@@ -781,4 +780,3 @@ export class PublicState {
     });
   }
 }
-

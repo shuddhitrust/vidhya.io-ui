@@ -10,62 +10,68 @@
 
 <ng-template #newsListTemplate>
   <div class="row">
-    <div class="column" style="height:auto">
-    <ng-container
-      style="display: block"
-      *ngTemplateOutlet="searchQueryDescription"
-    ></ng-container>        
-    <div id="homeCarousel-wrapper">
-      <span id="homeCarousel" class="carousel slide" data-ride="carousel">
-        <div class="carousel-inner">
-          <ng-container *ngFor="let item of news; index as i">
-            <div
-              [class]="slideClass(i)"
-              (click)="onClickNewsCard(item)"
-              data-interval="6000"
-            >
-              <img
-                [src]="item.image ? item.image : '/assets/images/logo.svg'"
-                class="slideshow-image"
-                alt="News feature image"
-              />
-              <div class="row">
-                <h2>{{ item.title }}</h2>
-                <p><small><i>{{ parseDate(item.createdAt) }}</i></small>
-                  {{ item.blurb }}
-                </p>
-            </div>
-            </div>
-          </ng-container>
-        </div>
-        <a
-          class="carousel-control-prev"
-          href="#homeCarousel"
-          role="button"
-          data-slide="prev"
-        >
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="sr-only">Previous</span>
-        </a>
-        <a
-          class="carousel-control-next"
-          href="#homeCarousel"
-          role="button"
-          data-slide="next"
-        >
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="sr-only">Next</span>
-        </a>
-      </span>
-    </div>      
+    <div class="column" style="height: auto">
+      <ng-container
+        style="display: block"
+        *ngTemplateOutlet="searchQueryDescription"
+      ></ng-container>
+      <div id="homeCarousel-wrapper">
+        <span id="homeCarousel" class="carousel slide" data-ride="carousel">
+          <div class="carousel-inner">
+            <ng-container *ngFor="let item of news; index as i">
+              <div
+                [class]="slideClass(i)"
+                (click)="onClickNewsCard(item)"
+                data-interval="6000"
+              >
+                <img
+                  [src]="item.image ? item.image : '/assets/images/logo.svg'"
+                  class="slideshow-image"
+                  alt="News feature image"
+                />
+                <div class="row">
+                  <h2>{{ item.title }}</h2>
+                  <p>
+                    <small class="news-date-block"
+                      ><i>{{ parseDate(item.createdAt) }}</i></small
+                    >
+                    {{ item.blurb }}
+                  </p>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+          <a
+            class="carousel-control-prev"
+            href="#homeCarousel"
+            role="button"
+            data-slide="prev"
+          >
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+          </a>
+          <a
+            class="carousel-control-next"
+            href="#homeCarousel"
+            role="button"
+            data-slide="next"
+          >
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+          </a>
+        </span>
+      </div>
     </div>
     <div class="column">
-          <ng-container *ngTemplateOutlet="projectFeedTemplate"></ng-container>
+      <ng-container *ngTemplateOutlet="projectFeedTemplate"></ng-container>
     </div>
   </div>
 </ng-template>
 <ng-template #projectFeedTemplate>
-  <div class="scroll-container" *ngIf="(projects$ | async)?.length > 0; else feedEmpty">
+  <div
+    class="scroll-container"
+    *ngIf="(projects$ | async)?.length > 0; else feedEmpty"
+  >
     <div
       class="scroll-feed"
       infiniteScroll
@@ -83,9 +89,11 @@
 
           <mat-card-actions>
             <small style="font-style: italic">
-              {{project.author.name}}
+              {{ project.author.name }}
             </small>
-            <small style="float:right">{{parseDate(project.createdAt)}}</small></mat-card-actions
+            <small style="float: right">{{
+              parseDate(project.createdAt)
+            }}</small></mat-card-actions
           >
         </mat-card>
       </span>
@@ -112,12 +120,12 @@
   </p>
 </ng-template>
 
-  <ng-template #feedEmpty>
-    <span class="center">
-      <h2>Projects</h2>
-      <p *ngIf="!isFetchingProjects">
-        No projects to show yet
-      </p>
-      <app-simple-loading-spinner loadingMessage="Fetching projects..."></app-simple-loading-spinner>
-    </span>
-  </ng-template>
+<ng-template #feedEmpty>
+  <span class="center">
+    <h2>Projects</h2>
+    <p *ngIf="!isFetchingProjects">No projects to show yet</p>
+    <app-simple-loading-spinner
+      loadingMessage="Fetching projects..."
+    ></app-simple-loading-spinner>
+  </span>
+</ng-template>
