@@ -14,6 +14,7 @@ export const emptyProjectFormRecord: Project = {
   course: null,
   description: null,
   public: true,
+  claps: null,
 };
 export interface ProjectStateModel {
   projects: Project[];

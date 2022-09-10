@@ -288,6 +288,17 @@ export const PROJECT_MUTATIONS = {
       }
     }
   `,
+  CLAP_PROJECT: gql`
+    mutation clapProject($id: ID!) {
+      clapProject(id: $id) {
+        ok
+        project {
+          id
+          claps
+        }
+      }
+    }
+  `,
   DELETE_PROJECT: gql`
     mutation deleteProject($id: ID!) {
       deleteProject(id: $id) {
@@ -1005,7 +1016,6 @@ export const AUTH_MUTATIONS = {
   `,
 };
 
-
 export const ADMIN_MUTATIONS = {
   CLEAR_SERVER_CACHE: gql`
     mutation clearServerCache {
@@ -1013,5 +1023,5 @@ export const ADMIN_MUTATIONS = {
         ok
       }
     }
-  `,  
-}
+  `,
+};

@@ -84,12 +84,17 @@
       <h2 class="center">Projects</h2>
       <span *ngFor="let project of projects$ | async">
         <mat-card class="feed-card" (click)="openProject(project)">
+          <small
+            style="float: right; margin-top: 0"
+            nz-tooltip="Number of times this project was applauded"
+            ><mat-icon class="clap-count-icon">thumb_up_alt</mat-icon>
+            {{ project.claps }}</small
+          >
           <h3>{{ project.title }}</h3>
           <p>{{ clip(project.description) }}</p>
-
           <mat-card-actions>
             <small style="font-style: italic">
-              {{ project.author.name }}
+              {{ project.author.name }}, {{ project.author.institution.name }}
             </small>
             <small style="float: right">{{
               parseDate(project.createdAt)

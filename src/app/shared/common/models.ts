@@ -296,6 +296,8 @@ export type Project = {
   link: string;
   course: any;
   contributors?: any[];
+  claps: number;
+  clapsBy?: any[];
   public: boolean;
   createdAt?: string;
 };

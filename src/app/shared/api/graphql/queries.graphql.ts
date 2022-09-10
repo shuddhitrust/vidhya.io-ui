@@ -574,9 +574,13 @@ export const PROJECT_QUERIES = {
         author {
           id
           name
+          institution {
+            name
+          }
         }
         link
         description
+        claps
         createdAt
       }
     }

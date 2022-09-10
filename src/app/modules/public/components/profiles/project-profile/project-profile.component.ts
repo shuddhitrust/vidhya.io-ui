@@ -23,6 +23,7 @@ import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { clipLongText, parseDateTime } from 'src/app/shared/common/functions';
 import { ProjectState } from 'src/app/modules/dashboard/modules/project/state/project.state';
 import {
+  ClapProjectAction,
   DeleteProjectAction,
   GetProjectAction,
   ResetProjectFormAction,
@@ -50,6 +51,8 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
   currentMember: CurrentMember;
   projectDoesNotExist: boolean;
   memberRows: any[] = [];
+  projectViewed: boolean = false;
+  projectClapped: boolean = false;
   constructor(
     public dialog: MatDialog,
     private store: Store,
@@ -145,6 +148,18 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  projectLinkClicked() {
+    this.projectViewed = true;
+  }
+
+  clapProject() {
+    if (this.projectViewed && !this.projectClapped) {
+      this.store.dispatch(new ClapProjectAction({ id: this.project.id }));
+      this.projectClapped = true;
+    }
+  }
+
   deleteProject() {
     this.store.dispatch(new DeleteProjectAction({ id: this.project.id }));
   }

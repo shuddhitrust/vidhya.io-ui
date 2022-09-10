@@ -25,6 +25,7 @@ import {
   GetProjectAction,
   ProjectSubscriptionAction,
   ResetProjectFormAction,
+  ClapProjectAction,
 } from './project.actions';
 import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
 import {
@@ -382,6 +383,39 @@ export class ProjectState {
         })
       );
     }
+  }
+
+  @Action(ClapProjectAction)
+  clapProject(
+    { getState, patchState }: StateContext<ProjectStateModel>,
+    { payload }: ClapProjectAction
+  ) {
+    const { id } = payload;
+    this.apollo
+      .mutate({
+        mutation: PROJECT_MUTATIONS.CLAP_PROJECT,
+        variables: { id },
+      })
+      .subscribe(
+        ({ data }: any) => {
+          const response = data.clapProject;
+          const state = getState();
+          patchState({
+            projectFormRecord: {
+              ...state.projectFormRecord,
+              claps: response.project.claps,
+            },
+          });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+        }
+      );
   }
 
   @Action(DeleteProjectAction)

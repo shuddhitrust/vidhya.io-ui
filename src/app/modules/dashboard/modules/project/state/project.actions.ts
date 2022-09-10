@@ -40,6 +40,12 @@ export class CreateUpdateProjectAction {
   ) {}
 }
 
+export class ClapProjectAction {
+  static readonly type = '[PUBLIC] Clap Project';
+
+  constructor(public payload: { id: number }) {}
+}
+
 export class ResetProjectFormAction {
   static readonly type = '[PROJECT] Reset Form';
 
