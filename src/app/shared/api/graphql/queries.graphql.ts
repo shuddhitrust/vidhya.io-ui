@@ -532,6 +532,7 @@ export const PROJECT_QUERIES = {
         link
         public
         description
+        claps
         createdAt
       }
     }
@@ -552,6 +553,7 @@ export const PROJECT_QUERIES = {
         link
         public
         description
+        claps
         createdAt
       }
     }
@@ -560,11 +562,13 @@ export const PROJECT_QUERIES = {
     query projects(
       $searchField: String
       $authorId: ID
+      $sortBy: String
       $limit: Int
       $offset: Int
     ) {
       projects(
         searchField: $searchField
+        sortBy: $sortBy
         authorId: $authorId
         limit: $limit
         offset: $offset

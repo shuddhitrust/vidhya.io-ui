@@ -168,6 +168,7 @@ export class ProjectState {
       searchField: searchQuery,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
+      sortBy: newFetchParams.columnFilters?.sortBy,
       authorId: newFetchParams.columnFilters?.authorId,
     };
     patchState({ isFetching: true });

@@ -86,10 +86,15 @@
         <mat-card class="feed-card" (click)="openProject(project)">
           <small
             style="float: right; margin-top: 0"
-            nz-tooltip="Number of times this project was applauded"
-            ><mat-icon class="clap-count-icon">thumb_up_alt</mat-icon>
-            {{ project.claps }}</small
+            [nz-tooltip]="
+              'This project was applauded ' + project.claps + ' times'
+            "
           >
+            <button class="project-clap-button" mat-mini-fab>
+              <mat-icon>thumb_up_alt</mat-icon>
+            </button>
+            <nz-badge [nzCount]="project.claps" nzStandalone> </nz-badge
+          ></small>
           <h3>{{ project.title }}</h3>
           <p>{{ clip(project.description) }}</p>
           <mat-card-actions>

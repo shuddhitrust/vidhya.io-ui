@@ -46,20 +46,19 @@
       </p>
       <p>{{ project?.description }}</p>
 
-      <nz-badge [nzCount]="project.claps" nzStandalone>
-        <button
-          [nz-tooltip]="
-            projectViewed
-              ? 'Applaud this project'
-              : 'Please review the project before being able to applaud it'
-          "
-          mat-mini-fab
-          (click)="clapProject()"
-          class="clap-button-bottom"
-        >
-          <mat-icon>thumb_up_alt</mat-icon>
-        </button></nz-badge
+      <button
+        [nz-tooltip]="
+          projectViewed
+            ? 'Applaud this project'
+            : 'Please review the project before being able to applaud it'
+        "
+        mat-mini-fab
+        (click)="clapProject()"
+        class="clap-button-bottom"
       >
+        <mat-icon>thumb_up_alt</mat-icon>
+      </button>
+      <nz-badge [nzCount]="project.claps" nzStandalone> </nz-badge>
 
       <button
         nz-tooltip="Report an issue with this project"

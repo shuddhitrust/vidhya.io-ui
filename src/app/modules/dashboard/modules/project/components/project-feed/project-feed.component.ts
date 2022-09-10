@@ -3,7 +3,10 @@ import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
-import { defaultSearchParams } from 'src/app/shared/common/constants';
+import {
+  defaultSearchParams,
+  SORT_BY_OPTIONS,
+} from 'src/app/shared/common/constants';
 import { clipLongText, parseDateTime } from 'src/app/shared/common/functions';
 import {
   Project,
@@ -56,14 +59,15 @@ export class ProjectFeedComponent implements OnInit {
     }
   }
   fetchProjects() {
-    const columnFilters = { authorId: this.author?.id };
-    if (columnFilters?.authorId) {
-      this.store.dispatch(
-        new FetchProjectsAction({
-          searchParams: { ...defaultSearchParams, columnFilters },
-        })
-      );
-    }
+    const columnFilters = {
+      authorId: this.author?.id,
+      sortBy: SORT_BY_OPTIONS.NEW,
+    };
+    this.store.dispatch(
+      new FetchProjectsAction({
+        searchParams: { ...defaultSearchParams, columnFilters },
+      })
+    );
   }
   authorizeResourceMethod(action) {
     return this.auth.authorizeResource(this.resource, action);

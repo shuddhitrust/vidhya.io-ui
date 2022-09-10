@@ -8,7 +8,10 @@ import {
   FetchProjectsAction,
 } from 'src/app/modules/dashboard/modules/project/state/project.actions';
 import { ProjectState } from 'src/app/modules/dashboard/modules/project/state/project.state';
-import { defaultSearchParams } from 'src/app/shared/common/constants';
+import {
+  defaultSearchParams,
+  SORT_BY_OPTIONS,
+} from 'src/app/shared/common/constants';
 import {
   clipLongText,
   parseDate,
@@ -109,9 +112,12 @@ export class PublicNewsFeedComponent implements OnInit {
   }
 
   fetchProjects() {
+    const columnFilters = {
+      sortBy: SORT_BY_OPTIONS.TOP,
+    };
     this.store.dispatch(
       new FetchProjectsAction({
-        searchParams: { ...defaultSearchParams },
+        searchParams: { ...defaultSearchParams, columnFilters },
       })
     );
   }
