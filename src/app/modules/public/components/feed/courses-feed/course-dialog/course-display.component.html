@@ -25,15 +25,13 @@
         ></iframe>
       </div>
       <div>
-        Credit Hours (hrs/week)
+        {{ course.creditHours }} Credit Hours (hrs/week)
         <mat-icon
           style="margin: 0; padding: 2px; font-size: 1em"
           nz-tooltip="The number of hours the learner needs to spend per week"
-          nzTooltipPlacement="top"
           color="primary"
           >info</mat-icon
         >
-        - {{ course.creditHours }}
       </div>
     </mat-card-content>
   </mat-card>
