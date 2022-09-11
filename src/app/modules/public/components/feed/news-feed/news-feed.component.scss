@@ -19,8 +19,13 @@ small {
   font-size: 0.8em;
 }
 
-.project-clap-button {
-  color: var(--blue);
+.project-clap-button-clapped {
+  color: white;
+  background: var(--shuddhi-color);
+}
+
+.project-clap-button-unclapped {
+  color: var(--shuddhi-color);
   background: white;
 }
 

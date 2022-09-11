@@ -12,6 +12,9 @@ export const AUTH_QUERIES = {
         title
         bio
         email
+        projectsClapped {
+          id
+        }
         institution {
           id
           name

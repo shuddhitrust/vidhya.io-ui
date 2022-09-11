@@ -16,6 +16,7 @@ export const localStorageKeys = {
   AUTH_REFRESH_TOKEN_KEY: 'AUTH_REFRESH_TOKEN',
   EXPIRATION_KEY: 'EXPIRES_AT',
   REMEMBER_ME_KEY: 'REMEMBER_ME',
+  PROJECTS_CLAPPED: 'PROJECTS_CLAPPED',
 };
 
 export const defaultLogos = {

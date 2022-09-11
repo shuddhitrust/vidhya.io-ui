@@ -157,3 +157,9 @@ export class GetAuthStorage {
 
   constructor() {}
 }
+
+export class UpdateProjectsClappedFromLocalStorageAction {
+  static readonly type = '[AUTH] Update projectsClapped from Local Storage';
+
+  constructor() {}
+}

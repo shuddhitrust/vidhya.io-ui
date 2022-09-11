@@ -1,4 +1,11 @@
-import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
+import {
+  Action,
+  Select,
+  Selector,
+  State,
+  StateContext,
+  Store,
+} from '@ngxs/store';
 import {
   defaultProjectState,
   emptyProjectFormRecord,
@@ -39,6 +46,10 @@ import { PROJECT_QUERIES } from 'src/app/shared/api/graphql/queries.graphql';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { SUBSCRIPTIONS } from 'src/app/shared/api/graphql/subscriptions.graphql';
 import { PROJECT_MUTATIONS } from 'src/app/shared/api/graphql/mutations.graphql';
+import { AuthState } from 'src/app/modules/auth/state/auth.state';
+import { AuthStateModel } from 'src/app/modules/auth/state/auth.model';
+import { Observable } from 'rxjs';
+import { localStorageKeys } from 'src/app/shared/common/constants';
 
 @State<ProjectStateModel>({
   name: 'projectState',
@@ -391,7 +402,7 @@ export class ProjectState {
     { getState, patchState }: StateContext<ProjectStateModel>,
     { payload }: ClapProjectAction
   ) {
-    const { id } = payload;
+    const { id, isLoggedIn } = payload;
     this.apollo
       .mutate({
         mutation: PROJECT_MUTATIONS.CLAP_PROJECT,
@@ -417,6 +428,19 @@ export class ProjectState {
           );
         }
       );
+    if (!isLoggedIn) {
+      {
+        let projectsClapped = JSON.parse(
+          localStorage.getItem(localStorageKeys.PROJECTS_CLAPPED)
+        );
+        projectsClapped = projectsClapped?.length ? projectsClapped : [];
+        projectsClapped = JSON.stringify(projectsClapped.concat([id]));
+        localStorage.setItem(
+          localStorageKeys.PROJECTS_CLAPPED,
+          projectsClapped
+        );
+      }
+    }
   }
 
   @Action(DeleteProjectAction)

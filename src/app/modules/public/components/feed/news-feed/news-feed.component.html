@@ -90,7 +90,7 @@
               'This project was applauded ' + project.claps + ' times'
             "
           >
-            <button class="project-clap-button" mat-mini-fab>
+            <button [class]="clapButtonClass(project.id)" mat-mini-fab>
               <mat-icon>thumb_up_alt</mat-icon>
             </button>
             <nz-badge [nzCount]="project.claps" nzStandalone> </nz-badge

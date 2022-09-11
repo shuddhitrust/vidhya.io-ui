@@ -34,10 +34,17 @@
   margin: -30px 10px 10px 0px;
 }
 
-.clap-button-bottom {
+.project-clap-button-clapped {
+  color: white;
+  background: var(--shuddhi-color);
   float: left;
+  margin: -10px 0px 20px 0px;
+}
+
+.project-clap-button-unclapped {
   color: var(--shuddhi-color);
   background: white;
+  float: left;
   margin: -10px 0px 20px 0px;
 }
 

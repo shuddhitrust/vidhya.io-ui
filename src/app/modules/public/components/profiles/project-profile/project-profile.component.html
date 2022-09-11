@@ -47,14 +47,10 @@
       <p>{{ project?.description }}</p>
 
       <button
-        [nz-tooltip]="
-          projectViewed
-            ? 'Applaud this project'
-            : 'Please review the project before being able to applaud it'
-        "
+        [nz-tooltip]="projectClapButtonTooltip(project.id)"
         mat-mini-fab
         (click)="clapProject()"
-        class="clap-button-bottom"
+        [class]="clapButtonClass(project.id)"
       >
         <mat-icon>thumb_up_alt</mat-icon>
       </button>

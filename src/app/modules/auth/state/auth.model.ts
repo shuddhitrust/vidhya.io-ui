@@ -1,3 +1,4 @@
+import { localStorageKeys } from 'src/app/shared/common/constants';
 import {
   CurrentMember,
   defaultResourcePermissions,
@@ -8,6 +9,29 @@ export const AuthStorageOptions = {
   session: 'sessionStorage',
   local: 'localStorage',
   default: 'sessionStorage',
+};
+
+export const getProjectsClappedFromLocalStorage = () => {
+  return JSON.parse(localStorage.getItem(localStorageKeys.PROJECTS_CLAPPED));
+};
+
+const startingCurrentMember: CurrentMember = {
+  id: null,
+  username: null,
+  firstName: null,
+  lastName: null,
+  name: null,
+  title: null,
+  bio: null,
+  email: null,
+  avatar: null,
+  invitecode: null,
+  institution: { id: null, name: null },
+  membershipStatus: null,
+  projectsClapped: getProjectsClappedFromLocalStorage(),
+  role: null,
+  createdAt: null,
+  updatedAt: null,
 };
 
 export interface AuthStateModel {
@@ -45,7 +69,7 @@ export const defaultAuthState: AuthStateModel = {
   lastLogin: null,
   isFullyAuthenticated: false,
   isFetchingCurrentMember: false,
-  currentMember: null,
+  currentMember: startingCurrentMember,
   permissions: defaultResourcePermissions,
   firstTimeSetup: false,
   activationEmailSent: null,

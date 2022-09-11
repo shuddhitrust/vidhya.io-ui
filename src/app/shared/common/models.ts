@@ -77,6 +77,7 @@ export type CurrentMember = {
   invitecode?: string;
   institution?: { id: number; name: string };
   membershipStatus: string;
+  projectsClapped: string[];
   role: { name?: string; permissions: UserPermissions };
   createdAt?: string;
   updatedAt?: string;

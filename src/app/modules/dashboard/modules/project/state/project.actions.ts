@@ -43,7 +43,7 @@ export class CreateUpdateProjectAction {
 export class ClapProjectAction {
   static readonly type = '[PUBLIC] Clap Project';
 
-  constructor(public payload: { id: number }) {}
+  constructor(public payload: { id: number; isLoggedIn: boolean }) {}
 }
 
 export class ResetProjectFormAction {

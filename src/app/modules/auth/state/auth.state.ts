@@ -10,6 +10,7 @@ import {
   AuthStateModel,
   AuthStorageOptions,
   defaultAuthState,
+  getProjectsClappedFromLocalStorage,
 } from './auth.model';
 
 import { Injectable, OnInit } from '@angular/core';
@@ -39,6 +40,7 @@ import {
   GenerateEmailOTPAction,
   VerifyEmailOTPAction,
   ResetEmailVerificationParamsAction,
+  UpdateProjectsClappedFromLocalStorageAction,
 } from './auth.actions';
 import { Apollo } from 'apollo-angular';
 
@@ -55,6 +57,8 @@ import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.action
 import { AUTH_MUTATIONS } from 'src/app/shared/api/graphql/mutations.graphql';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import {
+  clearAuthFromLocalStorage,
+  clearLocalStorage,
   constructPermissions,
   getErrorMessageFromGraphQLResponse,
 } from 'src/app/shared/common/functions';
@@ -95,7 +99,9 @@ export class AuthState {
     private store: Store,
     private apollo: Apollo,
     private router: Router
-  ) {}
+  ) {
+    this.store.dispatch(new UpdateProjectsClappedFromLocalStorageAction());
+  }
 
   /**
    * Creates a timeout method to call for refreshToken just a minute before
@@ -178,6 +184,11 @@ export class AuthState {
     return state.currentMember?.id;
   }
 
+  @Selector()
+  static projectsClapped(state: AuthStateModel): string[] {
+    return state.currentMember.projectsClapped;
+  }
+
   @Action(GetAuthStorage)
   getAuthStorage({ patchState }: StateContext<AuthStateModel>) {
     let remember = JSON.parse(
@@ -204,7 +215,7 @@ export class AuthState {
     if (remember) {
       sessionStorage.clear();
     } else {
-      localStorage.clear();
+      clearLocalStorage();
     }
     localStorage.setItem(
       localStorageKeys.REMEMBER_ME_KEY,
@@ -388,7 +399,8 @@ export class AuthState {
     );
     // Marking user as logged out
     patchState(defaultAuthState);
-    localStorage.clear();
+    console.log('Clearing localstorage from completeLogout');
+    clearAuthFromLocalStorage();
     sessionStorage.clear();
     this.store.dispatch(new SetAuthSessionAction());
   }
@@ -478,6 +490,7 @@ export class AuthState {
         name: user?.institution?.name,
       },
       membershipStatus: user?.membershipStatus,
+      projectsClapped: user?.projectsClapped.map((p: any) => p.id),
       role: {
         name: user?.role?.name,
         permissions,
@@ -1333,6 +1346,18 @@ export class AuthState {
   @Action(OpenLoginFormAction)
   openLogiinForm({ patchState }: StateContext<AuthStateModel>) {
     patchState({ closeLoginForm: false });
+  }
+
+  @Action(UpdateProjectsClappedFromLocalStorageAction)
+  getProjectsClappedFromLocalStorageAction({
+    getState,
+    patchState,
+  }: StateContext<AuthStateModel>) {
+    const state = getState();
+    const currentMember = state.currentMember;
+    const projectsClapped = getProjectsClappedFromLocalStorage();
+    const newCurrentMember = { ...currentMember, projectsClapped };
+    patchState({ currentMember: newCurrentMember });
   }
 }
 

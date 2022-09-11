@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
+import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import {
   FetchNextProjectsAction,
   FetchProjectsAction,
@@ -42,6 +43,10 @@ export class PublicNewsFeedComponent implements OnInit {
   @Select(ProjectState.listProjects)
   projects$: Observable<Project[]>;
 
+  @Select(AuthState.projectsClapped)
+  projectsClapped$: Observable<string[]>;
+  projectsClapped: string[];
+
   @Select(ProjectState.isFetching)
   isFetchingProjects$: Observable<boolean>;
   isFetchingProjects: boolean;
@@ -52,6 +57,10 @@ export class PublicNewsFeedComponent implements OnInit {
   ) {
     this.news$.subscribe((val) => {
       this.news = val;
+    });
+
+    this.projectsClapped$.subscribe((val) => {
+      this.projectsClapped = val;
     });
 
     this.isFetchingProjects$.subscribe((val) => {
@@ -126,6 +135,12 @@ export class PublicNewsFeedComponent implements OnInit {
     return `Published here on ${this.parseDate(project.createdAt)} by ${
       project.author.name
     }`;
+  }
+
+  clapButtonClass(id) {
+    return this.projectsClapped.includes(id)
+      ? 'project-clap-button-clapped'
+      : 'project-clap-button-unclapped';
   }
 
   openProject(project) {

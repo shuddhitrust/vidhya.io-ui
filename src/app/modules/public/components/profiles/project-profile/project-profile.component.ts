@@ -29,6 +29,7 @@ import {
   ResetProjectFormAction,
 } from 'src/app/modules/dashboard/modules/project/state/project.actions';
 import { generateMemberProfileLink } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.model';
+import { AuthStateModel } from 'src/app/modules/auth/state/auth.model';
 
 @Component({
   selector: 'app-project-profile',
@@ -53,6 +54,15 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
   memberRows: any[] = [];
   projectViewed: boolean = false;
   projectClapped: boolean = false;
+
+  @Select(AuthState.projectsClapped)
+  projectsClapped$: Observable<string[]>;
+  projectsClapped: string[] = [];
+  isLoggedIn: boolean = false;
+
+  @Select(AuthState)
+  authState$: Observable<AuthStateModel>;
+
   constructor(
     public dialog: MatDialog,
     private store: Store,
@@ -68,6 +78,15 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
       } else {
         this.projectDoesNotExist = false;
       }
+    });
+
+    this.authState$.subscribe((state) => {
+      this.projectsClapped = state.currentMember.projectsClapped;
+      this.isLoggedIn = state.isLoggedIn;
+    });
+
+    this.projectsClapped$.subscribe((val) => {
+      this.projectsClapped = val;
     });
   }
 
@@ -155,9 +174,30 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
 
   clapProject() {
     if (this.projectViewed && !this.projectClapped) {
-      this.store.dispatch(new ClapProjectAction({ id: this.project.id }));
+      this.store.dispatch(
+        new ClapProjectAction({
+          id: this.project.id,
+          isLoggedIn: this.isLoggedIn,
+        })
+      );
       this.projectClapped = true;
     }
+  }
+
+  clapButtonClass(id) {
+    return this.projectsClapped.includes(id) || this.projectClapped
+      ? 'project-clap-button-clapped'
+      : 'project-clap-button-unclapped';
+  }
+
+  projectClapButtonTooltip(id): string {
+    let tooltip = 'Please review the project before being able to applaud it';
+    if (this.projectsClapped.includes(id)) {
+      tooltip = 'You have already applauded this project';
+    } else if (this.projectViewed) {
+      tooltip = 'Applaud this project';
+    }
+    return tooltip;
   }
 
   deleteProject() {
