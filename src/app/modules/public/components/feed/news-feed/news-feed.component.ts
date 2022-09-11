@@ -138,7 +138,7 @@ export class PublicNewsFeedComponent implements OnInit {
   }
 
   clapButtonClass(id) {
-    return this.projectsClapped.includes(id)
+    return this.projectsClapped?.includes(id)
       ? 'project-clap-button-clapped'
       : 'project-clap-button-unclapped';
   }

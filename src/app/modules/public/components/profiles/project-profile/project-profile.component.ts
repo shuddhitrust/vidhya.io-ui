@@ -84,10 +84,6 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
       this.projectsClapped = state.currentMember.projectsClapped;
       this.isLoggedIn = state.isLoggedIn;
     });
-
-    this.projectsClapped$.subscribe((val) => {
-      this.projectsClapped = val;
-    });
   }
 
   parseDate(date) {
@@ -185,14 +181,14 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
   }
 
   clapButtonClass(id) {
-    return this.projectsClapped.includes(id) || this.projectClapped
+    return this.projectsClapped?.includes(id) || this.projectClapped
       ? 'project-clap-button-clapped'
       : 'project-clap-button-unclapped';
   }
 
   projectClapButtonTooltip(id): string {
     let tooltip = 'Please review the project before being able to applaud it';
-    if (this.projectsClapped.includes(id)) {
+    if (this.projectsClapped?.includes(id)) {
       tooltip = 'You have already applauded this project';
     } else if (this.projectViewed) {
       tooltip = 'Applaud this project';
