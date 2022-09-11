@@ -29,6 +29,25 @@ small {
   background: white;
 }
 
+.project-sort-button-container {
+  float: right;
+  margin-right: 20px;
+}
+
+.project-sort-button-container > button {
+  margin-left: 5px;
+}
+
+.active-sort-button {
+  background: var(--shuddhi-color);
+  color: white;
+}
+
+.inactive-sort-button {
+  background: white;
+  color: var(--shuddhi-color);
+}
+
 .news-date-block {
   background: rgba(0, 0, 0, 0.1);
   border-radius: 5px;

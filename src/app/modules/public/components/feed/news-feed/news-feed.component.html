@@ -81,6 +81,24 @@
       [fromRoot]="true"
       (scrolled)="onScroll()"
     >
+      <div class="project-sort-button-container">
+        <button
+          mat-stroked-button
+          nz-tooltip="Sort the projects by most applauded projects first"
+          [class]="projectSortButtonClass(sortByOptions.TOP)"
+          (click)="sortProjectFeed(sortByOptions.TOP)"
+        >
+          Top
+        </button>
+        <button
+          mat-stroked-button
+          nz-tooltip="Sort the projects by latest first"
+          [class]="projectSortButtonClass(sortByOptions.NEW)"
+          (click)="sortProjectFeed(sortByOptions.NEW)"
+        >
+          New
+        </button>
+      </div>
       <h2 class="center">Projects</h2>
       <span *ngFor="let project of projects$ | async">
         <mat-card class="feed-card" (click)="openProject(project)">
@@ -99,7 +117,8 @@
           <p>{{ clip(project.description) }}</p>
           <mat-card-actions>
             <small style="font-style: italic">
-              {{ project.author.name }}, {{ project.author.institution.name }}
+              {{ project.author.name }}, {{ project.author.institution.name }},
+              {{ project.author.institution.location }}
             </small>
             <small style="float: right">{{
               parseDate(project.createdAt)

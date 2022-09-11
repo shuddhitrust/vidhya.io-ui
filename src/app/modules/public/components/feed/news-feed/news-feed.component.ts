@@ -47,6 +47,12 @@ export class PublicNewsFeedComponent implements OnInit {
   projectsClapped$: Observable<string[]>;
   projectsClapped: string[];
 
+  sortByOptions = SORT_BY_OPTIONS;
+
+  projectColumnFilters = {
+    sortBy: SORT_BY_OPTIONS.TOP,
+  };
+
   @Select(ProjectState.isFetching)
   isFetchingProjects$: Observable<boolean>;
   isFetchingProjects: boolean;
@@ -121,12 +127,12 @@ export class PublicNewsFeedComponent implements OnInit {
   }
 
   fetchProjects() {
-    const columnFilters = {
-      sortBy: SORT_BY_OPTIONS.TOP,
-    };
     this.store.dispatch(
       new FetchProjectsAction({
-        searchParams: { ...defaultSearchParams, columnFilters },
+        searchParams: {
+          ...defaultSearchParams,
+          columnFilters: this.projectColumnFilters,
+        },
       })
     );
   }
@@ -141,6 +147,26 @@ export class PublicNewsFeedComponent implements OnInit {
     return this.projectsClapped?.includes(id)
       ? 'project-clap-button-clapped'
       : 'project-clap-button-unclapped';
+  }
+
+  projectSortButtonClass(sortOption) {
+    return this.projectColumnFilters.sortBy == sortOption
+      ? 'active-sort-button'
+      : 'inactive-sort-button';
+  }
+
+  sortProjectFeed(sortOption) {
+    sortOption =
+      sortOption == this.sortByOptions.TOP
+        ? this.sortByOptions.TOP
+        : this.sortByOptions.NEW;
+    this.projectColumnFilters = {
+      sortBy: sortOption,
+    };
+    this.projectColumnFilters = {
+      sortBy: sortOption,
+    };
+    this.fetchProjects();
   }
 
   openProject(project) {

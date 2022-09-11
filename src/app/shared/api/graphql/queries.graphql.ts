@@ -583,6 +583,7 @@ export const PROJECT_QUERIES = {
           name
           institution {
             name
+            location
           }
         }
         link
