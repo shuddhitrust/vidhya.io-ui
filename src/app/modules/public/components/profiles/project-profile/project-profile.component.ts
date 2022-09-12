@@ -30,6 +30,7 @@ import {
 } from 'src/app/modules/dashboard/modules/project/state/project.actions';
 import { generateMemberProfileLink } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.model';
 import { AuthStateModel } from 'src/app/modules/auth/state/auth.model';
+import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 
 @Component({
   selector: 'app-project-profile',
@@ -177,6 +178,13 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
         })
       );
       this.projectClapped = true;
+    } else {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message: this.projectClapButtonTooltip(this.project.id),
+          action: 'warning',
+        })
+      );
     }
   }
 
@@ -188,7 +196,7 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
 
   projectClapButtonTooltip(id): string {
     let tooltip = 'Please review the project before being able to applaud it';
-    if (this.projectsClapped?.includes(id)) {
+    if (this.projectsClapped?.includes(id) || this.projectClapped) {
       tooltip = 'You have already applauded this project';
     } else if (this.projectViewed) {
       tooltip = 'Applaud this project';

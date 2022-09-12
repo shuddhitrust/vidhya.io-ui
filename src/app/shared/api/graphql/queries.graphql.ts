@@ -527,6 +527,10 @@ export const PROJECT_QUERIES = {
           id
           name
           username
+          institution {
+            name
+            location
+          }
         }
         course {
           id

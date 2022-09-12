@@ -30,7 +30,10 @@
         Published here on
         {{ parseDate(project.createdAt) }} by
         <a (click)="authorLink()"
-          ><b>{{ project.author.name }}</b></a
+          ><b
+            >{{ project.author.name }}, {{ project.author.institution.name }},
+            {{ project.author.institution.location }}</b
+          ></a
         >
       </small>
       <hr />
