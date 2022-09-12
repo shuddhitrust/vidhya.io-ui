@@ -15,6 +15,15 @@ export const getProjectsClappedFromLocalStorage = () => {
   return JSON.parse(localStorage.getItem(localStorageKeys.PROJECTS_CLAPPED));
 };
 
+export const getAuthStorageTypeFromClient = () => {
+  const remember_me = JSON.parse(
+    localStorage.getItem(localStorageKeys.REMEMBER_ME_KEY)
+  );
+  if (remember_me == true) {
+    return AuthStorageOptions.local;
+  } else return AuthStorageOptions.default;
+};
+
 const startingCurrentMember: CurrentMember = {
   id: null,
   username: null,
@@ -56,7 +65,7 @@ export interface AuthStateModel {
 }
 
 export const defaultAuthState: AuthStateModel = {
-  authStorageType: AuthStorageOptions.default,
+  authStorageType: getAuthStorageTypeFromClient(),
   token: null,
   expiresAt: null,
   refreshToken: null,
