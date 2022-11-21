@@ -1114,6 +1114,74 @@ export class AuthState {
     }
   }
 
+  @Action(PasswordResetAction)
+  passwordReset(
+    { getState, patchState }: StateContext<AuthStateModel>,
+    { payload }: PasswordResetAction
+  ) {
+    const state = getState();
+    const { form, formDirective } = payload;
+    let { isSubmittingForm } = state;
+    if (form.valid) {
+      isSubmittingForm = true;
+      const values = form.value;
+      patchState({ isSubmittingForm });
+      this.apollo
+        .mutate({
+          mutation: AUTH_MUTATIONS.PASSWORD_RESET,
+          variables: {
+            token: values.token,
+            newPassword1: values.newPassword1,
+            newPassword2: values.newPassword2,
+          },
+        })
+        .subscribe(
+          ({ data }: any) => {
+            const response = data.passwordReset;
+            isSubmittingForm = false;
+            patchState({ isSubmittingForm });
+
+            if (response.success) {
+              form.reset();
+              formDirective.resetForm();
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message: 'Password reset successfully!',
+                  action: 'success',
+                })
+              );
+            } else {
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message: getErrorMessageFromGraphQLResponse(response?.errors),
+                  action: 'error',
+                })
+              );
+            }
+          },
+          (error) => {
+            console.error('There was an error ', error);
+            isSubmittingForm = false;
+            patchState({ isSubmittingForm });
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: 'There was an error in submitting your form!',
+                action: 'error',
+              })
+            );
+          }
+        );
+    } else {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message:
+            'Please make sure there are no errors in the form before attempting to submit!',
+          action: 'error',
+        })
+      );
+    }
+  }
+
   @Action(PasswordChangeAction)
   passwordChange(
     { getState, patchState }: StateContext<AuthStateModel>,
