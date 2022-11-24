@@ -8,8 +8,10 @@
 //   websocket_graphql_endpoint: `${websocket_api_endpoint}/graphql/`,
 // };
 
-const api_endpoint = 'https://vidhya-io-api.onrender.com';
-const websocket_api_endpoint = 'wss://vidhya-io-api.onrender.com';
+const base_url = 'vidhya-io-api.onrender.com';
+
+const api_endpoint = `https://${base_url}`;
+const websocket_api_endpoint = `wss://${base_url}`;
 const cloudinary_endpoint = 'https://api.cloudinary.com/v1_1/ragav-dev';
 const cloudinary_preset = 'cljckgq2';
 
