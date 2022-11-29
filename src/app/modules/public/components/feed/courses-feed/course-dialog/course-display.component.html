@@ -1,0 +1,44 @@
+<mat-icon class="close-button" (click)="closeDialog()">close</mat-icon>
+<div mat-dialog-content class="dialog-box">
+  <mat-card-header>
+    <mat-card-title>{{ course.title }}</mat-card-title>
+    <small *ngIf="course?.instructor?.username"
+      >Instructed by
+      <a [routerLink]="instructorProfileLink(course.instructor)">{{
+        course.instructor?.name
+      }}</a></small
+    >
+  </mat-card-header>
+  <mat-card>
+    <mat-card-content class="dialog-content">
+      <p>{{ course.description }}</p>
+      <div class="center">
+        <iframe
+          #iframeContainer
+          loading="lazy"
+          class="video-iframe"
+          [src]="video?.url"
+          [srcdoc]="video?.srcdoc"
+          frameborder="0"
+          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </div>
+      <div>
+        {{ course.creditHours }} Credit Hours (hrs/week)
+        <mat-icon
+          style="margin: 0; padding: 2px; font-size: 1em"
+          nz-tooltip="The number of hours the learner needs to spend per week"
+          color="primary"
+          >info</mat-icon
+        >
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<ng-template #loadingTemplate>
+  <app-simple-loading-spinner
+    loadingMessage="Fetching course..."
+  ></app-simple-loading-spinner>
+</ng-template>

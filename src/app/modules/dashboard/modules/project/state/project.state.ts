@@ -1,4 +1,11 @@
-import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
+import {
+  Action,
+  Select,
+  Selector,
+  State,
+  StateContext,
+  Store,
+} from '@ngxs/store';
 import {
   defaultProjectState,
   emptyProjectFormRecord,
@@ -25,6 +32,7 @@ import {
   GetProjectAction,
   ProjectSubscriptionAction,
   ResetProjectFormAction,
+  ClapProjectAction,
 } from './project.actions';
 import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
 import {
@@ -38,6 +46,10 @@ import { PROJECT_QUERIES } from 'src/app/shared/api/graphql/queries.graphql';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { SUBSCRIPTIONS } from 'src/app/shared/api/graphql/subscriptions.graphql';
 import { PROJECT_MUTATIONS } from 'src/app/shared/api/graphql/mutations.graphql';
+import { AuthState } from 'src/app/modules/auth/state/auth.state';
+import { AuthStateModel } from 'src/app/modules/auth/state/auth.model';
+import { Observable } from 'rxjs';
+import { localStorageKeys } from 'src/app/shared/common/constants';
 
 @State<ProjectStateModel>({
   name: 'projectState',
@@ -167,7 +179,8 @@ export class ProjectState {
       searchField: searchQuery,
       limit: newFetchParams.pageSize,
       offset: newFetchParams.offset,
-      authorId: newFetchParams.columnFilters.authorId,
+      sortBy: newFetchParams.columnFilters?.sortBy,
+      authorId: newFetchParams.columnFilters?.authorId,
     };
     patchState({ isFetching: true });
     this.store.dispatch(
@@ -177,12 +190,12 @@ export class ProjectState {
       })
     );
     this.apollo
-      .watchQuery({
+      .query({
         query: PROJECT_QUERIES.GET_PROJECTS,
         variables,
-        fetchPolicy,
+        // fetchPolicy,
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           this.store.dispatch(
             new ToggleLoadingScreen({
@@ -264,13 +277,12 @@ export class ProjectState {
         : PROJECT_QUERIES.GET_PROJECT_PROFILE;
       patchState({ isFetching: true });
       this.apollo
-        .watchQuery({
+        .query({
           query,
           variables: { id },
           fetchPolicy: 'network-only',
-          nextFetchPolicy: 'network-only',
         })
-        .valueChanges.subscribe(
+        .subscribe(
           ({ data }: any) => {
             const response = data.project;
             patchState({ projectFormRecord: response, isFetching: false });
@@ -382,6 +394,52 @@ export class ProjectState {
           action: 'error',
         })
       );
+    }
+  }
+
+  @Action(ClapProjectAction)
+  clapProject(
+    { getState, patchState }: StateContext<ProjectStateModel>,
+    { payload }: ClapProjectAction
+  ) {
+    const { id, isLoggedIn } = payload;
+    this.apollo
+      .mutate({
+        mutation: PROJECT_MUTATIONS.CLAP_PROJECT,
+        variables: { id },
+      })
+      .subscribe(
+        ({ data }: any) => {
+          const response = data.clapProject;
+          const state = getState();
+          patchState({
+            projectFormRecord: {
+              ...state.projectFormRecord,
+              claps: response.project.claps,
+            },
+          });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+        }
+      );
+    if (!isLoggedIn) {
+      {
+        let projectsClapped = JSON.parse(
+          localStorage.getItem(localStorageKeys.PROJECTS_CLAPPED)
+        );
+        projectsClapped = projectsClapped?.length ? projectsClapped : [];
+        projectsClapped = JSON.stringify(projectsClapped.concat([id]));
+        localStorage.setItem(
+          localStorageKeys.PROJECTS_CLAPPED,
+          projectsClapped
+        );
+      }
     }
   }
 

@@ -15,6 +15,7 @@ import { ShowNotificationAction } from 'src/app/shared/state/notifications/notif
 import {
   Announcement,
   Institution,
+  PublicCourse,
   startingFetchParams,
   User,
 } from 'src/app/shared/common/models';
@@ -23,13 +24,16 @@ import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
 import {
   FetchNewsAction,
   FetchNextNewsAction,
+  FetchNextPublicCoursesAction,
   FetchNextPublicInstitutionsAction,
   FetchNextPublicMembersAction,
+  FetchPublicCoursesAction,
   FetchPublicInstitutionssAction,
   FetchPublicMembersAction,
   ForceRefetchNewsAction,
   GetMemberByUsernameAction,
   GetNewsAction,
+  GetPublicCourseAction,
   GetPublicInstitutionAction,
   ResetNewsProfileAction,
   ResetPublicHomePageListsAction,
@@ -98,6 +102,26 @@ export class PublicState {
     return state.newsRecord;
   }
 
+  @Selector()
+  static listPublicCourses(state: PublicStateModel): PublicCourse[] {
+    return state.courses;
+  }
+
+  @Selector()
+  static isFetchingPublicCourses(state: PublicStateModel): boolean {
+    return state.isFetchingCourses;
+  }
+
+  @Selector()
+  static getPublicCourseRecord(state: PublicStateModel): PublicCourse {
+    return state.courseRecord;
+  }
+
+  @Selector()
+  static getIsFetchingPublicCourseRecord(state: PublicStateModel): boolean {
+    return state.isFetchingCourseRecord;
+  }
+
   @Action(FetchNextPublicMembersAction)
   fetchNextPublicMembers({ getState }: StateContext<PublicStateModel>) {
     const state = getState();
@@ -163,12 +187,12 @@ export class PublicState {
     };
 
     this.apollo
-      .watchQuery({
+      .query({
         query: PUBLIC_QUERIES.GET_PUBLIC_USERS,
         variables,
         fetchPolicy: 'cache-first',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           state = getState();
           const response = data.publicUsers.records;
@@ -215,12 +239,12 @@ export class PublicState {
     const { username } = payload;
     patchState({ isFetchingFormRecord: true });
     this.apollo
-      .watchQuery({
+      .query({
         query: PUBLIC_QUERIES.GET_USER_BY_USERNAME,
         variables: { username },
         fetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.userByUsername;
           patchState({
@@ -314,12 +338,12 @@ export class PublicState {
     };
 
     this.apollo
-      .watchQuery({
+      .query({
         query: PUBLIC_QUERIES.GET_PUBLIC_INSTITUTIONS,
         variables,
         fetchPolicy: 'cache-first',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           state = getState();
           const response = data.publicInstitutions.records;
@@ -365,13 +389,12 @@ export class PublicState {
     const { code } = payload;
     patchState({ isFetchingFormRecord: true });
     this.apollo
-      .watchQuery({
+      .query({
         query: PUBLIC_QUERIES.GET_PUBLIC_INSTITUTION,
         variables: { code },
         fetchPolicy: 'network-only',
-        nextFetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.publicInstitution;
           patchState({
@@ -392,13 +415,10 @@ export class PublicState {
   }
 
   @Action(ForceRefetchNewsAction)
-  forceRefetchAnnouncements({
-    getState,
-    patchState,
-  }: StateContext<PublicStateModel>) {
+  forceRefetchNews({ getState, patchState }: StateContext<PublicStateModel>) {
     const state = getState();
     let previousFetchParams =
-      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+      state.fetchNewsParamObjects[state.fetchNewsParamObjects.length - 1];
     previousFetchParams = previousFetchParams
       ? previousFetchParams
       : startingFetchParams;
@@ -416,11 +436,11 @@ export class PublicState {
   }
 
   @Action(FetchNextNewsAction)
-  fetchNextAnnouncements({ getState }: StateContext<PublicStateModel>) {
+  fetchNextNews({ getState }: StateContext<PublicStateModel>) {
     const state = getState();
     const lastPageNumber = state.lastNewsPage;
     let previousFetchParams =
-      state.fetchParamObjects[state.fetchParamObjects.length - 1];
+      state.fetchNewsParamObjects[state.fetchNewsParamObjects.length - 1];
     previousFetchParams = previousFetchParams
       ? previousFetchParams
       : startingFetchParams;
@@ -448,10 +468,10 @@ export class PublicState {
   ) {
     let { searchParams } = payload;
     const state = getState();
-    const { fetchPolicy, fetchParamObjects } = state;
+    const { fetchPolicy, fetchNewsParamObjects } = state;
     const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({
-      fetchParamObjects,
+      fetchParamObjects: fetchNewsParamObjects,
       newPageNumber: pageNumber,
       newPageSize: pageSize,
       newSearchQuery: searchQuery,
@@ -470,12 +490,12 @@ export class PublicState {
       })
     );
     this.apollo
-      .watchQuery({
+      .query({
         query: PUBLIC_QUERIES.GET_PUBLIC_NEWS,
         variables,
         fetchPolicy: 'cache-first',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           this.store.dispatch(
             new ToggleLoadingScreen({
@@ -498,7 +518,9 @@ export class PublicState {
             lastNewsPage,
             news,
             paginatedNews,
-            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
+            fetchNewsParamObjects: state.fetchNewsParamObjects.concat([
+              newFetchParams,
+            ]),
             isFetchingNews: false,
           });
         },
@@ -529,7 +551,6 @@ export class PublicState {
         .subscribe((result: any) => {
           const response = result?.data?.notifyAnnouncement;
           if (response) {
-            console.log('received a new result => ', { result });
             const state = getState();
             const method = response.method;
             const announcement = result?.data?.notifyAnnouncement?.announcement;
@@ -557,14 +578,13 @@ export class PublicState {
     const { id } = payload;
     patchState({ isFetchingNews: true });
     const query = PUBLIC_QUERIES.GET_PUBLIC_NEWS_ITEM;
-    console.log('Making request for public news item ');
     this.apollo
-      .watchQuery({
+      .query({
         query,
         variables: { id },
-        fetchPolicy: 'cache-first',
+        fetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.publicAnnouncement;
           patchState({
@@ -590,6 +610,145 @@ export class PublicState {
       isFetchingNews: false,
       newsRecord: defaultPublicState.newsRecord,
     });
+  }
+
+  @Action(FetchNextPublicCoursesAction)
+  fetchNextPublicCourses({ getState }: StateContext<PublicStateModel>) {
+    const state = getState();
+    const lastPageNumber = state.lastPagePublicMembers;
+    let previousFetchParams =
+      state.fetchMembersParamObjects[state.fetchMembersParamObjects.length - 1];
+    previousFetchParams = previousFetchParams
+      ? previousFetchParams
+      : startingFetchParams;
+    const pageNumber = previousFetchParams.currentPage + 1;
+    const newSearchParams: SearchParams = {
+      pageNumber,
+      pageSize: previousFetchParams.pageSize,
+      searchQuery: previousFetchParams.searchQuery,
+      columnFilters: previousFetchParams.columnFilters,
+    };
+    if (
+      !lastPageNumber ||
+      (lastPageNumber != null && pageNumber <= lastPageNumber)
+    ) {
+      this.store.dispatch(
+        new FetchPublicCoursesAction({ searchParams: newSearchParams })
+      );
+    }
+  }
+
+  @Action(FetchPublicCoursesAction)
+  fetchPublicCourses(
+    { getState, patchState }: StateContext<PublicStateModel>,
+    { payload }: FetchPublicMembersAction
+  ) {
+    let state = getState();
+    const { searchParams } = payload;
+    const { fetchCoursesParamObjects } = state;
+    const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
+    let newFetchParams = updateFetchParams({
+      fetchParamObjects: fetchCoursesParamObjects,
+      newPageNumber: pageNumber,
+      newPageSize: pageSize,
+      newSearchQuery: searchQuery,
+      newColumnFilters: columnFilters,
+    });
+    if (
+      columnFiltersChanged({
+        fetchParamObjects: fetchCoursesParamObjects,
+        newFetchParams,
+      })
+    ) {
+      patchState({
+        courses: defaultPublicState.courses,
+        paginatedPublicCourses: defaultPublicState.paginatedPublicCourses,
+        lastPagePublicCourses: defaultPublicState.lastPagePublicCourses,
+      });
+    }
+    patchState({ isFetchingCourses: true });
+    const variables = {
+      searchField: searchQuery,
+      limit: newFetchParams.pageSize,
+      offset: newFetchParams.offset,
+    };
+
+    this.apollo
+      .query({
+        query: PUBLIC_QUERIES.GET_PUBLIC_COURSES,
+        variables,
+        fetchPolicy: 'cache-first',
+      })
+      .subscribe(
+        ({ data }: any) => {
+          state = getState();
+          const response = data.publicCourses.records;
+          newFetchParams = { ...newFetchParams };
+          let paginatedPublicCourses = state.paginatedPublicCourses;
+          paginatedPublicCourses = {
+            ...paginatedPublicCourses,
+            [pageNumber]: response,
+          };
+          let courses = convertPaginatedListToNormalList(
+            paginatedPublicCourses
+          );
+          let lastPagePublicCourses = null;
+          if (response.length < newFetchParams.pageSize) {
+            lastPagePublicCourses = newFetchParams.currentPage;
+          }
+          patchState({
+            courses,
+            paginatedPublicCourses,
+            lastPagePublicCourses,
+            fetchCoursesParamObjects: state.fetchCoursesParamObjects.concat([
+              newFetchParams,
+            ]),
+            isFetchingCourses: false,
+          });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetchingCourses: false });
+        }
+      );
+  }
+
+  @Action(GetPublicCourseAction)
+  getPublicCourse(
+    { patchState }: StateContext<PublicStateModel>,
+    { payload }: GetPublicCourseAction
+  ) {
+    const { id } = payload;
+    patchState({ isFetchingCourseRecord: true });
+    this.apollo
+      .query({
+        query: PUBLIC_QUERIES.GET_PUBLIC_COURSE_ITEM,
+        variables: { id },
+        fetchPolicy: 'network-only',
+      })
+      .subscribe(
+        ({ data }: any) => {
+          const response = data.publicCourse;
+          patchState({
+            courseRecord: response,
+            isFetchingCourseRecord: false,
+          });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetchingCourseRecord: false });
+        }
+      );
   }
 
   // *********************************

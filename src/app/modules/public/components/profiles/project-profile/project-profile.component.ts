@@ -23,11 +23,14 @@ import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { clipLongText, parseDateTime } from 'src/app/shared/common/functions';
 import { ProjectState } from 'src/app/modules/dashboard/modules/project/state/project.state';
 import {
+  ClapProjectAction,
   DeleteProjectAction,
   GetProjectAction,
   ResetProjectFormAction,
 } from 'src/app/modules/dashboard/modules/project/state/project.actions';
 import { generateMemberProfileLink } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.model';
+import { AuthStateModel } from 'src/app/modules/auth/state/auth.model';
+import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 
 @Component({
   selector: 'app-project-profile',
@@ -50,6 +53,17 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
   currentMember: CurrentMember;
   projectDoesNotExist: boolean;
   memberRows: any[] = [];
+  projectViewed: boolean = false;
+  projectClapped: boolean = false;
+
+  @Select(AuthState.projectsClapped)
+  projectsClapped$: Observable<string[]>;
+  projectsClapped: string[] = [];
+  isLoggedIn: boolean = false;
+
+  @Select(AuthState)
+  authState$: Observable<AuthStateModel>;
+
   constructor(
     public dialog: MatDialog,
     private store: Store,
@@ -65,6 +79,11 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
       } else {
         this.projectDoesNotExist = false;
       }
+    });
+
+    this.authState$.subscribe((state) => {
+      this.projectsClapped = state.currentMember.projectsClapped;
+      this.isLoggedIn = state.isLoggedIn;
     });
   }
 
@@ -145,6 +164,46 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  projectLinkClicked() {
+    this.projectViewed = true;
+  }
+
+  clapProject() {
+    if (this.projectViewed && !this.projectClapped) {
+      this.store.dispatch(
+        new ClapProjectAction({
+          id: this.project.id,
+          isLoggedIn: this.isLoggedIn,
+        })
+      );
+      this.projectClapped = true;
+    } else {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message: this.projectClapButtonTooltip(this.project.id),
+          action: 'warning',
+        })
+      );
+    }
+  }
+
+  clapButtonClass(id) {
+    return this.projectsClapped?.includes(id) || this.projectClapped
+      ? 'project-clap-button-clapped'
+      : 'project-clap-button-unclapped';
+  }
+
+  projectClapButtonTooltip(id): string {
+    let tooltip = 'Please review the project before being able to applaud it';
+    if (this.projectsClapped?.includes(id) || this.projectClapped) {
+      tooltip = 'You have already applauded this project';
+    } else if (this.projectViewed) {
+      tooltip = 'Applaud this project';
+    }
+    return tooltip;
+  }
+
   deleteProject() {
     this.store.dispatch(new DeleteProjectAction({ id: this.project.id }));
   }

@@ -145,12 +145,12 @@ export class MemberState {
     };
 
     this.apollo
-      .watchQuery({
+      .query({
         query: USER_QUERIES.GET_USERS,
         variables,
-        fetchPolicy,
+        // fetchPolicy,
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.users.records;
           const totalCount = data.users.total ? data.users.total : 0;
@@ -208,13 +208,12 @@ export class MemberState {
     const { id } = payload;
     patchState({ isFetching: true });
     this.apollo
-      .watchQuery({
+      .query({
         query: USER_QUERIES.GET_USER,
         variables: { id },
         fetchPolicy: 'network-only',
-        nextFetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.member;
           patchState({ memberFormRecord: response, isFetching: false });

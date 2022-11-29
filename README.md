@@ -55,3 +55,4 @@ The following instructions assumes that you are attempting to setup the project 
 ## Useful Links
 
 1. [Setup Docker for an Angular application](https://mherman.org/blog/dockerizing-an-angular-app/)
+

@@ -214,13 +214,12 @@ export class ExerciseSubmissionState {
     ) {
       patchState({ isFetchingSubmissionHistory: true, submissionHistory: [] });
       this.apollo
-        .watchQuery({
+        .query({
           query: EXERCISE_SUBMISSION_QUERIES.GET_SUBMISSION_HISTORY,
           variables,
           fetchPolicy: 'network-only',
-          nextFetchPolicy: 'network-only',
         })
-        .valueChanges.subscribe(
+        .subscribe(
           ({ data }: any) => {
             const response = data.submissionHistory;
 
@@ -310,13 +309,12 @@ export class ExerciseSubmissionState {
         })
       );
       this.apollo
-        .watchQuery({
+        .query({
           query: EXERCISE_SUBMISSION_QUERIES.GET_EXERCISE_SUBMISSION_GROUPS,
           variables,
           fetchPolicy: 'network-only',
-          nextFetchPolicy: 'network-only',
         })
-        .valueChanges.subscribe(
+        .subscribe(
           ({ data }: any) => {
             this.store.dispatch(
               new ToggleLoadingScreen({
@@ -444,13 +442,12 @@ export class ExerciseSubmissionState {
       })
     );
     this.apollo
-      .watchQuery({
+      .query({
         query: EXERCISE_SUBMISSION_QUERIES.GET_EXERCISE_SUBMISSIONS,
         variables,
         fetchPolicy: 'network-only',
-        nextFetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           this.store.dispatch(
             new ToggleLoadingScreen({
@@ -533,13 +530,12 @@ export class ExerciseSubmissionState {
     const { id } = payload;
     patchState({ isFetching: true });
     this.apollo
-      .watchQuery({
+      .query({
         query: EXERCISE_SUBMISSION_QUERIES.GET_EXERCISE_SUBMISSION,
         variables: { id },
         fetchPolicy: 'network-only',
-        nextFetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.exerciseSubmission;
           patchState({

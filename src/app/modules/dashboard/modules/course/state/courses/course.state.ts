@@ -178,12 +178,12 @@ export class CourseState {
       })
     );
     this.apollo
-      .watchQuery({
+      .query({
         query: COURSE_QUERIES.GET_COURSES,
         variables,
-        fetchPolicy,
+        // fetchPolicy,
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           this.store.dispatch(
             new ToggleLoadingScreen({
@@ -261,13 +261,12 @@ export class CourseState {
       ? COURSE_QUERIES.GET_COURSE_FORM_DETAILS
       : COURSE_QUERIES.GET_COURSE_PROFILE;
     this.apollo
-      .watchQuery({
+      .query({
         query,
         variables: { id },
         fetchPolicy: 'network-only',
-        nextFetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.course;
           patchState({ courseFormRecord: response, isFetching: false });

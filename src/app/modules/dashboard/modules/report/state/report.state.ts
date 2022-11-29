@@ -166,12 +166,12 @@ export class ReportState {
     patchState({ isFetching: true });
 
     this.apollo
-      .watchQuery({
+      .query({
         query: REPORT_QUERIES.GET_REPORTS,
         variables,
-        fetchPolicy,
+        // fetchPolicy,
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.reports.records;
           const totalCount = data.reports?.total;
@@ -230,13 +230,12 @@ export class ReportState {
     const { id } = payload;
     patchState({ isFetching: true });
     this.apollo
-      .watchQuery({
+      .query({
         query: REPORT_QUERIES.GET_REPORT,
         variables: { id },
         fetchPolicy: 'network-only',
-        nextFetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.report;
           patchState({ reportFormRecord: response, isFetching: false });

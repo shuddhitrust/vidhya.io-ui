@@ -1,3 +1,7 @@
+#home-page {
+  height: calc(100vh - 200px);
+}
+
 h1 {
   // background: rgba(0, 0, 0, 0.1);
   color: rgba(0, 0, 0, 1);
@@ -6,30 +10,108 @@ h1 {
   text-align: center;
 }
 
-h2 {
-  text-align: center;
+h3 {
+  font-weight: bold;
+}
+
+small {
+  font-weight: bold;
+  font-size: 0.8em;
+}
+
+.project-clap-button-clapped {
+  color: white;
+  background: var(--shuddhi-color);
+}
+
+.project-clap-button-unclapped {
+  color: var(--shuddhi-color);
+  background: white;
+}
+
+.project-sort-button-container {
+  float: right;
+  margin-right: 20px;
+}
+
+.project-sort-button-container > button {
+  margin-left: 5px;
+}
+
+.active-sort-button {
+  background: var(--shuddhi-color);
+  color: white;
+}
+
+.inactive-sort-button {
+  background: white;
+  color: var(--shuddhi-color);
+}
+
+.news-date-block {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+
+.scroll-container {
+  height: calc(100vh - 190px);
+}
+
+.scroll-feed {
+  overflow: auto;
+  height: 95%;
+}
+
+/* Float four columns side by side */
+.column {
+  float: left;
+  width: 50%;
+  padding: 0 5px;
+  margin-bottom: 50px;
+}
+
+/* Remove extra left and right margins, due to padding in columns */
+.row {
+  margin: 0 -5px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Responsive columns - one column layout (vertical) on small screens */
+@media screen and (max-width: 600px) {
+  .column {
+    width: 100%;
+    display: block;
+    margin-bottom: 10px;
+    height: 95vh;
+    overflow-y: scroll;
+  }
 }
 
 #homeCarousel-wrapper {
-  width: 100%;
-  //   padding: 20px;
-  //   background: rgba(0, 0, 0);
-  // background: rgba(0, 153, 255, .7);
+  padding: 10px;
+}
+
+.home-project-feed {
+  float: right;
+  height: 100%;
 }
 
 #homeCarousel {
-  max-width: 95vw;
-  height: auto;
   display: block;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .carousel-control-prev,
 .carousel-control-next {
   //   background: rgba(255, 255, 255, 0.2);
   background: rgba(0, 0, 0, 0.2);
-  height: 50%;
+  height: 30px;
   margin-top: 75px;
 }
 
@@ -57,30 +139,6 @@ h2 {
   left: 10px;
   font-size: 2em;
 }
-.date h2 {
-  font-weight: bolder;
-}
-.image-text {
-  background-color: rgba(0, 0, 0, 0.3);
-  position: absolute;
-  text-align: left;
-  font-size: 1.5em;
-  padding: 20px;
-  color: white;
-  font-weight: bold;
-}
-
-.image-text > h1,
-.image-text > h2 {
-  color: white;
-}
-
-.caption {
-  bottom: 5px;
-  left: 10px;
-  width: 100%;
-  font-style: italic;
-}
 
 #hero-block {
   background: rgba(0, 0, 0, 0.05);
@@ -97,21 +155,17 @@ h2 {
   width: 50%;
 }
 
-.scroll-feed {
-  overflow: auto;
-  height: calc(100vh - 150px);
-}
-
 .cards {
   display: grid;
   margin: 0px auto;
   padding: 5px;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  grid-gap: 20px;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 5px;
   align-items: stretch;
   width: 95vw;
-  margin-bottom: 50px;
+  margin-bottom: 10px;
 }
+
 .card {
   cursor: pointer;
 }
@@ -131,6 +185,29 @@ h2 {
 }
 
 @media screen and (max-width: 768px) {
+  .column {
+    margin-bottom: 100px;
+  }
+
+  .scroll-feed {
+    height: auto;
+  }
+
+  #home-page {
+    height: 100%;
+  }
+
+  #homeCarousel {
+    max-width: 95vw;
+    height: auto;
+    display: block;
+    float: none;
+  }
+  #home-project-feed {
+    width: 95vw;
+    display: block;
+    float: none;
+  }
   #hero-block {
     width: 100%;
     margin-top: 20px;
@@ -142,12 +219,5 @@ h2 {
   }
   .cards {
     grid-template-columns: 1fr;
-  }
-
-  .image-text {
-    position: static;
-    display: block;
-    font-size: 1em;
-    padding: 10px;
   }
 }

@@ -288,6 +288,17 @@ export const PROJECT_MUTATIONS = {
       }
     }
   `,
+  CLAP_PROJECT: gql`
+    mutation clapProject($id: ID!) {
+      clapProject(id: $id) {
+        ok
+        project {
+          id
+          claps
+        }
+      }
+    }
+  `,
   DELETE_PROJECT: gql`
     mutation deleteProject($id: ID!) {
       deleteProject(id: $id) {
@@ -853,6 +864,20 @@ export const AUTH_MUTATIONS = {
       }
     }
   `,
+  GENERATE_EMAIL_OTP: gql`
+    mutation generateEmailOtp($email: String!) {
+      generateEmailOtp(email: $email) {
+        ok
+      }
+    }
+  `,
+  VERIFY_EMAIL_OTP: gql`
+    mutation verifyEmailOtp($email: String!, $otp: String!) {
+      verifyEmailOtp(email: $email, otp: $otp) {
+        ok
+      }
+    }
+  `,
   ADD_INVITECODE: gql`
     mutation addInvitecode($invitecode: String!, $email: String!) {
       addInvitecode(invitecode: $invitecode, email: $email) {
@@ -986,6 +1011,16 @@ export const AUTH_MUTATIONS = {
         errors
         token
         refreshToken
+      }
+    }
+  `,
+};
+
+export const ADMIN_MUTATIONS = {
+  CLEAR_SERVER_CACHE: gql`
+    mutation clearServerCache {
+      clearServerCache {
+        ok
       }
     }
   `,

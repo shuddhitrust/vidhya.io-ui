@@ -52,7 +52,7 @@
           <mat-label>Status</mat-label>
           <mat-select
             [(ngModel)]="submissionStatusFilter"
-            (ngModelChange)="fetchGradingGroups()"
+            (ngModelChange)="submissionStatusFilterChanged()"
           >
             <mat-option
               *ngFor="let status of exerciseSubmissionStatusOptions"
@@ -116,6 +116,14 @@
           nz-tooltip="This will automatically grade all submitted work that are eligible for automatic grading. Backup database before proceeding!"
         >
           Auto Grade
+        </button>
+                <button
+          mat-menu-item
+          (click)="clearServerSideCache()"
+          nzTooltipPlacement="left"
+          nz-tooltip="This will clear server side caching so that all requests are stored freshly."
+        >
+          Clear Server Cache
         </button>
       </mat-menu>
       <button

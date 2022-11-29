@@ -30,7 +30,10 @@
         Published here on
         {{ parseDate(project.createdAt) }} by
         <a (click)="authorLink()"
-          ><b>{{ project.author.name }}</b></a
+          ><b
+            >{{ project.author.name }}, {{ project.author.institution.name }},
+            {{ project.author.institution.location }}</b
+          ></a
         >
       </small>
       <hr />
@@ -40,10 +43,21 @@
           alt="project link"
           target="_blank"
           rel="noopener noreferrer nofollow"
+          (click)="projectLinkClicked()"
           >{{ project.link }}</a
         >
       </p>
       <p>{{ project?.description }}</p>
+
+      <button
+        [nz-tooltip]="projectClapButtonTooltip(project.id)"
+        mat-mini-fab
+        (click)="clapProject()"
+        [class]="clapButtonClass(project.id)"
+      >
+        <mat-icon>thumb_up_alt</mat-icon>
+      </button>
+      <nz-badge [nzCount]="project.claps" nzStandalone> </nz-badge>
 
       <button
         nz-tooltip="Report an issue with this project"

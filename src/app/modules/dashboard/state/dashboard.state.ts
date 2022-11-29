@@ -6,10 +6,11 @@ import {
 } from './dashboard.model';
 
 import { Injectable } from '@angular/core';
-import { GetUnreadCountAction } from './dashboard.actions';
+import { ClearServerCacheAction, GetUnreadCountAction } from './dashboard.actions';
 import { Apollo } from 'apollo-angular';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { DASHBOARD_MUTATIONS } from 'src/app/shared/api/graphql/queries.graphql';
+import { ADMIN_MUTATIONS } from 'src/app/shared/api/graphql/mutations.graphql';
 
 @State<DashboardStateModel>({
   name: 'dashboardState',
@@ -41,6 +42,28 @@ export class DashboardState {
             unreadAnnouncements: response.announcements,
             unreadAssignments: response.assignments,
           });
+        },
+        (error) => {
+          console.error('There was an error ', error);
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: 'There was an error!',
+              action: 'error',
+            })
+          );
+        }
+      );
+  }
+
+  @Action(ClearServerCacheAction)
+  clearServerCache() {
+    this.apollo
+      .mutate({
+        mutation: ADMIN_MUTATIONS.CLEAR_SERVER_CACHE,
+      })
+      .subscribe(
+        ({ data }: any) => {
+          console.log({data})
         },
         (error) => {
           console.error('There was an error ', error);

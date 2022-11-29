@@ -2,6 +2,7 @@ import { State, Action, Selector, StateContext, Store } from '@ngxs/store';
 import { defaultOptionsState, OptionsStateModel } from './options.model';
 import {
   FetchAdminGroupOptions,
+  FetchGraders,
   FetchMemberOptionsByInstitution,
 } from './options.actions';
 import { Injectable } from '@angular/core';
@@ -13,6 +14,7 @@ import {
 import { GROUP_QUERIES, USER_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
 import { ShowNotificationAction } from '../notifications/notification.actions';
+import { USER_ROLES_NAMES } from '../../common/constants';
 
 @State<OptionsStateModel>({
   name: 'optionsState',
@@ -32,8 +34,22 @@ export class OptionsState {
   }
 
   @Selector()
+  static listGraders(state: OptionsStateModel): MatSelectOption[] {
+    const options = state.graders.map((m) => {
+      return { value: m.id, label: `${m.name} (${m.role?.name})` };
+    });
+
+    return options;
+  }
+
+  @Selector()
   static getIsFetchingMembersByInstitution(state: OptionsStateModel): boolean {
     return state.isFetchingMembersByInstitution;
+  }
+
+  @Selector()
+  static getIsFetchingGraders(state: OptionsStateModel): boolean {
+    return state.isFetchingGraders;
   }
 
   @Selector()
@@ -78,16 +94,47 @@ export class OptionsState {
     };
 
     this.apollo
-      .watchQuery({
+      .query({
         query: USER_QUERIES.GET_USERS_OPTIONS,
         variables,
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           patchState({ isFetchingMembersByInstitution: false });
           const response = data.users.records;
           patchState({
             membersByInstitution: response,
+          });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+        }
+      );
+  }
+
+  @Action(FetchGraders)
+  fetchGraders({ patchState }: StateContext<OptionsStateModel>) {
+    patchState({ isFetchingGraders: true });
+    const variables = {
+      roles: [USER_ROLES_NAMES.GRADER, USER_ROLES_NAMES.SUPER_ADMIN],
+    };
+
+    this.apollo
+      .query({
+        query: USER_QUERIES.GET_USERS_OPTIONS,
+        variables,
+      })
+      .subscribe(
+        ({ data }: any) => {
+          patchState({ isFetchingGraders: false });
+          const response = data.users.records;
+          patchState({
+            graders: response,
           });
         },
         (error) => {
@@ -111,10 +158,10 @@ export class OptionsState {
     isFetchingAdminGroups = true;
     patchState({ isFetchingAdminGroups });
     this.apollo
-      .watchQuery({
+      .query({
         query: GROUP_QUERIES.GET_ADMIN_GROUP_OPTIONS,
       })
-      .valueChanges.subscribe(
+      .subscribe(
         (res: any) => {
           isFetchingAdminGroups = false;
           adminGroups = res?.data?.adminGroups;

@@ -122,12 +122,12 @@ export class CourseSectionState {
     patchState({ isFetching: true });
 
     this.apollo
-      .watchQuery({
+      .query({
         query: COURSE_SECTION_QUERIES.GET_COURSE_SECTIONS,
         variables,
-        fetchPolicy,
+        // fetchPolicy,
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.courseSections;
           newFetchParams = { ...newFetchParams };
@@ -209,13 +209,12 @@ export class CourseSectionState {
     const { id } = payload;
     patchState({ isFetching: true });
     this.apollo
-      .watchQuery({
+      .query({
         query: COURSE_SECTION_QUERIES.GET_COURSE_SECTION,
         variables: { id },
         fetchPolicy: 'network-only',
-        nextFetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.courseSection;
           patchState({ courseSectionFormRecord: response, isFetching: false });

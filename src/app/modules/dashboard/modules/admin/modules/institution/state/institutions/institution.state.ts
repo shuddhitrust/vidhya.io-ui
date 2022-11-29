@@ -149,12 +149,12 @@ export class InstitutionState {
     };
 
     this.apollo
-      .watchQuery({
+      .query({
         query: INSTITUTION_QUERIES.GET_INSTITUTIONS,
         variables,
-        fetchPolicy,
+        // fetchPolicy,
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.institutions.records;
           const totalCount = data.institutions.total
@@ -219,13 +219,12 @@ export class InstitutionState {
     const { id } = payload;
     patchState({ isFetching: true });
     this.apollo
-      .watchQuery({
+      .query({
         query: INSTITUTION_QUERIES.GET_INSTITUTION,
         variables: { id },
         fetchPolicy: 'network-only',
-        nextFetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.institution;
           patchState({ institutionFormRecord: response, isFetching: false });

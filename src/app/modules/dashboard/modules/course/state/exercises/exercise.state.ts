@@ -190,12 +190,12 @@ export class ExerciseState {
     patchState({ isFetching: true });
     if (variables.chapterId) {
       this.apollo
-        .watchQuery({
+        .query({
           query: EXERCISE_QUERIES.GET_EXERCISES,
           variables,
-          fetchPolicy,
+          // fetchPolicy,
         })
-        .valueChanges.subscribe(
+        .subscribe(
           ({ data }: any) => {
             const response = data.exercises;
             newFetchParams = { ...newFetchParams };
@@ -285,13 +285,12 @@ export class ExerciseState {
     const { id } = payload;
     patchState({ isFetching: true });
     this.apollo
-      .watchQuery({
+      .query({
         query: EXERCISE_QUERIES.GET_EXERCISE,
         variables: { id },
         fetchPolicy: 'network-only',
-        nextFetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.exercise;
           patchState({ exerciseFormRecord: response, isFetching: false });

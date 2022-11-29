@@ -174,12 +174,12 @@ export class GroupState {
       })
     );
     this.apollo
-      .watchQuery({
+      .query({
         query: GROUP_QUERIES.GET_GROUPS,
         variables,
-        fetchPolicy,
+        // fetchPolicy,
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           this.store.dispatch(
             new ToggleLoadingScreen({
@@ -255,13 +255,12 @@ export class GroupState {
 
     patchState({ isFetching: true });
     this.apollo
-      .watchQuery({
+      .query({
         query: GROUP_QUERIES.GET_GROUP,
         variables: { id },
         fetchPolicy: 'network-only',
-        nextFetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.group;
           patchState({ groupFormRecord: response, isFetching: false });

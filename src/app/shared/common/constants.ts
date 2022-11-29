@@ -16,6 +16,7 @@ export const localStorageKeys = {
   AUTH_REFRESH_TOKEN_KEY: 'AUTH_REFRESH_TOKEN',
   EXPIRATION_KEY: 'EXPIRES_AT',
   REMEMBER_ME_KEY: 'REMEMBER_ME',
+  PROJECTS_CLAPPED: 'PROJECTS_CLAPPED',
 };
 
 export const defaultLogos = {
@@ -31,8 +32,9 @@ export const USER_ROLES_NAMES = {
   SUPER_ADMIN: 'Super Admin',
   INSTITUTION_ADMIN: 'Institution Admin',
   CLASS_ADMIN: 'Class Admin',
-  CLASS_ADMIN_LEARNER: 'Class Admin Learner',
   LEARNER: 'Learner',
+  CLASS_ADMIN_LEARNER: 'Class Admin Learner',
+  GRADER: 'Grader',
 };
 
 export const ADMIN_SECTION_LABELS = {
@@ -71,3 +73,5 @@ export function markedOptionsFactory(): MarkedOptions {
     smartypants: false,
   };
 }
+
+export const SORT_BY_OPTIONS = { NEW: 'NEW', TOP: 'TOP' };

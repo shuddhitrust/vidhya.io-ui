@@ -168,12 +168,12 @@ export class ExerciseKeyState {
     patchState({ isFetching: true });
 
     this.apollo
-      .watchQuery({
+      .query({
         query: EXERCISE_KEY_QUERIES.GET_EXERCISE_KEYS,
         variables,
-        fetchPolicy,
+        // fetchPolicy,
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.exerciseKeys;
           newFetchParams = { ...newFetchParams };
@@ -248,13 +248,12 @@ export class ExerciseKeyState {
     const { exerciseId } = payload;
     patchState({ isFetching: true });
     this.apollo
-      .watchQuery({
+      .query({
         query: EXERCISE_KEY_QUERIES.GET_EXERCISE_KEY,
         variables: { exerciseId },
         fetchPolicy: 'network-only',
-        nextFetchPolicy: 'network-only',
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           const response = data.exerciseKey;
           patchState({ exerciseKeyFormRecord: response, isFetching: false });

@@ -12,6 +12,9 @@ export const AUTH_QUERIES = {
         title
         bio
         email
+        projectsClapped {
+          id
+        }
         institution {
           id
           name
@@ -172,6 +175,51 @@ export const PUBLIC_QUERIES = {
         message
         seen
         createdAt
+      }
+    }
+  `,
+  GET_PUBLIC_COURSE_ITEM: gql`
+    query publicCourse($id: ID!) {
+      publicCourse(id: $id) {
+        id
+        title
+        video
+        blurb
+        description
+        instructor {
+          username
+          name
+        }
+        mandatoryPrerequisites {
+          id
+          title
+        }
+        recommendedPrerequisites {
+          id
+          title
+        }
+        startDate
+        endDate
+        creditHours
+        createdAt
+        updatedAt
+      }
+    }
+  `,
+  GET_PUBLIC_COURSES: gql`
+    query publicCourses($searchField: String, $limit: Int, $offset: Int) {
+      publicCourses(searchField: $searchField, limit: $limit, offset: $offset) {
+        records {
+          id
+          index
+          title
+          blurb
+          instructor {
+            id
+            name
+          }
+        }
+        total
       }
     }
   `,
@@ -479,6 +527,10 @@ export const PROJECT_QUERIES = {
           id
           name
           username
+          institution {
+            name
+            location
+          }
         }
         course {
           id
@@ -487,6 +539,7 @@ export const PROJECT_QUERIES = {
         link
         public
         description
+        claps
         createdAt
       }
     }
@@ -507,6 +560,7 @@ export const PROJECT_QUERIES = {
         link
         public
         description
+        claps
         createdAt
       }
     }
@@ -515,11 +569,13 @@ export const PROJECT_QUERIES = {
     query projects(
       $searchField: String
       $authorId: ID
+      $sortBy: String
       $limit: Int
       $offset: Int
     ) {
       projects(
         searchField: $searchField
+        sortBy: $sortBy
         authorId: $authorId
         limit: $limit
         offset: $offset
@@ -529,9 +585,14 @@ export const PROJECT_QUERIES = {
         author {
           id
           name
+          institution {
+            name
+            location
+          }
         }
         link
         description
+        claps
         createdAt
       }
     }
@@ -631,9 +692,11 @@ export const COURSE_QUERIES = {
     query course($id: ID!) {
       course(id: $id) {
         id
+        index
         title
         blurb
         description
+        video
         instructor {
           id
           name
@@ -653,9 +716,11 @@ export const COURSE_QUERIES = {
     query course($id: ID!) {
       course(id: $id) {
         id
+        index
         title
         blurb
         description
+        video
         instructor {
           id
           name
@@ -668,6 +733,10 @@ export const COURSE_QUERIES = {
         passCompletionPercentage
         locked
         completed
+        graders {
+          id
+          name
+        }
         participants {
           id
           name
@@ -683,6 +752,7 @@ export const COURSE_QUERIES = {
     query courses($searchField: String, $limit: Int, $offset: Int) {
       courses(searchField: $searchField, limit: $limit, offset: $offset) {
         id
+        index
         title
         blurb
         instructor {

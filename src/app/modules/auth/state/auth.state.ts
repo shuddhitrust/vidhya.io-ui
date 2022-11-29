@@ -10,6 +10,7 @@ import {
   AuthStateModel,
   AuthStorageOptions,
   defaultAuthState,
+  getProjectsClappedFromLocalStorage,
 } from './auth.model';
 
 import { Injectable, OnInit } from '@angular/core';
@@ -36,6 +37,10 @@ import {
   SetAuthStorage,
   GetAuthStorage,
   UpdateTokenExpiry,
+  GenerateEmailOTPAction,
+  VerifyEmailOTPAction,
+  ResetEmailVerificationParamsAction,
+  UpdateProjectsClappedFromLocalStorageAction,
 } from './auth.actions';
 import { Apollo } from 'apollo-angular';
 
@@ -52,6 +57,8 @@ import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.action
 import { AUTH_MUTATIONS } from 'src/app/shared/api/graphql/mutations.graphql';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import {
+  clearAuthFromLocalStorage,
+  clearLocalStorage,
   constructPermissions,
   getErrorMessageFromGraphQLResponse,
 } from 'src/app/shared/common/functions';
@@ -92,7 +99,9 @@ export class AuthState {
     private store: Store,
     private apollo: Apollo,
     private router: Router
-  ) {}
+  ) {
+    this.store.dispatch(new UpdateProjectsClappedFromLocalStorageAction());
+  }
 
   /**
    * Creates a timeout method to call for refreshToken just a minute before
@@ -175,6 +184,11 @@ export class AuthState {
     return state.currentMember?.id;
   }
 
+  @Selector()
+  static projectsClapped(state: AuthStateModel): string[] {
+    return state.currentMember.projectsClapped;
+  }
+
   @Action(GetAuthStorage)
   getAuthStorage({ patchState }: StateContext<AuthStateModel>) {
     let remember = JSON.parse(
@@ -201,7 +215,7 @@ export class AuthState {
     if (remember) {
       sessionStorage.clear();
     } else {
-      localStorage.clear();
+      clearLocalStorage();
     }
     localStorage.setItem(
       localStorageKeys.REMEMBER_ME_KEY,
@@ -385,7 +399,8 @@ export class AuthState {
     );
     // Marking user as logged out
     patchState(defaultAuthState);
-    localStorage.clear();
+    console.log('Clearing localstorage from completeLogout');
+    clearAuthFromLocalStorage();
     sessionStorage.clear();
     this.store.dispatch(new SetAuthSessionAction());
   }
@@ -422,7 +437,7 @@ export class AuthState {
         })
       );
       patchState({ isFetchingCurrentMember: true });
-      this.apollo.watchQuery({ query: AUTH_QUERIES.ME }).valueChanges.subscribe(
+      this.apollo.query({ query: AUTH_QUERIES.ME }).subscribe(
         ({ data }: any) => {
           patchState({ isFetchingCurrentMember: false });
 
@@ -475,6 +490,7 @@ export class AuthState {
         name: user?.institution?.name,
       },
       membershipStatus: user?.membershipStatus,
+      projectsClapped: user?.projectsClapped.map((p: any) => p.id),
       role: {
         name: user?.role?.name,
         permissions,
@@ -951,6 +967,153 @@ export class AuthState {
     }
   }
 
+  @Action(ResetEmailVerificationParamsAction)
+  resetEmailVerificationParamsAction({
+    patchState,
+  }: StateContext<AuthStateModel>) {
+    patchState({
+      isEmailOTPGenerated: false,
+      isEmailVerified: false,
+      verificationEmail: null,
+    });
+  }
+
+  @Action(GenerateEmailOTPAction)
+  generateEmailOTPAction(
+    { getState, patchState }: StateContext<AuthStateModel>,
+    { payload }: GenerateEmailOTPAction
+  ) {
+    const state = getState();
+    const { form, formDirective } = payload;
+    let { isSubmittingForm } = state;
+    if (form.valid) {
+      isSubmittingForm = true;
+      const values = form.value;
+      patchState({ isSubmittingForm });
+      this.apollo
+        .mutate({
+          mutation: AUTH_MUTATIONS.GENERATE_EMAIL_OTP,
+          variables: {
+            email: values.email,
+          },
+        })
+        .subscribe(
+          ({ data }: any) => {
+            const response = data.generateEmailOtp;
+            isSubmittingForm = false;
+            patchState({ isSubmittingForm });
+
+            if (response.ok) {
+              patchState({
+                isEmailOTPGenerated: true,
+                verificationEmail: values.email,
+              });
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message:
+                    'Emailed verification code successfully. Please check your inbox.',
+                  action: 'success',
+                })
+              );
+            } else {
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message: getErrorMessageFromGraphQLResponse(response?.errors),
+                  action: 'error',
+                })
+              );
+            }
+          },
+          (error) => {
+            console.error('There was an error ', error);
+            isSubmittingForm = false;
+            patchState({ isSubmittingForm });
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: 'There was an error in submitting your form!',
+                action: 'error',
+              })
+            );
+          }
+        );
+    } else {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message:
+            'Please make sure there are no errors in the form before attempting to submit!',
+          action: 'error',
+        })
+      );
+    }
+  }
+
+  @Action(VerifyEmailOTPAction)
+  verifyEmailOTPAction(
+    { getState, patchState }: StateContext<AuthStateModel>,
+    { payload }: VerifyEmailOTPAction
+  ) {
+    const state = getState();
+    const { form, formDirective } = payload;
+    let { isSubmittingForm } = state;
+    if (form.valid) {
+      isSubmittingForm = true;
+      const values = form.value;
+      patchState({ isSubmittingForm });
+      this.apollo
+        .mutate({
+          mutation: AUTH_MUTATIONS.VERIFY_EMAIL_OTP,
+          variables: {
+            email: values.email,
+            otp: values.otp,
+          },
+        })
+        .subscribe(
+          ({ data }: any) => {
+            const response = data.verifyEmailOtp;
+            isSubmittingForm = false;
+            patchState({ isSubmittingForm });
+
+            if (response.ok) {
+              patchState({ isEmailVerified: true });
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message:
+                    'Your email has been verified successfully. You can now register for an account.',
+                  action: 'success',
+                })
+              );
+            } else {
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message: 'Incorrect OTP. Please enter the correct OTP',
+                  action: 'error',
+                })
+              );
+            }
+          },
+          (error) => {
+            console.error('There was an error ', error);
+            isSubmittingForm = false;
+            patchState({ isSubmittingForm });
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: 'There was an error in submitting your form!',
+                action: 'error',
+              })
+            );
+          }
+        );
+    } else {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message:
+            'Please make sure there are no errors in the form before attempting to submit!',
+          action: 'error',
+        })
+      );
+    }
+  }
+
   @Action(PasswordResetAction)
   passwordReset(
     { getState, patchState }: StateContext<AuthStateModel>,
@@ -1251,6 +1414,18 @@ export class AuthState {
   @Action(OpenLoginFormAction)
   openLogiinForm({ patchState }: StateContext<AuthStateModel>) {
     patchState({ closeLoginForm: false });
+  }
+
+  @Action(UpdateProjectsClappedFromLocalStorageAction)
+  getProjectsClappedFromLocalStorageAction({
+    getState,
+    patchState,
+  }: StateContext<AuthStateModel>) {
+    const state = getState();
+    const currentMember = state.currentMember;
+    const projectsClapped = getProjectsClappedFromLocalStorage();
+    const newCurrentMember = { ...currentMember, projectsClapped };
+    patchState({ currentMember: newCurrentMember });
   }
 }
 

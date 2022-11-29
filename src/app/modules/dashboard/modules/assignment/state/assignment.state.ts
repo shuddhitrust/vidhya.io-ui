@@ -144,12 +144,12 @@ export class AssignmentState {
       })
     );
     this.apollo
-      .watchQuery({
+      .query({
         query: ASSIGNMENT_QUERIES.GET_ASSIGNMENTS,
         variables,
-        fetchPolicy,
+        // fetchPolicy,
       })
-      .valueChanges.subscribe(
+      .subscribe(
         ({ data }: any) => {
           this.store.dispatch(
             new ToggleLoadingScreen({

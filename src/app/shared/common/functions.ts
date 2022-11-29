@@ -18,6 +18,7 @@ import {
   day,
   defaultSearchParams,
   hour,
+  localStorageKeys,
   minute,
   month,
   week,
@@ -598,4 +599,15 @@ export const SanitizeSubmissionRubricToServer = (submissions) => {
     return s;
   });
   return newSubmissions;
+};
+
+export const clearLocalStorage = () => {
+  console.log('clearing localStorage');
+  localStorage.clear();
+};
+
+export const clearAuthFromLocalStorage = () => {
+  localStorage.removeItem(localStorageKeys.AUTH_TOKEN_KEY);
+  localStorage.removeItem(localStorageKeys.AUTH_REFRESH_TOKEN_KEY);
+  localStorage.removeItem(localStorageKeys.EXPIRATION_KEY);
 };

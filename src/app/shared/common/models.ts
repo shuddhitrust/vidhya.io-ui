@@ -77,6 +77,7 @@ export type CurrentMember = {
   invitecode?: string;
   institution?: { id: number; name: string };
   membershipStatus: string;
+  projectsClapped: string[];
   role: { name?: string; permissions: UserPermissions };
   createdAt?: string;
   updatedAt?: string;
@@ -230,13 +231,15 @@ export type Institution = {
 
 export type Course = {
   id: number;
+  index: string;
   title: string;
-  index: number;
   blurb: string;
   description: string;
+  video?: string;
   instructor: any;
   institutions?: any[];
   participants?: any[];
+  graders?: any[];
   mandatoryPrerequisites?: any[];
   recommendedPrerequisites?: any[];
   startDate?: string;
@@ -249,6 +252,23 @@ export type Course = {
   completed?: boolean;
   completionStatus?: string;
   report?: Report;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type PublicCourse = {
+  id: number;
+  index: string;
+  title: string;
+  blurb: string;
+  description: string;
+  video?: string;
+  instructor: any;
+  mandatoryPrerequisites?: any[];
+  recommendedPrerequisites?: any[];
+  startDate?: string;
+  endDate?: string;
+  creditHours?: number;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -277,6 +297,8 @@ export type Project = {
   link: string;
   course: any;
   contributors?: any[];
+  claps: number;
+  clapsBy?: any[];
   public: boolean;
   createdAt?: string;
 };
