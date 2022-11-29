@@ -8,7 +8,7 @@
 //   websocket_graphql_endpoint: `${websocket_api_endpoint}/graphql/`,
 // };
 
-const base_url = 'vidhya-io-api.onrender.com';
+const base_url = 'vidhya-io-staging.herokuapp.com';
 
 const api_endpoint = `https://${base_url}`;
 const websocket_api_endpoint = `wss://${base_url}`;
