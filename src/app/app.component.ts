@@ -1,18 +1,20 @@
 import { Location } from '@angular/common';
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { GetAuthStorage } from './modules/auth/state/auth.actions';
 import { AuthState } from './modules/auth/state/auth.state';
 import { uiroutes } from './shared/common/ui-routes';
+import { filter } from 'rxjs/operators';
 
+declare var gtag: Function;
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent {
+export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   title = 'vidhya-ui';
   uiroutes = uiroutes;
   @Select(AuthState.getIsFullyAuthenticated)
@@ -20,6 +22,7 @@ export class AppComponent {
   @Select(AuthState.getFirstTimeSetup)
   firstTimeSetup$: Observable<boolean>;
   firstTimeSetup;
+  private routerSubscription: Subscription;
   constructor(
     private store: Store,
     private router: Router,
@@ -28,6 +31,20 @@ export class AppComponent {
     this.firstTimeSetup$.subscribe((val) => {
       this.firstTimeSetup = val;
     });
+  }
+
+  ngAfterViewInit(): void {
+    // subscribe to router events and send page views to Google Analytics
+    this.routerSubscription = this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        gtag('config', 'G-EN5L6B2N70', {
+          page_path: event.urlAfterRedirects,
+        });
+      });
+  }
+  ngOnDestroy(): void {
+    this.routerSubscription.unsubscribe();
   }
 
   currentRoute(): string {
@@ -47,6 +64,4 @@ export class AppComponent {
   checkAuthentication() {
     this.store.dispatch(new GetAuthStorage());
   }
-
-  ngOnDestroy() {}
 }
