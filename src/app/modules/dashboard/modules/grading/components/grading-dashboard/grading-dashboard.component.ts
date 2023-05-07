@@ -274,15 +274,20 @@ export class GradingDashboardComponent implements OnInit {
 
   submissionStatusFilterChanged() {
     // If we are showing the graded submissions, we need to inform the user that the results only show records from the past 60 days
-    if (this.submissionStatusFilter == exerciseSubmissionStatusTypes.graded && !this.searchQueryFilter) {
+    if (
+      this.submissionStatusFilter == exerciseSubmissionStatusTypes.graded &&
+      !this.searchQueryFilter
+    ) {
       this.store.dispatch(
         new ShowNotificationAction({
-          message: 'Graded submissions shown here are only from the past 60 days. To view older graded submissions, use a specific search query.',
+          message:
+            'Graded submissions shown here are only from the past 60 days. To view older graded submissions, use a specific search query.',
           action: 'warning',
-          autoClose: false
-        }))
+          autoClose: false,
+        })
+      );
     }
-    this.fetchGradingGroups()
+    this.fetchGradingGroups();
   }
 
   updateGradingGroupByFilter() {
@@ -503,18 +508,24 @@ export class GradingDashboardComponent implements OnInit {
   }
 
   showAnswerKey(exerciseSubmission) {
-    this.store.dispatch(
-      new GetExerciseKeyAction({ exerciseId: exerciseSubmission?.exercise.id })
-    );
+    if (
+      this.auth.authorizeResource(resources.EXERCISE_KEY, RESOURCE_ACTIONS.GET)
+    ) {
+      this.store.dispatch(
+        new GetExerciseKeyAction({
+          exerciseId: exerciseSubmission?.exercise.id,
+        })
+      );
 
-    const dialogRef = this.dialog.open(ExerciseKeyDialog, {
-      data: {
-        exerciseKeyRecord$: this.exerciseKeyRecord$,
-        isFetchingExerciseKey$: this.isFetchingExerciseKey$,
-      },
-    });
+      const dialogRef = this.dialog.open(ExerciseKeyDialog, {
+        data: {
+          exerciseKeyRecord$: this.exerciseKeyRecord$,
+          isFetchingExerciseKey$: this.isFetchingExerciseKey$,
+        },
+      });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+      dialogRef.afterClosed().subscribe((result) => {});
+    }
   }
 
   showHistory(exerciseSubmission) {
@@ -837,9 +848,7 @@ export class GradingDashboardComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result == true) {
-        this.store.dispatch(
-          new ClearServerCacheAction()
-        );
+        this.store.dispatch(new ClearServerCacheAction());
       }
     });
   }

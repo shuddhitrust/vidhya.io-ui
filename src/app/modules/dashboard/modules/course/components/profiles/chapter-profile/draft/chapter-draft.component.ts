@@ -242,7 +242,13 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   }
 
   fetchExerciseKeys() {
-    if (this.chapterFilters()) {
+    if (
+      this.chapterFilters() &&
+      this.auth.authorizeResource(
+        resources.EXERCISE_KEY,
+        this.resourceActions.LIST
+      )
+    ) {
       this.store.dispatch(
         new FetchExerciseKeysAction({
           searchParams: {

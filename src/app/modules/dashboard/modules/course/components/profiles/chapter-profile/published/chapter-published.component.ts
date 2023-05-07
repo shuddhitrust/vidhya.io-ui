@@ -167,6 +167,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     });
     this.exercises$.subscribe((val) => {
       this.exercises = sortByIndex(val.exercises);
+      console.log('exercises => ', this.exercises);
       this.setupExerciseSubmissions(val.submissions);
     });
 
@@ -182,9 +183,17 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
   setupTempVariables = () => {
     this.previousAnswers = {};
     this.previousLinks = {};
+    this.tempAnswers = {};
+    this.tempLinks = {};
     this.exerciseSubmissions.forEach((s) => {
-      this.previousAnswers[s.exercise] = s.answer;
-      this.previousLinks[s.exercise] = s.link;
+      this.tempAnswers[s.exercise] = s.answer;
+      this.tempLinks[s.exercise] = s.link;
+      console.log('submission => ', s);
+      if (this.isSubmissionReturned(s)) {
+        this.previousAnswers[s.exercise] = s.answer;
+        this.previousLinks[s.exercise] = s.link;
+      }
+      console.log('tempAnswers => ', this.tempAnswers);
     });
   };
 
@@ -304,6 +313,10 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
 
   isSubmissionReturned(submission: ExerciseSubmission) {
     return submission.status === ExerciseSubmissionStatusOptions.returned;
+  }
+
+  isSubmissionGraded(submission: ExerciseSubmission) {
+    return submission.status === ExerciseSubmissionStatusOptions.graded;
   }
 
   disableExerciseModification(exercise) {

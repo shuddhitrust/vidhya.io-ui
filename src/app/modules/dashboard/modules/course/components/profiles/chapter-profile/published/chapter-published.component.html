@@ -308,6 +308,20 @@
         />
       </mat-form-field>
     </span>
+    <div
+      class="col-lg-12 col-md-12 col-sm-12 graded-details"
+      *ngIf="isSubmissionGraded(response) && response.remarks"
+    >
+      <mat-form-field
+        data-cy="answer"
+        class="form-field-in-card"
+        appearance="outline"
+      >
+        <mat-label>Grader remarks</mat-label>
+        <input matInput disabled [value]="response.remarks" />
+      </mat-form-field>
+    </div>
+
     <hr />
     <small class="submission-status">{{ submissionStatus(response) }}</small>
     <small class="float-end">{{ exercisePoints(response) }}</small>
