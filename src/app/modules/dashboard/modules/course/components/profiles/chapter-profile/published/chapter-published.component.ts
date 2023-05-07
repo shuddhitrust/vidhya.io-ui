@@ -192,6 +192,8 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
       if (this.isSubmissionReturned(s)) {
         this.previousAnswers[s.exercise] = s.answer;
         this.previousLinks[s.exercise] = s.link;
+        this.tempAnswers[s.exercise] = '';
+        this.tempLinks[s.exercise] = '';
       }
       console.log('tempAnswers => ', this.tempAnswers);
     });
