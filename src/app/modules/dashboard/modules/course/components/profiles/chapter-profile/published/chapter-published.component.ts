@@ -141,6 +141,8 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
   formDirective: FormGroupDirective;
   tempAnswers = {};
   tempLinks = {};
+  previousAnswers = {};
+  previousLinks = {};
   constructor(
     public dialog: MatDialog,
     private location: Location,
@@ -178,11 +180,11 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
 
   // This is to load up the tempAnswers and tempLinks
   setupTempVariables = () => {
-    this.tempAnswers = {};
-    this.tempLinks = {};
+    this.previousAnswers = {};
+    this.previousLinks = {};
     this.exerciseSubmissions.forEach((s) => {
-      this.tempAnswers[s.exercise] = s.answer;
-      this.tempLinks[s.exercise] = s.link;
+      this.previousAnswers[s.exercise] = s.answer;
+      this.previousLinks[s.exercise] = s.link;
     });
   };
 
@@ -225,6 +227,9 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
   }
   submissionStatus(submission: ExerciseSubmission): string {
     return SubmissionStatus(submission);
+  }
+  submissionStatusIsReturned(submission: ExerciseSubmission): boolean {
+    return submission.status == ExerciseSubmissionStatusOptions.returned;
   }
   exercisePoints(submission: ExerciseSubmission): string {
     const exercise = this.exercises.find((e) => e.id == submission.exercise);

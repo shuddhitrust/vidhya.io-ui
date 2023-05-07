@@ -133,6 +133,29 @@
       <span style="float: left"> {{ exerciseTitle(question) }}&nbsp;</span>
       <markdown style="float: left" [data]="question.prompt"></markdown>
     </p>
+
+    <div
+      class="col-lg-12 col-md-12 col-sm-12 return-details"
+      *ngIf="submissionStatusIsReturned(response)"
+    >
+      <mat-form-field
+        data-cy="answer"
+        class="form-field-in-card"
+        appearance="outline"
+      >
+        <mat-label>Your previous response</mat-label>
+        <input matInput disabled [value]="previousAnswers[question.id]" />
+      </mat-form-field>
+      <mat-form-field
+        data-cy="answer"
+        class="form-field-in-card"
+        appearance="outline"
+      >
+        <mat-label>Reason for return</mat-label>
+        <input matInput disabled [value]="response.remarks" />
+      </mat-form-field>
+    </div>
+    <br />
     <span
       class="col-lg-12 col-md-12 col-sm-12"
       *ngIf="question.questionType == questionTypes.descriptive_answer"
@@ -284,9 +307,6 @@
           placeholder="Link"
         />
       </mat-form-field>
-    </span>
-    <span *ngIf="response.remarks">
-      <p>Remarks - {{ response.remarks }}</p>
     </span>
     <hr />
     <small class="submission-status">{{ submissionStatus(response) }}</small>

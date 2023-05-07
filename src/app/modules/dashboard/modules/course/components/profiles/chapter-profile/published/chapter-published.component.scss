@@ -100,6 +100,16 @@ h2 {
   width: 60%;
 }
 
+.return-details {
+  border: 1px solid red;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.return-details mat-form-field input {
+  color: red;
+}
+
 @media screen and (max-width: 768px) {
   .form-field-in-card {
     width: 90%;
