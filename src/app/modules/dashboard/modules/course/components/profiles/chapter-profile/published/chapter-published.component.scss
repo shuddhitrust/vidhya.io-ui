@@ -104,6 +104,7 @@ h2 {
   border: 1px solid red;
   border-radius: 5px;
   padding: 10px;
+  overflow: auto;
 }
 
 .return-details mat-form-field input {
@@ -114,6 +115,7 @@ h2 {
   border: 1px solid green;
   border-radius: 5px;
   padding: 10px;
+  overflow: auto;
 }
 
 .graded-details mat-form-field input {
