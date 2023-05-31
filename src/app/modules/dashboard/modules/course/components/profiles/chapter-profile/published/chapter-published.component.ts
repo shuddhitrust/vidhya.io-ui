@@ -143,6 +143,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
   tempLinks = {};
   previousAnswers = {};
   previousLinks = {};
+  previousImages = {};
   constructor(
     public dialog: MatDialog,
     private location: Location,
@@ -183,6 +184,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
   setupTempVariables = () => {
     this.previousAnswers = {};
     this.previousLinks = {};
+    this.previousImages = {};
     this.tempAnswers = {};
     this.tempLinks = {};
     this.exerciseSubmissions.forEach((s) => {
@@ -192,12 +194,21 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
       if (this.isSubmissionReturned(s)) {
         this.previousAnswers[s.exercise] = s.answer;
         this.previousLinks[s.exercise] = s.link;
+        this.previousImages[s.exercise] = s.images;
         this.tempAnswers[s.exercise] = '';
         this.tempLinks[s.exercise] = '';
       }
       console.log('tempAnswers => ', this.tempAnswers);
     });
   };
+
+  getPreviousAnswer(question: Exercise) {
+    if (question.questionType == this.questionTypes.descriptive_answer) {
+      return this.previousAnswers[question.id];
+    } else if (question.questionType == this.questionTypes.link) {
+      return this.previousLinks[question.id];
+    } else return null;
+  }
 
   setupExerciseSubmissions(submissions) {
     this.exerciseSubmissions = this.exercises.map(

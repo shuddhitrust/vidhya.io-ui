@@ -144,7 +144,7 @@
         appearance="outline"
       >
         <mat-label>Your previous response</mat-label>
-        <input matInput disabled [value]="previousAnswers[question.id]" />
+        <input matInput disabled [value]="getPreviousAnswer(question)" />
       </mat-form-field>
       <mat-form-field
         data-cy="answer"
