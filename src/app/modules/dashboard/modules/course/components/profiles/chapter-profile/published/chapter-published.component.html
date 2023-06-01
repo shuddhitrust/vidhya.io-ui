@@ -138,7 +138,21 @@
       class="col-lg-12 col-md-12 col-sm-12 return-details"
       *ngIf="submissionStatusIsReturned(response)"
     >
+      <div
+        *ngIf="question.questionType == questionTypes.image_upload"
+        class="col-lg-12 col-md-12 col-sm-12"
+      >
+        <span *ngFor="let image of previousImages[question.id]; let i = index">
+          <img
+            [src]="image"
+            alt="Exercise submission"
+            class="thumbnail"
+            (click)="showExpandedImage(image)"
+          />
+        </span>
+      </div>
       <mat-form-field
+        *ngIf="question.questionType != questionTypes.image_upload"
         data-cy="answer"
         class="form-field-in-card"
         appearance="outline"
