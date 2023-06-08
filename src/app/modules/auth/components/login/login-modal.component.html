@@ -1,12 +1,6 @@
 <span *ngIf="showDialog == LOGIN">
   <ng-container *ngTemplateOutlet="loginTemplate"></ng-container>
 </span>
-<span *ngIf="showDialog == REGISTER">
-  <ng-container *ngTemplateOutlet="registerTemplate"></ng-container>
-</span>
-<span *ngIf="showDialog == INVITECODE">
-  <ng-container *ngTemplateOutlet="invitecodeTemplate"></ng-container>
-</span>
 <span *ngIf="showDialog == GENERATE_EMAIL_OTP">
   <ng-container *ngTemplateOutlet="generateEmailOTPTemplate"></ng-container>
 </span>
@@ -17,9 +11,7 @@
   <ng-container *ngTemplateOutlet="troubleSigningInTemplate"></ng-container>
 </span>
 <span *ngIf="showDialog == RESEND_ACTIVATION_EMAIL">
-  <ng-container
-    *ngTemplateOutlet="resendActivationEmailTemplate"
-  ></ng-container>
+  <ng-container *ngTemplateOutlet="resendActivationEmailTemplate"></ng-container>
 </span>
 <span *ngIf="showDialog == FORGOT_PASSWORD">
   <ng-container *ngTemplateOutlet="forgotPasswordTemplate"></ng-container>
@@ -33,190 +25,78 @@
     <mat-card-header class="form-title">
       <mat-card-title data-cy="dialog-box-title">Login</mat-card-title>
     </mat-card-header>
-    <form
-      [formGroup]="loginForm"
-      novalidate
-      #formDirective="ngForm"
-      (submit)="login(loginForm, formDirective)"
-    >
-      <mat-form-field
-        class="col-lg-12 col-md-12 col-sm-12"
-        appearance="outline"
-        data-cy="username-field"
-      >
+    <form [formGroup]="loginForm" novalidate #formDirective="ngForm" (submit)="login(loginForm, formDirective)">
+      <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline" data-cy="username-field">
         <mat-label>Username</mat-label>
-        <input
-          autofocus
-          (keyup)="preventSpaces($event)"
-          matInput
-          formControlName="username"
-          required
-          placeholder="Username"
-        />
-        <small
-          class="validation-error"
-          *ngIf="
+        <input autofocus (keyup)="preventSpaces($event)" matInput formControlName="username" placeholder="Username" />
+        <small class="validation-error" *ngIf="
             loginForm.get('username').hasError('required') &&
             formDirective.submitted
-          "
-        >
+          ">
           Username is required
         </small>
       </mat-form-field>
 
-      <mat-form-field
-        class="col-lg-12 col-md-12 col-sm-12"
-        appearance="outline"
-        data-cy="password-field"
-      >
+      <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline" data-cy="password-field">
         <mat-label>Password</mat-label>
-        <input
-          matInput
-          [type]="hide ? 'password' : 'text'"
-          formControlName="password"
-          required
-          placeholder="Password"
-        />
-        <button
-          mat-icon-button
-          matSuffix
-          (click)="hide = !hide"
-          [attr.aria-label]="'Hide password'"
-          [attr.aria-pressed]="hide"
-        >
+        <input matInput [type]="hide ? 'password' : 'text'" formControlName="password" required
+          placeholder="Password" />
+        <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+          [attr.aria-pressed]="hide">
           <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
         </button>
-        <small
-          class="validation-error"
-          *ngIf="
+        <small class="validation-error" *ngIf="
             loginForm.get('password').hasError('required') &&
             formDirective.submitted
-          "
-        >
+          ">
           Password is required
         </small>
       </mat-form-field>
-      <mat-checkbox
-        nz-tooltip="Check this box only if you are using your own computer/phone. Remember to log off!"
-        nzTooltipPlacement="right"
-        color="primary"
-        [checked]="rememberMe"
-        (change)="toggleAuthStorage($event)"
-        data-cy="remember-me-checkbox"
-      >
+      <mat-checkbox nz-tooltip="Check this box only if you are using your own computer/phone. Remember to log off!"
+        nzTooltipPlacement="right" color="primary" [checked]="rememberMe" (change)="toggleAuthStorage($event)"
+        data-cy="remember-me-checkbox">
         Remember me on this device
       </mat-checkbox>
-      <button
-        data-cy="login-submit-button"
-        type="submit"
-        class="submit-button"
-        mat-raised-button
-        color="primary"
-        [disabled]="isSubmittingForm === true"
-      >
-        {{ isSubmittingForm === true ? "Logging in..." : "Login" }}
-      </button>
-    </form>
-    <div class="secondary-auth-options">
-      <p
-        data-cy="login-issues-link"
-        class="link-button"
-        style="color: var(--red)"
-        (click)="showTroubleSigningIn()"
-      >
-        Help! I am unable to login!
-      </p>
-      <p
-        data-cy="registration-link"
-        class="link-button"
-        (click)="showRegister()"
-      >
-        Register
-      </p>
-    </div>
-  </div>
-</ng-template>
+      <div class="row">
+        <div class="col-md-6">
 
-<!-- 
-  INVITECODE FORM
- -->
-<ng-template #invitecodeTemplate>
-  <div
-    data-cy="invitecode-dialog-box"
-    mat-dialog-content
-    class="invitecode-dialog-box"
-  >
-    <mat-card-header class="form-title">
-      <mat-card-title data-cy="dialog-box-title"
-        >Enter Invite Code</mat-card-title
-      >
-    </mat-card-header>
-    <hr />
-    <mat-card-subtitle style="text-align: left"
-      ><p>
-        Enter the invitecode you received from your institution
-      </p></mat-card-subtitle
-    >
-    <form
-      [formGroup]="invitecodeForm"
-      novalidate
-      #formDirective="ngForm"
-      (submit)="verifyInvitecode(invitecodeForm)"
-    >
-      <mat-form-field
-        data-cy="invitecode-field"
-        class="col-lg-12 col-md-12 col-sm-12"
-        appearance="outline"
-      >
-        <mat-label>Invite Code</mat-label>
-        <input
-          matInput
-          autofocus
-          formControlName="invitecode"
-          required
-          placeholder="Enter the invite code you received from your institution"
-        />
-        <small
-          class="validation-error"
-          *ngIf="
-            invitecodeForm.get('invitecode').hasError('required') &&
-            formDirective.submitted
-          "
-        >
-          Invite Code is required
-        </small>
-        <small
-          class="validation-error"
-          *ngIf="
-            (invitecodeForm.get('invitecode').hasError('maxlength') ||
-              invitecodeForm.get('invitecode').hasError('minlength')) &&
-            formDirective.submitted
-          "
-        >
-          Please enter a valid invite code
-        </small>
-      </mat-form-field>
-      <button
-        data-cy="verify-invitation"
-        type="submit"
-        class="submit-button"
-        mat-raised-button
-        color="primary"
-        [disabled]="isSubmittingForm === true"
-      >
-        {{ isSubmittingForm === true ? "Verifying..." : "Verify invitation" }}
-      </button>
+          <div class="secondary-auth-options">
+            <p data-cy="login-issues-link" class="link-button" style="color: var(--red)"
+              (click)="showTroubleSigningIn()">
+              Help! I am unable to login!
+            </p>
+            <p data-cy="registration-link" class="link-button" (click)="showRegister()">
+
+              Create New Account?
+            </p>
+          </div>
+        </div>
+        <div class="col-md-6">
+
+          <button data-cy="login-submit-button" type="submit" class="submit-button" mat-raised-button color="primary"
+            [disabled]="isSubmittingForm === true">
+            {{ isSubmittingForm === true ? "Logging in..." : "Login" }}
+          </button>
+        </div>
+      </div>
     </form>
-    <div class="secondary-auth-options">
-      <p
-        data-cy="go-to-login-dialog-box"
-        class="link-button"
-        (click)="showLogin()"
-      >
-        Login
-      </p>
+    <div class="col-md-12">
+      <div class="row">
+        <div class="SSODivider">
+          <hr>
+        </div>OR<div class="SSODivider">
+          <hr>
+        </div>
+      </div>
     </div>
-    <mat-dialog-actions class="card-actions"> </mat-dialog-actions>
+    <div class="col-md-12">
+      <div class="text-center">
+        <button mat-button class="googleLoginBtn"  (click)="openGoogleLogin($event)">
+          <mat-icon class="googleLoginIcon" svgIcon="logo"></mat-icon> Sign in with Google
+        </button>
+      </div>
+
+    </div>
   </div>
 </ng-template>
 
@@ -224,78 +104,43 @@
   ENTER EMAIL TO GENERATE EMAIL OTP
  -->
 <ng-template #generateEmailOTPTemplate>
-  <div
-    data-cy="generate-email-otp-dialog-box"
-    mat-dialog-content
-    class="email-input-dialog-box"
-  >
+  <div data-cy="generate-email-otp-dialog-box" mat-dialog-content class="email-input-dialog-box">
     <mat-card-header class="form-title">
-      <mat-card-title data-cy="dialog-box-title"
-        >Verify your email ID</mat-card-title
-      >
+      <mat-card-title data-cy="dialog-box-title">Register</mat-card-title>
     </mat-card-header>
     <hr />
-    <mat-card-subtitle style="text-align: left"
-      ><p>Enter your email ID to have it verified</p></mat-card-subtitle
-    >
-    <form
-      [formGroup]="emailForm"
-      novalidate
-      #formDirective="ngForm"
-      (submit)="generateEmailOTP(emailForm, formDirective)"
-    >
-      <mat-form-field
-        class="col-lg-12 col-md-12 col-sm-12"
-        appearance="outline"
-        data-cy="email-field"
-      >
+    <mat-card-subtitle style="text-align: left">
+      <p>Email Id</p>
+    </mat-card-subtitle>
+    <form [formGroup]="emailForm" novalidate #formDirective="ngForm"
+      (submit)="generateEmailOTP(emailForm, formDirective)">
+      <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline" data-cy="email-field">
         <mat-label>Email ID</mat-label>
-        <input
-          autofocus
-          matInput
-          formControlName="email"
-          (keyup)="preventSpaces($event)"
-          required
-          placeholder="Email ID"
-        />
-        <small
-          class="validation-error"
-          *ngIf="
+        <input autofocus matInput formControlName="email" (keyup)="preventSpaces($event)" required
+          placeholder="Email ID" />
+        <small class="validation-error" *ngIf="
             emailForm.get('email').hasError('required') &&
             formDirective.submitted
-          "
-        >
+          ">
           Email is required
         </small>
-        <small
-          class="validation-error"
-          *ngIf="
+        <small class="validation-error" *ngIf="
             emailForm.get('email').hasError('email') && formDirective.submitted
-          "
-        >
+          ">
           Please enter a valid email
         </small>
       </mat-form-field>
-      <button
-        data-cy="send-password-reset-email-button"
-        class="submit-button"
-        mat-raised-button
-        color="primary"
-        [disabled]="isSubmittingForm === true"
-      >
+      <button data-cy="send-password-reset-email-button" class="submit-button" mat-raised-button color="primary"
+        [disabled]="isSubmittingForm === true">
         {{
-          isSubmittingForm === true
-            ? "Emailing verificaiton code..."
-            : "Verify Email"
+        isSubmittingForm === true
+        ? "Emailing verificaiton code..."
+        : "Register"
         }}
       </button>
     </form>
     <div class="secondary-auth-options">
-      <p
-        class="link-button"
-        data-cy="go-to-login-dialog-box"
-        (click)="showLogin()"
-      >
+      <p class="link-button" data-cy="go-to-login-dialog-box" (click)="showLogin()">
         Login
       </p>
     </div>
@@ -306,15 +151,9 @@
   ENTER EMAIL OTP TO HAVE IT VERIFIED
  -->
 <ng-template #verifyEmailOTPTemplate>
-  <div
-    data-cy="verify-email-otp-dialog-box"
-    mat-dialog-content
-    class="email-input-dialog-box"
-  >
+  <div data-cy="verify-email-otp-dialog-box" mat-dialog-content class="email-input-dialog-box">
     <mat-card-header class="form-title">
-      <mat-card-title data-cy="dialog-box-title"
-        >Verify Email OTP</mat-card-title
-      >
+      <mat-card-title data-cy="dialog-box-title">Verify OTP</mat-card-title>
     </mat-card-header>
     <hr />
     <mat-card-subtitle style="text-align: left">
@@ -323,212 +162,33 @@
         below
       </p>
     </mat-card-subtitle>
-    <form
-      [formGroup]="emailForm"
-      novalidate
-      #formDirective="ngForm"
-      (submit)="verifyEmailOTP(emailForm, formDirective)"
-    >
-      <mat-form-field
-        class="col-lg-12 col-md-12 col-sm-12"
-        appearance="outline"
-        data-cy="otp-field"
-      >
+    <form [formGroup]="emailForm" novalidate #formDirective="ngForm"
+      (submit)="verifyEmailOTP(emailForm, formDirective)">
+      <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline" data-cy="otp-field">
         <mat-label>Email OTP</mat-label>
-        <input
-          autofocus
-          matInput
-          formControlName="otp"
-          (keyup)="preventSpaces($event)"
-          required
-          placeholder="Email OTP"
-        />
+        <input autofocus matInput formControlName="otp" (keyup)="preventSpaces($event)" required
+          placeholder="Email OTP" />
       </mat-form-field>
       <mat-card-subtitle style="text-align: left">
         <p>
-          The email ID you provided is <b>{{ emailForm.get("email").value }}</b
-          >. If you wish to change this,
-          <a (click)="initiateEmailVerification()"><i>click here</i></a
-          >.
-        </p></mat-card-subtitle
-      >
-      <button
-        data-cy="send-password-reset-email-button"
-        class="submit-button"
-        mat-raised-button
-        color="primary"
-        [disabled]="isSubmittingForm === true"
-      >
+          The email ID you provided is <b>{{ emailForm.get("email").value }}</b>. If you wish to change this,
+          <a (click)="initiateEmailVerification()"><i>click here</i></a>.
+        </p>
+      </mat-card-subtitle>
+      <button data-cy="send-password-reset-email-button" class="submit-button" mat-raised-button color="primary"
+        [disabled]="isSubmittingForm === true">
         {{
-          isSubmittingForm === true
-            ? "Verifying Email OTP..."
-            : "Verify Email OTP"
+        isSubmittingForm === true
+        ? "Verifying OTP..."
+        : "Verify OTP"
         }}
       </button>
     </form>
     <div class="secondary-auth-options">
-      <p
-        class="link-button"
-        data-cy="go-to-login-dialog-box"
-        (click)="showLogin()"
-      >
+      <p class="link-button" data-cy="go-to-login-dialog-box" (click)="showLogin()">
         Login
       </p>
     </div>
-  </div>
-</ng-template>
-
-<!-- 
-  REGISTER FORM, WHERE USERNAME, EMAIL AND PASSWORD ARE ACQUIRED 
--->
-<ng-template #registerTemplate>
-  <div
-    data-cy="registration-dialog-box"
-    mat-dialog-content
-    class="register-dialog-box"
-  >
-    <mat-card-header class="form-title">
-      <mat-card-title data-cy="dialog-box-title">Register</mat-card-title>
-      <br />
-      <mat-card-subtitle style="text-align: left">
-        <p>
-          Your email ID "{{ emailForm.get("email").value }}" is verified.
-        </p></mat-card-subtitle
-      >
-    </mat-card-header>
-    <form
-      [formGroup]="registerForm"
-      novalidate
-      #formDirective="ngForm"
-      (submit)="register(registerForm, formDirective)"
-    >
-      <mat-form-field
-        class="col-lg-12 col-md-12 col-sm-12"
-        appearance="outline"
-        data-cy="registration-username-field"
-      >
-        <mat-label>Username</mat-label>
-        <input
-          matInput
-          autofocus
-          (keyup)="sanitizeUsername($event)"
-          formControlName="username"
-          required
-          placeholder="Username"
-        /><mat-hint
-          *ngIf="
-            !(
-              registerForm.get('username').hasError('required') &&
-              formDirective.submitted
-            )
-          "
-          >You will not be able to change the username later.</mat-hint
-        >
-        <small
-          class="validation-error"
-          *ngIf="
-            registerForm.get('username').hasError('required') &&
-            formDirective.submitted
-          "
-        >
-          Username is required
-        </small>
-      </mat-form-field>
-
-      <mat-form-field
-        class="col-lg-12 col-md-12 col-sm-12"
-        appearance="outline"
-        data-cy="registration-password-field"
-      >
-        <mat-label>Password</mat-label>
-        <input
-          matInput
-          type="password"
-          formControlName="password1"
-          required
-          placeholder="Password"
-        />
-        <small
-          class="validation-error"
-          *ngIf="
-            registerForm.get('password1').hasError('required') &&
-            formDirective.submitted
-          "
-        >
-          Password is required
-        </small>
-      </mat-form-field>
-      <mat-form-field
-        class="col-lg-12 col-md-12 col-sm-12"
-        appearance="outline"
-        data-cy="registration-password-confirmation-field"
-      >
-        <mat-label>Confirm Password</mat-label>
-        <input
-          matInput
-          [type]="hide ? 'password' : 'text'"
-          formControlName="password2"
-          required
-          placeholder="Confirm password"
-        />
-        <button
-          mat-icon-button
-          matSuffix
-          (click)="hide = !hide"
-          [attr.aria-label]="'Hide password'"
-          [attr.aria-pressed]="hide"
-        >
-          <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
-        </button>
-        <small
-          class="validation-error"
-          *ngIf="
-            registerForm.get('password2').hasError('required') &&
-            formDirective.submitted
-          "
-        >
-          Password is required
-        </small>
-      </mat-form-field>
-      <br />
-      <mat-checkbox
-        nz-tooltip="Check this box to indicate that you agree to our terms and conditions!"
-        nzTooltipPlacement="right"
-        color="primary"
-        [checked]="termsAgreed"
-        (change)="toggleTermsAgreed($event)"
-        data-cy="tnc-agreement-checkbox"
-      >
-        I agree to the
-        <a
-          alt="Terms & Conditions"
-          target="_blank"
-          rel="noopener noreferrer nofollow"
-          [routerLink]="termsConditionsRoute"
-          >Terms & Conditions</a
-        >
-      </mat-checkbox>
-      <button
-        data-cy="register-submit-button"
-        type="submit"
-        class="submit-button"
-        mat-raised-button
-        color="primary"
-        [disabled]="isSubmittingForm === true || !termsAgreed"
-      >
-        {{ isSubmittingForm === true ? "Registering..." : "Register" }}
-      </button>
-    </form>
-    <div class="secondary-auth-options">
-      <p
-        class="link-button"
-        data-cy="go-to-login-dialog-box"
-        (click)="showLogin()"
-      >
-        Login
-      </p>
-    </div>
-    <mat-dialog-actions class="card-actions"> </mat-dialog-actions>
   </div>
 </ng-template>
 
@@ -536,82 +196,47 @@
   GET EMAIL FOR SENDING PASSWORD RESET EMAIL
  -->
 <ng-template #forgotPasswordTemplate>
-  <div
-    data-cy="password-reset-dialog-box"
-    mat-dialog-content
-    class="email-input-dialog-box"
-  >
+  <div data-cy="password-reset-dialog-box" mat-dialog-content class="email-input-dialog-box">
     <mat-card-header class="form-title">
-      <mat-card-title data-cy="dialog-box-title"
-        >Send Password Reset Email</mat-card-title
-      >
+      <mat-card-title data-cy="dialog-box-title">Send Password Reset Email</mat-card-title>
       <hr />
-      <mat-card-subtitle style="text-align: left"
-        ><p>
+      <mat-card-subtitle style="text-align: left">
+        <p>
           Enter the email ID tied to your account and submit this form to
           receive instructions to reset your password in the email.
-        </p></mat-card-subtitle
-      >
+        </p>
+      </mat-card-subtitle>
     </mat-card-header>
 
-    <form
-      [formGroup]="emailForm"
-      novalidate
-      #formDirective="ngForm"
-      (submit)="sendPasswordResetEmail(emailForm, formDirective)"
-    >
-      <mat-form-field
-        class="col-lg-12 col-md-12 col-sm-12"
-        appearance="outline"
-        data-cy="email-field"
-      >
+    <form [formGroup]="emailForm" novalidate #formDirective="ngForm"
+      (submit)="sendPasswordResetEmail(emailForm, formDirective)">
+      <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline" data-cy="email-field">
         <mat-label>Email ID</mat-label>
-        <input
-          autofocus
-          matInput
-          formControlName="email"
-          (keyup)="preventSpaces($event)"
-          required
-          placeholder="Email ID"
-        />
-        <small
-          class="validation-error"
-          *ngIf="
+        <input autofocus matInput formControlName="email" (keyup)="preventSpaces($event)" required
+          placeholder="Email ID" />
+        <small class="validation-error" *ngIf="
             emailForm.get('email').hasError('required') &&
             formDirective.submitted
-          "
-        >
+          ">
           Email is required
         </small>
-        <small
-          class="validation-error"
-          *ngIf="
+        <small class="validation-error" *ngIf="
             emailForm.get('email').hasError('email') && formDirective.submitted
-          "
-        >
+          ">
           Please enter a valid email
         </small>
       </mat-form-field>
-      <button
-        data-cy="send-password-reset-email-button"
-        class="submit-button"
-        mat-raised-button
-        color="primary"
-        [disabled]="isSubmittingForm === true"
-      >
+      <button data-cy="send-password-reset-email-button" class="submit-button" mat-raised-button color="primary"
+        [disabled]="isSubmittingForm === true">
         {{
-          isSubmittingForm === true
-            ? "Sending Reset Email..."
-            : "Send Reset Instructions"
+        isSubmittingForm === true
+        ? "Sending Reset Email..."
+        : "Send Reset Instructions"
         }}
       </button>
     </form>
     <div class="secondary-auth-options">
-      <p
-        class="link-button"
-        data-cy="go-to-login-dialog-box"
-        (click)="showLogin()"
-      >
+      <p class="link-button" data-cy="go-to-login-dialog-box" (click)="showLogin()">
         Login
       </p>
     </div>
@@ -622,83 +247,48 @@
   GET EMAIL FOR RESENDING ACTIVATION EMAIL
  -->
 <ng-template #resendActivationEmailTemplate>
-  <div
-    data-cy="resend-activation-dialog-box"
-    mat-dialog-content
-    class="email-input-dialog-box"
-  >
+  <div data-cy="resend-activation-dialog-box" mat-dialog-content class="email-input-dialog-box">
     <mat-card-header class="form-title">
-      <mat-card-title data-cy="dialog-box-title"
-        >Resend activation Email</mat-card-title
-      >
+      <mat-card-title data-cy="dialog-box-title">Resend activation Email</mat-card-title>
       <br />
       <hr />
-      <mat-card-subtitle style="text-align: left"
-        ><p>
+      <mat-card-subtitle style="text-align: left">
+        <p>
           Enter the email ID you used to register and submit this form to
           receive instructions to activate your account.
-        </p></mat-card-subtitle
-      >
+        </p>
+      </mat-card-subtitle>
     </mat-card-header>
 
-    <form
-      [formGroup]="emailForm"
-      novalidate
-      #formDirective="ngForm"
-      (submit)="sendAccountActivationEmail(emailForm, formDirective)"
-    >
-      <mat-form-field
-        class="col-lg-12 col-md-12 col-sm-12"
-        appearance="outline"
-        data-cy="email-field"
-      >
+    <form [formGroup]="emailForm" novalidate #formDirective="ngForm"
+      (submit)="sendAccountActivationEmail(emailForm, formDirective)">
+      <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline" data-cy="email-field">
         <mat-label>Email ID</mat-label>
-        <input
-          matInput
-          autofocus
-          formControlName="email"
-          (keyup)="preventSpaces($event)"
-          required
-          placeholder="Email ID"
-        />
-        <small
-          class="validation-error"
-          *ngIf="
+        <input matInput autofocus formControlName="email" (keyup)="preventSpaces($event)" required
+          placeholder="Email ID" />
+        <small class="validation-error" *ngIf="
             emailForm.get('email').hasError('required') &&
             formDirective.submitted
-          "
-        >
+          ">
           Email is required
         </small>
-        <small
-          class="validation-error"
-          *ngIf="
+        <small class="validation-error" *ngIf="
             emailForm.get('email').hasError('email') && formDirective.submitted
-          "
-        >
+          ">
           Please enter a valid email
         </small>
       </mat-form-field>
-      <button
-        data-cy="send-activation-email-button"
-        class="submit-button"
-        mat-raised-button
-        color="primary"
-        [disabled]="isSubmittingForm === true"
-      >
+      <button data-cy="send-activation-email-button" class="submit-button" mat-raised-button color="primary"
+        [disabled]="isSubmittingForm === true">
         {{
-          isSubmittingForm === true
-            ? "Sending Activation Email..."
-            : "Send Activation Instructions"
+        isSubmittingForm === true
+        ? "Sending Activation Email..."
+        : "Send Activation Instructions"
         }}
       </button>
     </form>
     <div class="secondary-auth-options">
-      <p
-        class="link-button"
-        data-cy="go-to-login-dialog-box"
-        (click)="showLogin()"
-      >
+      <p class="link-button" data-cy="go-to-login-dialog-box" (click)="showLogin()">
         Login
       </p>
     </div>
@@ -709,41 +299,21 @@
   CHOOSE REASON FOR LOGIN ISSUES
  -->
 <ng-template #troubleSigningInTemplate>
-  <div
-    data-cy="login-issues-dialog-box"
-    mat-dialog-content
-    class="email-input-dialog-box"
-  >
+  <div data-cy="login-issues-dialog-box" mat-dialog-content class="email-input-dialog-box">
     <mat-card-header class="form-title">
-      <mat-card-title data-cy="dialog-box-title"
-        >What issue are you having?</mat-card-title
-      >
+      <mat-card-title data-cy="dialog-box-title">What issue are you having?</mat-card-title>
     </mat-card-header>
     <hr />
-    <button
-      data-cy="activation-email-resend-button"
-      (click)="showResendActivation()"
-      mat-raised-button
-      color="primary"
-    >
+    <button data-cy="activation-email-resend-button" (click)="showResendActivation()" mat-raised-button color="primary">
       I did not receive my account activation email
     </button>
     <hr />
-    <button
-      data-cy="forgot-password-button"
-      (click)="showForgotPassword()"
-      mat-raised-button
-      color="primary"
-    >
+    <button data-cy="forgot-password-button" (click)="showForgotPassword()" mat-raised-button color="primary">
       I forgot my password
     </button>
     <hr />
     <div class="secondary-auth-options">
-      <p
-        data-cy="go-to-login-dialog-box"
-        class="link-button"
-        (click)="showLogin()"
-      >
+      <p data-cy="go-to-login-dialog-box" class="link-button" (click)="showLogin()">
         Login
       </p>
     </div>

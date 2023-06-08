@@ -1,6 +1,8 @@
 <app-password-reset
   *ngIf="showUnprotectedPage(uiroutes.PASSWORD_RESET_ROUTE.route)"
 ></app-password-reset>
+<app-change-password  
+*ngIf="showUnprotectedPage(uiroutes.CHANGE_PASSWORD.route)"></app-change-password>
 <app-add-edit-member
   *ngIf="showUnprotectedPage(uiroutes.MEMBER_FORM_ROUTE.route)"
 >

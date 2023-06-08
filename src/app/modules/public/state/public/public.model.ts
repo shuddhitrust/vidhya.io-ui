@@ -30,6 +30,10 @@ export const emptyMemberFormRecord: User = {
   avatar: null,
   title: null,
   bio: null,
+  dob: null,
+  address: null,
+  phone: null,
+  mobile: null,
   role: null,
   institution: null,
 };

@@ -56,6 +56,24 @@
   text-align: center;
 }
 
+.SSODivider{
+  width: 47%;
+}
+
+.googleLoginBtn{
+  width: 50px;
+  max-width: 400px;
+  min-width: min-content;
+  border-radius: 13px;
+  border: 1px solid #f0f0f0;
+}
+
+.googleLoginIcon{
+  width: 20px;
+  vertical-align: top;
+  height: 14px;
+}
+
 @media screen and (max-width: 768px) {
   .login-dialog-box,
   .register-dialog-box,

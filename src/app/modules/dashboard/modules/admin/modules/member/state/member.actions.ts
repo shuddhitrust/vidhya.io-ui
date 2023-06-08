@@ -33,7 +33,6 @@ export class CreateUpdateMemberAction {
     public payload: {
       form: FormGroup;
       formDirective: FormGroupDirective;
-      firstTimeSetup: boolean;
     }
   ) {}
 }

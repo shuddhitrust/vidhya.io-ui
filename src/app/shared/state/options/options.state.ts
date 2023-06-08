@@ -4,6 +4,8 @@ import {
   FetchAdminGroupOptions,
   FetchGraders,
   FetchMemberOptionsByInstitution,
+  FetchInstitutionsOptions,
+  FetchInstitutionsByNameOptions
 } from './options.actions';
 import { Injectable } from '@angular/core';
 import { groupTypeOptions, MatSelectOption } from '../../common/models';
@@ -11,10 +13,11 @@ import {
   getErrorMessageFromGraphQLResponse,
   getOptionLabel,
 } from '../../common/functions';
-import { GROUP_QUERIES, USER_QUERIES } from '../../api/graphql/queries.graphql';
+import { GROUP_QUERIES, USER_QUERIES, INSTITUTION_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import { USER_ROLES_NAMES } from '../../common/constants';
+import { error } from 'console';
 
 @State<OptionsStateModel>({
   name: 'optionsState',
@@ -80,6 +83,43 @@ export class OptionsState {
   @Selector()
   static getIsFetchingGroupsByInstitution(state: OptionsStateModel): boolean {
     return state.isFetchingMembersByInstitution;
+  }
+
+  @Selector()
+  static listInstitutionOptions(state: OptionsStateModel) {
+    let options = {};
+    state.institutionsList['records'].map((g) => {
+      // const option:MatSelectOption = {
+      //   value: g.id,
+      //   label: `${g.name} (${g.location})`,
+      // };
+      debugger;
+      if(options.hasOwnProperty(g.institutionType)){
+        options[g.institutionType].push(g);
+      }else{
+        options=Object.assign({},options,{[g.institutionType]:[g]});
+      }
+    });
+    return options;  
+  }
+  // static listInstitutionOptions(
+  //   state: InstitutionStateModel
+  // ): MatSelectOption[] {
+  //   debugger
+  //   const options: MatSelectOption[] = state.institutions.map((i) => {
+  //     const option: MatSelectOption = {
+  //       value: i.id,
+  //       label: `${i.name} (${i.location})`,
+  //     };
+  //     return option;
+  //   });
+
+  //   return options;
+  // }
+
+  @Selector()
+  static getIsFetchingInstitutions(state: OptionsStateModel): boolean {
+    return state.isFetchingAllInstitutions;
   }
 
   @Action(FetchMemberOptionsByInstitution)
@@ -179,5 +219,73 @@ export class OptionsState {
           );
         }
       );
+  }
+
+
+  
+  // To Fetch all the Institutios
+  @Action(FetchInstitutionsByNameOptions)
+  FetchInstitutionsByNameOptions({ getState, patchState }: StateContext<OptionsStateModel>,
+    { payload }: FetchInstitutionsByNameOptions
+  ) {    
+    const state = getState();
+    let { isFetchingAllInstitutions, institutionsList } = state;
+    isFetchingAllInstitutions = true;
+    patchState({ isFetchingAllInstitutions });
+    const variables = {
+      searchField: payload.name
+    };
+    this.apollo
+      .query({
+        query: INSTITUTION_QUERIES.GET_INSTITUTIONS,
+        variables
+      })
+      .subscribe(
+        (res: any) => {
+          isFetchingAllInstitutions = false;
+          institutionsList = res?.data?.institutions;
+          patchState({
+            institutionsList,
+            isFetchingAllInstitutions,
+          });        
+          // institutionsList.filter(option => option.name.toLowerCase().includes(filterValue)
+        },error=>{
+          new ShowNotificationAction({
+            message: getErrorMessageFromGraphQLResponse(error),
+            action: 'error',
+          })
+        })
+  }
+  // To Fetch all the Institutios
+  @Action(FetchInstitutionsOptions)
+  fetchInstitutions({
+    getState,
+    patchState,
+  }: StateContext<OptionsStateModel>) {
+    const state = getState();
+    let { isFetchingAllInstitutions, institutionsList } = state;
+    isFetchingAllInstitutions = true;
+    patchState({ isFetchingAllInstitutions });
+    this.apollo
+      .query({
+        query: INSTITUTION_QUERIES.GET_INSTITUTIONS,
+        
+      })
+      .subscribe(
+        (res: any) => {
+          isFetchingAllInstitutions = false;
+          institutionsList = res?.data?.institutions;
+          patchState({
+            institutionsList,
+            isFetchingAllInstitutions,
+          });        
+        },error=>{
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+        })
   }
 }

@@ -22,7 +22,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   @Select(AuthState.getFirstTimeSetup)
   firstTimeSetup$: Observable<boolean>;
   firstTimeSetup;
-  private routerSubscription: Subscription;
+  @Select(AuthState.getChangePassword)
+  isChangePassword$: Observable<string>;
+  isChangePassword;
+  routerSubscription: Subscription;
   constructor(
     private store: Store,
     private router: Router,
@@ -30,6 +33,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {
     this.firstTimeSetup$.subscribe((val) => {
       this.firstTimeSetup = val;
+    });
+    
+    this.isChangePassword$.subscribe((val)=>{
+      this.isChangePassword = val;
     });
   }
 

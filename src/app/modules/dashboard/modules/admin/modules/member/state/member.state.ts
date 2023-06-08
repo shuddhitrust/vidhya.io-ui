@@ -46,6 +46,7 @@ import { uiroutes } from '../../../../../../../shared/common/ui-routes';
 import { SearchParams } from '../../../../../../../shared/modules/master-grid/table.model';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { UpdateCurrentUserInStateAction } from 'src/app/modules/auth/state/auth.actions';
+import moment from 'moment';
 
 @State<MemberStateModel>({
   name: 'memberState',
@@ -235,20 +236,18 @@ export class MemberState {
     { getState, patchState }: StateContext<MemberStateModel>,
     { payload }: CreateUpdateMemberAction
   ) {
+    
     const state = getState();
-    const { form, formDirective, firstTimeSetup } = payload;
+    const { form, formDirective  } = payload;
     let { formSubmitting } = state;
     if (form.valid) {
       formSubmitting = true;
       patchState({ formSubmitting });
-      const values = form.value;
-
-      // const username = values?.username;
-
-      const { id, username, ...sanitizedValues } = values;
+      const values = Object.assign({},form.value['profile'],form.value['id'],form.value['institution'],form.value['contact'],form.value['accountSetting']);
+      values.dob = JSON.parse(JSON.stringify(values.dob));
+      const { id,institutionType, ...sanitizedValues } = values;
       const variables = {
         input: sanitizedValues,
-        // id: values.id, // adding id to the mutation variables if it is an update mutation
       };
 
       this.apollo
@@ -271,13 +270,13 @@ export class MemberState {
                   action: 'success',
                 })
               );
-              if (firstTimeSetup) {
-                this.router.navigateByUrl(uiroutes.HOME_ROUTE.route);
-              } else {
-                this.router.navigate([
-                  uiroutes.MEMBER_PROFILE_ROUTE.route + '/' + username,
-                ]);
-              }
+              // if (firstTimeSetup) {
+              //   this.router.navigateByUrl(uiroutes.HOME_ROUTE.route);
+              // } else {
+              //   this.router.navigate([
+              //     uiroutes.MEMBER_PROFILE_ROUTE.route + '/' + username,
+              //   ]);
+              // }
             } else {
               this.store.dispatch(
                 new ShowNotificationAction({

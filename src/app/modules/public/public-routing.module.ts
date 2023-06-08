@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { AddEditIssueComponent } from '../dashboard/modules/admin/modules/issues/components/add-edit-issue/add-edit-issue.component';
 import { uiroutes } from './../../shared/common/ui-routes';
 import { HomeComponent } from './components/pages/home/home.component';
+import { ChangePasswordComponent } from './components/pages/change-password/change-password.component'
 import { PasswordResetComponent } from './components/pages/password-reset/password-reset.component';
 import { PrivacyComponent } from './components/pages/privacy/privacy.component';
 import { TermsConditionsComponent } from './components/pages/terms-conditions/terms-conditions.component';
@@ -10,7 +11,6 @@ import { ProjectProfileComponent } from './components/profiles/project-profile/p
 import { InstitutionProfileComponent } from './components/profiles/public-institution-profile/public-institution-profile.component';
 import { NewsProfileComponent } from './components/profiles/public-news-profile/public-news-profile.component';
 import { PublicUserProfileComponent } from './components/profiles/public-user-profile/public-user-profile.component';
-
 /**
  * Public routes
  *  ***NOTE*** - In order for routes to be available without logging in,
@@ -61,6 +61,11 @@ const routes: Routes = [
   {
     path: `${uiroutes.PASSWORD_RESET_ROUTE.route}/:token`,
     component: PasswordResetComponent,
+    pathMatch: 'full',
+  },
+  {
+    path: uiroutes.CHANGE_PASSWORD.route,
+    component: ChangePasswordComponent,
     pathMatch: 'full',
   },
   {

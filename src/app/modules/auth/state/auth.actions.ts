@@ -29,7 +29,7 @@ export class RegisterAction {
   static readonly type = '[AUTH] Register';
 
   constructor(
-    public payload: { form: FormGroup; formDirective: FormGroupDirective }
+    public payload: { form: FormGroup,formDirective: FormGroupDirective }
   ) {}
 }
 
@@ -58,6 +58,7 @@ export class LoginAction {
     public payload: { form: FormGroup; formDirective: FormGroupDirective }
   ) {}
 }
+
 
 export class ResetEmailVerificationParamsAction {
   static readonly type = '[AUTH] Reset Email Verification Params';
@@ -104,16 +105,39 @@ export class PasswordChangeAction {
   ) {}
 }
 
+export class VerifyUserAction{
+  static readonly type ='[AUTH] VerifyUserAction';
+  
+  constructor(
+    public payload: { user: CurrentMember  }
+  ) {}
+}
+
+export class SocialAuthAccessAction{
+  static readonly type = '[AUTH] SocialAuthAction';
+
+  constructor(
+    public payload: {socialAuthData}
+  ){}
+}
+
 export class LogoutAction {
   static readonly type = '[AUTH] Logout';
 
   constructor() {}
 }
 
+
 export class GetCurrentUserAction {
   static readonly type = '[AUTH] Fetch Member';
 
   constructor() {}
+}
+
+export class GetEmailOTPAction {
+  static readonly type = '[AUTH] Fetch OTP';
+
+  constructor(public payload: { email: string ,password: string}) {}
 }
 
 export class UpdateCurrentUserInStateAction {
@@ -162,4 +186,11 @@ export class UpdateProjectsClappedFromLocalStorageAction {
   static readonly type = '[AUTH] Update projectsClapped from Local Storage';
 
   constructor() {}
+}
+
+
+
+export class CreateTokenAction {
+  static readonly type = '[AUTH] Update token'
+  constructor(public payload:{user:CurrentMember} ) {}
 }

@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
@@ -27,6 +28,7 @@ import { MatButtonModule } from '@angular/material/button';
     NzPaginationModule,
     MatIconModule,
     MatInputModule,
+    MatAutocompleteModule,
     MatFormFieldModule,
     MatButtonModule,
   ],

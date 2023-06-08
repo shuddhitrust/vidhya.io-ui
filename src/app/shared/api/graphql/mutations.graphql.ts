@@ -2,8 +2,8 @@ import { gql } from 'apollo-angular';
 
 export const USER_MUTATIONS = {
   // CREATE_USER: gql`
-  //   mutation createUser($input: UserInput!) {
-  //     createUser(input: $input) {
+  //   mutation createGoogleToken($input: UserInput!) {
+  //     createGoogleToken(input: $input) {
   //       ok
   //       user {
   //         id
@@ -12,6 +12,7 @@ export const USER_MUTATIONS = {
   //     }
   //   }
   // `,
+    
   UPDATE_USER: gql`
     mutation updateUser($input: UserInput!) {
       updateUser(input: $input) {
@@ -23,7 +24,15 @@ export const USER_MUTATIONS = {
           lastName
           name
           avatar
+          dob
           email
+          phone
+          mobile
+          address
+          pincode
+          state
+          city
+          country
           institution {
             id
             name
@@ -122,6 +131,8 @@ export const INSTITUTION_MUTATIONS = {
           location
           city
           bio
+          designations
+          institutionType
         }
       }
     }
@@ -136,6 +147,9 @@ export const INSTITUTION_MUTATIONS = {
           location
           city
           bio
+          designations
+          institutionType
+        
         }
       }
     }
@@ -857,6 +871,37 @@ export const CHAT_MESSAGE_MUTATIONS = {
 };
 
 export const AUTH_MUTATIONS = {
+  CREATE_SOCIALAUTH: gql`
+  mutation SocialAuth($provider: String!, $accessToken: String!) {
+    socialAuth(provider: $provider, accessToken: $accessToken) {
+      social {
+        id
+        uid
+        extraData
+      }
+      token
+    }
+  }
+  `,
+  CREATE_TOKEN:gql`
+  mutation createGoogleToken($input: UserInput!) {
+    createGoogleToken(input: $input) {          
+      ok
+      token
+      refreshToken
+        user {
+          id
+          username
+          firstName
+          lastName
+          name
+          avatar
+          email
+          membershipStatus
+        }  
+    }
+  }
+  `,
   VERIFY_INVITECODE: gql`
     mutation verifyInvitecode($invitecode: String!) {
       verifyInvitecode(invitecode: $invitecode) {
@@ -1014,6 +1059,21 @@ export const AUTH_MUTATIONS = {
       }
     }
   `,
+  VERIFY_EMAILUSER: gql`  
+  mutation verifyEmailUser(
+    $user_id: Int!,
+  ) {
+    verifyEmailUser(
+      userId: $user_id
+    )  {
+      ok
+      user{
+        manualLogin
+        googleLogin
+      }
+    }
+  }
+  `
 };
 
 export const ADMIN_MUTATIONS = {
