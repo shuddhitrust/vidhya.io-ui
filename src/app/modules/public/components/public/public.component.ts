@@ -32,6 +32,7 @@ export class PublicComponent {
       uiroutes.MEMBER_FORM_ROUTE.route,
       uiroutes.PROJECT_PROFILE_ROUTE.route,
       uiroutes.PASSWORD_RESET_ROUTE.route,
+      uiroutes.CHANGE_PASSWORD.route,
       uiroutes.ISSUE_FORM_ROUTE.route,
       uiroutes.PRIVACY_ROUTE.route,
       uiroutes.TERMS_CONDITIONS_ROUTE.route,
@@ -61,6 +62,12 @@ export class PublicComponent {
           return true;
         }
         break;
+      case uiroutes.CHANGE_PASSWORD.route:
+        if(this.firstTimeSetup && this.routeIs(uiroutes.CHANGE_PASSWORD.route)){
+          return true;
+        }
+    
+      break;
       case uiroutes.MEMBER_PROFILE_ROUTE.route:
         if (this.routeIs(uiroutes.MEMBER_PROFILE_ROUTE.route)) {
           return true;
@@ -68,7 +75,7 @@ export class PublicComponent {
         break;
       case uiroutes.NEWS_PROFILE_ROUTE.route:
         if (this.routeIs(uiroutes.NEWS_PROFILE_ROUTE.route)) {
-          return true;
+         return true;
         }
         break;
       case uiroutes.PROJECT_PROFILE_ROUTE.route:
@@ -78,12 +85,12 @@ export class PublicComponent {
         break;
       case uiroutes.ISSUE_FORM_ROUTE.route:
         if (this.routeIs(uiroutes.ISSUE_FORM_ROUTE.route)) {
-          return true;
+         return true;
         }
         break;
       case uiroutes.INSTITUTION_PROFILE_ROUTE.route:
         if (this.routeIs(uiroutes.INSTITUTION_PROFILE_ROUTE.route)) {
-          return true;
+        return true;
         }
         break;
       case uiroutes.PRIVACY_ROUTE.route:

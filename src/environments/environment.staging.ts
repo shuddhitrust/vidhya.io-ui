@@ -20,6 +20,7 @@ export const environment = {
   api_endpoint,
   file_uplod_endpoint: `${cloudinary_endpoint}/upload/`,
   cloudinary_preset,
+  googleRedirect_endpoint: `${api_endpoint}/social-auth/login/google-oauth2/`,
   graphql_endpoint: `${api_endpoint}/graphql/`,
   websocket_graphql_endpoint: `${websocket_api_endpoint}/ws/graphql/`,
   oAuthConfig: {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -11,19 +11,14 @@ import { Observable } from 'rxjs';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { Router } from '@angular/router';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
-import { PasswordResetAction } from 'src/app/modules/auth/state/auth.actions';
+import { PasswordChangeAction } from 'src/app/modules/auth/state/auth.actions';
 
 @Component({
-  selector: 'app-password-reset',
-  templateUrl: './password-reset.component.html',
-  styleUrls: [
-    './password-reset.component.scss',
-    './../../../../../shared/common/shared-styles.css',
-  ],
+  selector: 'app-change-password',
+  templateUrl: './change-password.component.html',
+  styleUrls: ['./change-password.component.scss']
 })
-export class PasswordResetComponent implements OnInit {
-  url: string;
-  token: string;
+export class ChangePasswordComponent {
   hide: boolean = true;
   passwordResetForm: FormGroup;
   @Select(AuthState.getIsSubmittingForm)
@@ -44,38 +39,15 @@ export class PasswordResetComponent implements OnInit {
     this.setupPasswordResetForm();
   }
 
-  fetchTokenFromUrl() {
-    
-    if (this.isLoggedIn) {
-      this.router.navigate(['']);
-    } else {
-      this.url = window.location.href;
-      if (this.router.url.includes(uiroutes.PASSWORD_RESET_ROUTE.route)) {
-        this.token = this.url.split(
-          uiroutes.PASSWORD_RESET_ROUTE.route + '/'
-        )[1];
-      }
-    }
-  }
-
-  goBack() {
-    this.location.back();
-  }
-
   setupPasswordResetForm() {
-    this.fetchTokenFromUrl();
     this.passwordResetForm = this.fb.group({
-      token: [this.token, Validators.required],
+      oldPassword: ['', Validators.required],
       newPassword1: ['', Validators.required],
       newPassword2: ['', Validators.required],
     });
   }
 
   resetPasswordForm(form: FormGroup, formDirective: FormGroupDirective) {
-    this.store.dispatch(new PasswordResetAction({ form, formDirective }));
-  }
-
-  ngOnInit(): void {
-    this.fetchTokenFromUrl();
+    this.store.dispatch(new PasswordChangeAction({ form, formDirective }));
   }
 }

@@ -108,7 +108,7 @@ export class PublicUserProfileComponent implements OnInit, OnDestroy {
       const usernameWithParams = this.url?.split(
         uiroutes.MEMBER_PROFILE_ROUTE.route + '/'
       )[1];
-      this.username = usernameWithParams.split('?')[0];
+      this.username = usernameWithParams?.split('?')[0];
       if (
         this.username &&
         this.username != 'undefined' &&

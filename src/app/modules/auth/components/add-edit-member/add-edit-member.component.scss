@@ -8,6 +8,10 @@
   color: white;
   cursor: pointer;
 }
+.scroll-feed {
+  overflow: auto;
+  height: calc(100vh - 190px);
+}
 
 /* Centered text */
 .centered {
@@ -16,6 +20,10 @@
   left: 50%;
   background: rgba(0, 0, 0, 0.3);
   transform: translate(-50%, -50%);
+}
+
+.submitBtn button {
+  margin: 10px;
 }
 
 @media screen and (max-width: 990px) {

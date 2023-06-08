@@ -13,7 +13,7 @@ import {
   getProjectsClappedFromLocalStorage,
 } from './auth.model';
 
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import {
   RegisterAction,
   LoginAction,
@@ -22,6 +22,7 @@ import {
   SendPasswordResetEmailAction,
   PasswordResetAction,
   PasswordChangeAction,
+  VerifyUserAction,
   AuthenticationCheckAction,
   SetAuthSessionAction,
   VerifyTokenAction,
@@ -41,6 +42,9 @@ import {
   VerifyEmailOTPAction,
   ResetEmailVerificationParamsAction,
   UpdateProjectsClappedFromLocalStorageAction,
+  CreateTokenAction,
+  GetEmailOTPAction,
+  SocialAuthAccessAction
 } from './auth.actions';
 import { Apollo } from 'apollo-angular';
 
@@ -52,6 +56,7 @@ import {
   CurrentMember,
   MembershipStatusOptions,
   UserPermissions,
+  loginType
 } from 'src/app/shared/common/models';
 import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
 import { AUTH_MUTATIONS } from 'src/app/shared/api/graphql/mutations.graphql';
@@ -66,6 +71,14 @@ import { AUTH_QUERIES } from 'src/app/shared/api/graphql/queries.graphql';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 
 import { StateResetAll } from 'ngxs-reset-plugin';
+
+import {
+  FormBuilder,
+  FormGroup,
+  FormGroupDirective,
+  NgForm,
+  Validators,
+} from '@angular/forms';
 /**
  * Auth flow steps:-
  * - When the application loads, it runs the AuthenticationCheckAction which checks for what kind of storage is used.
@@ -95,10 +108,16 @@ import { StateResetAll } from 'ngxs-reset-plugin';
 @Injectable()
 export class AuthState {
   refreshTokenTimeout; // Variable that stores the timeout method for the next RefreshToken call
+  SSOLogin: boolean;
+  registerForm: FormGroup;
+
   constructor(
     private store: Store,
     private apollo: Apollo,
-    private router: Router
+    private router: Router,
+    private fb: FormBuilder,
+    private ngZone: NgZone
+
   ) {
     this.store.dispatch(new UpdateProjectsClappedFromLocalStorageAction());
   }
@@ -151,9 +170,18 @@ export class AuthState {
   static getIsLoggedIn(state: AuthStateModel): boolean {
     return state.isLoggedIn;
   }
+
+  @Selector()
+  static getIsGoogleLoggedIn(state: AuthStateModel): boolean {
+    return state.isGoogleLoggedIn;
+  }
   @Selector()
   static getFirstTimeSetup(state: AuthStateModel): boolean {
     return state.firstTimeSetup;
+  }
+  @Selector()
+  static getChangePassword(state: AuthStateModel): boolean {
+    return state.isChangePassword;
   }
   @Selector()
   static getInvited(state: AuthStateModel): string {
@@ -439,13 +467,14 @@ export class AuthState {
       patchState({ isFetchingCurrentMember: true });
       this.apollo.query({ query: AUTH_QUERIES.ME }).subscribe(
         ({ data }: any) => {
-          patchState({ isFetchingCurrentMember: false });
+          const user = data.me;          
+
+          patchState({ isFetchingCurrentMember: false,isGoogleLoggedIn:user?.googleLogin, isManualLogIn:user?.manualLogin });
 
           this.store.dispatch(
             new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
           );
 
-          const user = data.me;
           this.store.dispatch(new UpdateCurrentUserInStateAction({ user }));
         },
         (error) => {
@@ -483,21 +512,35 @@ export class AuthState {
       email: user?.email,
       title: user?.title,
       bio: user?.bio,
+      dob:user?.dob,
+      mobile:user?.mobile,
+      phone:user?.phone,
+      address:user?.address,
+      pincode:user?.pincode,
+      city:user?.city,
+      state:user?.state,
+      country:user?.country,
       avatar: user?.avatar,
       invitecode: user?.invitecode,
       institution: {
         id: user?.institution?.id,
         name: user?.institution?.name,
+        designations:user?.institution?.designations,
+        institutionType:user?.institution?.institutionType
       },
       membershipStatus: user?.membershipStatus,
-      projectsClapped: user?.projectsClapped.map((p: any) => p.id),
+      projectsClapped: user?.projectsClapped?.map((p: any) => { if (p) return p.id }),
       role: {
         name: user?.role?.name,
         permissions,
       },
     };
-
-    const firstTimeSetup = calculateFirstTiimeSetup(newCurrentMember);
+    // let firstTimeSetup
+    // if (this.SSOLogin == true) {
+    //   firstTimeSetup = true
+    // } else {
+     const firstTimeSetup = calculateFirstTiimeSetup(newCurrentMember);
+    // }
     const isFullyAuthenticated =
       isLoggedIn == true &&
       newCurrentMember?.membershipStatus == MembershipStatusOptions.APPROVED;
@@ -561,6 +604,9 @@ export class AuthState {
                 closeLoginForm: true,
                 lastLogin: response?.user?.lastLogin,
               });
+              this.store.dispatch(
+                new GetEmailOTPAction({ email: values.username, password:values.password })
+              );
               this.store.dispatch(new UpdateCurrentUserInStateAction({ user }));
               this.store.dispatch(
                 new ToggleLoadingScreen({
@@ -570,12 +616,16 @@ export class AuthState {
               );
 
               this.store.dispatch(new AuthenticationCheckAction());
+
+              
+              this.store.dispatch(new VerifyUserAction({user:user}))
               this.store.dispatch(
                 new ShowNotificationAction({
                   message: 'Logged in successfully!',
                   action: 'success',
                 })
               );
+
             } else {
               this.store.dispatch(
                 new ToggleLoadingScreen({
@@ -587,7 +637,7 @@ export class AuthState {
                 new ShowNotificationAction({
                   message:
                     getErrorMessageFromGraphQLResponse(response?.errors) ==
-                    'Please, enter valid credentials.'
+                      'Please, enter valid credentials.'
                       ? 'Your username or password is incorrect. Please check their spelling and case and then retry.'
                       : getErrorMessageFromGraphQLResponse(response?.errors),
                   action: 'error',
@@ -596,6 +646,10 @@ export class AuthState {
             }
           },
           (error) => {
+
+            this.store.dispatch(
+              new GetEmailOTPAction({ email: values.username, password: values.password })
+            );
             this.store.dispatch(
               new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
             );
@@ -621,6 +675,38 @@ export class AuthState {
     }
   }
 
+  @Action(GetEmailOTPAction)
+  getEmailOTP(
+    { patchState }: StateContext<AuthStateModel>,
+    { payload }: GetEmailOTPAction
+  ) {
+    const { email, password} = payload;
+    patchState({ isChangePassword: false });
+    this.apollo
+      .query({
+        query: AUTH_QUERIES.GET_EMAIL_OTP,
+        variables: { email },
+        fetchPolicy: 'network-only',
+      })
+      .subscribe(
+        ({ data }: any) => {          
+          const response = data.emailOtp;
+          
+          if(response.otp == password){
+            patchState({
+              isChangePassword: false
+            });
+          }else{
+            patchState({
+              isChangePassword : true
+            })
+          }
+        },
+        (error) => {
+
+
+        })
+  }
   @Action(LogoutAction)
   logout({ getState, patchState }: StateContext<AuthStateModel>) {
     this.store.dispatch(
@@ -643,6 +729,7 @@ export class AuthState {
           // Clearing the refreshToken timeout
           clearTimeout(this.refreshTokenTimeout);
           // Marking user as logged out
+          this.router.navigateByUrl(uiroutes.HOME_ROUTE.route);
           if (response.success) {
             this.store.dispatch(
               new ShowNotificationAction({
@@ -673,8 +760,10 @@ export class AuthState {
     { getState, patchState }: StateContext<AuthStateModel>,
     { payload }: RegisterAction
   ) {
+
     let state = getState();
-    const { form, formDirective } = payload;
+    let { currentMember } = state;
+    const { form,formDirective } = payload;
     let { isSubmittingForm } = state;
     if (form.valid) {
       this.store.dispatch(
@@ -692,9 +781,9 @@ export class AuthState {
           mutation: AUTH_MUTATIONS.REGISTER,
           variables: {
             username: values.username,
-            email: values.email,
             password1: values.password1,
             password2: values.password2,
+            email: values.email
           },
         })
         .subscribe(
@@ -714,21 +803,21 @@ export class AuthState {
               formDirective.resetForm();
               const token = response?.token;
               const refreshToken = response?.refreshToken;
-              this.store.dispatch(
-                new UpdateTokenAction({ token, refreshToken })
-              );
+              if(token || refreshToken){                
+                this.store.dispatch(
+                  new UpdateTokenAction({ token, refreshToken })
+                );
+              }
               patchState({
                 closeLoginForm: true,
               });
               this.store.dispatch(new SetAuthSessionAction());
               state = getState();
-              this.store.dispatch(
-                new AddInvitecodeAction({
-                  invitecode: state.currentMember?.invitecode,
-                  email,
-                })
-              );
-              // this.store.dispatch(new VerifyTokenAction());
+              let loginForm  = this.fb.group({
+                'username': values.username,
+                'password': values.password1
+              })
+              this.store.dispatch(new LoginAction({ form:loginForm ,formDirective}));
             } else {
               this.store.dispatch(
                 new ShowNotificationAction({
@@ -898,7 +987,8 @@ export class AuthState {
   ) {
     const state = getState();
     const { form, formDirective } = payload;
-    let { isSubmittingForm } = state;
+
+    let { isSubmittingForm,isLoggedIn,isGoogleLoggedIn } = state;
     if (form.valid) {
       isSubmittingForm = true;
       const values = form.value;
@@ -907,7 +997,7 @@ export class AuthState {
         .mutate({
           mutation: AUTH_MUTATIONS.SEND_PASSWORD_RESET_EMAIL,
           variables: {
-            email: values.email,
+            email: values?.email?values.email:values,
           },
         })
         .subscribe(
@@ -924,14 +1014,19 @@ export class AuthState {
               this.store.dispatch(
                 new UpdateTokenAction({ token, refreshToken })
               );
+              if(isLoggedIn){
+                this.store.dispatch(new LogoutAction());
+              }else{                
               patchState({
                 closeLoginForm: true,
               });
+              }
               this.store.dispatch(new SetAuthSessionAction());
+              const successNotifyLoggedIn = 'Please check your email inbox and follow instructions.';
+              const successNotifyForgotPassword = 'If you have an account with us, you should have received an email with instructions to reset your password. Please check your email inbox.';
               this.store.dispatch(
                 new ShowNotificationAction({
-                  message:
-                    'If you have an account with us, you should have received an email with instructions to reset your password. Please check your email inbox.',
+                  message:isLoggedIn?successNotifyLoggedIn:successNotifyForgotPassword,
                   action: 'success',
                 })
               );
@@ -1182,14 +1277,127 @@ export class AuthState {
     }
   }
 
+  @Action(SocialAuthAccessAction)
+  socialAuth(
+    { getState, patchState }: StateContext<AuthStateModel>,
+    { payload }: SocialAuthAccessAction
+  ) {
+    const state = getState();
+    const { socialAuthData } = payload;
+    // const token = socialAuthData;
+    this.apollo
+        .mutate({
+          mutation: AUTH_MUTATIONS.CREATE_SOCIALAUTH,
+          variables: {
+            provider: socialAuthData.provider,
+            accessToken: socialAuthData.accessToken,
+          },
+        })
+        .subscribe(
+          ({ data }: any) => {
+            const response = data.socialAuth;
+              const token = response?.token;
+              const refreshToken = response?.refreshToken;
+              const { userId } = this.getDecodedToken(token);
+              let user:any = {};
+              // user.id =  response.social.id;
+              user.email = response.social.uid;
+              user.username = response.social.uid;
+              user.firstName = response.social.extraData.firstName;
+              user.lastName = response.social.extraData.lastName;
+              user.name = response.social.extraData.firstName+" "+response.social.extraData.lastName;
+              this.store.dispatch(new CreateTokenAction({user}))
+          },err=>{
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message:err.message,
+                action: 'error',
+              })
+            )
+          })
+  }
+
+  @Action(CreateTokenAction)
+  createToken(
+    { getState, patchState }: StateContext<AuthStateModel>,
+    { payload }: CreateTokenAction
+  ) {
+    let { user } = payload;
+    const state = getState();
+
+    patchState({
+      isFetchingCurrentMember: true,
+      isGoogleLoggedIn: true
+    });
+    this.apollo
+    .mutate({
+      mutation: AUTH_MUTATIONS.CREATE_TOKEN,
+      variables: {
+       input:{ email: user.email,firstName:user.firstName,lastName:user.lastName,username: user.email, googleLogin: true}
+      },
+    })
+    .subscribe(
+      ({ data }: any) => {
+        const state = getState();
+
+        let { currentMember } = state;
+
+        const response = data.createGoogleToken;
+        const token = response.token;
+        const refreshToken = response.refreshToken
+        currentMember = { ...currentMember,...response.user };
+
+        this.store.dispatch(
+          new UpdateTokenAction({ token, refreshToken })
+        );
+        
+        patchState({
+          currentMember,
+          isLoggedIn: true,
+          closeLoginForm: true,
+          lastLogin: response?.user?.lastLogin
+        });
+        user = response.user
+        this.store.dispatch(new UpdateCurrentUserInStateAction({ user }));
+        this.store.dispatch(
+          new ToggleLoadingScreen({
+            showLoadingScreen: false,
+            message: '',
+          })
+        );
+
+        this.store.dispatch(new AuthenticationCheckAction());
+        this.store.dispatch(
+          new ShowNotificationAction({
+            message: 'Logged in successfully!',
+            action: 'success',
+          })
+        );
+        
+              
+        this.store.dispatch(new VerifyUserAction({user:user}))
+        this.router.navigateByUrl(uiroutes.MEMBER_FORM_ROUTE.route);
+      },error=>{
+        console.error('There was an error ', error);
+        this.store.dispatch(
+          new ShowNotificationAction({
+            message:
+              'There was an error in Creating Token. Please retry!',
+            action: 'error',
+          })
+        )
+      })
+    
+  }
   @Action(PasswordChangeAction)
   passwordChange(
     { getState, patchState }: StateContext<AuthStateModel>,
     { payload }: PasswordChangeAction
   ) {
     const state = getState();
+    let { currentMember } = state;
     const { form, formDirective } = payload;
-    let { isSubmittingForm } = state;
+    let { isSubmittingForm,firstTimeSetup,isChangePassword } = state;
     if (form.valid) {
       isSubmittingForm = true;
       const values = form.value;
@@ -1205,11 +1413,11 @@ export class AuthState {
         })
         .subscribe(
           ({ data }: any) => {
-            const response = data.passwordChange;
-            isSubmittingForm = false;
-            patchState({ isSubmittingForm });
-
+            const response = data.passwordChange;          
             if (response.success) {
+              isSubmittingForm = false;
+              isChangePassword = false;
+              patchState({ isSubmittingForm,isChangePassword });
               form.reset();
               formDirective.resetForm();
               const token = response?.token;
@@ -1217,19 +1425,28 @@ export class AuthState {
               this.store.dispatch(
                 new UpdateTokenAction({ token, refreshToken })
               );
+              
               this.store.dispatch(
                 new ShowNotificationAction({
                   message: 'Password Changed successfully!',
                   action: 'success',
                 })
               );
+              if(firstTimeSetup==true){
+                // debugger;
+                this.ngZone.run(() => this.router.navigateByUrl(uiroutes.MEMBER_FORM_ROUTE.route)).then();
+              }
             } else {
+              if(response?.errors?.nonFieldErrors?.length>0 && response?.errors?.nonFieldErrors[0].code=='not_verified'){
+                this.store.dispatch(new VerifyUserAction({user:currentMember}))
+              }else{                
               this.store.dispatch(
                 new ShowNotificationAction({
-                  message: getErrorMessageFromGraphQLResponse(response?.errors),
+                  message: getErrorMessageFromGraphQLResponse(response),
                   action: 'error',
                 })
               );
+              }
             }
           },
           (error) => {
@@ -1255,6 +1472,36 @@ export class AuthState {
     }
   }
 
+  @Action(VerifyUserAction)
+  verifyUserAction(
+    { patchState, getState }: StateContext<AuthStateModel>,
+    { payload }: VerifyUserAction
+  ){
+    const state = getState();
+    const { user } = payload;
+    let { isManualLogIn } = state;
+    this.apollo
+    .mutate({
+      mutation: AUTH_MUTATIONS.VERIFY_EMAILUSER,
+      variables: {
+        user_id: user.id,
+      },
+    })
+    .subscribe(
+      ({ data }: any) => {        
+        patchState({
+          isManualLogIn:true
+        });
+      },err=>{
+        this.store.dispatch(
+          new ShowNotificationAction({
+            message:
+              'Your email Verification got failed!',
+            action: 'error',
+          })
+        )
+      })
+    }
   @Action(VerifyInvitecodeAction)
   verifyInvitecode(
     { patchState, getState }: StateContext<AuthStateModel>,
@@ -1304,8 +1551,6 @@ export class AuthState {
 
             if (response?.ok) {
               form.reset();
-              // formDirective.resetForm();
-
               patchState({
                 currentMember: { ...state.currentMember, invitecode },
               });
@@ -1430,6 +1675,7 @@ export class AuthState {
 }
 
 const calculateFirstTiimeSetup = (currentMember: CurrentMember): boolean => {
+
   const firstTimeSetup =
     currentMember?.membershipStatus == MembershipStatusOptions.UNINITIALIZED;
 

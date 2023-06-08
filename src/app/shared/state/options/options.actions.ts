@@ -14,3 +14,16 @@ export class FetchGraders {
 
   constructor() {}
 }
+
+export class FetchInstitutionsOptions{
+  static readonly type = '[MEMBER] Fetch All Institutions';
+
+  constructor() {}
+}
+
+
+export class FetchInstitutionsByNameOptions{
+  static readonly type = '[MEMBER] Fetch Institution by Names';
+
+  constructor(public payload: { name: string }) {}
+}

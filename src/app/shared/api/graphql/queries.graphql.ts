@@ -12,18 +12,30 @@ export const AUTH_QUERIES = {
         title
         bio
         email
+        dob
+        phone
+        mobile
+        address
+        pincode
+        state
+        city
+        country
         projectsClapped {
           id
         }
         institution {
           id
           name
+          institutionType
+          designations        
         }
         role {
           name
           permissions
         }
         membershipStatus
+        googleLogin
+        manualLogin
       }
     }
   `,
@@ -35,6 +47,16 @@ export const AUTH_QUERIES = {
       }
     }
   `,
+  GET_EMAIL_OTP: gql`
+    query emailOtp($email: String!){
+      emailOtp(email: $email){
+        id
+        email
+        otp
+        verified
+      }
+    }
+  `
 };
 
 export const PUBLIC_QUERIES = {
@@ -50,6 +72,8 @@ export const PUBLIC_QUERIES = {
         institution {
           code
           name
+          designations
+          institutionType
         }
         courses {
           course {
@@ -126,10 +150,20 @@ export const PUBLIC_QUERIES = {
           id
           name
           code
-          logo
           location
           city
+          website
+          phone
+          logo
           bio
+          address
+          pincode
+          state
+          dob
+          country
+          invitecode        
+          designations
+          institutionType
           score
         }
         total
@@ -256,6 +290,7 @@ export const USER_QUERIES = {
           permissions
         }
         membershipStatus
+        institutionType
       }
     }
   `,
@@ -368,7 +403,42 @@ export const INSTITUTION_QUERIES = {
         phone
         logo
         bio
-        invitecode
+        address
+        pincode
+        state
+        dob
+        country
+        invitecode        
+        designations
+        institutionType
+      }
+    }
+  `,
+  GET_SEARCH_INSTITUTIONS: gql`
+    query searchinstitutions($name: String!){
+      searchinstitution(
+        filter:{name:{allofterms: $name}}
+      ){
+        records {
+          id
+          name
+          code
+          location
+          city
+          website
+          phone
+          logo
+          bio
+          address
+          pincode
+          state
+          dob
+          country
+          invitecode        
+          designations
+          institutionType
+        }
+        total
       }
     }
   `,
@@ -378,10 +448,21 @@ export const INSTITUTION_QUERIES = {
         records {
           id
           name
+          code
           location
           city
+          website
+          phone
+          logo
           bio
-          invitecode
+          address
+          pincode
+          state
+          dob
+          country
+          invitecode        
+          designations
+          institutionType
         }
         total
       }
@@ -399,7 +480,9 @@ export const GROUP_QUERIES = {
         description
         institution {
           id
-          name
+          name          
+          designations
+          institutionType
         }
         groupType
         admins {

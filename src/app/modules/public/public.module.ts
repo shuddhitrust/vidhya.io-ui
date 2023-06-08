@@ -24,7 +24,7 @@ import { NewsProfileComponent } from './components/profiles/public-news-profile/
 import { ProjectProfileComponent } from './components/profiles/project-profile/project-profile.component';
 import { CoursesFeedComponent } from './components/feed/courses-feed/courses-feed.component';
 import { CourseDisplayComponent } from './components/feed/courses-feed/course-dialog/course-display.component';
-
+import { ChangePasswordComponent } from './components/pages/change-password/change-password.component';
 const declarations = [
   HomeComponent,
   PasswordResetComponent,
@@ -44,7 +44,8 @@ const declarations = [
   UserCoursesComponent,
   UserProjectsComponent,
   CoursesFeedComponent,
-  CourseDisplayComponent
+  CourseDisplayComponent,
+  ChangePasswordComponent
 ];
 
 @NgModule({
@@ -56,6 +57,6 @@ const declarations = [
     ProjectModule,
     PublicRoutingModule,
     NgxsModule.forFeature([PublicState]),
-  ],
+  ]
 })
 export class PublicModule {}

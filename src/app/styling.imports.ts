@@ -9,10 +9,12 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatInputModule } from '@angular/material/input';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatTableModule } from '@angular/material/table';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -37,10 +39,12 @@ const components = [
   MatSidenavModule,
   MatListModule,
   MatInputModule,
+  MatAutocompleteModule,
   MatCardModule,
   MatProgressSpinnerModule,
   MatSelectModule,
   MatCheckboxModule,
+  MatRadioModule,
   MatTableModule,
   MatDatepickerModule,
   MatNativeDateModule,

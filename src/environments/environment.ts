@@ -20,8 +20,23 @@ export const environment = {
   api_endpoint,
   file_uplod_endpoint: `${cloudinary_endpoint}/upload/`,
   cloudinary_preset,
+  googleRedirect_endpoint: `${api_endpoint}/social-auth/login/google-oauth2/`,
   graphql_endpoint: `${api_endpoint}/graphql/`,
   websocket_graphql_endpoint: `${websocket_api_endpoint}/ws/graphql/`,
+  oAuthConfig: {
+    issuer:'https://accounts.google.com',
+    strictDiscoveryDocumentValidation: false,
+    clientId: "298234328692-f47a20r8v4cfkceb3308png4999a2mtl.apps.googleusercontent.com",
+    showDebugInformation: true,
+    redirectUri:window.location.origin,
+    clearHashAfterLogin: true,
+    scope:'openid profile email https://www.googleapis.com/auth/gmail.readonly',
+    silentRefreshRedirectUri: window.location.origin + '/silent-refresh.html',
+    useSilentRefresh: true, // Needed for Code Flow to suggest using iframe-based refreshes
+    sessionChecksEnabled: true,
+    nonceStateSeparator: 'semicolon', // Real semicolon gets mangled by IdentityServer's URI encoding
+    requireHttps: true,  
+  }
 };
 
 /*

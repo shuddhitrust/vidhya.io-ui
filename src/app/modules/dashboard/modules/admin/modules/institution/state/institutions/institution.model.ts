@@ -20,6 +20,9 @@ export const emptyInstitutionFormRecord: Institution = {
   logo: defaultLogos.institution,
   bio: null,
   invitecode: null,
+  institutionType:null,
+  designations:null,
+  address:null,
 };
 export interface InstitutionStateModel {
   institutions: Institution[];

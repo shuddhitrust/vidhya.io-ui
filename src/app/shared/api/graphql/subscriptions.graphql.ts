@@ -26,6 +26,11 @@ export const SUBSCRIPTIONS = {
           title
           bio
           avatar
+        dob
+        mobileno
+        phoneno
+        address
+        institutionType
           membershipStatus
           role {
             name

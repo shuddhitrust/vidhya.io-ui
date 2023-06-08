@@ -1,15 +1,14 @@
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import {
   Component,
   ElementRef,
   Inject,
   OnInit,
-  ViewChild,
 } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
   FormGroupDirective,
+  NgForm,
   Validators,
 } from '@angular/forms';
 import {
@@ -39,6 +38,11 @@ import {
   VerifyEmailOTPAction,
   VerifyInvitecodeAction,
 } from 'src/app/modules/auth/state/auth.actions';
+import { environment } from 'src/environments/environment';
+import { DomSanitizer } from '@angular/platform-browser';
+import { MatIconRegistry } from '@angular/material/icon';
+import { DOCUMENT } from '@angular/common';
+import { AuthConfig, OAuthService, JwksValidationHandler } from 'angular-oauth2-oidc';
 
 const INVITECODE = 'INVITECODE';
 const GENERATE_EMAIL_OTP = 'GENERATE_EMAIL_OTP';
@@ -48,12 +52,18 @@ const LOGIN = 'LOGIN';
 const FORGOT_PASSWORD = 'FORGOT_PASSWORD';
 const TROUBLE_SIGNING_IN = 'TROUBLE_SIGNING_IN';
 const RESEND_ACTIVATION_EMAIL = 'RESEND_ACTIVATION_EMAIL';
+declare global {
+  const google: typeof import('google-one-tap');
+}
+const googleLogoURL = "./assets/images/google-SSO/Google.svg";
+const authConfig: AuthConfig = environment.oAuthConfig;
 
 @Component({
   selector: 'app-login-modal',
   templateUrl: './login-modal.component.html',
   styleUrls: ['./login-modal.component.scss'],
 })
+
 export class LoginModalComponent implements OnInit {
   url: string;
   INVITECODE = INVITECODE;
@@ -85,21 +95,33 @@ export class LoginModalComponent implements OnInit {
   rememberMe: boolean = JSON.parse(
     localStorage.getItem(localStorageKeys.REMEMBER_ME_KEY)
   );
+  googleLogo: any = "btn_google_signin_dark_normal_web.png";
+  registerDirective: FormGroupDirective;
+  // @ViewChild('buttonDiv') buttonDiv: ElementRef = new ElementRef({});
+
   constructor(
     private store: Store,
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<LoginModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private fb: FormBuilder,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private matIconRegistry: MatIconRegistry,
+    private domSanitizer: DomSanitizer,
+    private oauthService: OAuthService,
+    @Inject(DOCUMENT) private document: Document
   ) {
+    this.configureSingleSignOn();
+    this.matIconRegistry.addSvgIcon(
+      "logo",
+      this.domSanitizer.bypassSecurityTrustResourceUrl(googleLogoURL));
     this.setupLoginForm();
     this.setupForgotPasswordForm();
     this.setupRegisterForm();
     this.setupInvitecodeForm();
     this.authState$.subscribe((val) => {
       this.authState = val;
-      this.invited = this.authState?.currentMember?.invitecode;
+      // this.invited = this.authState?.currentMember?.invitecode;
       this.isEmailOTPGenerated = this.authState?.isEmailOTPGenerated;
       this.isEmailVerified = this.authState?.isEmailVerified;
       this.isLoggedIn = this.authState?.isLoggedIn;
@@ -128,6 +150,10 @@ export class LoginModalComponent implements OnInit {
     });
   }
 
+  configureSingleSignOn() {
+    this.oauthService.configure(authConfig);
+  }
+
   preventSpaces($event) {
     return preventSpaces($event);
   }
@@ -135,6 +161,7 @@ export class LoginModalComponent implements OnInit {
     return sanitizeUsername($event);
   }
   ngOnInit() {
+
     this.url = window.location.href;
     if (this.url.includes(uiroutes.REGISTER_ROUTE.route) && !this.isLoggedIn) {
       const invitecode = this.url.split(uiroutes.REGISTER_ROUTE.route + '/')[1];
@@ -147,7 +174,7 @@ export class LoginModalComponent implements OnInit {
       });
     }
   }
-
+  
   setupForgotPasswordForm() {
     this.emailForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -185,10 +212,10 @@ export class LoginModalComponent implements OnInit {
 
   setupRegisterForm() {
     this.registerForm = this.fb.group({
-      username: ['', Validators.required],
+      username: [this.emailForm.get('email').value, Validators.required],
       email: [this.emailForm.get('email').value, Validators.required],
-      password1: ['', Validators.required],
-      password2: ['', Validators.required],
+      password1: [this.emailForm.get('otp').value, Validators.required],
+      password2: [this.emailForm.get('otp').value, Validators.required],
     });
   }
 
@@ -201,14 +228,15 @@ export class LoginModalComponent implements OnInit {
   }
 
   login(form: FormGroup, formDirective: FormGroupDirective) {
-    this.store.dispatch(new LoginAction({ form, formDirective }));
+    this.store.dispatch(new LoginAction({ form,formDirective }));
   }
 
   verifyInvitecode(form: FormGroup) {
     this.store.dispatch(new VerifyInvitecodeAction({ form }));
   }
   register(form: FormGroup, formDirective: FormGroupDirective) {
-    this.store.dispatch(new RegisterAction({ form, formDirective }));
+    debugger;
+    this.store.dispatch(new RegisterAction({ form,formDirective }));
   }
 
   sendPasswordResetEmail(form: FormGroup, formDirective: FormGroupDirective) {
@@ -231,12 +259,16 @@ export class LoginModalComponent implements OnInit {
   }
 
   generateEmailOTP(form: FormGroup, formDirective: FormGroupDirective) {
+    this.registerDirective = formDirective;
     this.store.dispatch(new GenerateEmailOTPAction({ form, formDirective }));
   }
 
   verifyEmailOTP(form: FormGroup, formDirective: FormGroupDirective) {
+    debugger;
     this.store.dispatch(new VerifyEmailOTPAction({ form, formDirective }));
     this.setupRegisterForm();
+    this.register(this.registerForm,formDirective);
+
   }
 
   showLogin() {
@@ -246,19 +278,22 @@ export class LoginModalComponent implements OnInit {
 
   showRegister() {
     this.registration = true;
-    if (this.invited) {
-      if (this.isEmailVerified) {
-        this.showDialog = REGISTER;
-      } else {
-        if (this.isEmailOTPGenerated) {
-          this.showDialog = VERIFY_EMAIL_OTP;
-        } else {
-          this.showDialog = GENERATE_EMAIL_OTP;
-        }
+    // if (this.invited) {
+    if (this.isEmailVerified) {
+      // this.showDialog = REGISTER;
+      if (this.registerForm && !this.isSubmittingForm) {
+        this.registration = false;
       }
     } else {
-      this.showDialog = INVITECODE;
+      if (this.isEmailOTPGenerated) {
+        this.showDialog = VERIFY_EMAIL_OTP;
+      } else {
+        this.showDialog = GENERATE_EMAIL_OTP;
+      }
     }
+    // } else {
+    //   this.showDialog = INVITECODE;
+    // }
   }
 
   showTroubleSigningIn() {
@@ -271,5 +306,15 @@ export class LoginModalComponent implements OnInit {
 
   showResendActivation() {
     this.showDialog = RESEND_ACTIVATION_EMAIL;
+  }
+
+  openGoogleLogin(e) {
+    this.oauthService.loadDiscoveryDocument()
+      .then(() => this.oauthService.tryLogin())
+      .then(() => {
+        if (!this.oauthService.hasValidAccessToken()) {
+          this.oauthService.initImplicitFlow();
+        }
+      });
   }
 }
