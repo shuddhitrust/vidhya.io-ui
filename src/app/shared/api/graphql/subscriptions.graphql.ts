@@ -27,8 +27,8 @@ export const SUBSCRIPTIONS = {
           bio
           avatar
         dob
-        mobileno
-        phoneno
+        mobile
+        phone
         address
         institutionType
           membershipStatus

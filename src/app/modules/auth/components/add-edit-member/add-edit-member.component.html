@@ -151,11 +151,17 @@
             *ngIf="memberForm.get('institution').get('institutionType').value?true:false"
             [class.dropdoawn-loading]="isFetchingInstitutions" appearance="outline">
             <mat-label>Institution</mat-label>
-            <input type="text" matInput [matAutocomplete]="auto" formControlName="institution">
-            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-              <mat-option *ngFor="let institution of filteredOptions | async;let i=index" [value]="institution">
-                {{ institution.name }}
-              </mat-option>
+            <input type="text" matInput [matAutocomplete]="auto" ([ngModel])="institutionName" (input)="filter($event)"  #autoInput>
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+              <div *ngIf="filteredOptions$ | async as filteredOptions">
+                <ng-container *ngIf="filteredOptions.length; else noItems">
+                  <mat-option *ngFor="let institution of filteredOptions;let i=index; let l = count"
+                    [value]="institution"   (onSelectionChange)="selectInstitution($event,institution)">
+                    {{ institution.name }}
+                  </mat-option>
+                </ng-container>
+                <ng-template #noItems>No Items!</ng-template>
+              </div>
               <mat-option>
                 <button mat-raised-button color="primary" (click)="addNewInstitution($event)">Can't find your
                   institution? Add it!</button>

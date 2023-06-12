@@ -253,7 +253,7 @@ export class InstitutionState {
       formSubmitting = true;
       patchState({ formSubmitting });
       const values = form.value;
-
+      values.designations = values.designations.toString();
       const updateForm = values.id == null ? false : true;
       const { id, ...sanitizedValues } = values;
       const variables = updateForm
