@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Location } from '@angular/common';
 import {
   FormBuilder,
@@ -36,6 +36,7 @@ import { PasswordResetComponent } from 'src/app/modules/public/components/pages/
 import { ChangePasswordComponent } from 'src/app/modules/public/components/pages/change-password/change-password.component';
 import { SendPasswordResetEmailAction } from '../../state/auth.actions';
 import moment from 'moment';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-add-edit-member',
@@ -95,8 +96,12 @@ export class AddEditMemberComponent implements OnInit {
   newPasswordBtnName: any = 'Change Password';
   isGoogleLoggedIn: boolean = false;
   isManualLogIn: boolean = false;
-  filteredOptions: Observable<any>;
+  filteredOptions$: Observable<any>;
   filterValue: string;
+  institutionName:any = '';
+
+  // @Output() optionSelected = new EventEmitter<MatAutocompleteSelectedEvent>();
+
   constructor(
     private location: Location,
     private store: Store,
@@ -111,10 +116,11 @@ export class AddEditMemberComponent implements OnInit {
         this.institutionOptionList = options;
         this.institutionOptions = options[this.memberForm.get('institution').get('institutionType').value];
         const institutionOptionsObservable$ = of(this.institutionOptions);
-        this.filteredOptions = institutionOptionsObservable$.pipe(map((number) => number));
+        this.filteredOptions$ = institutionOptionsObservable$.pipe(map((number) => number));
       }
     })
     this.authState$.subscribe((val) => {
+      // debugger;
       this.authState = val;
       this.isFullyAuthenticated = this.authState?.isFullyAuthenticated;
       this.currentMember = this.authState?.currentMember;
@@ -155,7 +161,6 @@ export class AddEditMemberComponent implements OnInit {
 
       this.memberForm = this.setupMemberFormGroup(this.currentMember);
 
-
       this.populateInstitution();
       if (this.firstTimeSetup) {
         this.store.dispatch(
@@ -180,31 +185,13 @@ export class AddEditMemberComponent implements OnInit {
     }
 
     this.checkIfFormContainsRecord();
-    this.filteredOptions = this.memberForm.get('institution').get('institution').valueChanges
-      .pipe(
-        startWith(''),
-        map(value => {
-          const name = typeof value === 'string' ? value : value?.name;
-          return name ?
-            this._filter(name as string)
-            : this.institutionOptions.slice();
-        }),
-      );
-
+   
   }
 
-  displayFn(user): string {
-    debugger;
-    return user && user.name ? user.name : '';
-  }
-
-  private _filter(name: string) {
-    if (name.length > 3) {
-      this.filterValue = name.toLowerCase();
-      return this.store.dispatch(new FetchInstitutionsByNameOptions({ name: name }));
-    } else {
-      return [];
-    }
+  selectInstitution(e,institution){
+    // debugger
+    this.institutionName = institution.name;
+    this.memberForm.controls['institution'].get('institution').setValue(institution.id);
   }
 
   checkIfFormContainsRecord() {
@@ -242,13 +229,15 @@ export class AddEditMemberComponent implements OnInit {
       institution: this.fb.group({
         institutionType: [memberFormRecord?.institution.institutionType || this.institutionTypeOptions[0].value],
         designation: [memberFormRecord?.designation],
-        institution: [memberFormRecord?.institution?.id]
+        institution: [memberFormRecord?.institution.id]
       }),
       accountSetting: this.fb.group({
         username: [memberFormRecord?.username, [Validators.minLength(5), Validators.maxLength(16)]]
       })
     });
-    this.previewPath = formGroup.get('profile').get('avatar').value;
+    this.store.dispatch(new FetchInstitutionsByNameOptions({ name: memberFormRecord?.institution.name }));
+    this.previewPath = formGroup.get('profile').get('avatar').value;    
+    this.institutionName = memberFormRecord?.institution.name;
     return formGroup;
   };
   ngOnInit(): void {
@@ -394,6 +383,25 @@ export class AddEditMemberComponent implements OnInit {
       this.store.dispatch(
         new SendPasswordResetEmailAction({ form, formDirective })
       );
+    }
+  }
+  
+  displayFn(user) {
+    this.institutionName= user && user.name ? user.name : '';
+    return user.name;
+  }
+
+  private _filter(name: string) {
+      this.filterValue = name.toLowerCase();
+      return this.store.dispatch(new FetchInstitutionsByNameOptions({ name: name }));
+  }
+  getData(searchText:string){
+    return searchText.length < 3 ? of(this.institutionOptions = []):      
+            this._filter(searchText)
+  }
+  filter(event:any){
+    if(event){
+      this.filteredOptions$ = this.getData(event.target.value);
     }
   }
 }

@@ -233,17 +233,17 @@ export class OptionsState {
     isFetchingAllInstitutions = true;
     patchState({ isFetchingAllInstitutions });
     const variables = {
-      searchField: payload.name
+      name: payload.name
     };
     this.apollo
       .query({
-        query: INSTITUTION_QUERIES.GET_INSTITUTIONS,
+        query: INSTITUTION_QUERIES.GET_SEARCH_INSTITUTIONS,
         variables
       })
       .subscribe(
         (res: any) => {
           isFetchingAllInstitutions = false;
-          institutionsList = res?.data?.institutions;
+          institutionsList = res?.data?.searchInstitutions;
           patchState({
             institutionsList,
             isFetchingAllInstitutions,

@@ -24,10 +24,9 @@ export interface MemberInput {
   bio: String;
   searchField: String;
   dob: Date;
-  // year: String;
   address: String;
-  phoneno: number;
-  mobileno:number;
+  phone: number;
+  mobile:number;
 }
 
 export const emptyMemberFormRecord: User = {

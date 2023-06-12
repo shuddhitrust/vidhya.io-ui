@@ -415,10 +415,8 @@ export const INSTITUTION_QUERIES = {
     }
   `,
   GET_SEARCH_INSTITUTIONS: gql`
-    query searchinstitutions($name: String!){
-      searchinstitution(
-        filter:{name:{allofterms: $name}}
-      ){
+    query searchInstitutions($name: String!){
+      searchInstitutions(name:$name){
         records {
           id
           name
