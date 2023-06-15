@@ -17,6 +17,8 @@ export const localStorageKeys = {
   EXPIRATION_KEY: 'EXPIRES_AT',
   REMEMBER_ME_KEY: 'REMEMBER_ME',
   PROJECTS_CLAPPED: 'PROJECTS_CLAPPED',
+  EMAIL_OTP_KEY: 'EMAIL_OTP',
+  FIRST_TIME_SETUP_VIEW_KEY:'FIRST_TIME_SETUP_VIEW'
 };
 
 export const defaultLogos = {
@@ -48,8 +50,8 @@ export const ADMIN_SECTION_LABELS = {
   USER_ROLES: 'User Roles',
 };
 export const INSTITUTION_DESIGNATIONS={
-  'School':['Preschool', 'LKG', 'UKG', '1st Standard', '2nd Standard', '3rd Standard', '4th Standard','5th Standard', '6th Standard', '7th Standard', '8th Standard', '9th Standard', '10th Standard', '11th Standard', '12th Standard'],
-  'College':["1st Year", "2nd Year", "3rd Year", "4th Year"]
+  'School':"Preschool,LKG,UKG,1st Standard,2nd Standard,3rd Standard,4th Standard,5th Standard,6th Standard,7th Standard,8th Standard,9th Standard,10th Standard,11th Standard,12th Standard",
+  'College':"1st Year, 2nd Year, 3rd Year, 4th Year"
 }
 /**
  * Marked options for import into modules that use Markdown

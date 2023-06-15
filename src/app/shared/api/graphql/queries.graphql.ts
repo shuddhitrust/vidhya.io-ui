@@ -160,8 +160,7 @@ export const PUBLIC_QUERIES = {
           pincode
           state
           dob
-          country
-          invitecode        
+          country        
           designations
           institutionType
           score
@@ -431,8 +430,7 @@ export const INSTITUTION_QUERIES = {
           pincode
           state
           dob
-          country
-          invitecode        
+          country        
           designations
           institutionType
         }

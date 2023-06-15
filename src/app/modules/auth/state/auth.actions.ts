@@ -105,6 +105,13 @@ export class PasswordChangeAction {
   ) {}
 }
 
+export class firstTimeSetupAction{
+  static readonly type = '[AUTH] firstTimeSetupAction';
+
+  constructor(
+    public payload: {firstTimeSetup:any }
+  ) {}
+}
 export class VerifyUserAction{
   static readonly type ='[AUTH] VerifyUserAction';
   
@@ -137,7 +144,7 @@ export class GetCurrentUserAction {
 export class GetEmailOTPAction {
   static readonly type = '[AUTH] Fetch OTP';
 
-  constructor(public payload: { email: string ,password: string}) {}
+  constructor(public payload: { user: CurrentMember ,password: string}) {}
 }
 
 export class UpdateCurrentUserInStateAction {

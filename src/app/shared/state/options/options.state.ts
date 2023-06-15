@@ -89,11 +89,6 @@ export class OptionsState {
   static listInstitutionOptions(state: OptionsStateModel) {
     let options = {};
     state.institutionsList['records'].map((g) => {
-      // const option:MatSelectOption = {
-      //   value: g.id,
-      //   label: `${g.name} (${g.location})`,
-      // };
-      debugger;
       if(options.hasOwnProperty(g.institutionType)){
         options[g.institutionType].push(g);
       }else{
@@ -105,7 +100,6 @@ export class OptionsState {
   // static listInstitutionOptions(
   //   state: InstitutionStateModel
   // ): MatSelectOption[] {
-  //   debugger
   //   const options: MatSelectOption[] = state.institutions.map((i) => {
   //     const option: MatSelectOption = {
   //       value: i.id,

@@ -1,6 +1,6 @@
 import { FormGroup, FormGroupDirective } from '@angular/forms';
 import { SearchParams } from '../../../../../../../shared/modules/master-grid/table.model';
-import { idPayload } from '../../../../../../../shared/common/models';
+import { CurrentMember, idPayload } from '../../../../../../../shared/common/models';
 
 export class FetchMembersAction {
   static readonly type = '[MEMBERS] Fetch';
@@ -33,6 +33,7 @@ export class CreateUpdateMemberAction {
     public payload: {
       form: FormGroup;
       formDirective: FormGroupDirective;
+      username: string;
     }
   ) {}
 }

@@ -1,7 +1,7 @@
 <div class="col-lg-8 col-sm-12 form-container">
   <nz-tabset [nzSelectedIndex]="selectedIndex" nzCentered [nzSize]="'large'" [nzTabBarGutter]="20" [nzTabBarStyle]="{
-  'font-family': 'Hahmlet, Roboto, sans-serif;'
-  }">
+  'font-family': 'Hahmlet, Roboto, sans-serif;' 
+  }"  (nzSelectChange)="onTabChange($event)">
     <nz-tab [nzTitle]="'Profile'">
       <ng-container *ngTemplateOutlet="ProfileTemplate"></ng-container>
     </nz-tab>
@@ -73,7 +73,7 @@
         <div>
           <mat-form-field class="col-lg-6 col-md-6 col-sm-6" disabled appearance="outline">
             <mat-label>Mobile</mat-label>
-            <input matInput formControlName="mobile" placeholder="Mobile" />
+            <input matInput formControlName="mobile" placeholder="Mobile" onlyNumber/>
             <small class="validation-error" *ngIf="
               memberForm.get('contact').get('mobile').hasError('') &&
               formDirective.submitted
@@ -84,7 +84,7 @@
           </mat-form-field>
           <mat-form-field class="col-lg-6 col-md-6 col-sm-6" disabled appearance="outline">
             <mat-label>Phone</mat-label>
-            <input matInput formControlName="phone" placeholder="Phone" />
+            <input matInput formControlName="phone" placeholder="Phone" onlyNumber/>
           </mat-form-field>
           <mat-form-field class="col-lg-12 col-md-12 col-sm-12" disabled appearance="outline">
             <mat-label>Address</mat-label>
@@ -196,7 +196,7 @@
           <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
             <mat-label>User Name</mat-label>
             <input matInput specialIsAlphaNumeric placeholder="Your UserName"
-              [disabled]="memberForm.get('contact').get('email').value!=memberForm.get('accountSetting').get('username').value"
+              
               formControlName="username" maxlength="16" />
             <small class="validation-error" *ngIf="
               memberForm.get('accountSetting').get('username').hasError('required') &&

@@ -129,6 +129,7 @@ export class AddEditMemberComponent implements OnInit {
       this.isManualLogIn = this.authState?.isManualLogIn;
       this.newPasswordBtnName = this.isManualLogIn ? 'Change Password' : 'Reset Password';
       this.currentMember = {
+        id:this.currentMember?.id,
         username: this.currentMember?.username,
         firstName: this.currentMember?.firstName,
         lastName: this.currentMember?.lastName,
@@ -189,9 +190,10 @@ export class AddEditMemberComponent implements OnInit {
   }
 
   selectInstitution(e,institution){
-    // debugger
     this.institutionName = institution.name;
     this.memberForm.controls['institution'].get('institution').setValue(institution.id);
+    this.designationOptions = institution.designations?institution.designations.split(',') : [];
+ 
   }
 
   checkIfFormContainsRecord() {
@@ -235,9 +237,15 @@ export class AddEditMemberComponent implements OnInit {
         username: [memberFormRecord?.username, [Validators.minLength(5), Validators.maxLength(16)]]
       })
     });
-    this.store.dispatch(new FetchInstitutionsByNameOptions({ name: memberFormRecord?.institution.name }));
+    if(memberFormRecord?.institution.name){
+      this.store.dispatch(new FetchInstitutionsByNameOptions({ name: memberFormRecord?.institution.name }));
+    }
     this.previewPath = formGroup.get('profile').get('avatar').value;    
-    this.institutionName = memberFormRecord?.institution.name;
+    this.institutionName = memberFormRecord?.institution.name;      
+    formGroup.get('contact').get('email').disable();  
+    if(formGroup.controls['contact'].get('email').value!=formGroup.controls['accountSetting'].get('username').value){
+      formGroup.get('accountSetting').get('username').disable();
+    }
     return formGroup;
   };
   ngOnInit(): void {
@@ -305,6 +313,9 @@ export class AddEditMemberComponent implements OnInit {
     const file = (e.target as HTMLInputElement).files[0];
   }
 
+  onTabChange(e){
+  }
+
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {
     if (this.avatarFile) {
       this.store.dispatch(
@@ -322,7 +333,8 @@ export class AddEditMemberComponent implements OnInit {
           this.store.dispatch(
             new CreateUpdateMemberAction({
               form,
-              formDirective
+              formDirective,
+              username:this?.currentMember?.username
             })
           );
           this.store.dispatch(
@@ -343,7 +355,8 @@ export class AddEditMemberComponent implements OnInit {
       this.store.dispatch(
         new CreateUpdateMemberAction({
           form,
-          formDirective
+          formDirective,
+          username:this?.currentMember?.email
         })
       );
     }
@@ -356,6 +369,7 @@ export class AddEditMemberComponent implements OnInit {
   }
 
   institutionChange(e) {
+    debugger
     this.memberForm.controls['institution'].get('designation').setValue('');
     let findDesignation = this.institutionOptions.find(item => item.id == e);
     this.designationOptions = findDesignation ? this.institutionOptions.find(item => item.id == e).designations.split(',') : [];
@@ -375,6 +389,7 @@ export class AddEditMemberComponent implements OnInit {
   }
 
   passwordUpdate(form, formDirective) {
+    debugger;
     if (this.isManualLogIn) {
       let dialogName = ChangePasswordComponent;
       const dialogRef = this.dialog.open(dialogName);

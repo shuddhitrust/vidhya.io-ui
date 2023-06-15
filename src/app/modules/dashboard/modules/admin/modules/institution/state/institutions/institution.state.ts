@@ -256,6 +256,7 @@ export class InstitutionState {
       values.designations = values.designations.toString();
       const updateForm = values.id == null ? false : true;
       const { id, ...sanitizedValues } = values;
+      values.dob = JSON.parse(JSON.stringify(values.dob));
       const variables = updateForm
         ? {
             input: sanitizedValues,

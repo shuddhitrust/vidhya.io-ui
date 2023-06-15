@@ -58,7 +58,7 @@ export class MemberState {
     private apollo: Apollo,
     private store: Store,
     private router: Router
-  ) {}
+  ) { }
 
   @Selector()
   static listMembers(state: MemberStateModel): User[] {
@@ -236,16 +236,27 @@ export class MemberState {
     { getState, patchState }: StateContext<MemberStateModel>,
     { payload }: CreateUpdateMemberAction
   ) {
-    
+
     const state = getState();
-    const { form, formDirective  } = payload;
+    const { form, formDirective, username } = payload;
     let { formSubmitting } = state;
     if (form.valid) {
       formSubmitting = true;
       patchState({ formSubmitting });
-      const values = Object.assign({},form.value['profile'],form.value['id'],form.value['institution'],form.value['contact'],form.value['accountSetting']);
-      values.dob = JSON.parse(JSON.stringify(values.dob));
-      const { id,institutionType, ...sanitizedValues } = values;
+      let values: any = {};
+      Object.keys(form.value).forEach(elem => {
+        if (elem != 'id') {
+          values = Object.assign({}, values, form.value[elem]);
+          values.dob = JSON.parse(JSON.stringify(values.dob));
+        } else {
+          values = Object.assign({}, values, { 'id': form.value['id'] });
+        }
+      })
+      // const values = Object.assign({},form.value['profile'],form.value['id'],form.value['institution'],form.value['contact'],form.value['accountSetting']);
+      // if (username != values.email) {
+      //   delete values.username;
+      // }
+      const { institutionType, ...sanitizedValues } = values;
       const variables = {
         input: sanitizedValues,
       };
@@ -309,7 +320,7 @@ export class MemberState {
 
   @Action(DeleteMemberAction)
   deleteMember(
-    {}: StateContext<MemberStateModel>,
+    { }: StateContext<MemberStateModel>,
     { payload }: DeleteMemberAction
   ) {
     let { id } = payload;
@@ -403,7 +414,7 @@ export class MemberState {
 
   @Action(SuspendMemberAction)
   suspendUser(
-    {}: StateContext<MemberStateModel>,
+    { }: StateContext<MemberStateModel>,
     { payload }: SuspendMemberAction
   ) {
     let { userId, remarks } = payload;
