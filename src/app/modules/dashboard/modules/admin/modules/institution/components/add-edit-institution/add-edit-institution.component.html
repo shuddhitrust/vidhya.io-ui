@@ -242,8 +242,8 @@ formDirective.submitted
 
     
     <mat-form-field class="col-lg-4 col-md-4 col-sm-12" appearance="outline">
-      <mat-label>DOB</mat-label>
-      <input matInput [matDatepicker]="picker" formControlName="dob">
+      <mat-label>Date of Founding</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="dob" placeholder="Date of Founding">
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>

@@ -59,7 +59,7 @@ export interface AuthStateModel {
   isSubmittingForm: boolean;
   closeLoginForm: boolean;
   isLoggedIn: boolean;
-  isChangePassword: boolean;
+  isChangePasswordEnable: boolean;
   isGoogleLoggedIn: boolean;
   isManualLogIn: boolean;
   verificationEmail: string;
@@ -85,7 +85,7 @@ export const defaultAuthState: AuthStateModel = {
   isLoggedIn: false,
   verificationEmail: null,
   isEmailOTPGenerated: false,
-  isChangePassword: false,
+  isChangePasswordEnable: false,
   isGoogleLoggedIn: false,
   isManualLogIn: false,
   isEmailVerified: false,

@@ -12,6 +12,7 @@ import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { Router } from '@angular/router';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { PasswordChangeAction } from 'src/app/modules/auth/state/auth.actions';
+import { AuthStateModel } from 'src/app/modules/auth/state/auth.model';
 
 @Component({
   selector: 'app-change-password',
@@ -27,6 +28,13 @@ export class ChangePasswordComponent {
   @Select(AuthState.getIsLoggedIn)
   isLoggedIn$: Observable<boolean>;
   isLoggedIn: boolean;
+  @Select(AuthState)
+  authState$: Observable<AuthStateModel>;
+  firstTimeSetup: any;
+  authState: AuthStateModel;
+  @Select(AuthState.getFirstTimeSetup)
+  firstTimeSetup$: Observable<any>;
+  
   constructor(
     private location: Location,
     private store: Store,
@@ -36,7 +44,16 @@ export class ChangePasswordComponent {
     this.isLoggedIn$.subscribe((val) => {
       this.isLoggedIn = val;
     });
+    this.firstTimeSetup$
+    .subscribe((status) => {
+      if (status) {
+        this.firstTimeSetup = status?.firstTimeSetup;      
+      }
+    })
     this.setupPasswordResetForm();
+    if(this.firstTimeSetup == true){
+      this.passwordResetForm.controls['oldPassword'].setValue(sessionStorage.getItem('EMAIL_OTP')?sessionStorage.getItem('EMAIL_OTP'):'');
+    }
   }
 
   setupPasswordResetForm() {

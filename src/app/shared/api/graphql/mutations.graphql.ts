@@ -893,11 +893,28 @@ export const AUTH_MUTATIONS = {
           id
           username
           firstName
+          mobile
+          phone
+          address
+          dob
+          country
+          city
+          state
+          pincode
+          designation
           lastName
           name
           avatar
           email
-          membershipStatus
+          membershipStatus          
+          institution {
+            id
+            name
+          }
+          role {
+            name
+            permissions
+          }          
         }  
     }
   }
@@ -972,12 +989,23 @@ export const AUTH_MUTATIONS = {
         token
         refreshToken
         user {
+          id
           username
           firstName
+          mobile
+          phone
+          address
+          dob
+          country
+          city
+          state
+          pincode
+          designation
           lastName
           name
           avatar
           email
+          membershipStatus          
           institution {
             id
             name
@@ -986,7 +1014,6 @@ export const AUTH_MUTATIONS = {
             name
             permissions
           }
-          membershipStatus
         }
       }
     }

@@ -23,6 +23,7 @@ import { ShowNotificationAction } from 'src/app/shared/state/notifications/notif
 import { sanitizeUsername } from 'src/app/shared/common/functions';
 import { INSTITUTION_DESIGNATIONS } from 'src/app/shared/common/constants';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import moment from 'moment';
 
 @Component({
   selector: 'app-add-edit-institution',
@@ -90,7 +91,7 @@ export class AddEditInstitutionComponent implements OnInit {
       address: [institutionFormRecord.address],
       state: [institutionFormRecord.state],
       pincode: [institutionFormRecord.pincode],
-      dob: [institutionFormRecord.dob],
+      dob: [moment(institutionFormRecord.dob)],
       country: [institutionFormRecord.country]
     });
     if(!formGroup.controls['designations'].value && formGroup.controls['institutionType'].value){

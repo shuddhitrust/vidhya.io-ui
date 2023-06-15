@@ -6,11 +6,15 @@
 // const websocket_api_endpoint = 'ws://143.244.184.238:8000/';
 
 const baseUrl = 'localhost:8000';
+// const baseUrl='vidhya-io-api-mw7x.onrender.com';
+// const baseUrl = 'vidhya-io-staging.onrender.com';
 // const baseUrl = 'vidhya-io-staging.herokuapp.com';
 // const baseUrl = 'vidhya-io-live-replica.herokuapp.com';
 // const baseUrl = '156.67.208.64';
+// const api_endpoint = `https://${baseUrl}`;
 
 const api_endpoint = `http://${baseUrl}`;
+
 const websocket_api_endpoint = `ws://${baseUrl}/`;
 const cloudinary_endpoint = 'https://api.cloudinary.com/v1_1/ragav-dev';
 const cloudinary_preset = 'cljckgq2';
@@ -26,11 +30,11 @@ export const environment = {
   oAuthConfig: {
     issuer:'https://accounts.google.com',
     strictDiscoveryDocumentValidation: false,
-    clientId: "298234328692-f47a20r8v4cfkceb3308png4999a2mtl.apps.googleusercontent.com",
+    clientId: "298234328692-ripbjps673t74to6r1o4mlvtvottg3su.apps.googleusercontent.com",
     showDebugInformation: true,
     redirectUri:window.location.origin,
     clearHashAfterLogin: true,
-    scope:'openid profile email https://www.googleapis.com/auth/gmail.readonly',
+    scope:'openid profile email',
     silentRefreshRedirectUri: window.location.origin + '/silent-refresh.html',
     useSilentRefresh: true, // Needed for Code Flow to suggest using iframe-based refreshes
     sessionChecksEnabled: true,
