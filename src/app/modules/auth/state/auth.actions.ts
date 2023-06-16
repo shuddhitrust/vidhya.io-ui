@@ -116,7 +116,7 @@ export class VerifyUserAction{
   static readonly type ='[AUTH] VerifyUserAction';
   
   constructor(
-    public payload: { user: CurrentMember  }
+    public payload: { user: CurrentMember}
   ) {}
 }
 

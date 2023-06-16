@@ -1014,6 +1014,8 @@ export const AUTH_MUTATIONS = {
             name
             permissions
           }
+          googleLogin
+          manualLogin
         }
       }
     }
@@ -1088,10 +1090,14 @@ export const AUTH_MUTATIONS = {
   `,
   VERIFY_EMAILUSER: gql`  
   mutation verifyEmailUser(
-    $user_id: Int!,
+    $user_id: Int!,      
+    $googleLogin:Boolean!,
+    $manualLogin:Boolean!
   ) {
     verifyEmailUser(
-      userId: $user_id
+      userId: $user_id,
+      googleLogin:$googleLogin,
+      manualLogin:$manualLogin
     )  {
       ok
       user{

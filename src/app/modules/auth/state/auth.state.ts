@@ -602,7 +602,7 @@ export class AuthState {
           ({ data }: any) => {
             const response = data.tokenAuth;
             isSubmittingForm = false;
-            patchState({ isSubmittingForm });
+            patchState({ isSubmittingForm});
 
             if (response.success) {
               form.reset();
@@ -612,6 +612,8 @@ export class AuthState {
               const { userId } = this.getDecodedToken(token);
               let user = response.user;
               user.id = userId;
+              patchState({ isGoogleLoggedIn:user.googleLogin ,isManualLogIn:true});
+
               this.store.dispatch(
                 new UpdateTokenAction({ token, refreshToken })
               );
@@ -1009,7 +1011,7 @@ export class AuthState {
     const { form, formDirective } = payload;
 
     let { isSubmittingForm, isLoggedIn, isGoogleLoggedIn } = state;
-    if (form.valid) {
+    if (form.valid||(form.disabled && form.value)) {
       isSubmittingForm = true;
       const values = form.value;
       patchState({ isSubmittingForm });
@@ -1354,7 +1356,7 @@ export class AuthState {
       .mutate({
         mutation: AUTH_MUTATIONS.CREATE_TOKEN,
         variables: {
-          input: { email: user.email, firstName: user.firstName, lastName: user.lastName, username: user.email, googleLogin: true }
+          input: { email: user.email, firstName: user.firstName, lastName: user.lastName, username: user.email }
         },
       })
       .subscribe(
@@ -1394,7 +1396,6 @@ export class AuthState {
               action: 'success',
             })
           );
-
 
           this.store.dispatch(new VerifyUserAction({ user: user }))
           this.router.navigateByUrl(uiroutes.MEMBER_FORM_ROUTE.route);
@@ -1514,19 +1515,22 @@ export class AuthState {
   ) {
     const state = getState();
     const { user } = payload;
-    let { isManualLogIn } = state;
+    let { isManualLogIn,isGoogleLoggedIn } = state;
     this.apollo
       .mutate({
         mutation: AUTH_MUTATIONS.VERIFY_EMAILUSER,
         variables: {
           user_id: user.id,
+          googleLogin:isGoogleLoggedIn,
+          manualLogin:isManualLogIn
         },
       })
       .subscribe(
         ({ data }: any) => {
-          patchState({
-            isManualLogIn: true
-          });
+          console.log(data);
+          // patchState({
+          //   isManualLogIn: true
+          // });
         }, err => {
           this.store.dispatch(
             new ShowNotificationAction({
