@@ -127,7 +127,6 @@ export class AddEditMemberComponent implements OnInit {
       this.firstTimeSetup = this.authState?.firstTimeSetup;
       this.isGoogleLoggedIn = this.authState?.isGoogleLoggedIn;
       this.isManualLogIn = this.authState?.isManualLogIn;
-      this.newPasswordBtnName = this.isManualLogIn ? 'Change Password' : 'Reset Password';
       this.currentMember = {
         id:this.currentMember?.id,
         username: this.currentMember?.username,
@@ -231,13 +230,14 @@ export class AddEditMemberComponent implements OnInit {
       institution: this.fb.group({
         institutionType: [memberFormRecord?.institution.institutionType || this.institutionTypeOptions[0].value],
         designation: [memberFormRecord?.designation],
-        institution: [memberFormRecord?.institution.id]
+        institution: [memberFormRecord?.institution?.id]
       }),
       accountSetting: this.fb.group({
         username: [memberFormRecord?.username, [Validators.minLength(5), Validators.maxLength(16)]]
       })
     });
-    if(memberFormRecord?.institution.name){
+    if(memberFormRecord?.institution?.name){
+      this.designationOptions=memberFormRecord?.institution?.designationOptions?memberFormRecord?.institution?.designationOptions.split(','):['NA'];
       this.store.dispatch(new FetchInstitutionsByNameOptions({ name: memberFormRecord?.institution.name }));
     }
     this.previewPath = formGroup.get('profile').get('avatar').value;    
@@ -246,6 +246,7 @@ export class AddEditMemberComponent implements OnInit {
     if(formGroup.controls['contact'].get('email').value!=formGroup.controls['accountSetting'].get('username').value){
       formGroup.get('accountSetting').get('username').disable();
     }
+    this.newPasswordBtnName = this.isManualLogIn ? 'Change Password' : 'Reset Password';
     return formGroup;
   };
   ngOnInit(): void {
