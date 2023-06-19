@@ -30,7 +30,7 @@ export const environment = {
     showDebugInformation: true,
     redirectUri:window.location.origin,
     clearHashAfterLogin: true,
-    scope:'openid profile email https://www.googleapis.com/auth/gmail.readonly',
+    scope:'openid profile email',
     silentRefreshRedirectUri: window.location.origin + '/silent-refresh.html',
     useSilentRefresh: true, // Needed for Code Flow to suggest using iframe-based refreshes
     sessionChecksEnabled: true,
