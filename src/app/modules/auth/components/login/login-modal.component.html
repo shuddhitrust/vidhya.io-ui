@@ -57,45 +57,31 @@
         data-cy="remember-me-checkbox">
         Remember me on this device
       </mat-checkbox>
-      <div class="row">
-        <div class="col-md-6">
-
-          <div class="secondary-auth-options">
-            <p data-cy="login-issues-link" class="link-button" style="color: var(--red)"
-              (click)="showTroubleSigningIn()">
-              Help! I am unable to login!
-            </p>
-            <p data-cy="registration-link" class="link-button" (click)="showRegister()">
-
-              Create New Account?
-            </p>
-          </div>
-        </div>
-        <div class="col-md-6">
-
-          <button data-cy="login-submit-button" type="submit" class="submit-button" mat-raised-button color="primary"
-            [disabled]="isSubmittingForm === true">
-            {{ isSubmittingForm === true ? "Logging in..." : "Login" }}
-          </button>
-        </div>
-      </div>
+      <button data-cy="login-submit-button" type="submit" class="submit-button" mat-raised-button color="primary"
+        [disabled]="isSubmittingForm === true">
+        {{ isSubmittingForm === true ? "Logging in..." : "Login" }}
+      </button>
     </form>
-    <div class="col-md-12">
-      <div class="row">
-        <div class="SSODivider">
-          <hr>
-        </div>OR<div class="SSODivider">
-          <hr>
-        </div>
-      </div>
+
+    <div class="secondary-auth-options w-65">
+      <p data-cy="login-issues-link" class="link-button" style="color: var(--red)" (click)="showTroubleSigningIn()">
+        Help! I am unable to login!
+      </p>
+      <p data-cy="registration-link" class="link-button" (click)="showRegister()">
+
+        Create New Account?
+      </p>
     </div>
-    <div class="col-md-12">
+    <div class="">
+      <div class="separator">
+        <h3><span>OR</span></h3>
+      </div>
+
       <div class="text-center">
-        <button mat-button class="googleLoginBtn"  (click)="openGoogleLogin($event)">
+        <button mat-button class="googleLoginBtn" (click)="openGoogleLogin($event)">
           <mat-icon class="googleLoginIcon" svgIcon="logo"></mat-icon> Sign in with Google
         </button>
       </div>
-
     </div>
   </div>
 </ng-template>
@@ -168,6 +154,12 @@
         <mat-label>Email OTP</mat-label>
         <input autofocus matInput formControlName="otp" (keyup)="preventSpaces($event)" required
           placeholder="Email OTP" />
+          <small class="validation-error" *ngIf="
+            emailForm.get('otp').hasError('required') &&
+            formDirective.submitted
+          ">
+          OTP is required
+        </small>
       </mat-form-field>
       <mat-card-subtitle style="text-align: left">
         <p>

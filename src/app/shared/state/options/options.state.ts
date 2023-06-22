@@ -88,28 +88,8 @@ export class OptionsState {
   @Selector()
   static listInstitutionOptions(state: OptionsStateModel) {
     let options = {};
-    state.institutionsList['records'].map((g) => {
-      if(options.hasOwnProperty(g.institutionType)){
-        options[g.institutionType].push(g);
-      }else{
-        options=Object.assign({},options,{[g.institutionType]:[g]});
-      }
-    });
-    return options;  
+    return state.institutionsList['records'];  
   }
-  // static listInstitutionOptions(
-  //   state: InstitutionStateModel
-  // ): MatSelectOption[] {
-  //   const options: MatSelectOption[] = state.institutions.map((i) => {
-  //     const option: MatSelectOption = {
-  //       value: i.id,
-  //       label: `${i.name} (${i.location})`,
-  //     };
-  //     return option;
-  //   });
-
-  //   return options;
-  // }
 
   @Selector()
   static getIsFetchingInstitutions(state: OptionsStateModel): boolean {

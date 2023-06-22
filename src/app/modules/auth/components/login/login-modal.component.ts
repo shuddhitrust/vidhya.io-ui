@@ -235,7 +235,6 @@ export class LoginModalComponent implements OnInit {
     this.store.dispatch(new VerifyInvitecodeAction({ form }));
   }
   register(form: FormGroup, formDirective: FormGroupDirective) {
-    debugger;
     this.store.dispatch(new RegisterAction({ form,formDirective }));
   }
 
@@ -264,7 +263,6 @@ export class LoginModalComponent implements OnInit {
   }
 
   verifyEmailOTP(form: FormGroup, formDirective: FormGroupDirective) {
-    debugger;
     this.store.dispatch(new VerifyEmailOTPAction({ form, formDirective }));
     this.setupRegisterForm();
     this.register(this.registerForm,formDirective);
@@ -287,6 +285,7 @@ export class LoginModalComponent implements OnInit {
     } else {
       if (this.isEmailOTPGenerated) {
         this.showDialog = VERIFY_EMAIL_OTP;
+        this.emailForm.controls['otp'].setValidators(Validators.required);
       } else {
         this.showDialog = GENERATE_EMAIL_OTP;
       }

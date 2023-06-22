@@ -36,7 +36,7 @@
 
 .secondary-auth-options {
   float: left;
-  display: block;
+  display: contents;
   padding-top: 10px;
   font-size: 0.9em;
 }
@@ -44,7 +44,7 @@
 .submit-button {
   display: block;
   float: right;
-  margin-top: 30px;
+  margin-top: 50px;
 }
 
 .link-button {
@@ -54,10 +54,6 @@
 
 .form-title {
   text-align: center;
-}
-
-.SSODivider{
-  width: 47%;
 }
 
 .googleLoginBtn{
@@ -72,6 +68,46 @@
   width: 20px;
   vertical-align: top;
   height: 14px;
+}
+
+.separator {
+  // margin: 43px auto 0;
+  max-width: 960px;
+  text-align: center;
+  width: 100%;
+
+  h3 {
+    text-align: center;
+    display: block;
+    overflow: hidden;
+    margin: 15px 20px 0;
+    
+    span {
+      font-weight: 100;
+      height: 30px;
+      position: relative;
+      display: inline-block;
+      
+      &::before,
+      &::after {
+        content: "";
+        position: absolute;
+        top: 35%;
+        height: 1px;
+        background: #757575;
+        width: 99999px;
+      }
+      
+      &::before {
+        left: 100%;
+        margin-left: 10px;
+      }
+      &::after {
+        right: 100%;
+        margin-right: 10px;
+      }
+    }
+}
 }
 
 @media screen and (max-width: 768px) {
@@ -91,5 +127,11 @@
   button {
     padding-left: 10px;
     padding-right: 10px;
+  }
+  
+}
+@media screen and (max-width: 396px) {
+  .separator {
+    margin: 43px auto 0;
   }
 }

@@ -20,14 +20,15 @@ export const AUTH_QUERIES = {
         state
         city
         country
+        designation
         projectsClapped {
           id
         }
         institution {
           id
-          name
+          name                  
+          designations
           institutionType
-          designations        
         }
         role {
           name

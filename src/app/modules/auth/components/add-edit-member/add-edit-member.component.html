@@ -1,26 +1,77 @@
 <div class="col-lg-8 col-sm-12 form-container">
-  <nz-tabset [nzSelectedIndex]="selectedIndex" nzCentered [nzSize]="'large'" [nzTabBarGutter]="20" [nzTabBarStyle]="{
-  'font-family': 'Hahmlet, Roboto, sans-serif;' 
-  }"  (nzSelectChange)="onTabChange($event)">
-    <nz-tab [nzTitle]="'Profile'">
-      <ng-container *ngTemplateOutlet="ProfileTemplate"></ng-container>
-    </nz-tab>
-    <nz-tab [nzTitle]="'Contact'">
-      <ng-container *ngTemplateOutlet="ContactTemplate"></ng-container>
-    </nz-tab>
-    <nz-tab [nzTitle]="'Institution'">
-      <ng-container *ngTemplateOutlet="InstitutionTemplate"></ng-container>
-    </nz-tab>
-    <nz-tab [nzTitle]="'Account Settings'">
+  <mat-accordion multi>
+    <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false" [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Account Settings
+        </mat-panel-title>
+      </mat-expansion-panel-header>
       <ng-container *ngTemplateOutlet="AccountSettingsTemplate"></ng-container>
-    </nz-tab>
-  </nz-tabset>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false" [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Profile
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <ng-container *ngTemplateOutlet="ProfileTemplate"></ng-container>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false" [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Contact
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <ng-container *ngTemplateOutlet="ContactTemplate"></ng-container>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false" [expanded]="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Institution
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <ng-container *ngTemplateOutlet="InstitutionTemplate"></ng-container>
+    </mat-expansion-panel>
+  </mat-accordion>
 </div>
 <form [formGroup]="memberForm" novalidate (submit)="submitForm(memberForm, formDirective)" #formDirective="ngForm">
+  <!-- ACCOUNT SETTINGS TAB UI -->
+  <ng-template #AccountSettingsTemplate>
+    <!-- <div class="scroll-feed" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" [fromRoot]="true"
+      (scrolled)="onScroll()"> -->
+    <div>
+      <form formGroupName="accountSetting" #formDirective="ngForm">
+        <div>
+          <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
+            <mat-label>User Name</mat-label>
+            <input matInput specialIsAlphaNumeric placeholder="Your UserName" required formControlName="username"
+              maxlength="16" />
+            <mat-hint>You will not able to change the username later. </mat-hint>
+            <small class="validation-error my-mat-hint" *ngIf="
+            memberForm.get('accountSetting').get('username').hasError('required') &&
+            formDirective.submitted
+            "> UserName is required </small>
+            <small class="validation-error  my-mat-hint" *ngIf="!memberForm.get('accountSetting').get('username')?.valid && (memberForm.get('accountSetting').get('username')?.dirty
+            ||memberForm.get('accountSetting').get('username')?.touched)"> Please Enter Valid UserName </small>
+          </mat-form-field>
+          <p></p>
+          <div class="col-lg-9 col-md-12 col-sm-12">
+            <button mat-stroked-button color="primary"
+              (click)="passwordUpdate(memberForm.get('contact').get('email'),formDirective)">{{newPasswordBtnName}}</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </ng-template>
+
   <!-- PROFILE TAB UI -->
-  <ng-template #ProfileTemplate nz-tab>
-    <div class="scroll-feed" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" [fromRoot]="true"
-      (scrolled)="onScroll()">
+  <ng-template #ProfileTemplate>
+    <!-- <div class="scroll-feed" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" [fromRoot]="true"
+      (scrolled)="onScroll()"> -->
+    <div>
       <form formGroupName="profile">
         <p></p>
         <div class="col-lg-3 col-md-4 col-sm-12 floating-avatar">
@@ -42,7 +93,7 @@
         </div>
         <mat-form-field class="col-lg-9 col-md-12 col-sm-12" appearance="outline">
           <mat-label>First Name</mat-label>
-          <input matInput formControlName="firstName" placeholder="Your first name" />
+          <input matInput required formControlName="firstName" placeholder="Your first name" />
           <small class="validation-error" *ngIf="
            memberForm.get('profile').get('firstName').hasError('required') &&
            formDirective.submitted
@@ -50,7 +101,7 @@
         </mat-form-field>
         <mat-form-field class="col-lg-9 col-md-12 col-sm-12" appearance="outline">
           <mat-label>Last Name</mat-label>
-          <input matInput formControlName="lastName" placeholder="Your last name" />
+          <input matInput required formControlName="lastName" placeholder="Your last name" />
           <small class="validation-error" *ngIf="
            memberForm.get('profile').get('lastName').hasError('required') &&
            formDirective.submitted
@@ -58,33 +109,35 @@
         </mat-form-field>
         <mat-form-field class="col-lg-9 col-md-12 col-sm-12" appearance="outline">
           <mat-label>Date of birth</mat-label>
-          <input matInput [matDatepicker]="picker" formControlName="dob" placeholder="Date of birth">
+          <input matInput [matDatepicker]="picker" required formControlName="dob" placeholder="Date of birth">
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
+          <small class="validation-error" *ngIf="
+           memberForm.get('profile').get('dob').hasError('required') &&
+           formDirective.submitted
+           "> DOB is required </small>
         </mat-form-field>
       </form>
     </div>
   </ng-template>
   <!-- CONTACT TAB UI -->
-  <ng-template #ContactTemplate nz-tab>
-    <div class="scroll-feed" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" [fromRoot]="true"
-      (scrolled)="onScroll()">
+  <ng-template #ContactTemplate>
+    <!-- <div class="scroll-feed" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" [fromRoot]="true"
+      (scrolled)="onScroll()"> -->
+    <div>
       <form formGroupName="contact">
         <div>
           <mat-form-field class="col-lg-6 col-md-6 col-sm-6" disabled appearance="outline">
             <mat-label>Mobile</mat-label>
-            <input matInput formControlName="mobile" placeholder="Mobile" onlyNumber/>
+            <input matInput required formControlName="mobile" placeholder="Mobile" onlyNumber />
             <small class="validation-error" *ngIf="
               memberForm.get('contact').get('mobile').hasError('') &&
               formDirective.submitted
-              "> Mobile No is required</small>
-            <small class="validation-error" *ngIf="
-              memberForm.get('contact').get('mobile').hasError('mobile') && formDirective.submitted
-              "> Please enter a valid Mobile No </small>
+              "> Mobile is required</small>
           </mat-form-field>
           <mat-form-field class="col-lg-6 col-md-6 col-sm-6" disabled appearance="outline">
             <mat-label>Phone</mat-label>
-            <input matInput formControlName="phone" placeholder="Phone" onlyNumber/>
+            <input matInput formControlName="phone" placeholder="Phone" onlyNumber />
           </mat-form-field>
           <mat-form-field class="col-lg-12 col-md-12 col-sm-12" disabled appearance="outline">
             <mat-label>Address</mat-label>
@@ -104,74 +157,68 @@
           </mat-form-field>
           <mat-form-field class="col-lg-4 col-md-4 col-sm-4" disabled appearance="outline">
             <mat-label>Country</mat-label>
-            <input matInput formControlName="country" placeholder="Country" />
+            <input matInput required formControlName="country" placeholder="Country" />
             <small class="validation-error" *ngIf="
               memberForm.get('contact').get('country').hasError('') &&
               formDirective.submitted
               "> Country is required</small>
           </mat-form-field>
-          <mat-form-field class="col-lg-6 col-md-6 col-sm-6" disabled appearance="outline">
+          <mat-form-field class="col-lg-6 col-md-6 col-sm-6" appearance="outline">
             <mat-label>Email ID</mat-label>
-            <input matInput formControlName="email" required readonly placeholder="Email ID" />
-            <small class="validation-error" *ngIf="
-              memberForm.get('contact').get('email').hasError('required') &&
-              formDirective.submitted
-              "> Email is required </small>
-            <small class="validation-error" *ngIf="
-              memberForm.get('contact').get('email').hasError('email') && formDirective.submitted
-              "> Please enter a valid email </small>
+            <input matInput formControlName="email" required placeholder="Email ID" />
           </mat-form-field>
         </div>
       </form>
     </div>
   </ng-template>
   <!-- INSTITUTION TAB UI -->
-  <ng-template #InstitutionTemplate nz-tab>
-    <div class="scroll-feed" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" [fromRoot]="true"
-      (scrolled)="onScroll()">
+  <ng-template #InstitutionTemplate>
+    <!-- <div class="scroll-feed" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" [fromRoot]="true"
+      (scrolled)="onScroll()"> -->
+    <div>
       <form formGroupName="institution">
         <div>
           <mat-form-field class="col-lg-12 col-md-12 col-sm-12" [class.dropdoawn-loading]="isFetchingInstitutions"
             appearance="outline">
-            <mat-label>Institution Type</mat-label>
-            <mat-select formControlName="institutionType" placeholder="Institution Type"
-              (valueChange)="institutionTypeChange($event)">
-              <mat-option *ngFor="let type of institutionTypeOptions" [value]="type.value">
-                {{ type.label }}
-              </mat-option>
-            </mat-select>
-            <small class="validation-error" *ngIf="
-              memberForm.get('institution').get('institutionType').hasError('required') &&
-              formDirective.submitted
-              ">
-              Institution Type is required
-            </small>
-          </mat-form-field>
-          <mat-form-field class="col-lg-12 col-md-12 col-sm-12"
-            *ngIf="memberForm.get('institution').get('institutionType').value?true:false"
-            [class.dropdoawn-loading]="isFetchingInstitutions" appearance="outline">
             <mat-label>Institution</mat-label>
-            <input type="text" matInput [matAutocomplete]="auto" ([ngModel])="institutionName" (input)="filter($event)"  #autoInput>
-            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+            <input type="text" matInput [matAutocomplete]="auto" ([ngModel])="institutionName" (input)="filter($event)"
+              #autoInput>
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
+              (optionSelected)='getPosts($event.option.value)'>
               <div *ngIf="filteredOptions$ | async as filteredOptions">
                 <ng-container *ngIf="filteredOptions.length; else noItems">
-                  <mat-option *ngFor="let institution of filteredOptions;let i=index; let l = count"
-                    [value]="institution"   (onSelectionChange)="selectInstitution($event,institution)">
-                    {{ institution.name }}
-                  </mat-option>
+                  <div class="institutionGrid">
+                    <div class="row institutionGridHead" style="background-color: #0099ff;">
+                      <div class="col"><strong>Name</strong></div>
+                      <div class="col"><strong>Institution Type</strong></div>
+                    </div>
+                    <mat-option *ngFor="let institution of filteredOptions;let i=index; let l = count"
+                      [value]="institution" (onSelectionChange)="selectInstitution($event,institution)">
+                      <div class="institutionGridBody">
+                        <div class="row">
+                          <div class="col" [matTooltip]="institution.name" matTooltipPosition="above"> {{
+                            institution.name }}</div>
+                          <div class="col">
+                            {{institution.institutionType=='SC'?'School':institution.institutionType=='CL'?'College':institution.institutionType=='CO'?'Company':institution.institutionType=='OR'?'Organization':'SC'}}
+                          </div>
+                        </div>
+                      </div>
+                    </mat-option>
+                  </div>
                 </ng-container>
-                <ng-template #noItems>No Items!</ng-template>
+                <ng-template #noItems>No Items!
+                  <mat-option>
+                    <button mat-raised-button color="primary" (click)="addNewInstitution($event)">Can't find your
+                      institution? Add it!</button>
+                  </mat-option>
+                </ng-template>
               </div>
-              <mat-option>
-                <button mat-raised-button color="primary" (click)="addNewInstitution($event)">Can't find your
-                  institution? Add it!</button>
-              </mat-option>
             </mat-autocomplete>
           </mat-form-field>
           <mat-form-field class="col-lg-12 col-md-12 col-sm-12"
             *ngIf="memberForm.get('institution').get('institution').value?true:false" appearance="outline">
             <mat-label>Designation</mat-label>
-            <mat-select formControlName="designation" placeholder="Designation">
+            <mat-select formControlName="designation" required placeholder="Designation">
               <mat-option *ngFor="let designation of designationOptions" [value]="designation">
                 {{designation }}
               </mat-option>
@@ -187,35 +234,8 @@
       </form>
     </div>
   </ng-template>
-  <!-- ACCOUNT SETTINGS TAB UI -->
-  <ng-template #AccountSettingsTemplate nz-tab>
-    <div class="scroll-feed" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" [fromRoot]="true"
-      (scrolled)="onScroll()">
-      <form formGroupName="accountSetting" #formDirective="ngForm">
-        <div>
-          <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
-            <mat-label>User Name</mat-label>
-            <input matInput specialIsAlphaNumeric placeholder="Your UserName"
-              
-              formControlName="username" maxlength="16" />
-            <small class="validation-error" *ngIf="
-              memberForm.get('accountSetting').get('username').hasError('required') &&
-              formDirective.submitted
-              "> UserName is required </small>
-            <small class="validation-error" *ngIf="!memberForm.get('accountSetting').get('username')?.valid && (memberForm.get('accountSetting').get('username')?.dirty
-              ||memberForm.get('accountSetting').get('username')?.touched)"> Please Enter Valid UserName </small>
-          </mat-form-field>
-          <small class="col-lg-12 col-md-12 col-sm-12"> You will not able to change the username later. </small>
-          <div class="col-lg-9 col-md-12 col-sm-12">
-            <button mat-stroked-button color="primary"
-              (click)="passwordUpdate(memberForm.get('contact').get('email'),formDirective)">{{newPasswordBtnName}}</button>
-          </div>
-        </div>
-      </form>
-    </div>
-  </ng-template>
   <button type="submit" class="floating-button-bottom" mat-raised-button color="primary"
-    [disabled]="(formSubmitting$ | async) === true">
+    [disabled]="(formSubmitting$ | async) === true  || memberForm.valid!=true">
     {{ (formSubmitting$ | async) === true ? "Submitting..." : "Submit" }}
   </button>
 </form>

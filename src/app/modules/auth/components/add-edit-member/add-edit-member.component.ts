@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import {
   FormBuilder,
@@ -45,8 +45,10 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
     './add-edit-member.component.scss',
     './../../../../shared/common/shared-styles.css',
   ],
+
 })
 export class AddEditMemberComponent implements OnInit {
+  panelOpenState: boolean = false;
   formSubmitting: boolean = false;
   public selectedIndex: number = 0;
   memberFormTab = ['']
@@ -98,7 +100,9 @@ export class AddEditMemberComponent implements OnInit {
   isManualLogIn: boolean = false;
   filteredOptions$: Observable<any>;
   filterValue: string;
-  institutionName:any = '';
+  institutionName: any = '';
+  @ViewChild('autoInput') autoInput;
+
 
   // @Output() optionSelected = new EventEmitter<MatAutocompleteSelectedEvent>();
 
@@ -114,13 +118,18 @@ export class AddEditMemberComponent implements OnInit {
     this.institutionList$.subscribe(options => {
       if (options) {
         this.institutionOptionList = options;
-        this.institutionOptions = options[this.memberForm.get('institution').get('institutionType').value];
+        this.institutionOptions = options;//[this.memberForm.get('institution').get('institutionType').value];
         const institutionOptionsObservable$ = of(this.institutionOptions);
         this.filteredOptions$ = institutionOptionsObservable$.pipe(map((number) => number));
+        if (this.memberForm.controls['institution'].get('institution').value) {
+          if (!this.autoInput.nativeElement.value) {
+            this.autoInput.nativeElement.value = this.currentMember?.institution?.name;
+          }
+          this.designationOptions = this.currentMember.institution.designations.split(',')
+        }
       }
     })
     this.authState$.subscribe((val) => {
-      // debugger;
       this.authState = val;
       this.isFullyAuthenticated = this.authState?.isFullyAuthenticated;
       this.currentMember = this.authState?.currentMember;
@@ -128,7 +137,7 @@ export class AddEditMemberComponent implements OnInit {
       this.isGoogleLoggedIn = this.authState?.isGoogleLoggedIn;
       this.isManualLogIn = this.authState?.isManualLogIn;
       this.currentMember = {
-        id:this.currentMember?.id,
+        id: this.currentMember?.id,
         username: this.currentMember?.username,
         firstName: this.currentMember?.firstName,
         lastName: this.currentMember?.lastName,
@@ -185,14 +194,20 @@ export class AddEditMemberComponent implements OnInit {
     }
 
     this.checkIfFormContainsRecord();
-   
+
   }
 
-  selectInstitution(e,institution){
+  selectInstitution(e, institution) {
     this.institutionName = institution.name;
     this.memberForm.controls['institution'].get('institution').setValue(institution.id);
-    this.designationOptions = institution.designations?institution.designations.split(',') : [];
- 
+    this.designationOptions = institution.designations ? institution.designations.split(',') : ['NA'];
+    if (institution?.name != this.currentMember?.institution?.name) {
+      this.memberForm.controls['institution'].get('designatiom').setValue('');
+    } else if (institution?.name == this.currentMember?.institution?.name) {
+      this.memberForm.controls['institution'].get('designatiom').setValue(this.currentMember.designation);
+
+    }
+
   }
 
   checkIfFormContainsRecord() {
@@ -207,9 +222,9 @@ export class AddEditMemberComponent implements OnInit {
     const formGroup = this.fb.group({
       id: [memberFormRecord?.id],
       profile: this.fb.group({
-        firstName: [memberFormRecord?.firstName],
-        lastName: [memberFormRecord?.lastName],
-        dob: [moment(memberFormRecord?.dob)],
+        firstName: [memberFormRecord?.firstName, Validators.required],
+        lastName: [memberFormRecord?.lastName, Validators.required],
+        dob: [moment(memberFormRecord?.dob), Validators.required],
         avatar: [memberFormRecord?.avatar],
         title: [
           memberFormRecord?.title,
@@ -218,32 +233,32 @@ export class AddEditMemberComponent implements OnInit {
         bio: [memberFormRecord?.bio, Validators.maxLength(this.bioMaxLength)]
       }),
       contact: this.fb.group({
-        email: [memberFormRecord.email, [Validators.email]],
+        email: [memberFormRecord.email],
         address: [memberFormRecord?.address],
         city: [memberFormRecord?.city],
         pincode: [memberFormRecord?.pincode],
         state: [memberFormRecord?.state],
-        country: [memberFormRecord?.country],
-        mobile: [memberFormRecord?.mobile],
-        phone: [memberFormRecord?.phone]
+        country: [memberFormRecord?.country, Validators.required],
+        mobile: [memberFormRecord?.mobile == "0000000000" ? '' : memberFormRecord?.mobile, Validators.required],
+        phone: [memberFormRecord?.phone == "0000000000" ? '' : memberFormRecord?.phone]
       }),
       institution: this.fb.group({
-        institutionType: [memberFormRecord?.institution.institutionType || this.institutionTypeOptions[0].value],
-        designation: [memberFormRecord?.designation],
+        // institutionType: [memberFormRecord?.institution.institutionType || this.institutionTypeOptions[0].value],
+        designation: [memberFormRecord?.designation, Validators.required],
         institution: [memberFormRecord?.institution?.id]
       }),
       accountSetting: this.fb.group({
-        username: [memberFormRecord?.username, [Validators.minLength(5), Validators.maxLength(16)]]
+        username: [memberFormRecord.email == memberFormRecord.username ? '' : memberFormRecord.username, [Validators.minLength(5), Validators.maxLength(16), Validators.required]]
       })
     });
-    if(memberFormRecord?.institution?.name){
-      this.designationOptions=memberFormRecord?.institution?.designationOptions?memberFormRecord?.institution?.designationOptions.split(','):['NA'];
+    if (memberFormRecord?.institution?.name) {
+      this.designationOptions = memberFormRecord?.institution?.designationOptions ? memberFormRecord?.institution?.designationOptions.split(',') : ['NA'];
       this.store.dispatch(new FetchInstitutionsByNameOptions({ name: memberFormRecord?.institution.name }));
     }
-    this.previewPath = formGroup.get('profile').get('avatar').value;    
-    this.institutionName = memberFormRecord?.institution.name;      
-    formGroup.get('contact').get('email').disable();  
-    if(formGroup.controls['contact'].get('email').value!=formGroup.controls['accountSetting'].get('username').value){
+    this.previewPath = formGroup.get('profile').get('avatar').value;
+    this.institutionName = memberFormRecord?.institution.name;
+    formGroup.get('contact').get('email').disable();
+    if (formGroup.controls['accountSetting'].get('username').value) {
       formGroup.get('accountSetting').get('username').disable();
     }
     this.newPasswordBtnName = this.isManualLogIn ? 'Change Password' : 'Reset Password';
@@ -314,7 +329,7 @@ export class AddEditMemberComponent implements OnInit {
     const file = (e.target as HTMLInputElement).files[0];
   }
 
-  onTabChange(e){
+  onTabChange(e) {
   }
 
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {
@@ -335,7 +350,7 @@ export class AddEditMemberComponent implements OnInit {
             new CreateUpdateMemberAction({
               form,
               formDirective,
-              username:this?.currentMember?.username
+              username: this?.currentMember?.username
             })
           );
           this.store.dispatch(
@@ -357,31 +372,20 @@ export class AddEditMemberComponent implements OnInit {
         new CreateUpdateMemberAction({
           form,
           formDirective,
-          username:this?.currentMember?.email
+          username: this?.currentMember?.email
         })
       );
     }
   }
-
-  institutionTypeChange(e) {
-    this.institutionOptions = this.institutionOptionList[e];
-    this.memberForm.controls['institution'].get('institution').setValue('');
-    this.memberForm.controls['institution'].get('designation').setValue('');
+  getPosts(e) {
+    debugger;
   }
-
-  institutionChange(e) {
-    debugger
-    this.memberForm.controls['institution'].get('designation').setValue('');
-    let findDesignation = this.institutionOptions.find(item => item.id == e);
-    this.designationOptions = findDesignation ? this.institutionOptions.find(item => item.id == e).designations.split(',') : [];
-  }
-
   addNewInstitution(e) {
     const dialogRef = this.dialog.open(AddEditInstitutionComponent, {
       height: '80%',
       data: {
         newInstitutionDialog: {
-          type: this.memberForm.get('institution').get('institutionType').value,
+          // type: this.memberForm.get('institution').get('institutionType').value,
           isDialog: true
         }
       }
@@ -401,22 +405,22 @@ export class AddEditMemberComponent implements OnInit {
       );
     }
   }
-  
+
   displayFn(user) {
-    this.institutionName= user && user.name ? user.name : '';
+    this.institutionName = user && user.name ? user.name : '';
     return user.name;
   }
 
   private _filter(name: string) {
-      this.filterValue = name.toLowerCase();
-      return this.store.dispatch(new FetchInstitutionsByNameOptions({ name: name }));
+    this.filterValue = name.toLowerCase();
+    return this.store.dispatch(new FetchInstitutionsByNameOptions({ name: name }));
   }
-  getData(searchText:string){
-    return searchText.length < 3 ? of(this.institutionOptions = []):      
-            this._filter(searchText)
+  getData(searchText: string) {
+    return searchText.length < 3 ? of(this.institutionOptions = []) :
+      this._filter(searchText)
   }
-  filter(event:any){
-    if(event){
+  filter(event: any) {
+    if (event) {
       this.filteredOptions$ = this.getData(event.target.value);
     }
   }
