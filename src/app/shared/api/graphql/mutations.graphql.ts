@@ -33,9 +33,12 @@ export const USER_MUTATIONS = {
           state
           city
           country
+          designation
           institution {
             id
-            name
+            name                  
+            designations
+            institutionType
           }
           role {
             name
@@ -1008,7 +1011,9 @@ export const AUTH_MUTATIONS = {
           membershipStatus          
           institution {
             id
-            name
+            name                  
+            designations
+            institutionType
           }
           role {
             name

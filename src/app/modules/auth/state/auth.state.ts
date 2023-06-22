@@ -538,6 +538,7 @@ export class AuthState {
       country: user?.country,
       avatar: user?.avatar,
       invitecode: user?.invitecode,
+      designation:user?.designation,
       institution: {
         id: user?.institution?.id,
         name: user?.institution?.name,
@@ -551,12 +552,7 @@ export class AuthState {
         permissions,
       },
     };
-    // let firstTimeSetup
-    // if (this.SSOLogin == true) {
-    //   firstTimeSetup = true
-    // } else {
     const firstTimeSetup = calculateFirstTimeSetup(newCurrentMember);
-    // }
     const isFullyAuthenticated =
       isLoggedIn == true &&
       newCurrentMember?.membershipStatus == MembershipStatusOptions.APPROVED;
@@ -1104,9 +1100,9 @@ export class AuthState {
     const { form, formDirective } = payload;
     let { isSubmittingForm } = state;
     if (form.valid) {
-      isSubmittingForm = true;
+      // isSubmittingForm = true;
       const values = form.value;
-      patchState({ isSubmittingForm });
+      // patchState({ isSubmittingForm });
       this.apollo
         .mutate({
           mutation: AUTH_MUTATIONS.GENERATE_EMAIL_OTP,

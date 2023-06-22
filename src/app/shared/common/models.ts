@@ -74,14 +74,15 @@ export type CurrentMember = {
   bio: string;
   email: string;
   dob: string;
-  mobile: number;
-  phone:number;
+  mobile: string;
+  phone:string;
   address: string;
   pincode: string;
   city: string;
   state: string;
   country: string;
   avatar: string;
+  designation:string;
   invitecode?: string;
   institution?: { id: number; name: string,designations: string; institutionType: string };
   membershipStatus: string;
@@ -186,8 +187,8 @@ export type User = {
   pincode?:string;
   state?:string;
   country?:string;  
-  phone?:number;
-  mobile?: number;
+  phone?:string;
+  mobile?: string;
   designation?:string;
   manualLogin?:boolean;
   googleLogin?:boolean;
