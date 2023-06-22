@@ -101,39 +101,11 @@ export class HomeComponent implements OnInit {
         this.isChangePasswordEnable = status?.isChangePasswordEnable;
         if (status?.firstTimeSetup == true && status?.isChangePasswordEnable == true) {
           this.router.navigate([uiroutes.CHANGE_PASSWORD.route]);
-        } else if (status?.firstTimeSetup == true && (status?.isChangePasswordEnable == false || status?.isGoogleLogin == true)) {
+        } else if (status?.firstTimeSetup == true && this.isLoggedIn && (status?.isChangePasswordEnable == false || status?.isGoogleLogin == true)) {
           this.router.navigate([uiroutes.MEMBER_FORM_ROUTE.route]);
         }
-        // this.router.navigate([uiroutes.MEMBER_FORM_ROUTE.route]);
-
-        // this.isChangePasswordEnable$.subscribe((val2) => {
-        //   this.isChangePasswordEnable = val2;
-        //   if (this.firstTimeSetup && !this.isChangePasswordEnable) {
-        //     // If this is the first time user is logging in, redirect to member form page
-        //     // to update their profile info.
-        //     this.router.navigate([uiroutes.MEMBER_FORM_ROUTE.route]);
-
-        //   } else if (this.firstTimeSetup && this.isChangePasswordEnable) {
-        //     // If this is the first time user is logging in & password changes, redirect to member form page
-        //     // to update their profile info.
-        //     this.router.navigate([uiroutes.CHANGE_PASSWORD.route]);
-
-        //   }
-        // })
-        // this.isGoogleLoggedIn$.subscribe((status) => {
-        //   this.isGoogleLogin = status
-        //   if (this.firstTimeSetup && this.isGoogleLogin) {
-        //     this.router.navigate([uiroutes.MEMBER_FORM_ROUTE.route]);
-        //   }
-        // })
       }
     });
-
-
-    // this.pendingApproval =
-    //   this.authState.membershipStatus == MembershipStatusOptions.PENDING_APPROVAL;
-    // this.suspended =
-    //   this.authState.membershipStatus == MembershipStatusOptions.SUSPENDED;
   }
   initialiseInvites() {
     // Set default values and re-fetch any data you need.

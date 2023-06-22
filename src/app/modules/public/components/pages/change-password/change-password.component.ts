@@ -52,7 +52,7 @@ export class ChangePasswordComponent {
     })
     this.setupPasswordResetForm();
     if(this.firstTimeSetup == true){
-      this.passwordResetForm.controls['oldPassword'].setValue(sessionStorage.getItem('EMAIL_OTP')?sessionStorage.getItem('EMAIL_OTP'):'');
+      this.passwordResetForm.controls['oldPassword'].setValue(localStorage.getItem('EMAIL_OTP')?localStorage.getItem('EMAIL_OTP'):sessionStorage.getItem('EMAIL_OTP')?sessionStorage.getItem('EMAIL_OTP'):'');
     }
   }
 

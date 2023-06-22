@@ -747,7 +747,8 @@ export class AuthState {
           // Clearing the refreshToken timeout
           clearTimeout(this.refreshTokenTimeout);
           // Marking user as logged out
-          this.router.navigateByUrl(uiroutes.HOME_ROUTE.route);
+          this.ngZone.run(() => this.router.navigateByUrl(uiroutes.HOME_ROUTE.route)).then();
+
           if (response.success) {
             this.store.dispatch(
               new ShowNotificationAction({
