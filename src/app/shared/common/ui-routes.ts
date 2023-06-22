@@ -56,9 +56,7 @@ export const uiroutes = {
   CHANGE_PASSWORD: {
     route: 'change-password',
     auth: {
-      resource: resources.MEMBER,
-      actions: [RESOURCE_ACTIONS.CREATE, RESOURCE_ACTIONS.UPDATE],
-    },
+      resource: null, actions: [] },
   },
   MEMBER_FORM_ROUTE: {
     route: 'member-form',

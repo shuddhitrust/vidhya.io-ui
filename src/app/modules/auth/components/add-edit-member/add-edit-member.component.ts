@@ -407,8 +407,8 @@ export class AddEditMemberComponent implements OnInit {
   }
 
   displayFn(user) {
-    this.institutionName = user && user.name ? user.name : '';
-    return user.name;
+    this.institutionName = user && user?.name ? user?.name : '';
+    return user?.name;
   }
 
   private _filter(name: string) {

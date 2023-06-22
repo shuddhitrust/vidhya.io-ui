@@ -1,8 +1,11 @@
 .login-dialog-box {
   width: 40vw;
   min-width: 500px;
-  height: 40vh;
+  // height: 40vh;
   min-height: 350px;
+}
+.mat-dialog-content{
+  max-height: 400px;
 }
 
 .register-dialog-box {
