@@ -233,6 +233,11 @@ export class AuthState {
     return state.currentMember.projectsClapped;
   }
 
+  @Selector()
+  static getIsEmailVerified(state: AuthStateModel): boolean {
+    return state.isEmailVerified;
+  }
+
   @Action(GetAuthStorage)
   getAuthStorage({ patchState }: StateContext<AuthStateModel>) {
     let remember = JSON.parse(
@@ -1360,7 +1365,7 @@ export class AuthState {
         ({ data }: any) => {
           const state = getState();
 
-          let { currentMember } = state;
+          let { currentMember,firstTimeSetup } = state;
 
           const response = data.createGoogleToken;
           const token = response.token;
@@ -1395,7 +1400,10 @@ export class AuthState {
           );
 
           this.store.dispatch(new VerifyUserAction({ user: user }))
-          this.router.navigateByUrl(uiroutes.MEMBER_FORM_ROUTE.route);
+          if (firstTimeSetup == true) {
+            this.ngZone.run(() => this.router.navigateByUrl(uiroutes.MEMBER_FORM_ROUTE.route)).then();
+          }
+          // this.router.navigateByUrl(uiroutes.MEMBER_FORM_ROUTE.route);
         }, error => {
           console.error('There was an error ', error);
           this.store.dispatch(

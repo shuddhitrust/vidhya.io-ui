@@ -87,11 +87,14 @@ export class LoginModalComponent implements OnInit {
   authState$: Observable<AuthStateModel>;
   authState: AuthStateModel;
   invited: string;
+  @Select(AuthState.getIsEmailVerified)
+  isEmailVerified$:Observable<boolean>
   isEmailVerified: boolean = false;
   isEmailOTPGenerated: boolean = false;
   isLoggedIn: boolean = false;
   isSubmittingForm: boolean = false;
   closeLoginForm: boolean = false;
+  loginFormDirective:FormGroupDirective
   rememberMe: boolean = JSON.parse(
     localStorage.getItem(localStorageKeys.REMEMBER_ME_KEY)
   );
@@ -119,6 +122,12 @@ export class LoginModalComponent implements OnInit {
     this.setupForgotPasswordForm();
     this.setupRegisterForm();
     this.setupInvitecodeForm();
+    this.isEmailVerified$.subscribe((val)=>{
+      this.isEmailVerified=val;
+      if(this.isEmailVerified===true){
+        this.finalizeRegistration()
+      }
+    })
     this.authState$.subscribe((val) => {
       this.authState = val;
       // this.invited = this.authState?.currentMember?.invitecode;
@@ -263,10 +272,13 @@ export class LoginModalComponent implements OnInit {
   }
 
   verifyEmailOTP(form: FormGroup, formDirective: FormGroupDirective) {
+    this.loginFormDirective=formDirective
     this.store.dispatch(new VerifyEmailOTPAction({ form, formDirective }));
-    this.setupRegisterForm();
-    this.register(this.registerForm,formDirective);
+  }
 
+  finalizeRegistration() {
+    this.setupRegisterForm();
+    this.register(this.registerForm,this.loginFormDirective);
   }
 
   showLogin() {
