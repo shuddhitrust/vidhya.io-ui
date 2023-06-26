@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import {
   FormBuilder,
@@ -16,11 +16,15 @@ import {
 import { InstitutionState } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.state';
 import { Observable } from 'rxjs';
 import { emptyInstitutionFormRecord } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.model';
-import { Institution } from 'src/app/shared/common/models';
+import { Institution, institutionTypeOptions, MatSelectOption } from 'src/app/shared/common/models';
 import { UploadService } from 'src/app/shared/api/upload.service';
 import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { sanitizeUsername } from 'src/app/shared/common/functions';
+import { INSTITUTION_DESIGNATIONS } from 'src/app/shared/common/constants';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import moment from 'moment';
+
 @Component({
   selector: 'app-add-edit-institution',
   templateUrl: './add-edit-institution.component.html',
@@ -28,6 +32,10 @@ import { sanitizeUsername } from 'src/app/shared/common/functions';
     './add-edit-institution.component.scss',
     './../../../../../../../../shared/common/shared-styles.css',
   ],
+  providers: [
+    { provide: MAT_DIALOG_DATA, useValue: {} },
+    { provide: MatDialogRef, useValue: {} }
+]
 })
 export class AddEditInstitutionComponent implements OnInit {
   formSubmitting: boolean = false;
@@ -40,16 +48,22 @@ export class AddEditInstitutionComponent implements OnInit {
   institutionForm: FormGroup;
   logoFile = null;
   previewPath = null;
-
+  institutionTypeOptions: MatSelectOption[] = institutionTypeOptions;
+  institutionDesignationsList: any = INSTITUTION_DESIGNATIONS;
+  institutionModalData:any;
+  isInstitutionModalDialog: any=false;
   constructor(
     private location: Location,
     private store: Store,
     private route: ActivatedRoute,
     private fb: FormBuilder,
-    private uploadService: UploadService
+    private uploadService: UploadService,
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) {
+    this.institutionModalData = data.newInstitutionDialog;
+    this.isInstitutionModalDialog = this.institutionModalData?.isDialog
     this.institutionForm = this.setupInstitutionFormGroup();
-    this.institutionFormRecord$.subscribe((val) => {
+    this.institutionFormRecord$.subscribe((val) => {      
       this.institutionFormRecord = val;
       this.institutionForm = this.setupInstitutionFormGroup(
         this.institutionFormRecord
@@ -65,14 +79,26 @@ export class AddEditInstitutionComponent implements OnInit {
     const formGroup = this.fb.group({
       id: [institutionFormRecord.id],
       name: [institutionFormRecord.name, Validators.required],
-      code: [institutionFormRecord.code, Validators.required],
+      code: [institutionFormRecord.code, Validators.required],      
+      institutionType:[institutionFormRecord.institutionType, Validators.required],
+      designations:[institutionFormRecord.designations?institutionFormRecord.designations.toString():'NA', Validators.required],
       location: [institutionFormRecord.location, Validators.required],
       city: [institutionFormRecord.city, Validators.required],
       website: [institutionFormRecord.website],
       phone: [institutionFormRecord.phone],
       logo: [institutionFormRecord.logo],
       bio: [institutionFormRecord.bio],
+      address: [institutionFormRecord.address],
+      state: [institutionFormRecord.state],
+      pincode: [institutionFormRecord.pincode],
+      dob: [moment(institutionFormRecord.dob)],
+      country: [institutionFormRecord.country]
     });
+    if(!formGroup.controls['designations'].value && formGroup.controls['institutionType'].value){
+      let defaultDesignations = this.institutionTypeOptions.find(item=>item.value==formGroup.controls['institutionType'].value);
+      formGroup.controls['designations'].setValue(this.institutionDesignationsList[defaultDesignations.label].toString());
+    }
+
     this.previewPath = formGroup.get('logo').value;
     return formGroup;
   };
@@ -161,6 +187,13 @@ export class AddEditInstitutionComponent implements OnInit {
       this.store.dispatch(
         new CreateUpdateInstitutionAction({ form, formDirective })
       );
+    }
+  }
+  institutionTypeChange(e){
+    let selectedType = this.institutionTypeOptions.find(item=>item.value==e);
+    if(selectedType){
+      let designationValue = this.institutionFormRecord.institutionType!=e?this.institutionDesignationsList[selectedType?.label]:this.institutionFormRecord.designations;
+      this.institutionForm.controls['designations'].setValue(designationValue);
     }
   }
 }

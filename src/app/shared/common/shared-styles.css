@@ -36,8 +36,13 @@
   right: 50px;
   bottom: 50px;
 }
+.floating-button-bottom-modal{
+  position: fixed;
+  right: 137px;
+  bottom: 73px;
+}
 
-.floating-button-bottom .mat-icon {
+.floating-button-bottom .mat-icon,.floating-button-bottom-modal .mat-icon {
   height: 50px;
 }
 
@@ -83,7 +88,7 @@
 .thumbnail {
   width: auto;
   height: auto;
-  max-height: 200px;
+  max-height: 150px;
   min-height: 100px;
   min-width: 100px;
   max-width: 200px;

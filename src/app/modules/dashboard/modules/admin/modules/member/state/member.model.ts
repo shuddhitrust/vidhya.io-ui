@@ -23,6 +23,10 @@ export interface MemberInput {
   title: String;
   bio: String;
   searchField: String;
+  dob: Date;
+  address: String;
+  phone: number;
+  mobile:number;
 }
 
 export const emptyMemberFormRecord: User = {
@@ -35,6 +39,17 @@ export const emptyMemberFormRecord: User = {
   title: null,
   bio: null,
   role: null,
+  dob:null,
+  address:null,
+  city:null,
+  pincode:null,
+  state:null,
+  country:null,  
+  phone:null,
+  mobile:null,
+  designation:null,
+  manualLogin:null,
+  googleLogin:null,
   institution: null,
 };
 

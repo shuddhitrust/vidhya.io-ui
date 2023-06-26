@@ -73,9 +73,18 @@ export type CurrentMember = {
   title: string;
   bio: string;
   email: string;
+  dob: string;
+  mobile: string;
+  phone:string;
+  address: string;
+  pincode: string;
+  city: string;
+  state: string;
+  country: string;
   avatar: string;
+  designation:string;
   invitecode?: string;
-  institution?: { id: number; name: string };
+  institution?: { id: number; name: string,designations: string; institutionType: string };
   membershipStatus: string;
   projectsClapped: string[];
   role: { name?: string; permissions: UserPermissions };
@@ -103,6 +112,17 @@ export const MembershipStatusOptions = {
   APPROVED: 'AP',
   SUSPENDED: 'SU',
 };
+
+export type InstitutionType = 'SC' | 'CL' | 'CO' | 'OR';
+export const InstitutionTypeOptions = {
+  School: 'SC',
+  College: 'CL',
+  Company: 'CO',
+  Organization: 'OR',
+};
+
+export const institutionTypeOptions: MatSelectOption[] =
+  autoGenOptions(InstitutionTypeOptions);
 
 export type GroupType = 'CL' | 'TE' | 'CO';
 
@@ -144,6 +164,11 @@ export const ExerciseSubmissionStatusOptions = {
   returned: 'RE',
 };
 
+export type loginType = {
+  manualLogin: boolean,
+  googleLogin:boolean
+}
+
 export type User = {
   id?: number;
   username?: string;
@@ -156,6 +181,17 @@ export type User = {
   invitecode?: string;
   title?: string;
   bio?: string;
+  dob?:string;
+  address?:string;
+  city?:string;
+  pincode?:string;
+  state?:string;
+  country?:string;  
+  phone?:string;
+  mobile?: string;
+  designation?:string;
+  manualLogin?:boolean;
+  googleLogin?:boolean;
   courses?: Course[];
   projects?: Project[];
   role: { name?: string; permissions: UserPermissions };
@@ -215,8 +251,15 @@ export type Institution = {
   id: number;
   name: string;
   code: string;
+  institutionType:string,
+  designations:string,
   location?: string;
+  address?:string;
+  dob?:Date;
+  pincode?:string;
+  state?:string;
   city?: string;
+  country?: string;
   website?: string;
   phone?: string;
   logo?: string;

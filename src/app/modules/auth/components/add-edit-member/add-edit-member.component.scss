@@ -8,6 +8,10 @@
   color: white;
   cursor: pointer;
 }
+.scroll-feed {
+  overflow: auto;
+  height: calc(100vh - 190px);
+}
 
 /* Centered text */
 .centered {
@@ -18,6 +22,54 @@
   transform: translate(-50%, -50%);
 }
 
+.submitBtn button {
+  margin: 10px;
+}
+.mat-mdc-form-field + .mat-mdc-form-field {
+  margin-left: 8px;
+}
+::ng-deep .cdk-overlay-pane {
+    max-width:450px;
+}
+.institutionGridHead{
+  background-color: #0099ff;
+  margin: auto;
+  padding: 7px;
+}
+.institutionGrid mat-option{
+  border:1px solid #0099ff;
+}
+.institutionGrid mat-option .col:first-child {
+  border-right: 1px solid #0099ff;;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.institutionGrid .col{
+  width: 50%;
+}
+
+.my-mat-hint {
+  line-height: 1.2em;
+  transform: translateY(10px);
+  font-size: 75%;
+}
+
+.institutionPanel{
+  margin-bottom: 50px!important;
+}
+
+.my-mat-hint {
+  line-height: 1.2em;
+  transform: translateY(10px);
+  font-size: 75%;
+}
+
+.my-mat-hint {
+  line-height: 1.2em;
+  transform: translateY(10px);
+  font-size: 75%;
+}
 @media screen and (max-width: 990px) {
   .floating-avatar {
     float: none;

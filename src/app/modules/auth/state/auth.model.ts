@@ -33,9 +33,18 @@ const startingCurrentMember: CurrentMember = {
   title: null,
   bio: null,
   email: null,
+  dob: null,
+  mobile: null,
+  phone: null,
+  address: null,
+  pincode: null,
+  city: null,
+  state: null,
+  country: null,
   avatar: null,
   invitecode: null,
-  institution: { id: null, name: null },
+  designation:null,
+  institution: { id: null, name: null ,designations:null, institutionType:null},
   membershipStatus: null,
   projectsClapped: getProjectsClappedFromLocalStorage(),
   role: null,
@@ -51,6 +60,9 @@ export interface AuthStateModel {
   isSubmittingForm: boolean;
   closeLoginForm: boolean;
   isLoggedIn: boolean;
+  isChangePasswordEnable: boolean;
+  isGoogleLoggedIn: boolean;
+  isManualLogIn: boolean;
   verificationEmail: string;
   isEmailOTPGenerated: boolean;
   isEmailVerified: boolean;
@@ -74,6 +86,9 @@ export const defaultAuthState: AuthStateModel = {
   isLoggedIn: false,
   verificationEmail: null,
   isEmailOTPGenerated: false,
+  isChangePasswordEnable: false,
+  isGoogleLoggedIn: false,
+  isManualLogIn: false,
   isEmailVerified: false,
   lastLogin: null,
   isFullyAuthenticated: false,

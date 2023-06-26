@@ -20,17 +20,28 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   @Select(AuthState.getIsFullyAuthenticated)
   isFullyAuthenticated$: Observable<boolean>;
   @Select(AuthState.getFirstTimeSetup)
-  firstTimeSetup$: Observable<boolean>;
+  firstTimeSetup$: Observable<any>;
   firstTimeSetup;
-  private routerSubscription: Subscription;
+  // @Select(AuthState.getChangePassword)
+  // isChangePasswordEnable$: Observable<string>;
+  isChangePasswordEnable;
+  routerSubscription: Subscription;
+  isGoogleLogin: any;
   constructor(
     private store: Store,
     private router: Router,
     private readonly location: Location
   ) {
     this.firstTimeSetup$.subscribe((val) => {
-      this.firstTimeSetup = val;
+      this.firstTimeSetup = val?.firstTimeSetup;
+      this.isGoogleLogin = val?.isGoogleLoggedIn;
+      this.isChangePasswordEnable = val?.isChangePasswordEnable;
+     
     });
+    
+    // this.isChangePasswordEnable$.subscribe((val)=>{
+    //   this.isChangePasswordEnable = val;
+    // });
   }
 
   ngAfterViewInit(): void {

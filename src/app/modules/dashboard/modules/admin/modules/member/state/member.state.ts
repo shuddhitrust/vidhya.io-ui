@@ -46,6 +46,7 @@ import { uiroutes } from '../../../../../../../shared/common/ui-routes';
 import { SearchParams } from '../../../../../../../shared/modules/master-grid/table.model';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { UpdateCurrentUserInStateAction } from 'src/app/modules/auth/state/auth.actions';
+import moment from 'moment';
 
 @State<MemberStateModel>({
   name: 'memberState',
@@ -57,7 +58,7 @@ export class MemberState {
     private apollo: Apollo,
     private store: Store,
     private router: Router
-  ) {}
+  ) { }
 
   @Selector()
   static listMembers(state: MemberStateModel): User[] {
@@ -235,20 +236,29 @@ export class MemberState {
     { getState, patchState }: StateContext<MemberStateModel>,
     { payload }: CreateUpdateMemberAction
   ) {
+
     const state = getState();
-    const { form, formDirective, firstTimeSetup } = payload;
+    const { form, formDirective, username } = payload;
     let { formSubmitting } = state;
     if (form.valid) {
       formSubmitting = true;
       patchState({ formSubmitting });
-      const values = form.value;
-
-      // const username = values?.username;
-
-      const { id, username, ...sanitizedValues } = values;
+      let values: any = {};
+      Object.keys(form.value).forEach(elem => {
+        if (elem != 'id') {
+          values = Object.assign({}, values, form.value[elem]);
+          values.dob = JSON.parse(JSON.stringify(values.dob));
+        } else {
+          values = Object.assign({}, values, { 'id': form.value['id'] });
+        }
+      })
+      // const values = Object.assign({},form.value['profile'],form.value['id'],form.value['institution'],form.value['contact'],form.value['accountSetting']);
+      // if (username != values.email) {
+      //   delete values.username;
+      // }
+      const { institutionType, ...sanitizedValues } = values;
       const variables = {
         input: sanitizedValues,
-        // id: values.id, // adding id to the mutation variables if it is an update mutation
       };
 
       this.apollo
@@ -271,13 +281,13 @@ export class MemberState {
                   action: 'success',
                 })
               );
-              if (firstTimeSetup) {
-                this.router.navigateByUrl(uiroutes.HOME_ROUTE.route);
-              } else {
-                this.router.navigate([
-                  uiroutes.MEMBER_PROFILE_ROUTE.route + '/' + username,
-                ]);
-              }
+              // if (firstTimeSetup) {
+              //   this.router.navigateByUrl(uiroutes.HOME_ROUTE.route);
+              // } else {
+              //   this.router.navigate([
+              //     uiroutes.MEMBER_PROFILE_ROUTE.route + '/' + username,
+              //   ]);
+              // }
             } else {
               this.store.dispatch(
                 new ShowNotificationAction({
@@ -310,7 +320,7 @@ export class MemberState {
 
   @Action(DeleteMemberAction)
   deleteMember(
-    {}: StateContext<MemberStateModel>,
+    { }: StateContext<MemberStateModel>,
     { payload }: DeleteMemberAction
   ) {
     let { id } = payload;
@@ -404,7 +414,7 @@ export class MemberState {
 
   @Action(SuspendMemberAction)
   suspendUser(
-    {}: StateContext<MemberStateModel>,
+    { }: StateContext<MemberStateModel>,
     { payload }: SuspendMemberAction
   ) {
     let { userId, remarks } = payload;

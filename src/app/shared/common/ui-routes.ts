@@ -52,6 +52,11 @@ export const uiroutes = {
   MEMBER_PROFILE_ROUTE: {
     route: 'profile',
     auth: { resource: null, actions: [] },
+  },  
+  CHANGE_PASSWORD: {
+    route: 'change-password',
+    auth: {
+      resource: null, actions: [] },
   },
   MEMBER_FORM_ROUTE: {
     route: 'member-form',

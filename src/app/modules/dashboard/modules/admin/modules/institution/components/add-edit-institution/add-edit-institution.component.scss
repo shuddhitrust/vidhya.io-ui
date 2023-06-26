@@ -2,6 +2,15 @@
   float: left;
 }
 
+.designation-hint {
+  line-height: 3.2em;
+  transform: translateY(10px);
+  font-size: 75%;
+}
+.designationFieldHeight{
+  height: 96px;
+}
+
 @media screen and (max-width: 768px) {
   .floating-logo {
     float: none;

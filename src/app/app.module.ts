@@ -67,6 +67,7 @@ import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsModule } from '@ngxs/store';
 import { AuthModule } from './modules/auth/auth.module';
 import { NgxsResetPluginModule } from 'ngxs-reset-plugin';
+import { OAuthModule } from 'angular-oauth2-oidc';
 // function that returns `MarkedOptions` with renderer override
 
 @NgModule({
@@ -86,6 +87,7 @@ import { NgxsResetPluginModule } from 'ngxs-reset-plugin';
     DashboardModule,
     AppRoutingModule,
     GraphQLModule,
+    OAuthModule.forRoot(),
     // TokenUpdater,
     ScullyLibModule,
     [

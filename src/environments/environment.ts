@@ -6,11 +6,15 @@
 // const websocket_api_endpoint = 'ws://143.244.184.238:8000/';
 
 const baseUrl = 'localhost:8000';
+// const baseUrl='vidhya-io-api-mw7x.onrender.com';
+// const baseUrl = 'vidhya-io-staging.onrender.com';
 // const baseUrl = 'vidhya-io-staging.herokuapp.com';
 // const baseUrl = 'vidhya-io-live-replica.herokuapp.com';
 // const baseUrl = '156.67.208.64';
+// const api_endpoint = `https://${baseUrl}`;
 
 const api_endpoint = `http://${baseUrl}`;
+
 const websocket_api_endpoint = `ws://${baseUrl}/`;
 const cloudinary_endpoint = 'https://api.cloudinary.com/v1_1/ragav-dev';
 const cloudinary_preset = 'cljckgq2';
@@ -20,8 +24,23 @@ export const environment = {
   api_endpoint,
   file_uplod_endpoint: `${cloudinary_endpoint}/upload/`,
   cloudinary_preset,
+  googleRedirect_endpoint: `${api_endpoint}/social-auth/login/google-oauth2/`,
   graphql_endpoint: `${api_endpoint}/graphql/`,
   websocket_graphql_endpoint: `${websocket_api_endpoint}/ws/graphql/`,
+  oAuthConfig: {
+    issuer:'https://accounts.google.com',
+    strictDiscoveryDocumentValidation: false,
+    clientId: "298234328692-ripbjps673t74to6r1o4mlvtvottg3su.apps.googleusercontent.com",
+    showDebugInformation: true,
+    redirectUri:window.location.origin,
+    clearHashAfterLogin: true,
+    scope:'openid profile email',
+    silentRefreshRedirectUri: window.location.origin + '/silent-refresh.html',
+    useSilentRefresh: true, // Needed for Code Flow to suggest using iframe-based refreshes
+    sessionChecksEnabled: true,
+    nonceStateSeparator: 'semicolon', // Real semicolon gets mangled by IdentityServer's URI encoding
+    requireHttps: true,  
+  }
 };
 
 /*
