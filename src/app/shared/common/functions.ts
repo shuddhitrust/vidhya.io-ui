@@ -343,6 +343,7 @@ export const autoGenOptions = (type: object): MatSelectOption[] => {
 };
 
 export const getErrorMessageFromGraphQLResponse = (errors): string => {
+  console.log({errors})
   const keys = Object.keys(errors);
   const message = errors[keys[0]][0]?.message;
 
