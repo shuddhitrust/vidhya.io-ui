@@ -1324,9 +1324,7 @@ export class AuthState {
           const refreshToken = response?.refreshToken;
           const { userId } = this.getDecodedToken(token);
           let user: any = {};
-          // user.id =  response.social.id;
           user.email = response.social.uid;
-          user.username = response.social.uid;
           user.firstName = response.social.extraData.firstName;
           user.lastName = response.social.extraData.lastName;
           user.name = response.social.extraData.firstName + " " + response.social.extraData.lastName;
@@ -1358,7 +1356,7 @@ export class AuthState {
       .mutate({
         mutation: AUTH_MUTATIONS.CREATE_TOKEN,
         variables: {
-          input: { email: user.email, firstName: user.firstName, lastName: user.lastName, username: user.email }
+          input: { email: user.email, firstName: user.firstName, lastName: user.lastName }
         },
       })
       .subscribe(
@@ -1369,9 +1367,10 @@ export class AuthState {
 
           const response = data.createGoogleToken;
           const token = response.token;
+          const isUserVerified = response?.isverified
           const refreshToken = response.refreshToken
           currentMember = { ...currentMember, ...response.user };
-
+          patchState({ isFetchingCurrentMember: false, isGoogleLoggedIn: response?.user?.googleLogin, isManualLogIn:response?.user?.manualLogin });
           this.store.dispatch(
             new UpdateTokenAction({ token, refreshToken })
           );
@@ -1398,8 +1397,8 @@ export class AuthState {
               action: 'success',
             })
           );
-
-          this.store.dispatch(new VerifyUserAction({ user: user }))
+          if(!isUserVerified)
+            this.store.dispatch(new VerifyUserAction({ user: user }))
           if (firstTimeSetup == true) {
             this.ngZone.run(() => this.router.navigateByUrl(uiroutes.MEMBER_FORM_ROUTE.route)).then();
           }
