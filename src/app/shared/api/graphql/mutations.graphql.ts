@@ -891,6 +891,7 @@ export const AUTH_MUTATIONS = {
     createGoogleToken(input: $input) {          
       ok
       token
+      isverified
       refreshToken
         user {
           id
@@ -918,6 +919,8 @@ export const AUTH_MUTATIONS = {
             name
             permissions
           }          
+          googleLogin
+          manualLogin
         }  
     }
   }

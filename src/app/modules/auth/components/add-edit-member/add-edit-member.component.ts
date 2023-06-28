@@ -125,7 +125,7 @@ export class AddEditMemberComponent implements OnInit {
           if (!this.autoInput.nativeElement.value) {
             this.autoInput.nativeElement.value = this.currentMember?.institution?.name;
           }
-          this.designationOptions = this.currentMember.institution.designations.split(',')
+          this.designationOptions = this.currentMember?.institution?.designations?.split(',')
         }
       }
     })
