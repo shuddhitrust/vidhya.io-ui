@@ -177,6 +177,11 @@ export class OpenLoginFormAction {
   constructor() {}
 }
 
+export class CloseMemberFormAction {
+  static readonly type = '[AUTH] Close Member form';
+  constructor(public payload: {user:CurrentMember}) {}
+}
+
 export class SetAuthStorage {
   static readonly type = '[AUTH] Set Auth Storage';
 

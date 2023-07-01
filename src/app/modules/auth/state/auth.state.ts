@@ -45,7 +45,8 @@ import {
   CreateTokenAction,
   GetEmailOTPAction,
   SocialAuthAccessAction,
-  firstTimeSetupAction
+  firstTimeSetupAction,
+  CloseMemberFormAction
 } from './auth.actions';
 import { Apollo } from 'apollo-angular';
 
@@ -80,6 +81,7 @@ import {
   NgForm,
   Validators,
 } from '@angular/forms';
+import { error } from 'console';
 /**
  * Auth flow steps:-
  * - When the application loads, it runs the AuthenticationCheckAction which checks for what kind of storage is used.
@@ -180,7 +182,6 @@ export class AuthState {
   @Selector()
   static getFirstTimeSetup(state: AuthStateModel): {} {
     let setupView: any;
-    // else {
     if (state.firstTimeSetup == true || state.isChangePasswordEnable == true || state.isGoogleLoggedIn == true) {
       setupView = { firstTimeSetup: state.firstTimeSetup, isChangePasswordEnable: state.isChangePasswordEnable, isGoogleLoggedIn: state.isGoogleLoggedIn }
       AuthStorage('session').setItem(localStorageKeys.FIRST_TIME_SETUP_VIEW_KEY, JSON.stringify(setupView));
@@ -543,7 +544,7 @@ export class AuthState {
       country: user?.country,
       avatar: user?.avatar,
       invitecode: user?.invitecode,
-      designation:user?.designation,
+      designation: user?.designation,
       institution: {
         id: user?.institution?.id,
         name: user?.institution?.name,
@@ -603,7 +604,7 @@ export class AuthState {
           ({ data }: any) => {
             const response = data.tokenAuth;
             isSubmittingForm = false;
-            patchState({ isSubmittingForm});
+            patchState({ isSubmittingForm });
 
             if (response.success) {
               form.reset();
@@ -613,7 +614,7 @@ export class AuthState {
               const { userId } = this.getDecodedToken(token);
               let user = response.user;
               user.id = userId;
-              patchState({ isGoogleLoggedIn:user.googleLogin ,isManualLogIn:true});
+              patchState({ isGoogleLoggedIn: user.googleLogin, isManualLogIn: true });
 
               this.store.dispatch(
                 new UpdateTokenAction({ token, refreshToken })
@@ -1013,7 +1014,7 @@ export class AuthState {
     const { form, formDirective } = payload;
 
     let { isSubmittingForm, isLoggedIn, isGoogleLoggedIn } = state;
-    if (form.valid||(form.disabled && form.value)) {
+    if (form.valid || (form.disabled && form.value)) {
       isSubmittingForm = true;
       const values = form.value;
       patchState({ isSubmittingForm });
@@ -1363,14 +1364,14 @@ export class AuthState {
         ({ data }: any) => {
           const state = getState();
 
-          let { currentMember,firstTimeSetup } = state;
+          let { currentMember, firstTimeSetup } = state;
 
           const response = data.createGoogleToken;
           const token = response.token;
           const isUserVerified = response?.isverified
           const refreshToken = response.refreshToken
           currentMember = { ...currentMember, ...response.user };
-          patchState({ isFetchingCurrentMember: false, isGoogleLoggedIn: response?.user?.googleLogin, isManualLogIn:response?.user?.manualLogin });
+          patchState({ isFetchingCurrentMember: false, isGoogleLoggedIn: response?.user?.googleLogin, isManualLogIn: response?.user?.manualLogin });
           this.store.dispatch(
             new UpdateTokenAction({ token, refreshToken })
           );
@@ -1397,7 +1398,7 @@ export class AuthState {
               action: 'success',
             })
           );
-          if(!isUserVerified)
+          if (!isUserVerified)
             this.store.dispatch(new VerifyUserAction({ user: user }))
           if (firstTimeSetup == true) {
             this.ngZone.run(() => this.router.navigateByUrl(uiroutes.MEMBER_FORM_ROUTE.route)).then();
@@ -1485,8 +1486,11 @@ export class AuthState {
               })
             );
           }
-        );
+        ), error => {
+          debugger;
+        };
     } else {
+      isSubmittingForm = false;
       this.store.dispatch(
         new ShowNotificationAction({
           message:
@@ -1504,7 +1508,8 @@ export class AuthState {
   ) {
     const state = getState();
     let data = payload.firstTimeSetup;
-    if (state.firstTimeSetup != data.firstTimeSetup || state.isChangePasswordEnable != data.isChangePasswordEnable || state.isGoogleLoggedIn != data.isGoogleLoggedIn) {      patchState({
+    if (state.firstTimeSetup != data.firstTimeSetup || state.isChangePasswordEnable != data.isChangePasswordEnable || state.isGoogleLoggedIn != data.isGoogleLoggedIn) {
+      patchState({
         firstTimeSetup: data.firstTimeSetup,
         isChangePasswordEnable: data.isChangePasswordEnable,
         isGoogleLoggedIn: data.isGoogleLoggedIn
@@ -1519,14 +1524,14 @@ export class AuthState {
   ) {
     const state = getState();
     const { user } = payload;
-    let { isManualLogIn,isGoogleLoggedIn } = state;
+    let { isManualLogIn, isGoogleLoggedIn } = state;
     this.apollo
       .mutate({
         mutation: AUTH_MUTATIONS.VERIFY_EMAILUSER,
         variables: {
           user_id: user.id,
-          googleLogin:isGoogleLoggedIn,
-          manualLogin:isManualLogIn
+          googleLogin: isGoogleLoggedIn,
+          manualLogin: isManualLogIn
         },
       })
       .subscribe(
@@ -1714,6 +1719,34 @@ export class AuthState {
     const projectsClapped = getProjectsClappedFromLocalStorage();
     const newCurrentMember = { ...currentMember, projectsClapped };
     patchState({ currentMember: newCurrentMember });
+  }
+
+  @Action(CloseMemberFormAction)
+  closeMemberForm({ getState, patchState }: StateContext<AuthStateModel>,
+    { payload }: CloseMemberFormAction) {
+    const state = getState();
+    const { user } = payload;
+    const firstTimeSetup = calculateFirstTimeSetup(user);
+    patchState({ firstTimeSetup: firstTimeSetup });
+    if (firstTimeSetup == false) {
+      if (AuthStorage('session').getItem(localStorageKeys.FIRST_TIME_SETUP_VIEW_KEY)) {
+        AuthStorage('session').removeItem(localStorageKeys.FIRST_TIME_SETUP_VIEW_KEY);
+      }
+      let firstTimeSetupObject = {
+        firstTimeSetup: firstTimeSetup,
+        isChangePasswordEnable: state.isChangePasswordEnable,
+        isGoogleLoggedIn: state.isGoogleLoggedIn
+      }
+      this.store.dispatch(new firstTimeSetupAction({ firstTimeSetup: firstTimeSetupObject }));
+    }
+    if (user.membershipStatus == 'PE') {
+      this.ngZone.run(() => this.router.navigateByUrl(uiroutes.HOME_ROUTE.route)).then();
+    } else {
+      // let username = { username: user.username }
+      this.router.navigate([
+        uiroutes.MEMBER_PROFILE_ROUTE.route + '/' +  user.username])
+    }
+    this.store.dispatch(new firstTimeSetupAction({ firstTimeSetup: firstTimeSetup }));
   }
 }
 
