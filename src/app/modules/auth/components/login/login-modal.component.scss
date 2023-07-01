@@ -5,7 +5,7 @@
   min-height: 350px;
 }
 .mat-dialog-content{
-  max-height: 400px;
+  max-height: 420px;
 }
 
 .register-dialog-box {
@@ -59,25 +59,43 @@
   text-align: center;
 }
 
-.googleLoginBtn{
-  width: 50px;
-  max-width: 400px;
+// .googleLoginBtn{
+//   // width: 50px;
+//   width: 100%;
+//   max-width: 400px;
+//   min-width: min-content;
+//   background: url('/assets/images/google-SSO/btn_google_signin_dark_pressed_web.png')  no-repeat center center;
+//   color: #ffffff;
+//   background-size: cover;
+//   // border-radius: 13px;
+//   // border: 1px solid #f0f0f0;
+// }
+.googleLoginBtn {
+  width: 100%;
+  max-width: 204px;
+  min-width: -webkit-min-content;
   min-width: min-content;
-  border-radius: 13px;
-  border: 1px solid #f0f0f0;
+  height: 49px;
+  background: url("/assets/images/google-SSO/btn_google_signin_dark_pressed_web.png") no-repeat center center;
+  color: #ffffff;
+  background-size: contain;
 }
-
 .googleLoginIcon{
   width: 20px;
   vertical-align: top;
   height: 14px;
 }
 
+.loginTitle{
+  line-height: 50px;
+}
 .separator {
   // margin: 43px auto 0;
   max-width: 960px;
   text-align: center;
   width: 100%;
+  padding-top: 10px;
+  padding-bottom: 10px;
 
   h3 {
     text-align: center;

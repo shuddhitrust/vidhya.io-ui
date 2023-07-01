@@ -12,7 +12,7 @@ import {
   MemberStateModel,
 } from './member.model';
 
-import { Injectable } from '@angular/core';
+import { Injectable,NgZone } from '@angular/core';
 import {
   ApproveMemberAction,
   CreateUpdateMemberAction,
@@ -45,7 +45,7 @@ import { SUBSCRIPTIONS } from '../../../../../../../shared/api/graphql/subscript
 import { uiroutes } from '../../../../../../../shared/common/ui-routes';
 import { SearchParams } from '../../../../../../../shared/modules/master-grid/table.model';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
-import { UpdateCurrentUserInStateAction } from 'src/app/modules/auth/state/auth.actions';
+import { UpdateCurrentUserInStateAction, CloseMemberFormAction} from 'src/app/modules/auth/state/auth.actions';
 import moment from 'moment';
 
 @State<MemberStateModel>({
@@ -57,7 +57,8 @@ export class MemberState {
   constructor(
     private apollo: Apollo,
     private store: Store,
-    private router: Router
+    private router: Router,
+    private ngZone: NgZone
   ) { }
 
   @Selector()
@@ -275,6 +276,8 @@ export class MemberState {
               const user = response?.user;
 
               this.store.dispatch(new UpdateCurrentUserInStateAction({ user }));
+              this.store.dispatch(new CloseMemberFormAction({user}));
+
               this.store.dispatch(
                 new ShowNotificationAction({
                   message: `Member updated successfully!`,
@@ -282,7 +285,9 @@ export class MemberState {
                 })
               );
               // if (firstTimeSetup) {
-              //   this.router.navigateByUrl(uiroutes.HOME_ROUTE.route);
+                // this.router.navigateByUrl(uiroutes.HOME_ROUTE.route);
+                // this.ngZone.run(() => this.router.navigateByUrl(uiroutes.HOME_ROUTE.route)).then();
+
               // } else {
               //   this.router.navigate([
               //     uiroutes.MEMBER_PROFILE_ROUTE.route + '/' + username,
