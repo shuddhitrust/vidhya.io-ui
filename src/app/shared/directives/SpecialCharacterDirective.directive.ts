@@ -25,4 +25,13 @@ export class SpecialCharacterDirective {
       event.preventDefault();
     }, 100);
   }
+
+  ngAfterViewInit():boolean{
+    if(this.el.nativeElement.value){
+      if(new RegExp(this.regexStr).test(this.el.nativeElement.value)){
+        return true;
+      }
+    }
+    return false;
+  }
 }

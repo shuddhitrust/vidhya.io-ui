@@ -44,6 +44,13 @@ export class ChangePasswordComponent {
     this.isLoggedIn$.subscribe((val) => {
       this.isLoggedIn = val;
     });
+    
+    this.isSubmittingForm$.subscribe((val) => {
+      this.isSubmittingForm = val;
+    })
+    this.authState$.subscribe((val) => {
+      this.isSubmittingForm = val?.isSubmittingForm;
+    })
     this.firstTimeSetup$
     .subscribe((status) => {
       if (status) {

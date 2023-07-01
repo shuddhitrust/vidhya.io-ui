@@ -8,13 +8,14 @@ import { SpecialCharacterDirective } from 'src/app/shared/directives/SpecialChar
 import { OnlyNumberDirective } from 'src/app/shared/directives/OnlyNumberDirective.directive';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import { MemberShipStatePendingComponent } from './components/member-ship-state-pending/member-ship-state-pending.component';
 
-const declarations = [AddEditMemberComponent,SpecialCharacterDirective,OnlyNumberDirective];
+const declarations = [AddEditMemberComponent,SpecialCharacterDirective,OnlyNumberDirective,MemberShipStatePendingComponent];
 const imports = [SharedModule, AuthRoutingModule, MatExpansionModule,MatTooltipModule];
 
 @NgModule({
   declarations,
   imports: [...imports, NgxsModule.forFeature([AuthState])],
-  exports: [...declarations, ...imports], 
+  exports: [...declarations, ...imports],
 })
 export class AuthModule {}

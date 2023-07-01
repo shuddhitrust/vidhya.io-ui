@@ -6,7 +6,7 @@ import { Observable, Subject } from 'rxjs';
 import { VerifyAccountAction, firstTimeSetupAction } from 'src/app/modules/auth/state/auth.actions';
 import { AuthStateModel } from 'src/app/modules/auth/state/auth.model';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
-import { MembershipStatusOptions } from 'src/app/shared/common/models';
+import { CurrentMember, MembershipStatusOptions } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { LoginModalComponent } from '../../../../auth/components/login/login-modal.component';
@@ -36,6 +36,9 @@ export class HomeComponent implements OnInit {
   membershipStatus$: Observable<string>;
   @Select(AuthState.getFirstTimeSetup)
   firstTimeSetup$: Observable<any>;
+  @Select(AuthState.getCurrentMember)
+  currentMember$: Observable<CurrentMember>;
+  currentMember: CurrentMember;
   // @Select(AuthState.getChangePassword)
   // isChangePasswordEnable$: Observable<string>;
   membershipStatus: string;
@@ -54,24 +57,31 @@ export class HomeComponent implements OnInit {
     public dialog: MatDialog
   ) {
     this.isLoggedIn$
-    .pipe(takeUntil(this.ngDestroyed$))
-    .subscribe((val) => {
-      this.isLoggedIn = val;
-    });
-
+      .pipe(takeUntil(this.ngDestroyed$))
+      .subscribe((val) => {
+        this.isLoggedIn = val;
+      });
+    this.currentMember$
+      .pipe(takeUntil(this.ngDestroyed$))
+      .subscribe((val) => {
+        if (this.isLoggedIn == true && this.firstTimeSetup == false && this.isChangePasswordEnable == false && val != undefined && val?.membershipStatus) {
+          this.currentMember = val;
+          this.processMemberFormValid();
+        }
+      });
     // Code to decode the hash value from the browser URL for Google
     if (window.location.hash) {
       this.checkGoogleLoginHash();
     }
 
     this.membershipStatus$
-    .pipe(takeUntil(this.ngDestroyed$))
-    .subscribe((val) => {
-      if (this.membershipStatus != val && val !== undefined) {
-        this.membershipStatus = val;
-        this.processMembershipStatusOptions();
-      }
-    });
+      .pipe(takeUntil(this.ngDestroyed$))
+      .subscribe((val) => {
+        if (this.membershipStatus != val && val !== undefined) {
+          this.membershipStatus = val;
+          this.processMembershipStatusOptions();
+        }
+      });
 
     // let loadingFirstScreenAfterLogin = concat(
     //   this.firstTimeSetup$,
@@ -92,27 +102,43 @@ export class HomeComponent implements OnInit {
     // });
 
     this.firstTimeSetup$
-    .pipe(takeUntil(this.ngDestroyed$))
-    .subscribe((status) => {
-      if (status) {
-        this.store.dispatch(new firstTimeSetupAction({ firstTimeSetup: status }));
-        this.firstTimeSetup = status?.firstTimeSetup;
-        this.isGoogleLogin = status?.isGoogleLoggedIn;
-        this.isChangePasswordEnable = status?.isChangePasswordEnable;
-        if (status?.firstTimeSetup == true && status?.isChangePasswordEnable == true) {
-          this.router.navigate([uiroutes.CHANGE_PASSWORD.route]);
-        } else if (status?.firstTimeSetup == true && this.isLoggedIn && (status?.isChangePasswordEnable == false || status?.isGoogleLogin == true)) {
-          this.router.navigate([uiroutes.MEMBER_FORM_ROUTE.route]);
+      .pipe(takeUntil(this.ngDestroyed$))
+      .subscribe((status) => {
+        if (status) {
+          this.store.dispatch(new firstTimeSetupAction({ firstTimeSetup: status }));
+          this.firstTimeSetup = status?.firstTimeSetup;
+          this.isGoogleLogin = status?.isGoogleLoggedIn;
+          this.isChangePasswordEnable = status?.isChangePasswordEnable;
+          if (status?.firstTimeSetup == true && status?.isChangePasswordEnable == true) {
+            this.router.navigate([uiroutes.CHANGE_PASSWORD.route]);
+          } else if (status?.firstTimeSetup == true && this.isLoggedIn && (status?.isChangePasswordEnable == false || status?.isGoogleLogin == true)) {
+            this.router.navigate([uiroutes.MEMBER_FORM_ROUTE.route]);
+          }
         }
-      }
-    });
+      });
+
   }
   initialiseInvites() {
     // Set default values and re-fetch any data you need.
   }
-  
+  processMemberFormValid() {
+    const regexStr = '^([a-zA-Z0-9_.]*)$';
+    const requiredField = ['username', 'firstName', 'lastName', 'dob', 'email', 'institution', 'mobile', 'designation'];
+    let isEmptyFieldValueExist = requiredField.find(item => {
+      if (!this.currentMember[item]) {
+        return true;
+      }
+      return false;
+    })
+    if(isEmptyFieldValueExist|| !new RegExp(regexStr, 'g').test(this.currentMember['username'])){
+      this.router.navigate([uiroutes.MEMBER_FORM_ROUTE.route]);
+    }
+  }
+
   processMembershipStatusOptions() {
     if (this.membershipStatus == MembershipStatusOptions.PENDING) {
+      this.router.navigate([uiroutes.MEMBERSHIPSTATUS_PENDING_STATE_ROUTE.route], { state: { 'firstName': this.currentMember?.firstName, 'lastName': this.currentMember?.lastName } });
+
       this.store.dispatch(
         new ShowNotificationAction({
           message:
@@ -137,7 +163,10 @@ export class HomeComponent implements OnInit {
       }
     }
     if (this.url.includes(uiroutes.REGISTER_ROUTE.route)) {
-      this.dialog.open(LoginModalComponent);
+      this.dialog.open(LoginModalComponent, {
+        height: '400px',
+        width: '600px',
+      });
     }
   }
 

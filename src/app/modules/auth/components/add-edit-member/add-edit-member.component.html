@@ -48,7 +48,7 @@
           <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
             <mat-label>User Name</mat-label>
             <input matInput specialIsAlphaNumeric placeholder="Your UserName" required formControlName="username"
-              maxlength="16" />
+              maxlength="16" pattern="^[a-zA-Z0-9_.]*$"/>
             <mat-hint>You will not able to change the username later. </mat-hint>
             <small class="validation-error my-mat-hint" *ngIf="
             memberForm.get('accountSetting').get('username').hasError('required') &&
@@ -109,7 +109,7 @@
         </mat-form-field>
         <mat-form-field class="col-lg-9 col-md-12 col-sm-12" appearance="outline">
           <mat-label>Date of birth</mat-label>
-          <input matInput [matDatepicker]="picker" required formControlName="dob" placeholder="Date of birth">
+          <input matInput [matDatepicker]="picker" (focus)="picker.open()" readonly="true" required formControlName="dob" [max]="maxDob" placeholder="Date of birth">
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
           <small class="validation-error" *ngIf="
@@ -181,7 +181,7 @@
           <mat-form-field class="col-lg-12 col-md-12 col-sm-12" [class.dropdoawn-loading]="isFetchingInstitutions"
             appearance="outline">
             <mat-label>Institution</mat-label>
-            <input type="text" matInput [matAutocomplete]="auto" ([ngModel])="institutionName" (input)="filter($event)"
+            <input type="text" matInput required [matAutocomplete]="auto" ([ngModel])="institutionName" (input)="filter($event)"
               #autoInput>
             <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
               (optionSelected)='getPosts($event.option.value)'>
@@ -225,8 +225,7 @@
             </mat-select>
             <small class="validation-error" *ngIf="
               memberForm.get('institution').get('designation').hasError('required') &&
-              formDirective.submitted
-              ">
+              formDirective.submitted">
               Designation is required
             </small>
           </mat-form-field>
@@ -236,6 +235,6 @@
   </ng-template>
   <button type="submit" class="floating-button-bottom" mat-raised-button color="primary"
     [disabled]="(formSubmitting$ | async) === true  || memberForm.valid!=true">
-    {{ (formSubmitting$ | async) === true ? "Submitting..." : "Submit" }}
+    {{ (formSubmitting$ | async) === true ? "Submitting..." : submitBtnName }}
   </button>
 </form>
