@@ -15,7 +15,7 @@
     "deploy:staging": "npm run build:staging && git add . && git commit -m'Rebuild and deploy' && git push origin staging",
     "deploy:production": "npm run build:production && git add . && git commit -m'Rebuild and deploy' && git push origin production",
     "stage": "git checkout staging && git merge dev && git push && git checkout dev",
-    "golive": "git checkout master && git merge dev && git push && git checkout dev"
+    "golive": "git checkout staging && git pull origin staging && git checkout master && git merge staging && git push origin master && git push github master && git checkout dev"
   },
   "private": true,
   "dependencies": {

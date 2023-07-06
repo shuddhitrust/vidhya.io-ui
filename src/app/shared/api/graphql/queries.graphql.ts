@@ -328,6 +328,10 @@ export const USER_QUERIES = {
           institution {
             id
             name
+            coordinator{
+              id
+              name
+            }
           }
         }
         total
@@ -411,6 +415,11 @@ export const INSTITUTION_QUERIES = {
         invitecode        
         designations
         institutionType
+        coordinator{
+          id
+          name
+        }
+        verified
       }
     }
   `,
@@ -434,6 +443,11 @@ export const INSTITUTION_QUERIES = {
           country        
           designations
           institutionType
+          coordinator{
+            id
+            name
+          }
+          verified
         }
         total
       }
