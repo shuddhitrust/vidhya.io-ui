@@ -253,6 +253,8 @@ export type Institution = {
   code: string;
   institutionType:string,
   designations:string,
+  coordinator:{id:String,name:String},
+  verified:boolean,
   location?: string;
   address?:string;
   dob?:Date;
