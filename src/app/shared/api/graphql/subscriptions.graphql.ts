@@ -30,7 +30,6 @@ export const SUBSCRIPTIONS = {
         mobile
         phone
         address
-        institutionType
           membershipStatus
           role {
             name

@@ -26,7 +26,7 @@ export const AUTH_QUERIES = {
         }
         institution {
           id
-          name                  
+          name
           designations
           institutionType
         }
@@ -49,15 +49,15 @@ export const AUTH_QUERIES = {
     }
   `,
   GET_EMAIL_OTP: gql`
-    query emailOtp($email: String!){
-      emailOtp(email: $email){
+    query emailOtp($email: String!) {
+      emailOtp(email: $email) {
         id
         email
         otp
         verified
       }
     }
-  `
+  `,
 };
 
 export const PUBLIC_QUERIES = {
@@ -161,7 +161,7 @@ export const PUBLIC_QUERIES = {
           pincode
           state
           dob
-          country        
+          country
           designations
           institutionType
           score
@@ -290,7 +290,6 @@ export const USER_QUERIES = {
           permissions
         }
         membershipStatus
-        institutionType
       }
     }
   `,
@@ -328,6 +327,10 @@ export const USER_QUERIES = {
           institution {
             id
             name
+            coordinator {
+              id
+              name
+            }
           }
         }
         total
@@ -408,30 +411,23 @@ export const INSTITUTION_QUERIES = {
         state
         dob
         country
-        invitecode        
+        invitecode
         designations
         institutionType
+        coordinator {
+          id
+          name
+        }
+        verified
       }
     }
   `,
-  GET_SEARCH_INSTITUTIONS: gql`
-    query searchInstitutions($name: String!){
-      searchInstitutions(name:$name){
+  GET_INSTITUTIONS_DESIGNATIONS: gql`
+    query fetchInstitutionDesignations($name: String!){
+      fetchInstitutionDesignations(name:$name){
         records {
           id
           name
-          code
-          location
-          city
-          website
-          phone
-          logo
-          bio
-          address
-          pincode
-          state
-          dob
-          country        
           designations
           institutionType
         }
@@ -457,7 +453,7 @@ export const INSTITUTION_QUERIES = {
           state
           dob
           country
-          invitecode        
+          invitecode
           designations
           institutionType
         }
@@ -477,7 +473,7 @@ export const GROUP_QUERIES = {
         description
         institution {
           id
-          name          
+          name
           designations
           institutionType
         }

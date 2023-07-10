@@ -74,7 +74,7 @@
       </small>
     </mat-form-field>
     <!-- <mat-form-field class="col-lg-9 col-md-6 col-sm-12" appearance="outline"> -->
-      <!-- <mat-radio-group class="col-lg-9 col-md-6 col-sm-12" appearance="outline"  placeholder="Institution Type" aria-label="Select an option" formControlName="institutionType" >
+    <!-- <mat-radio-group class="col-lg-9 col-md-6 col-sm-12" appearance="outline"  placeholder="Institution Type" aria-label="Select an option" formControlName="institutionType" >
         <mat-label>Institution Type</mat-label>
         <mat-radio-button  *ngFor = "let type of institutionTypeOptions" [value]="type.value" (change)="institutionTypeChange($event,type)">
           {{ type.label }}</mat-radio-button>
@@ -89,22 +89,22 @@
       Institution Type is required
       </small> -->
     <!-- </mat-form-field> -->
-    
+
     <mat-form-field class="col-lg-9 col-md-6 col-sm-12"
     appearance="outline">
-    <mat-label>Institution Type</mat-label>
+      <mat-label>Institution Type</mat-label>
     <mat-select formControlName="institutionType" #choosedValue required placeholder="Institution Type" (valueChange)="institutionTypeChange($event)">
-      <mat-option *ngFor="let type of institutionTypeOptions" [value]="type.value">
-        {{ type.label }}
-      </mat-option>
-    </mat-select>
-    <small class="validation-error" *ngIf="
+        <mat-option *ngFor="let type of institutionTypeOptions" [value]="type.value">
+          {{ type.label }}
+        </mat-option>
+      </mat-select>
+      <small class="validation-error" *ngIf="
     institutionForm.get('institutionType').hasError('required') &&
 formDirective.submitted
 ">
-      Institution Type is required
-    </small>
-  </mat-form-field>
+        Institution Type is required
+      </small>
+    </mat-form-field>
     <mat-form-field class="col-lg-12 col-md-12 col-sm-12 designationFieldHeight" appearance="outline">
       <mat-label>Designations</mat-label>
       <input
@@ -121,7 +121,7 @@ formDirective.submitted
           formDirective.submitted
         "
       >
-      Designations is required
+        Designations is required
       </small>
     </mat-form-field>
 
@@ -143,7 +143,7 @@ formDirective.submitted
         Location is required
       </small>
     </mat-form-field>
-    
+
     <mat-form-field class="col-lg-12 col-md-6 col-sm-12" appearance="outline">
       <mat-label>Address</mat-label>
       <textarea
@@ -181,7 +181,7 @@ formDirective.submitted
         City is required
       </small>
     </mat-form-field>
-    
+
     <mat-form-field class="col-lg-4 col-md-4 col-sm-12" appearance="outline">
       <mat-label>Pincode</mat-label>
       <input
@@ -201,7 +201,7 @@ formDirective.submitted
       </small>
     </mat-form-field>
 
-    
+
     <mat-form-field class="col-lg-4 col-md-4 col-sm-12" appearance="outline">
       <mat-label>State</mat-label>
       <input
@@ -221,7 +221,7 @@ formDirective.submitted
       </small>
     </mat-form-field>
 
-    
+
     <mat-form-field class="col-lg-8 col-md-4 col-sm-12" appearance="outline">
       <mat-label>Country</mat-label>
       <input
@@ -241,10 +241,10 @@ formDirective.submitted
       </small>
     </mat-form-field>
 
-    
+
     <mat-form-field class="col-lg-4 col-md-4 col-sm-12" appearance="outline">
       <mat-label>Date of Founding</mat-label>
-      <input matInput [matDatepicker]="picker" formControlName="dob" placeholder="Date of Founding">
+      <input matInput [matDatepicker]="picker" [max]="today" formControlName="dob"  (focus)="picker.open()" readonly="true" placeholder="Date of Founding">
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
@@ -264,28 +264,53 @@ formDirective.submitted
         matInput
         formControlName="phone"
         placeholder="Institution's phone number"
+        onlyNumber
       />
     </mat-form-field>
 
     <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
       <mat-label>Bio</mat-label>
-      <textarea
-        matInput
-        formControlName="bio"
-        placeholder="Brief bio about the institution"
+      <textarea 
+      matInput 
+      formControlName="bio" 
+      placeholder="Brief bio about the institution"
       ></textarea>
     </mat-form-field>
+    
+    <div *ngIf="isAuthorizedMember()"> 
+      <hr>
+      <ng-container *ngTemplateOutlet="adminFeatures"></ng-container>
+    </div>  
 
-    <button
-      type="submit"
+    <ng-template #adminFeatures>
+      <mat-form-field class="col-lg-9 col-md-6 col-sm-12" appearance="outline">
+        <mat-label>Coordinator</mat-label>
+        <mat-select formControlName="coordinator" #choosedValue required placeholder="Coordinator"
+          (valueChange)="coordinatorChange($event)">
+          <mat-option *ngFor="let coordinator of coordinatorOptions" [value]="coordinator.value">
+            {{ coordinator.label }}
+          </mat-option>
+        </mat-select>
+        <small class="validation-error" *ngIf="
+          institutionForm.get('coordinator').hasError('required') && formDirective.submitted
+        ">
+          Coordinator is required
+        </small>
+      </mat-form-field>
+    
+      <mat-checkbox class="col-lg-3 col-md-6 col-sm-6" color="primary" formControlName="verified">Verified Institution</mat-checkbox>
+    </ng-template>
+
+    <button type="submit"
       [class]="isInstitutionModalDialog==false?'floating-button-bottom':'floating-button-bottom-modal'"
-      mat-raised-button
-      color="primary"
+      mat-raised-button 
+      color="primary" 
       [disabled]="(formSubmitting$ | async) === true"
-    >
+      >
       {{ (formSubmitting$ | async) === true ? "Submitting..." : "Submit" }}
-    </button>
+    </button>    
   </form>
 </div>
 <br />
 <br />
+

@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit,NgZone } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
-import { VerifyAccountAction, firstTimeSetupAction } from 'src/app/modules/auth/state/auth.actions';
+import { VerifyAccountAction } from 'src/app/modules/auth/state/auth.actions';
 import { AuthStateModel } from 'src/app/modules/auth/state/auth.model';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { CurrentMember, MembershipStatusOptions } from 'src/app/shared/common/models';
@@ -15,6 +15,7 @@ import {
   getParamsObjectFromHash
 } from 'src/app/shared/common/functions';
 import { takeUntil } from 'rxjs/operators';
+import moment from 'moment';
 
 @Component({
   selector: 'app-home',
@@ -39,13 +40,10 @@ export class HomeComponent implements OnInit {
   @Select(AuthState.getCurrentMember)
   currentMember$: Observable<CurrentMember>;
   currentMember: CurrentMember;
-  // @Select(AuthState.getChangePassword)
-  // isChangePasswordEnable$: Observable<string>;
   membershipStatus: string;
   authState: AuthStateModel;
   isLoggedIn: boolean = false;
   firstTimeSetup: boolean = false;
-  // isChangePasswordEnable: string;
   navigationSubscription: any;
   isGoogleLogin: boolean = false;
   isChangePasswordEnable: boolean = false;
@@ -54,7 +52,8 @@ export class HomeComponent implements OnInit {
   constructor(
     private store: Store,
     private router: Router,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private ngZone: NgZone
   ) {
     this.isLoggedIn$
       .pipe(takeUntil(this.ngDestroyed$))
@@ -105,14 +104,13 @@ export class HomeComponent implements OnInit {
       .pipe(takeUntil(this.ngDestroyed$))
       .subscribe((status) => {
         if (status) {
-          this.store.dispatch(new firstTimeSetupAction({ firstTimeSetup: status }));
           this.firstTimeSetup = status?.firstTimeSetup;
           this.isGoogleLogin = status?.isGoogleLoggedIn;
           this.isChangePasswordEnable = status?.isChangePasswordEnable;
           if (status?.firstTimeSetup == true && status?.isChangePasswordEnable == true) {
             this.router.navigate([uiroutes.CHANGE_PASSWORD.route]);
           } else if (status?.firstTimeSetup == true && this.isLoggedIn && (status?.isChangePasswordEnable == false || status?.isGoogleLogin == true)) {
-            this.router.navigate([uiroutes.MEMBER_FORM_ROUTE.route]);
+            this.ngZone.run(() =>this.router.navigate([uiroutes.MEMBER_FORM_ROUTE.route])).then();
           }
         }
       });
@@ -128,17 +126,26 @@ export class HomeComponent implements OnInit {
       if (!this.currentMember[item]) {
         return true;
       }
+      if(item=='dob'){
+        const today = new Date();
+        let maxDob = new Date(
+          today.getFullYear() - 10,
+          today.getMonth(),
+          today.getDate()
+        );
+        let validDobDate=  moment(new Date(this.currentMember[item])).isBefore(maxDob, 'day') ||moment(new Date(this.currentMember[item])).isSame(maxDob, 'day'); // false
+          return validDobDate?false:true;
+      }
       return false;
     })
     if(isEmptyFieldValueExist|| !new RegExp(regexStr, 'g').test(this.currentMember['username'])){
-      this.router.navigate([uiroutes.MEMBER_FORM_ROUTE.route]);
+      this.ngZone.run(() =>this.router.navigate([uiroutes.MEMBER_FORM_ROUTE.route])).then();
     }
   }
 
   processMembershipStatusOptions() {
     if (this.membershipStatus == MembershipStatusOptions.PENDING) {
       this.router.navigate([uiroutes.MEMBERSHIPSTATUS_PENDING_STATE_ROUTE.route], { state: { 'firstName': this.currentMember?.firstName, 'lastName': this.currentMember?.lastName } });
-
       this.store.dispatch(
         new ShowNotificationAction({
           message:

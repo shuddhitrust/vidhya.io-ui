@@ -44,7 +44,7 @@ const startingCurrentMember: CurrentMember = {
   avatar: null,
   invitecode: null,
   designation:null,
-  institution: { id: null, name: null ,designations:null, institutionType:null},
+  institution: { id: null, name: null ,designations:null, institutionType:null,coordinatorId:null},
   membershipStatus: null,
   projectsClapped: getProjectsClappedFromLocalStorage(),
   role: null,
@@ -70,6 +70,7 @@ export interface AuthStateModel {
   isFullyAuthenticated: boolean;
   isFetchingCurrentMember: boolean;
   currentMember: CurrentMember;
+  memberShipStatus:string;
   permissions: UserPermissions;
   firstTimeSetup: boolean;
   activationEmailSent: Date;
@@ -94,6 +95,7 @@ export const defaultAuthState: AuthStateModel = {
   isFullyAuthenticated: false,
   isFetchingCurrentMember: false,
   currentMember: startingCurrentMember,
+  memberShipStatus:null,
   permissions: defaultResourcePermissions,
   firstTimeSetup: false,
   activationEmailSent: null,

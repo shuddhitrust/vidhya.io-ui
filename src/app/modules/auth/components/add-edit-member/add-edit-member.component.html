@@ -60,7 +60,7 @@
           <p></p>
           <div class="col-lg-9 col-md-12 col-sm-12">
             <button mat-stroked-button color="primary"
-              (click)="passwordUpdate(memberForm.get('contact').get('email'),formDirective)">{{newPasswordBtnName}}</button>
+              (click)="passwordUpdate(memberForm.get('contact').get('email'),formDirective)">Change Password</button>
           </div>
         </div>
       </form>
@@ -109,11 +109,12 @@
         </mat-form-field>
         <mat-form-field class="col-lg-9 col-md-12 col-sm-12" appearance="outline">
           <mat-label>Date of birth</mat-label>
-          <input matInput [matDatepicker]="picker" (focus)="picker.open()" readonly="true" required formControlName="dob" [max]="maxDob" placeholder="Date of birth">
+          <input matInput [matDatepicker]="picker" (focus)="picker.open()" readonly="true" required
+            formControlName="dob" [max]="maxDob" placeholder="Date of birth" [class.invalid-input]="memberForm.get('profile').get('dob').invalid && (memberForm.get('profile').get('dob').dirty || memberForm.get('profile').get('dob').touched)"
+            >
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
-          <small class="validation-error" *ngIf="
-           memberForm.get('profile').get('dob').hasError('required') &&
+          <small class="validation-error" *ngIf="memberForm.get('profile').get('dob').hasError('required') &&
            formDirective.submitted
            "> DOB is required </small>
         </mat-form-field>
@@ -181,8 +182,8 @@
           <mat-form-field class="col-lg-12 col-md-12 col-sm-12" [class.dropdoawn-loading]="isFetchingInstitutions"
             appearance="outline">
             <mat-label>Institution</mat-label>
-            <input type="text" matInput required [matAutocomplete]="auto" ([ngModel])="institutionName" (input)="filter($event)"
-              #autoInput>
+            <input type="text" matInput required [matAutocomplete]="auto" ([ngModel])="institutionName"
+              (input)="filter($event)" #autoInput>
             <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
               (optionSelected)='getPosts($event.option.value)'>
               <div *ngIf="filteredOptions$ | async as filteredOptions">
@@ -238,3 +239,13 @@
     {{ (formSubmitting$ | async) === true ? "Submitting..." : submitBtnName }}
   </button>
 </form>
+
+<ng-template #dialogTemplate>
+  <h2 class="center-title">Change Password</h2>
+
+  <div class="col-lg-12 col-md-12 col-sm-12">
+    <div>Please click below to logout and check your email
+    <h4 class="displayMail">{{memberForm.get('contact').get('email').value}}</h4> to set password and enable same account to do manual login.</div>
+    <button mat-stroked-button color="primary" class="resetLogoutButton" (click)="resetPassword()">Click here</button>
+  </div>
+</ng-template>

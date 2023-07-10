@@ -30,7 +30,7 @@ export class CreateUpdateInstitutionAction {
   static readonly type = '[INSTITUTION] Create';
 
   constructor(
-    public payload: { form: FormGroup; formDirective: FormGroupDirective }
+    public payload: { form: FormGroup; formDirective: FormGroupDirective;isInstitutionModalDialog:boolean }
   ) {}
 }
 

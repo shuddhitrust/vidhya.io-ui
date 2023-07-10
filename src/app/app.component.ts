@@ -22,8 +22,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   @Select(AuthState.getFirstTimeSetup)
   firstTimeSetup$: Observable<any>;
   firstTimeSetup;
-  // @Select(AuthState.getChangePassword)
-  // isChangePasswordEnable$: Observable<string>;
   isChangePasswordEnable;
   routerSubscription: Subscription;
   isGoogleLogin: any;
@@ -33,15 +31,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private readonly location: Location
   ) {
     this.firstTimeSetup$.subscribe((val) => {
-      this.firstTimeSetup = val?.firstTimeSetup;
-      this.isGoogleLogin = val?.isGoogleLoggedIn;
-      this.isChangePasswordEnable = val?.isChangePasswordEnable;
-     
+      if (val) {
+        this.firstTimeSetup = val?.firstTimeSetup;
+        this.isGoogleLogin = val?.isGoogleLoggedIn;
+        this.isChangePasswordEnable = val?.isChangePasswordEnable;
+      }
     });
-    
-    // this.isChangePasswordEnable$.subscribe((val)=>{
-    //   this.isChangePasswordEnable = val;
-    // });
   }
 
   ngAfterViewInit(): void {

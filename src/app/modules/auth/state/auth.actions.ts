@@ -105,13 +105,6 @@ export class PasswordChangeAction {
   ) {}
 }
 
-export class firstTimeSetupAction{
-  static readonly type = '[AUTH] firstTimeSetupAction';
-
-  constructor(
-    public payload: {firstTimeSetup:any }
-  ) {}
-}
 export class VerifyUserAction{
   static readonly type ='[AUTH] VerifyUserAction';
   

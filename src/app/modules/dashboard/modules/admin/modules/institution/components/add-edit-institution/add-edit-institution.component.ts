@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, Optional } from '@angular/core';
 import { Location } from '@angular/common';
 import {
   FormBuilder,
@@ -13,10 +13,12 @@ import {
   CreateUpdateInstitutionAction,
   GetInstitutionAction,
 } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.actions';
+import { FetchMembersAction } from '../../../member/state/member.actions';
+import { MemberState } from '../../../member/state/member.state';
 import { InstitutionState } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.state';
 import { Observable } from 'rxjs';
 import { emptyInstitutionFormRecord } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.model';
-import { Institution, institutionTypeOptions, MatSelectOption } from 'src/app/shared/common/models';
+import { Institution, institutionTypeOptions, MatSelectOption,User } from 'src/app/shared/common/models';
 import { UploadService } from 'src/app/shared/api/upload.service';
 import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
@@ -24,6 +26,10 @@ import { sanitizeUsername } from 'src/app/shared/common/functions';
 import { INSTITUTION_DESIGNATIONS } from 'src/app/shared/common/constants';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import moment from 'moment';
+import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
+import { USER_ROLES_NAMES } from 'src/app/shared/common/constants';
+import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
+
 
 @Component({
   selector: 'app-add-edit-institution',
@@ -31,11 +37,7 @@ import moment from 'moment';
   styleUrls: [
     './add-edit-institution.component.scss',
     './../../../../../../../../shared/common/shared-styles.css',
-  ],
-  providers: [
-    { provide: MAT_DIALOG_DATA, useValue: {} },
-    { provide: MatDialogRef, useValue: {} }
-]
+  ]
 })
 export class AddEditInstitutionComponent implements OnInit {
   formSubmitting: boolean = false;
@@ -45,22 +47,32 @@ export class AddEditInstitutionComponent implements OnInit {
   institutionFormRecord: Institution = emptyInstitutionFormRecord;
   @Select(InstitutionState.formSubmitting)
   formSubmitting$: Observable<boolean>;
+  @Select(MemberState.listMembers)
+  coordinatorsRecord$: Observable<User[]>;
   institutionForm: FormGroup;
   logoFile = null;
   previewPath = null;
   institutionTypeOptions: MatSelectOption[] = institutionTypeOptions;
+  coordinatorOptions:MatSelectOption[]=[]
   institutionDesignationsList: any = INSTITUTION_DESIGNATIONS;
   institutionModalData:any;
   isInstitutionModalDialog: any=false;
+  columnFilters = {
+    roles: [USER_ROLES_NAMES.INSTITUTION_ADMIN],
+  };
+  today = new Date();
+  dialogTitle: string;
+  dialogText: string;
+  
   constructor(
     private location: Location,
     private store: Store,
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private uploadService: UploadService,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {
-    this.institutionModalData = data.newInstitutionDialog;
+    private auth: AuthorizationService,
+    @Optional()  @Inject(MAT_DIALOG_DATA) public data: any  ) {
+    this.institutionModalData = data?.newInstitutionDialog;
     this.isInstitutionModalDialog = this.institutionModalData?.isDialog
     this.institutionForm = this.setupInstitutionFormGroup();
     this.institutionFormRecord$.subscribe((val) => {      
@@ -69,6 +81,12 @@ export class AddEditInstitutionComponent implements OnInit {
         this.institutionFormRecord
       );
     });
+    this.coordinatorsRecord$.subscribe((val)=>{
+      for(let coordinator of val){        
+        let optionObject:MatSelectOption={label:coordinator.name,value:coordinator.id}
+        this.coordinatorOptions.push(optionObject)
+      }
+    })
   }
 
   setupInstitutionFormGroup = (
@@ -80,8 +98,10 @@ export class AddEditInstitutionComponent implements OnInit {
       id: [institutionFormRecord.id],
       name: [institutionFormRecord.name, Validators.required],
       code: [institutionFormRecord.code, Validators.required],      
-      institutionType:[institutionFormRecord.institutionType, Validators.required],
+      institutionType:[institutionFormRecord?.institutionType, Validators.required],
       designations:[institutionFormRecord.designations?institutionFormRecord.designations.toString():'NA', Validators.required],
+      coordinator:[institutionFormRecord?.coordinator?.id],
+      verified:[institutionFormRecord.verified],
       location: [institutionFormRecord.location, Validators.required],
       city: [institutionFormRecord.city, Validators.required],
       website: [institutionFormRecord.website],
@@ -103,7 +123,8 @@ export class AddEditInstitutionComponent implements OnInit {
     return formGroup;
   };
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
+    this.fetchMembers(new SearchParams())
+     this.route.queryParams.subscribe((params) => {
       this.params = params;
       const id = params['id'];
       if (id) {
@@ -164,7 +185,7 @@ export class AddEditInstitutionComponent implements OnInit {
           const url = res.secure_url;
           form.get('logo').setValue(url);
           this.store.dispatch(
-            new CreateUpdateInstitutionAction({ form, formDirective })
+            new CreateUpdateInstitutionAction({ form, formDirective,isInstitutionModalDialog:this.isInstitutionModalDialog })
           );
           this.store.dispatch(
             new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
@@ -185,7 +206,7 @@ export class AddEditInstitutionComponent implements OnInit {
       );
     } else {
       this.store.dispatch(
-        new CreateUpdateInstitutionAction({ form, formDirective })
+        new CreateUpdateInstitutionAction({ form, formDirective, isInstitutionModalDialog:this.isInstitutionModalDialog })
       );
     }
   }
@@ -195,5 +216,21 @@ export class AddEditInstitutionComponent implements OnInit {
       let designationValue = this.institutionFormRecord.institutionType!=e?this.institutionDesignationsList[selectedType?.label]:this.institutionFormRecord.designations;
       this.institutionForm.controls['designations'].setValue(designationValue);
     }
+  }
+  
+  coordinatorChange(e){
+    this.institutionForm.controls['coordinator'].setValue(e);
+    }
+
+  fetchMembers(searchParams: SearchParams) {
+      this.store.dispatch(
+        new FetchMembersAction({
+          searchParams: { ...searchParams, columnFilters: this.columnFilters },
+        })
+      );
+    }
+
+  isAuthorizedMember(){    
+    return this.auth.currentMemberRoleName===USER_ROLES_NAMES.SUPER_ADMIN
   }
 }

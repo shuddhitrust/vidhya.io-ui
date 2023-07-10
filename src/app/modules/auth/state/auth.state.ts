@@ -22,7 +22,7 @@ import {
   SendPasswordResetEmailAction,
   PasswordResetAction,
   PasswordChangeAction,
-  VerifyUserAction,
+  // VerifyUserAction,
   AuthenticationCheckAction,
   SetAuthSessionAction,
   VerifyTokenAction,
@@ -45,7 +45,6 @@ import {
   CreateTokenAction,
   GetEmailOTPAction,
   SocialAuthAccessAction,
-  firstTimeSetupAction,
   CloseMemberFormAction
 } from './auth.actions';
 import { Apollo } from 'apollo-angular';
@@ -182,11 +181,14 @@ export class AuthState {
   @Selector()
   static getFirstTimeSetup(state: AuthStateModel): {} {
     let setupView: any;
-    if (state.firstTimeSetup == true || state.isChangePasswordEnable == true || state.isGoogleLoggedIn == true) {
+    if (state.firstTimeSetup == true || state.isChangePasswordEnable == true|| state.isGoogleLoggedIn == true) {
       setupView = { firstTimeSetup: state.firstTimeSetup, isChangePasswordEnable: state.isChangePasswordEnable, isGoogleLoggedIn: state.isGoogleLoggedIn }
-      AuthStorage('session').setItem(localStorageKeys.FIRST_TIME_SETUP_VIEW_KEY, JSON.stringify(setupView));
-    } else if (AuthStorage('session').getItem(localStorageKeys.FIRST_TIME_SETUP_VIEW_KEY)) {
-      setupView = JSON.parse(AuthStorage('session').getItem(localStorageKeys.FIRST_TIME_SETUP_VIEW_KEY));
+      if (state.isChangePasswordEnable == true)
+        AuthStorage('session').setItem(localStorageKeys.CHANGE_PASSWORD_ENABLE_KEY, state.isChangePasswordEnable);
+    } else if (AuthStorage('session').getItem(localStorageKeys.CHANGE_PASSWORD_ENABLE_KEY)) {
+      let changePassword = AuthStorage('session').getItem(localStorageKeys.CHANGE_PASSWORD_ENABLE_KEY) == 'true' ? true : false;
+      setupView = { firstTimeSetup: state.firstTimeSetup, isChangePasswordEnable: changePassword, isGoogleLoggedIn: state.isGoogleLoggedIn }
+
     }
     return setupView;
   }
@@ -214,7 +216,8 @@ export class AuthState {
   }
   @Selector()
   static getCurrentMemberStatus(state: AuthStateModel): string {
-    return state.currentMember.membershipStatus;
+    // return state.currentMember.membershipStatus;
+    return state.memberShipStatus;
   }
   @Selector()
   static getIsFullyAuthenticated(state: AuthStateModel): boolean {
@@ -426,8 +429,14 @@ export class AuthState {
             } else {
               this.store.dispatch(new CompleteLogoutAction());
             }
+            this.store.dispatch(
+              new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+            );
           },
           (error) => {
+            this.store.dispatch(
+              new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+            );
             console.error('There was an error ', error);
             this.store.dispatch(
               new ShowNotificationAction({
@@ -490,8 +499,8 @@ export class AuthState {
       this.apollo.query({ query: AUTH_QUERIES.ME }).subscribe(
         ({ data }: any) => {
           const user = data.me;
-
-          patchState({ isFetchingCurrentMember: false, isGoogleLoggedIn: user?.googleLogin, isManualLogIn: user?.manualLogin });
+          let getChangePasswordEnable = AuthStorage('session').getItem(localStorageKeys.CHANGE_PASSWORD_ENABLE_KEY) == 'true' ? true : false;
+          patchState({ isFetchingCurrentMember: false, isGoogleLoggedIn: user?.googleLogin, isManualLogIn: user?.manualLogin, isChangePasswordEnable: getChangePasswordEnable });
 
           this.store.dispatch(
             new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
@@ -500,6 +509,10 @@ export class AuthState {
           this.store.dispatch(new UpdateCurrentUserInStateAction({ user }));
         },
         (error) => {
+          this.store.dispatch(
+            new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+          );
+          console.error('There was an error ', error);
           this.store.dispatch(
             new ShowNotificationAction({
               message: getErrorMessageFromGraphQLResponse(error),
@@ -549,7 +562,8 @@ export class AuthState {
         id: user?.institution?.id,
         name: user?.institution?.name,
         designations: user?.institution?.designations,
-        institutionType: user?.institution?.institutionType
+        institutionType: user?.institution?.institutionType,
+        coordinatorId:user?.institution?.coordinatorId
       },
       membershipStatus: user?.membershipStatus,
       projectsClapped: user?.projectsClapped?.map((p: any) => { if (p) return p.id }),
@@ -568,6 +582,9 @@ export class AuthState {
       permissions,
       firstTimeSetup,
     });
+    if(newCurrentMember.membershipStatus){
+      patchState({memberShipStatus:newCurrentMember.membershipStatus});
+    }
     state = getState();
     if (!state.subscriptionsInitiated) {
       // this.store.dispatch(new InitiateSubscriptionsAction());
@@ -624,10 +641,27 @@ export class AuthState {
                 closeLoginForm: true,
                 lastLogin: response?.user?.lastLogin,
               });
-              this.store.dispatch(
-                new GetEmailOTPAction({ user, password: values.password })
-              );
-
+              const firstTimeSetup = calculateFirstTimeSetup(user);
+              if (firstTimeSetup) {
+                this.store.dispatch(
+                  new GetEmailOTPAction({ user, password: values.password })
+                );
+              } else {
+                this.store.dispatch(new UpdateCurrentUserInStateAction({ user }));
+                this.store.dispatch(new AuthenticationCheckAction());
+                this.store.dispatch(
+                  new ToggleLoadingScreen({
+                    showLoadingScreen: false,
+                    message: '',
+                  })
+                );
+                this.store.dispatch(
+                  new ShowNotificationAction({
+                    message: 'Logged in successfully!',
+                    action: 'success',
+                  })
+                );
+              }
             } else {
               this.store.dispatch(
                 new ToggleLoadingScreen({
@@ -648,10 +682,6 @@ export class AuthState {
             }
           },
           (error) => {
-
-            // this.store.dispatch(
-            //   new GetEmailOTPAction({ email: values.username, password: values.password })
-            // );
             this.store.dispatch(
               new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
             );
@@ -687,31 +717,31 @@ export class AuthState {
     const { user, password } = payload;
     patchState({ isChangePasswordEnable: false });
     this.apollo
-      .query({
-        query: AUTH_QUERIES.GET_EMAIL_OTP,
-        variables: { email: user.email },
-        fetchPolicy: 'network-only',
+      .mutate({
+        mutation: AUTH_MUTATIONS.VERIFY_USER_GET_EMAILOTP,
+        variables: { email: user.email, user_id: user.id },
       })
       .subscribe(
         ({ data }: any) => {
-          const response = data.emailOtp;
+          const response = data.verifyUserLoginGetEmailOtp;
           const authStorage = AuthStorage(authStorageType);
           if (authStorage.getItem(localStorageKeys.EMAIL_OTP_KEY)) {
             authStorage.removeItem(localStorageKeys.EMAIL_OTP_KEY);
           }
-          authStorage.setItem(localStorageKeys.EMAIL_OTP_KEY, response.otp);
-          if (response.otp == password) {
+          patchState({ isManualLogIn: response.user.manualLogin, isGoogleLoggedIn: response.user.googleLogin });
+          if (response.emailOtp.otp == password) {
+            authStorage.setItem(localStorageKeys.EMAIL_OTP_KEY, response.emailOtp.otp);
             patchState({
-              isChangePasswordEnable: true
+              isChangePasswordEnable: true,
             });
           } else {
             patchState({
               isChangePasswordEnable: false
             })
           }
+          state
           this.store.dispatch(new UpdateCurrentUserInStateAction({ user }));
           this.store.dispatch(new AuthenticationCheckAction());
-          this.store.dispatch(new VerifyUserAction({ user: user }))
           this.store.dispatch(
             new ToggleLoadingScreen({
               showLoadingScreen: false,
@@ -726,8 +756,17 @@ export class AuthState {
           );
 
         },
-        (error) => {
-
+        (error) => {          
+          this.store.dispatch(
+            new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+          );
+          console.error('There was an error ', error);
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: 'There was an error in getting Email OTP!',
+              action: 'error',
+            })
+          );
 
         })
   }
@@ -853,6 +892,9 @@ export class AuthState {
             }
           },
           (error) => {
+            this.store.dispatch(
+              new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+            );
             console.error('There was an error ', error);
             isSubmittingForm = false;
             this.store.dispatch(
@@ -905,14 +947,21 @@ export class AuthState {
           patchState({ isSubmittingForm });
 
           this.router.navigateByUrl(uiroutes.HOME_ROUTE.route);
-          if (response.success) {
+          if (response.success) {            
+            this.store.dispatch(
+              new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+            );
             this.store.dispatch(
               new ShowNotificationAction({
                 message: 'Account verified successfully! Now you may login.',
                 action: 'success',
               })
             );
-          } else {
+          } else {            
+            this.store.dispatch(
+              new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+            );
+            console.error('There was an error ', response.errors);
             this.store.dispatch(
               new ShowNotificationAction({
                 message: getErrorMessageFromGraphQLResponse(response?.errors),
@@ -922,7 +971,10 @@ export class AuthState {
           }
         },
         (error) => {
-          console.error('There was an error ', error);
+          this.store.dispatch(
+            new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+          );
+          console.error('There was an error ', error);          
           this.store.dispatch(
             new ShowNotificationAction({
               message:
@@ -982,7 +1034,10 @@ export class AuthState {
               );
             }
           },
-          (error) => {
+          (error) => {            
+            this.store.dispatch(
+              new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+            );
             console.error('There was an error ', error);
             isSubmittingForm = false;
             patchState({ isSubmittingForm });
@@ -1065,6 +1120,9 @@ export class AuthState {
             }
           },
           (error) => {
+            this.store.dispatch(
+              new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+            );
             console.error('There was an error ', error);
             isSubmittingForm = false;
             patchState({ isSubmittingForm });
@@ -1124,6 +1182,9 @@ export class AuthState {
             patchState({ isSubmittingForm });
 
             if (response.ok) {
+              this.store.dispatch(
+                new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+              );
               patchState({
                 isEmailOTPGenerated: true,
                 verificationEmail: values.email,
@@ -1137,6 +1198,10 @@ export class AuthState {
               );
             } else {
               this.store.dispatch(
+                new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+              );
+              console.log("There was an error",response?.errors);
+              this.store.dispatch(
                 new ShowNotificationAction({
                   message: getErrorMessageFromGraphQLResponse(response?.errors),
                   action: 'error',
@@ -1145,6 +1210,9 @@ export class AuthState {
             }
           },
           (error) => {
+            this.store.dispatch(
+              new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+            );
             console.error('There was an error ', error);
             isSubmittingForm = false;
             patchState({ isSubmittingForm });
@@ -1212,6 +1280,9 @@ export class AuthState {
             }
           },
           (error) => {
+            this.store.dispatch(
+              new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+            );
             console.error('There was an error ', error);
             isSubmittingForm = false;
             patchState({ isSubmittingForm });
@@ -1265,12 +1336,19 @@ export class AuthState {
               form.reset();
               formDirective.resetForm();
               this.store.dispatch(
+                new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+              );
+              this.store.dispatch(
                 new ShowNotificationAction({
                   message: 'Password reset successfully!',
                   action: 'success',
                 })
               );
             } else {
+              this.store.dispatch(
+                new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+              );
+              console.log("There was an error",response.errors);
               this.store.dispatch(
                 new ShowNotificationAction({
                   message: getErrorMessageFromGraphQLResponse(response?.errors),
@@ -1280,6 +1358,9 @@ export class AuthState {
             }
           },
           (error) => {
+            this.store.dispatch(
+              new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+            );
             console.error('There was an error ', error);
             isSubmittingForm = false;
             patchState({ isSubmittingForm });
@@ -1321,16 +1402,16 @@ export class AuthState {
       .subscribe(
         ({ data }: any) => {
           const response = data.socialAuth;
-          const token = response?.token;
-          const refreshToken = response?.refreshToken;
-          const { userId } = this.getDecodedToken(token);
           let user: any = {};
           user.email = response.social.uid;
           user.firstName = response.social.extraData.firstName;
           user.lastName = response.social.extraData.lastName;
-          user.name = response.social.extraData.firstName + " " + response.social.extraData.lastName;
           this.store.dispatch(new CreateTokenAction({ user }))
-        }, err => {
+        }, err => {          
+          this.store.dispatch(
+            new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+          );
+          console.error('There was an error ', err);
           this.store.dispatch(
             new ShowNotificationAction({
               message: err.message,
@@ -1349,9 +1430,7 @@ export class AuthState {
     const state = getState();
 
     patchState({
-      isFetchingCurrentMember: true,
-      firstTimeSetup: true,
-      isGoogleLoggedIn: true
+      isFetchingCurrentMember: true
     });
     this.apollo
       .mutate({
@@ -1363,15 +1442,18 @@ export class AuthState {
       .subscribe(
         ({ data }: any) => {
           const state = getState();
-
           let { currentMember, firstTimeSetup } = state;
-
           const response = data.createGoogleToken;
           const token = response.token;
           const isUserVerified = response?.isverified
           const refreshToken = response.refreshToken
           currentMember = { ...currentMember, ...response.user };
-          patchState({ isFetchingCurrentMember: false, isGoogleLoggedIn: response?.user?.googleLogin, isManualLogIn: response?.user?.manualLogin });
+          patchState({
+            isFetchingCurrentMember: false,
+            firstTimeSetup: calculateFirstTimeSetup(response.user),
+            isGoogleLoggedIn: response?.user?.googleLogin,
+            isManualLogIn: response?.user?.manualLogin
+          });
           this.store.dispatch(
             new UpdateTokenAction({ token, refreshToken })
           );
@@ -1398,14 +1480,11 @@ export class AuthState {
               action: 'success',
             })
           );
-          if (!isUserVerified)
-            this.store.dispatch(new VerifyUserAction({ user: user }))
-          if (firstTimeSetup == true) {
-            this.ngZone.run(() => this.router.navigateByUrl(uiroutes.MEMBER_FORM_ROUTE.route)).then();
-          }
-          // this.router.navigateByUrl(uiroutes.MEMBER_FORM_ROUTE.route);
         }, error => {
-          console.error('There was an error ', error);
+          this.store.dispatch(
+            new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+          );
+          console.error('There was an error ', error); 
           this.store.dispatch(
             new ShowNotificationAction({
               message:
@@ -1444,6 +1523,9 @@ export class AuthState {
             if (response.success) {
               isSubmittingForm = false;
               isChangePasswordEnable = false;
+              this.store.dispatch(
+                new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+              );  
               patchState({ isSubmittingForm, isChangePasswordEnable });
               form.reset();
               formDirective.resetForm();
@@ -1462,20 +1544,29 @@ export class AuthState {
               if (firstTimeSetup == true) {
                 this.ngZone.run(() => this.router.navigateByUrl(uiroutes.MEMBER_FORM_ROUTE.route)).then();
               }
-            } else {
-              if (response?.errors?.nonFieldErrors?.length > 0 && response?.errors?.nonFieldErrors[0].code == 'not_verified') {
-                this.store.dispatch(new VerifyUserAction({ user: currentMember }))
-              } else {
-                this.store.dispatch(
-                  new ShowNotificationAction({
-                    message: getErrorMessageFromGraphQLResponse(response),
-                    action: 'error',
-                  })
-                );
+              if (AuthStorage('session').getItem(localStorageKeys.CHANGE_PASSWORD_ENABLE_KEY)) {
+                AuthStorage('session').removeItem(localStorageKeys.CHANGE_PASSWORD_ENABLE_KEY);
+                patchState({ isChangePasswordEnable: false })
               }
+            } else {              
+            this.store.dispatch(
+              new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+            );
+            console.error('There was an error ', response.errors);
+              isSubmittingForm = false;
+              patchState({ isSubmittingForm });
+              this.store.dispatch(
+                new ShowNotificationAction({
+                  message: getErrorMessageFromGraphQLResponse(response.errors),
+                  action: 'error',
+                })
+              );
             }
           },
-          (error) => {
+          (error) => {            
+            this.store.dispatch(
+              new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+            );
             console.error('There was an error ', error);
             isSubmittingForm = false;
             patchState({ isSubmittingForm });
@@ -1485,10 +1576,7 @@ export class AuthState {
                 action: 'error',
               })
             );
-          }
-        ), error => {
-          debugger;
-        };
+          });
     } else {
       isSubmittingForm = false;
       this.store.dispatch(
@@ -1501,55 +1589,6 @@ export class AuthState {
     }
   }
 
-  @Action(firstTimeSetupAction)
-  firstTimeSetupAction(
-    { patchState, getState }: StateContext<AuthStateModel>,
-    { payload }: firstTimeSetupAction
-  ) {
-    const state = getState();
-    let data = payload.firstTimeSetup;
-    if (state.firstTimeSetup != data.firstTimeSetup || state.isChangePasswordEnable != data.isChangePasswordEnable || state.isGoogleLoggedIn != data.isGoogleLoggedIn) {
-      patchState({
-        firstTimeSetup: data.firstTimeSetup,
-        isChangePasswordEnable: data.isChangePasswordEnable,
-        isGoogleLoggedIn: data.isGoogleLoggedIn
-      });
-    }
-  }
-
-  @Action(VerifyUserAction)
-  verifyUserAction(
-    { patchState, getState }: StateContext<AuthStateModel>,
-    { payload }: VerifyUserAction
-  ) {
-    const state = getState();
-    const { user } = payload;
-    let { isManualLogIn, isGoogleLoggedIn } = state;
-    this.apollo
-      .mutate({
-        mutation: AUTH_MUTATIONS.VERIFY_EMAILUSER,
-        variables: {
-          user_id: user.id,
-          googleLogin: isGoogleLoggedIn,
-          manualLogin: isManualLogIn
-        },
-      })
-      .subscribe(
-        ({ data }: any) => {
-          console.log(data);
-          // patchState({
-          //   isManualLogIn: true
-          // });
-        }, err => {
-          this.store.dispatch(
-            new ShowNotificationAction({
-              message:
-                'Your email Verification got failed!',
-              action: 'error',
-            })
-          )
-        })
-  }
   @Action(VerifyInvitecodeAction)
   verifyInvitecode(
     { patchState, getState }: StateContext<AuthStateModel>,
@@ -1684,6 +1723,9 @@ export class AuthState {
             }
           },
           (error) => {
+            this.store.dispatch(
+              new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+            );
             console.error('There was an error ', error);
             this.store.dispatch(
               new ShowNotificationAction({
@@ -1728,25 +1770,14 @@ export class AuthState {
     const { user } = payload;
     const firstTimeSetup = calculateFirstTimeSetup(user);
     patchState({ firstTimeSetup: firstTimeSetup });
-    if (firstTimeSetup == false) {
-      if (AuthStorage('session').getItem(localStorageKeys.FIRST_TIME_SETUP_VIEW_KEY)) {
-        AuthStorage('session').removeItem(localStorageKeys.FIRST_TIME_SETUP_VIEW_KEY);
-      }
-      let firstTimeSetupObject = {
-        firstTimeSetup: firstTimeSetup,
-        isChangePasswordEnable: state.isChangePasswordEnable,
-        isGoogleLoggedIn: state.isGoogleLoggedIn
-      }
-      this.store.dispatch(new firstTimeSetupAction({ firstTimeSetup: firstTimeSetupObject }));
-    }
-    if (user.membershipStatus == 'PE') {
+    //After Submitting member form with all required data, at that time it redirects to the Pending UI
+    if (user.membershipStatus == MembershipStatusOptions.PENDING) {
       this.ngZone.run(() => this.router.navigateByUrl(uiroutes.HOME_ROUTE.route)).then();
-    } else {
-      // let username = { username: user.username }
+    } else if (user.membershipStatus == MembershipStatusOptions.APPROVED) {
+      //When opening the member screen after approval It redirects to profile URL
       this.router.navigate([
-        uiroutes.MEMBER_PROFILE_ROUTE.route + '/' +  user.username])
+        uiroutes.MEMBER_PROFILE_ROUTE.route + '/' + user.username])
     }
-    this.store.dispatch(new firstTimeSetupAction({ firstTimeSetup: firstTimeSetup }));
   }
 }
 
