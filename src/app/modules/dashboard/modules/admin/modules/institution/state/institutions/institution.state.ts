@@ -6,7 +6,7 @@ import {
   InstitutionStateModel,
 } from './institution.model';
 
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import {
   CreateUpdateInstitutionAction,
   DeleteInstitutionAction,
@@ -39,6 +39,7 @@ import {
 } from '../../../../../../../../shared/common/constants';
 import { SUBSCRIPTIONS } from '../../../../../../../../shared/api/graphql/subscriptions.graphql';
 import { SearchParams } from '../../../../../../../../shared/modules/master-grid/table.model';
+import { MatDialog } from '@angular/material/dialog';
 
 @State<InstitutionStateModel>({
   name: 'institutionState',
@@ -49,7 +50,9 @@ export class InstitutionState {
   constructor(
     private apollo: Apollo,
     private store: Store,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog,
+    private ngZone:NgZone
   ) {}
 
   @Selector()
@@ -247,7 +250,7 @@ export class InstitutionState {
     { payload }: CreateUpdateInstitutionAction
   ) {
     const state = getState();
-    const { form, formDirective } = payload;
+    const { form, formDirective,isInstitutionModalDialog } = payload;
     let { formSubmitting } = state;
     if (form.valid) {
       formSubmitting = true;
@@ -255,8 +258,8 @@ export class InstitutionState {
       const values = form.value;
       values.designations = values.designations.toString();
       const updateForm = values.id == null ? false : true;
+      // values.dob = values.dob;
       const { id, ...sanitizedValues } = values;
-      values.dob = JSON.parse(JSON.stringify(values.dob));
       const variables = updateForm
         ? {
             input: sanitizedValues,
@@ -289,14 +292,21 @@ export class InstitutionState {
               );
               form.reset();
               formDirective.resetForm();
-              this.router.navigate([InstitutionFormCloseURL], {
-                queryParams: {
-                  adminSection: ADMIN_SECTION_LABELS.INSTITUTIONS,
-                },
-              });
+              
               patchState({
                 institutionFormRecord: emptyInstitutionFormRecord,
               });
+              if(isInstitutionModalDialog == true){
+                  this.ngZone.run(() => {
+                    this.dialog.closeAll();
+                  });
+              }else{                
+                this.router.navigate([InstitutionFormCloseURL], {
+                  queryParams: {
+                    adminSection: ADMIN_SECTION_LABELS.INSTITUTIONS,
+                  },
+                });
+              }
             } else {
               this.store.dispatch(
                 new ShowNotificationAction({

@@ -8,6 +8,7 @@
   color: white;
   cursor: pointer;
 }
+
 .scroll-feed {
   overflow: auto;
   height: calc(100vh - 190px);
@@ -25,27 +26,34 @@
 .submitBtn button {
   margin: 10px;
 }
-.mat-mdc-form-field + .mat-mdc-form-field {
+
+.mat-mdc-form-field+.mat-mdc-form-field {
   margin-left: 8px;
 }
+
 ::ng-deep .cdk-overlay-pane {
-    max-width:450px;
+  max-width: 450px;
 }
-.institutionGridHead{
+
+.institutionGridHead {
   background-color: #0099ff;
   margin: auto;
   padding: 7px;
 }
-.institutionGrid mat-option{
-  border:1px solid #0099ff;
+
+.institutionGrid mat-option {
+  border: 1px solid #0099ff;
 }
+
 .institutionGrid mat-option .col:first-child {
-  border-right: 1px solid #0099ff;;
+  border-right: 1px solid #0099ff;
+  ;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.institutionGrid .col{
+
+.institutionGrid .col {
   width: 50%;
 }
 
@@ -55,8 +63,8 @@
   font-size: 75%;
 }
 
-.institutionPanel{
-  margin-bottom: 50px!important;
+.institutionPanel {
+  margin-bottom: 50px !important;
 }
 
 .my-mat-hint {
@@ -70,6 +78,17 @@
   transform: translateY(10px);
   font-size: 75%;
 }
+
+.displayMail {
+  margin: 0;
+  text-align: center;
+  color: #0099ff;
+}
+.resetLogoutButton{
+  display: block;
+  margin: auto;
+}
+
 @media screen and (max-width: 990px) {
   .floating-avatar {
     float: none;

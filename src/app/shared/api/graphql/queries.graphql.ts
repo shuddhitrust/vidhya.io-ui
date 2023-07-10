@@ -422,31 +422,14 @@ export const INSTITUTION_QUERIES = {
       }
     }
   `,
-  GET_SEARCH_INSTITUTIONS: gql`
-    query searchInstitutions($name: String!) {
-      searchInstitutions(name: $name) {
+  GET_INSTITUTIONS_DESIGNATIONS: gql`
+    query fetchInstitutionDesignations($name: String!){
+      fetchInstitutionDesignations(name:$name){
         records {
           id
           name
-          code
-          location
-          city
-          website
-          phone
-          logo
-          bio
-          address
-          pincode
-          state
-          dob
-          country
           designations
           institutionType
-          coordinator {
-            id
-            name
-          }
-          verified
         }
         total
       }

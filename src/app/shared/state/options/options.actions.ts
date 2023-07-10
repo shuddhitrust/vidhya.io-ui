@@ -22,7 +22,7 @@ export class FetchInstitutionsOptions{
 }
 
 
-export class FetchInstitutionsByNameOptions{
+export class fetchInstitutionDesignations{
   static readonly type = '[MEMBER] Fetch Institution by Names';
 
   constructor(public payload: { name: string }) {}

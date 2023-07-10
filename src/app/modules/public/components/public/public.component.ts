@@ -11,7 +11,10 @@ import { uiroutes } from 'src/app/shared/common/ui-routes';
 export class PublicComponent {
   title = 'vidhya-ui';
   uiroutes = uiroutes;
-  @Input() firstTimeSetup;
+   _firstTimeSetup: boolean;
+  @Input() set firstTimeSetup(status:boolean){
+    this._firstTimeSetup = status;
+  };
   constructor(private router: Router, private readonly location: Location) {}
 
   currentRoute(): string {
@@ -64,7 +67,7 @@ export class PublicComponent {
         }
         break;
       case uiroutes.CHANGE_PASSWORD.route:
-        if(this.firstTimeSetup && this.routeIs(uiroutes.CHANGE_PASSWORD.route)){
+        if(this._firstTimeSetup && this.routeIs(uiroutes.CHANGE_PASSWORD.route)){
           return true;
         }
     
@@ -111,7 +114,7 @@ export class PublicComponent {
         break;
       case uiroutes.MEMBER_FORM_ROUTE.route:
         if (
-          this.firstTimeSetup &&
+          this._firstTimeSetup &&
           this.routeIs(uiroutes.MEMBER_FORM_ROUTE.route)
         ) {
           return true;
@@ -133,4 +136,10 @@ export class PublicComponent {
     }
     return false;
   }
+  
+  // ngOnChanges(changes: SimpleChanges) {
+  //   if(changes){
+  //     this.firstTimeSetup = changes.firstTimeSetup.firstChange;
+  //   }
+  // }
 }

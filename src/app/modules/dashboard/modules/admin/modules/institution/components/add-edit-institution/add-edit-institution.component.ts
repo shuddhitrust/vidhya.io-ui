@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, Optional } from '@angular/core';
 import { Location } from '@angular/common';
 import {
   FormBuilder,
@@ -37,11 +37,7 @@ import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
   styleUrls: [
     './add-edit-institution.component.scss',
     './../../../../../../../../shared/common/shared-styles.css',
-  ],
-  providers: [
-    { provide: MAT_DIALOG_DATA, useValue: {} },
-    { provide: MatDialogRef, useValue: {} }
-]
+  ]
 })
 export class AddEditInstitutionComponent implements OnInit {
   formSubmitting: boolean = false;
@@ -64,6 +60,10 @@ export class AddEditInstitutionComponent implements OnInit {
   columnFilters = {
     roles: [USER_ROLES_NAMES.INSTITUTION_ADMIN],
   };
+  today = new Date();
+  dialogTitle: string;
+  dialogText: string;
+  
   constructor(
     private location: Location,
     private store: Store,
@@ -71,9 +71,8 @@ export class AddEditInstitutionComponent implements OnInit {
     private fb: FormBuilder,
     private uploadService: UploadService,
     private auth: AuthorizationService,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {
-    this.institutionModalData = data.newInstitutionDialog;
+    @Optional()  @Inject(MAT_DIALOG_DATA) public data: any  ) {
+    this.institutionModalData = data?.newInstitutionDialog;
     this.isInstitutionModalDialog = this.institutionModalData?.isDialog
     this.institutionForm = this.setupInstitutionFormGroup();
     this.institutionFormRecord$.subscribe((val) => {      
@@ -99,9 +98,9 @@ export class AddEditInstitutionComponent implements OnInit {
       id: [institutionFormRecord.id],
       name: [institutionFormRecord.name, Validators.required],
       code: [institutionFormRecord.code, Validators.required],      
-      institutionType:[institutionFormRecord.institutionType, Validators.required],
+      institutionType:[institutionFormRecord?.institutionType, Validators.required],
       designations:[institutionFormRecord.designations?institutionFormRecord.designations.toString():'NA', Validators.required],
-      coordinator:[institutionFormRecord.coordinator.id],
+      coordinator:[institutionFormRecord?.coordinator?.id],
       verified:[institutionFormRecord.verified],
       location: [institutionFormRecord.location, Validators.required],
       city: [institutionFormRecord.city, Validators.required],
@@ -186,7 +185,7 @@ export class AddEditInstitutionComponent implements OnInit {
           const url = res.secure_url;
           form.get('logo').setValue(url);
           this.store.dispatch(
-            new CreateUpdateInstitutionAction({ form, formDirective })
+            new CreateUpdateInstitutionAction({ form, formDirective,isInstitutionModalDialog:this.isInstitutionModalDialog })
           );
           this.store.dispatch(
             new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
@@ -207,7 +206,7 @@ export class AddEditInstitutionComponent implements OnInit {
       );
     } else {
       this.store.dispatch(
-        new CreateUpdateInstitutionAction({ form, formDirective })
+        new CreateUpdateInstitutionAction({ form, formDirective, isInstitutionModalDialog:this.isInstitutionModalDialog })
       );
     }
   }
