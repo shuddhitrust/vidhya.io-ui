@@ -12,7 +12,7 @@ export const USER_MUTATIONS = {
   //     }
   //   }
   // `,
-    
+
   UPDATE_USER: gql`
     mutation updateUser($input: UserInput!) {
       updateUser(input: $input) {
@@ -886,12 +886,12 @@ export const AUTH_MUTATIONS = {
     }
   }
   `,
-  CREATE_TOKEN:gql`
+  CREATE_TOKEN: gql`
   mutation createGoogleToken($input: UserInput!) {
     createGoogleToken(input: $input) {          
       ok
       token
-      isverified
+      isVerified
       refreshToken
         user {
           id
@@ -914,6 +914,8 @@ export const AUTH_MUTATIONS = {
           institution {
             id
             name
+            designations
+            institutionType
           }
           role {
             name
@@ -1096,25 +1098,23 @@ export const AUTH_MUTATIONS = {
       }
     }
   `,
-  VERIFY_EMAILUSER: gql`  
-  mutation verifyEmailUser(
-    $user_id: Int!,      
-    $googleLogin:Boolean!,
-    $manualLogin:Boolean!
-  ) {
-    verifyEmailUser(
-      userId: $user_id,
-      googleLogin:$googleLogin,
-      manualLogin:$manualLogin
-    )  {
-      ok
-      user{
-        manualLogin
-        googleLogin
+
+  VERIFY_USER_GET_EMAILOTP: gql`
+    mutation verifyUserLoginGetEmailOtp($email: String!,$user_id:Int!){
+      verifyUserLoginGetEmailOtp(email: $email,userId:$user_id){
+        user{
+          id
+          googleLogin
+          manualLogin
+        }
+        emailOtp{
+          id
+          email
+          otp
+          verified
+        }
       }
-    }
-  }
-  `
+    }`,
 };
 
 export const ADMIN_MUTATIONS = {

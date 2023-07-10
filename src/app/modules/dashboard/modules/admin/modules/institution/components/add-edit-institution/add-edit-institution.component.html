@@ -244,7 +244,7 @@ formDirective.submitted
 
     <mat-form-field class="col-lg-4 col-md-4 col-sm-12" appearance="outline">
       <mat-label>Date of Founding</mat-label>
-      <input matInput [matDatepicker]="picker" formControlName="dob" placeholder="Date of Founding">
+      <input matInput [matDatepicker]="picker" [max]="today" formControlName="dob"  (focus)="picker.open()" readonly="true" placeholder="Date of Founding">
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
@@ -264,6 +264,7 @@ formDirective.submitted
         matInput
         formControlName="phone"
         placeholder="Institution's phone number"
+        onlyNumber
       />
     </mat-form-field>
 

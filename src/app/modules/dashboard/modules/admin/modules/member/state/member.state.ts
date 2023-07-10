@@ -245,18 +245,14 @@ export class MemberState {
       formSubmitting = true;
       patchState({ formSubmitting });
       let values: any = {};
-      Object.keys(form.value).forEach(elem => {
+      Object.keys(form.getRawValue()).forEach(elem => {
         if (elem != 'id') {
-          values = Object.assign({}, values, form.value[elem]);
+          values = Object.assign({}, values, form.getRawValue()[elem]);
           values.dob = JSON.parse(JSON.stringify(values.dob));
         } else {
-          values = Object.assign({}, values, { 'id': form.value['id'] });
+          values = Object.assign({}, values, { 'id': form.getRawValue()['id'] });
         }
       })
-      // const values = Object.assign({},form.value['profile'],form.value['id'],form.value['institution'],form.value['contact'],form.value['accountSetting']);
-      // if (username != values.email) {
-      //   delete values.username;
-      // }
       const { institutionType, ...sanitizedValues } = values;
       const variables = {
         input: sanitizedValues,

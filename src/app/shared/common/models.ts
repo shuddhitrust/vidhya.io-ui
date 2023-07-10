@@ -84,7 +84,7 @@ export type CurrentMember = {
   avatar: string;
   designation:string;
   invitecode?: string;
-  institution?: { id: number; name: string,designations: string; institutionType: string };
+  institution?: { id: number; name: string,designations: string; institutionType: string,coordinatorId: string };
   membershipStatus: string;
   projectsClapped: string[];
   role: { name?: string; permissions: UserPermissions };
@@ -177,7 +177,7 @@ export type User = {
   name?: string;
   email?: string;
   avatar?: string;
-  institution?: any;
+  institution?: {id: number; name: string,designations: string; institutionType: string,coordinatorId:string};
   invitecode?: string;
   title?: string;
   bio?: string;
@@ -257,7 +257,7 @@ export type Institution = {
   verified:boolean,
   location?: string;
   address?:string;
-  dob?:Date;
+  dob?:string;
   pincode?:string;
   state?:string;
   city?: string;

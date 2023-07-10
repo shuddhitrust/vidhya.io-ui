@@ -5,7 +5,7 @@ import {
   FetchGraders,
   FetchMemberOptionsByInstitution,
   FetchInstitutionsOptions,
-  FetchInstitutionsByNameOptions
+  fetchInstitutionDesignations
 } from './options.actions';
 import { Injectable } from '@angular/core';
 import { groupTypeOptions, MatSelectOption } from '../../common/models';
@@ -198,9 +198,9 @@ export class OptionsState {
 
   
   // To Fetch all the Institutios
-  @Action(FetchInstitutionsByNameOptions)
-  FetchInstitutionsByNameOptions({ getState, patchState }: StateContext<OptionsStateModel>,
-    { payload }: FetchInstitutionsByNameOptions
+  @Action(fetchInstitutionDesignations)
+  fetchInstitutionDesignations({ getState, patchState }: StateContext<OptionsStateModel>,
+    { payload }: fetchInstitutionDesignations
   ) {    
     const state = getState();
     let { isFetchingAllInstitutions, institutionsList } = state;
@@ -211,13 +211,13 @@ export class OptionsState {
     };
     this.apollo
       .query({
-        query: INSTITUTION_QUERIES.GET_SEARCH_INSTITUTIONS,
+        query: INSTITUTION_QUERIES.GET_INSTITUTIONS_DESIGNATIONS,
         variables
       })
       .subscribe(
         (res: any) => {
           isFetchingAllInstitutions = false;
-          institutionsList = res?.data?.searchInstitutions;
+          institutionsList = res?.data?.fetchInstitutionDesignations;
           patchState({
             institutionsList,
             isFetchingAllInstitutions,
