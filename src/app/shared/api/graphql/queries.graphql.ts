@@ -325,7 +325,7 @@ export const USER_QUERIES = {
           institution {
             id
             name
-            coordinator {
+            coordinator{
               id
               name
             }
@@ -335,6 +335,31 @@ export const USER_QUERIES = {
       }
     }
   `,
+  GET_USERS_BY_INSTITUTION: gql`
+  query usersByInstitution(
+    $institution_id:Int
+    $roles: [String]
+    $limit: Int
+    $offset: Int
+  ) {
+    usersByInstitution(
+      institutionId:$institution_id
+      roles: $roles
+      limit: $limit
+      offset: $offset
+    ) {
+      records {
+        id
+        username
+        firstName
+        lastName
+        name
+        membershipStatus
+      }
+      total
+    }
+  }
+`,
   GET_USERS_OPTIONS: gql`
     query users(
       $searchField: String
@@ -412,7 +437,7 @@ export const INSTITUTION_QUERIES = {
         invitecode
         designations
         institutionType
-        coordinator {
+        coordinator{
           id
           name
         }
@@ -427,6 +452,11 @@ export const INSTITUTION_QUERIES = {
           id
           name
           institutionType
+          coordinator{
+            id
+            name
+          }
+          verified
         }
         total
       }

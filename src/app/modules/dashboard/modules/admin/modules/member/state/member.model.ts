@@ -55,6 +55,7 @@ export const emptyMemberFormRecord: User = {
 
 export interface MemberStateModel {
   members: User[];
+  institutionMembers:User[];
   membersSubscribed: boolean;
   lastPagePublicMembers: number;
   paginatedPublicMembers: any[];
@@ -71,6 +72,7 @@ export interface MemberStateModel {
 
 export const defaultMemberState: MemberStateModel = {
   members: [],
+  institutionMembers:[],
   membersSubscribed: false,
   lastPagePublicMembers: null,
   paginatedPublicMembers: [],
