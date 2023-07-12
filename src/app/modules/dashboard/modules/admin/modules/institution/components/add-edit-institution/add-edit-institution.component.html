@@ -285,17 +285,12 @@ formDirective.submitted
     <ng-template #adminFeatures>
       <mat-form-field class="col-lg-9 col-md-6 col-sm-12" appearance="outline">
         <mat-label>Coordinator</mat-label>
-        <mat-select formControlName="coordinator" #choosedValue required placeholder="Coordinator"
+        <mat-select formControlName="coordinator" #choosedValue  placeholder="Coordinator"
           (valueChange)="coordinatorChange($event)">
           <mat-option *ngFor="let coordinator of coordinatorOptions" [value]="coordinator.value">
             {{ coordinator.label }}
           </mat-option>
         </mat-select>
-        <small class="validation-error" *ngIf="
-          institutionForm.get('coordinator').hasError('required') && formDirective.submitted
-        ">
-          Coordinator is required
-        </small>
       </mat-form-field>
     
       <mat-checkbox class="col-lg-3 col-md-6 col-sm-6" color="primary" formControlName="verified">Verified Institution</mat-checkbox>
