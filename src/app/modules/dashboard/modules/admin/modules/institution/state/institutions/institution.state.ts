@@ -2,6 +2,7 @@ import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 import {
   defaultInstitutionState,
   emptyInstitutionFormRecord,
+  fetchDesignationByInstitutionModel,
   InstitutionFormCloseURL,
   InstitutionStateModel,
 } from './institution.model';
@@ -39,8 +40,6 @@ import {
 } from '../../../../../../../../shared/common/constants';
 import { SUBSCRIPTIONS } from '../../../../../../../../shared/api/graphql/subscriptions.graphql';
 import { SearchParams } from '../../../../../../../../shared/modules/master-grid/table.model';
-import { MatDialog } from '@angular/material/dialog';
-
 @State<InstitutionStateModel>({
   name: 'institutionState',
   defaults: defaultInstitutionState,
@@ -51,7 +50,6 @@ export class InstitutionState {
     private apollo: Apollo,
     private store: Store,
     private router: Router,
-    private dialog: MatDialog,
     private ngZone:NgZone
   ) {}
 
@@ -82,6 +80,18 @@ export class InstitutionState {
     });
 
     return options;
+  }
+
+  @Selector()
+  static isInstitutionModalDialog(state: InstitutionStateModel,model:fetchDesignationByInstitutionModel):Institution {
+    if(state.isInstitutionModalFormOpen){
+      // state.
+      // Object.keys(model).forEach(element => {
+        
+      // });
+      return state.institutionModalData;
+    }
+    return null;
   }
 
   @Selector()
@@ -251,10 +261,10 @@ export class InstitutionState {
   ) {
     const state = getState();
     const { form, formDirective,isInstitutionModalDialog } = payload;
-    let { formSubmitting } = state;
+    let { formSubmitting,isInstitutionModalFormOpen } = state;
     if (form.valid) {
       formSubmitting = true;
-      patchState({ formSubmitting });
+      patchState({ formSubmitting});
       const values = form.value;
       values.designations = values.designations.toString();
       const updateForm = values.id == null ? false : true;
@@ -295,18 +305,19 @@ export class InstitutionState {
               
               patchState({
                 institutionFormRecord: emptyInstitutionFormRecord,
-              });
+              });      
               if(isInstitutionModalDialog == true){
-                  this.ngZone.run(() => {
-                    this.dialog.closeAll();
-                  });
-              }else{                
+                patchState({institutionModalData:response?.institution,
+                  isInstitutionModalFormOpen:isInstitutionModalDialog
+                });
+              }else{                         
                 this.router.navigate([InstitutionFormCloseURL], {
                   queryParams: {
                     adminSection: ADMIN_SECTION_LABELS.INSTITUTIONS,
                   },
                 });
               }
+              
             } else {
               this.store.dispatch(
                 new ShowNotificationAction({
@@ -385,6 +396,10 @@ export class InstitutionState {
     patchState({
       institutionFormRecord: emptyInstitutionFormRecord,
       formSubmitting: false,
+      isInstitutionModalFormOpen: false,
+      institutionModalData:emptyInstitutionFormRecord
     });
   }
+
+  
 }

@@ -33,10 +33,19 @@ export interface InstitutionStateModel {
   fetchParamObjects: FetchParams[];
   institutionFormId: number;
   institutionFormRecord: Institution;
+  institutionModalData:Institution;
+  isInstitutionModalFormOpen:boolean;
   isFetching: boolean;
   errorFetching: boolean;
   formSubmitting: boolean;
   errorSubmitting: boolean;
+}
+
+export interface fetchDesignationByInstitutionModel {
+  id:null,
+  name:string,
+  institutionType:null,
+  designations:null, 
 }
 
 export const defaultInstitutionState: InstitutionStateModel = {
@@ -46,6 +55,8 @@ export const defaultInstitutionState: InstitutionStateModel = {
   fetchParamObjects: [],
   institutionFormId: null,
   institutionFormRecord: emptyInstitutionFormRecord,
+  institutionModalData: null,
+  isInstitutionModalFormOpen:false,
   isFetching: false,
   errorFetching: false,
   formSubmitting: false,
