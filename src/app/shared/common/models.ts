@@ -177,7 +177,7 @@ export type User = {
   name?: string;
   email?: string;
   avatar?: string;
-  institution?: {id: number; name: string,designations: string; institutionType: string,coordinatorId:string};
+  institution?: {id: number, name: string, institutionType: string,coordinatorId:string};
   invitecode?: string;
   title?: string;
   bio?: string;

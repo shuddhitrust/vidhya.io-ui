@@ -37,7 +37,6 @@ export const USER_MUTATIONS = {
           institution {
             id
             name                  
-            designations
             institutionType
           }
           role {
@@ -914,7 +913,6 @@ export const AUTH_MUTATIONS = {
           institution {
             id
             name
-            designations
             institutionType
           }
           role {
@@ -1017,7 +1015,6 @@ export const AUTH_MUTATIONS = {
           institution {
             id
             name                  
-            designations
             institutionType
           }
           role {

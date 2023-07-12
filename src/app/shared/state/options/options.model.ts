@@ -10,6 +10,8 @@ export interface OptionsStateModel {
   fetchPolicyForMembers: FetchPolicyModel;
   adminGroups: Group[];
   institutionsList : Institution[];
+  isFetchingDesignationsByInsitution: boolean;
+  designationsByInsitution: Institution[];
   isFetchingAdminGroups: boolean;
   fetchPolicyForGroups: FetchPolicyModel;
 }
@@ -24,6 +26,8 @@ export const defaultOptionsState: OptionsStateModel = {
   fetchPolicyForMembers: null,
   adminGroups: [],
   institutionsList: [],
+  isFetchingDesignationsByInsitution:false,
+  designationsByInsitution:[],
   isFetchingAdminGroups: false,
   fetchPolicyForGroups: null,
 };

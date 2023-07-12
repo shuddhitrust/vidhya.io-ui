@@ -3,6 +3,14 @@ export class FetchMemberOptionsByInstitution {
 
   constructor(public payload: { memberInstitutionId: number }) {}
 }
+
+export class FetchDesignationByInstitution {
+  
+  static readonly type = '[MEMBER] Fetch designation by institution';
+
+  constructor(public payload: { id: number }) {}
+}
+
 export class FetchAdminGroupOptions {
   static readonly type = '[GROUP] Fetch admin groups ';
 
@@ -22,7 +30,7 @@ export class FetchInstitutionsOptions{
 }
 
 
-export class fetchInstitutionDesignations{
+export class searchInstitution{
   static readonly type = '[MEMBER] Fetch Institution by Names';
 
   constructor(public payload: { name: string }) {}

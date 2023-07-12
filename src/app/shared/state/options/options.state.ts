@@ -5,8 +5,8 @@ import {
   FetchGraders,
   FetchMemberOptionsByInstitution,
   FetchInstitutionsOptions,
-  fetchInstitutionDesignations
-} from './options.actions';
+  searchInstitution,
+  FetchDesignationByInstitution} from './options.actions';
 import { Injectable } from '@angular/core';
 import { groupTypeOptions, MatSelectOption } from '../../common/models';
 import {
@@ -32,8 +32,14 @@ export class OptionsState {
     const options = state.membersByInstitution.map((m) => {
       return { value: m.id, label: `${m.name} (${m.role?.name})` };
     });
-
     return options;
+  }
+
+  @Selector()  
+  static listDesignationsByInstitutionsOptions(
+    state: OptionsStateModel
+  ) {
+    return state.designationsByInsitution;
   }
 
   @Selector()
@@ -198,26 +204,29 @@ export class OptionsState {
 
   
   // To Fetch all the Institutios
-  @Action(fetchInstitutionDesignations)
-  fetchInstitutionDesignations({ getState, patchState }: StateContext<OptionsStateModel>,
-    { payload }: fetchInstitutionDesignations
+  @Action(searchInstitution)
+  searchInstitution({ getState, patchState }: StateContext<OptionsStateModel>,
+    { payload }: searchInstitution
   ) {    
     const state = getState();
-    let { isFetchingAllInstitutions, institutionsList } = state;
+    let { isFetchingAllInstitutions, institutionsList, designationsByInsitution } = state;
     isFetchingAllInstitutions = true;
-    patchState({ isFetchingAllInstitutions });
+    institutionsList = [];
+    designationsByInsitution = [];
+    patchState({ isFetchingAllInstitutions,institutionsList,designationsByInsitution });
     const variables = {
       name: payload.name
     };
     this.apollo
       .query({
-        query: INSTITUTION_QUERIES.GET_INSTITUTIONS_DESIGNATIONS,
-        variables
+        query: INSTITUTION_QUERIES.SEARCH_INSTITUTIONS,
+        variables,
+        fetchPolicy: 'network-only',
       })
       .subscribe(
         (res: any) => {
           isFetchingAllInstitutions = false;
-          institutionsList = res?.data?.fetchInstitutionDesignations;
+          institutionsList = res?.data?.searchInstitution;
           patchState({
             institutionsList,
             isFetchingAllInstitutions,
@@ -230,6 +239,61 @@ export class OptionsState {
           })
         })
   }
+
+  // To Fetch all the Institutios
+  @Action(FetchDesignationByInstitution)
+  FetchDesignationByInstitution({
+    getState,
+    patchState,
+  }: StateContext<OptionsStateModel>,
+  { payload }: FetchDesignationByInstitution
+  ) {
+    const state = getState();
+    let { isFetchingDesignationsByInsitution, institutionsList } = state;
+    isFetchingDesignationsByInsitution = true;
+    patchState({ isFetchingDesignationsByInsitution: true });
+    const variables = {
+      id: payload.id
+    };
+    this.apollo
+      .query({
+        query: INSTITUTION_QUERIES.GET_FETCH_DESIGNATION_BY_INSTITUTION,
+        variables        
+      })
+      .subscribe(
+        (res: any) => {
+          debugger
+          let designationsList = res?.data?.fetchDesignationByInstitution.designations;
+          patchState({ isFetchingDesignationsByInsitution: false });
+          const response = designationsList?designationsList.split(','):['NA'];
+          patchState({
+            designationsByInsitution: response,
+          });
+       
+         
+          // let institutionIndex = institutionsList['records'].findIndex(item=>item.id==payload.id);
+          // let institution = institutionsList['records'].find(item=>item.id==payload.id);
+          // selectedInstitution = Object.assign({}, institutionsList['records'][institutionIndex],{'designations':designationsList})
+          // institutionsList['records'][institutionIndex] = aaa;
+          // institutionsList['records'].splice(institutionIndex, 1, aaa);
+
+// institutionsList=Object.assign
+// institutionsList
+          // institutionsList= Object.assign({},,{'designations':designationsList})
+          // patchState({
+          //   institutionsList,
+            
+          // })
+          // institutionsLis
+
+        },error=>{
+          new ShowNotificationAction({
+            message: getErrorMessageFromGraphQLResponse(error),
+            action: 'error',
+          })
+        })
+  }
+
   // To Fetch all the Institutios
   @Action(FetchInstitutionsOptions)
   fetchInstitutions({

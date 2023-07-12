@@ -27,7 +27,6 @@ export const AUTH_QUERIES = {
         institution {
           id
           name
-          designations
           institutionType
         }
         role {
@@ -73,7 +72,6 @@ export const PUBLIC_QUERIES = {
         institution {
           code
           name
-          designations
           institutionType
         }
         courses {
@@ -422,13 +420,12 @@ export const INSTITUTION_QUERIES = {
       }
     }
   `,
-  GET_INSTITUTIONS_DESIGNATIONS: gql`
-    query fetchInstitutionDesignations($name: String!){
-      fetchInstitutionDesignations(name:$name){
+  SEARCH_INSTITUTIONS: gql`
+    query searchInstitution($name: String!){
+      searchInstitution(name:$name){
         records {
           id
           name
-          designations
           institutionType
         }
         total
@@ -461,6 +458,13 @@ export const INSTITUTION_QUERIES = {
       }
     }
   `,
+  GET_FETCH_DESIGNATION_BY_INSTITUTION: gql`
+  query fetchDesignationByInstitution($id: ID!) {
+    fetchDesignationByInstitution(id: $id) {      
+        designations      
+    }
+  }
+  `
 };
 
 export const GROUP_QUERIES = {

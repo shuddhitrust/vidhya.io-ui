@@ -12,6 +12,7 @@ import { ActivatedRoute } from '@angular/router';
 import {
   CreateUpdateInstitutionAction,
   GetInstitutionAction,
+  ResetInstitutionFormAction,
 } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.actions';
 import { FetchMembersAction } from '../../../member/state/member.actions';
 import { MemberState } from '../../../member/state/member.state';
@@ -47,6 +48,8 @@ export class AddEditInstitutionComponent implements OnInit {
   institutionFormRecord: Institution = emptyInstitutionFormRecord;
   @Select(InstitutionState.formSubmitting)
   formSubmitting$: Observable<boolean>;
+  @Select(InstitutionState.isInstitutionModalDialog)
+  isInstitutionModalDialog$: Observable<boolean>;
   @Select(MemberState.listMembers)
   coordinatorsRecord$: Observable<User[]>;
   institutionForm: FormGroup;
@@ -71,7 +74,9 @@ export class AddEditInstitutionComponent implements OnInit {
     private fb: FormBuilder,
     private uploadService: UploadService,
     private auth: AuthorizationService,
-    @Optional()  @Inject(MAT_DIALOG_DATA) public data: any  ) {
+    @Optional()  @Inject(MAT_DIALOG_DATA) public data: any,
+    private dialogRef: MatDialogRef<AddEditInstitutionComponent>
+    ) {
     this.institutionModalData = data?.newInstitutionDialog;
     this.isInstitutionModalDialog = this.institutionModalData?.isDialog
     this.institutionForm = this.setupInstitutionFormGroup();
@@ -80,6 +85,12 @@ export class AddEditInstitutionComponent implements OnInit {
       this.institutionForm = this.setupInstitutionFormGroup(
         this.institutionFormRecord
       );
+    });
+    this.isInstitutionModalDialog$.subscribe((val)=>{
+      if(val){
+        this.dialogRef.close({data: val})
+        this.store.dispatch(new ResetInstitutionFormAction());
+      }
     });
     this.coordinatorsRecord$.subscribe((val)=>{
       for(let coordinator of val){        
