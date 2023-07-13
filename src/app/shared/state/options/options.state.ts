@@ -262,30 +262,12 @@ export class OptionsState {
       })
       .subscribe(
         (res: any) => {
-          debugger
           let designationsList = res?.data?.fetchDesignationByInstitution.designations;
           patchState({ isFetchingDesignationsByInsitution: false });
           const response = designationsList?designationsList.split(','):['NA'];
           patchState({
             designationsByInsitution: response,
           });
-       
-         
-          // let institutionIndex = institutionsList['records'].findIndex(item=>item.id==payload.id);
-          // let institution = institutionsList['records'].find(item=>item.id==payload.id);
-          // selectedInstitution = Object.assign({}, institutionsList['records'][institutionIndex],{'designations':designationsList})
-          // institutionsList['records'][institutionIndex] = aaa;
-          // institutionsList['records'].splice(institutionIndex, 1, aaa);
-
-// institutionsList=Object.assign
-// institutionsList
-          // institutionsList= Object.assign({},,{'designations':designationsList})
-          // patchState({
-          //   institutionsList,
-            
-          // })
-          // institutionsLis
-
         },error=>{
           new ShowNotificationAction({
             message: getErrorMessageFromGraphQLResponse(error),
