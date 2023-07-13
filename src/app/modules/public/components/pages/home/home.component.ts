@@ -82,24 +82,6 @@ export class HomeComponent implements OnInit {
         }
       });
 
-    // let loadingFirstScreenAfterLogin = concat(
-    //   this.firstTimeSetup$,
-    //   this.isChangePasswordEnable$
-    // )
-    // loadingFirstScreenAfterLogin.subscribe((res) => {
-    //   this.firstTimeSetup = res[0];    
-    //   this.isChangePasswordEnable = res[1];
-    //   if (this.firstTimeSetup && !this.isChangePasswordEnable) {
-    //     // If this is the first time user is logging in, redirect to member form page
-    //     // to update their profile info.
-    //     this.router.navigate([uiroutes.CHANGE_PASSWORD.route]);
-    //   }else if(this.firstTimeSetup && this.isChangePasswordEnable){
-    //     // If this is the first time user is logging in & password changes, redirect to member form page
-    //     // to update their profile info.
-    //     this.router.navigate([uiroutes.MEMBER_FORM_ROUTE.route]);
-    //   }
-    // });
-
     this.firstTimeSetup$
       .pipe(takeUntil(this.ngDestroyed$))
       .subscribe((status) => {
@@ -121,12 +103,12 @@ export class HomeComponent implements OnInit {
   }
   processMemberFormValid() {
     const regexStr = '^([a-zA-Z0-9_.]*)$';
-    const requiredField = ['username', 'firstName', 'lastName', 'dob', 'email', 'institution', 'mobile', 'designation'];
+    const requiredField = ['username', 'firstName', 'lastName', 'dob', 'email', 'institution', 'state', 'designation'];
     let isEmptyFieldValueExist = requiredField.find(item => {
-      if (!this.currentMember[item]) {
+      if (!this.currentMember[item] && item!='dob') {
         return true;
       }
-      if(item=='dob'){
+      if(item=='dob' && this.currentMember[item]){
         const today = new Date();
         let maxDob = new Date(
           today.getFullYear() - 10,
