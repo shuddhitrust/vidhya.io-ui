@@ -48,6 +48,8 @@ export class AddEditInstitutionComponent implements OnInit {
   institutionFormRecord: Institution = emptyInstitutionFormRecord;
   @Select(InstitutionState.formSubmitting)
   formSubmitting$: Observable<boolean>;
+  @Select(InstitutionState.isInstitutionModalDialog)
+  isInstitutionModalDialog$: Observable<boolean>;
   @Select(MemberState.listInstitutionMembers)
   coordinatorsRecord$: Observable<User[]>;
   institutionForm: FormGroup;
@@ -62,6 +64,8 @@ export class AddEditInstitutionComponent implements OnInit {
     roles: [USER_ROLES_NAMES.INSTITUTION_ADMIN],
     institution_id:null
   };
+  today = new Date();
+  
   constructor(
     private location: Location,
     private store: Store,
@@ -69,9 +73,10 @@ export class AddEditInstitutionComponent implements OnInit {
     private fb: FormBuilder,
     private uploadService: UploadService,
     private auth: AuthorizationService,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {
-    this.institutionModalData = data.newInstitutionDialog;
+    @Optional()  @Inject(MAT_DIALOG_DATA) public data: any,
+    private dialogRef: MatDialogRef<AddEditInstitutionComponent>
+    ) {
+    this.institutionModalData = data?.newInstitutionDialog;
     this.isInstitutionModalDialog = this.institutionModalData?.isDialog
     this.institutionForm = this.setupInstitutionFormGroup();
     this.institutionFormRecord$.subscribe((val) => {      
@@ -79,6 +84,12 @@ export class AddEditInstitutionComponent implements OnInit {
       this.institutionForm = this.setupInstitutionFormGroup(
         this.institutionFormRecord
       );
+    });
+    this.isInstitutionModalDialog$.subscribe((val)=>{
+      if(val){
+        this.dialogRef.close({data: val})
+        this.store.dispatch(new ResetInstitutionFormAction());
+      }
     });
     this.coordinatorsRecord$.subscribe((val)=>{
       for(let coordinator of val){        

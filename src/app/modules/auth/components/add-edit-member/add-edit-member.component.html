@@ -106,14 +106,14 @@
         </mat-form-field>
         <mat-form-field class="col-lg-9 col-md-12 col-sm-12" appearance="outline">
           <mat-label>Date of birth</mat-label>
-          <input matInput [matDatepicker]="picker" (focus)="picker.open()" readonly="true" required
+          <input matInput [matDatepicker]="picker" (focus)="picker.open()" readonly="true"
             formControlName="dob" [max]="maxDob" placeholder="Date of birth"
             [class.invalid-input]="memberForm.get('profile').get('dob').invalid && (memberForm.get('profile').get('dob').dirty || memberForm.get('profile').get('dob').touched)">
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
-          <small class="validation-error" *ngIf="memberForm.get('profile').get('dob').hasError('required') &&
+          <!-- <small class="validation-error" *ngIf="memberForm.get('profile').get('dob').hasError('required') &&
            formDirective.submitted
-           "> DOB is required </small>
+           "> DOB is required </small> -->
         </mat-form-field>
       </form>
     </div>
@@ -125,11 +125,11 @@
         <div>
           <mat-form-field class="col-lg-6 col-md-6 col-sm-6" disabled appearance="outline">
             <mat-label>Mobile</mat-label>
-            <input matInput required formControlName="mobile" placeholder="Mobile" onlyNumber />
-            <small class="validation-error" *ngIf="
+            <input matInput  formControlName="mobile" placeholder="Mobile" onlyNumber />
+            <!-- <small class="validation-error" *ngIf="
               memberForm.get('contact').get('mobile').hasError('') &&
               formDirective.submitted
-              "> Mobile is required</small>
+              "> Mobile is required</small> -->
           </mat-form-field>
           <mat-form-field class="col-lg-6 col-md-6 col-sm-6" disabled appearance="outline">
             <mat-label>Phone</mat-label>
@@ -149,7 +149,11 @@
           </mat-form-field>
           <mat-form-field class="col-lg-4 col-md-4 col-sm-4" disabled appearance="outline">
             <mat-label>State</mat-label>
-            <input matInput formControlName="state" placeholder="State" />
+            <input matInput formControlName="state" placeholder="State" required/>
+            <small class="validation-error" *ngIf="
+              memberForm.get('contact').get('state').hasError('') &&
+              formDirective.submitted
+              "> State is required</small> 
           </mat-form-field>
           <mat-form-field class="col-lg-4 col-md-4 col-sm-4" disabled appearance="outline">
             <mat-label>Country</mat-label>

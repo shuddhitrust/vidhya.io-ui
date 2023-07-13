@@ -224,7 +224,7 @@ export class AddEditMemberComponent implements OnInit {
       profile: this.fb.group({
         firstName: [memberFormRecord?.firstName, Validators.required],
         lastName: [memberFormRecord?.lastName, Validators.required],
-        dob: [validDobDate ? moment(memberFormRecord?.dob) : '', Validators.required],
+        dob: [validDobDate ?(memberFormRecord?.dob? moment(memberFormRecord?.dob):null) : null],
         avatar: [memberFormRecord?.avatar],
         title: [
           memberFormRecord?.title,
@@ -237,9 +237,9 @@ export class AddEditMemberComponent implements OnInit {
         address: [memberFormRecord?.address],
         city: [memberFormRecord?.city],
         pincode: [memberFormRecord?.pincode],
-        state: [memberFormRecord?.state],
+        state: [memberFormRecord?.state=="NA"?'':memberFormRecord?.state, Validators.required],
         country: [memberFormRecord?.country, Validators.required],
-        mobile: [memberFormRecord?.mobile == "0000000000" ? '' : memberFormRecord?.mobile, Validators.required],
+        mobile: [memberFormRecord?.mobile == "0000000000" ? '' : memberFormRecord?.mobile],
         phone: [memberFormRecord?.phone == "0000000000" ? '' : memberFormRecord?.phone]
       }),
       institution: this.fb.group({
