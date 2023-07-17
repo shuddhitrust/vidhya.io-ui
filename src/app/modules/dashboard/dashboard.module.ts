@@ -10,7 +10,7 @@ import { HotToastModule } from '@ngneat/hot-toast';
 import { MasterConfirmationDialog } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { ImageDisplayDialog } from 'src/app/shared/components/image-display/image-display-dialog.component';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
-import { MasterGridModule } from 'src/app/shared/modules/master-grid/master-grid.module';
+// import { MasterGridModule } from 'src/app/shared/modules/master-grid/master-grid.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { AnnouncementModule } from './modules/announcement/announcement.module';
 import { markedOptionsFactory } from 'src/app/shared/common/constants';
@@ -32,7 +32,7 @@ import { NgxsModule } from '@ngxs/store';
   ],
   imports: [
     SharedModule,
-    MasterGridModule,
+    // MasterGridModule,
     InfiniteScrollModule,
     LMarkdownEditorModule,
     MarkdownModule.forRoot({
