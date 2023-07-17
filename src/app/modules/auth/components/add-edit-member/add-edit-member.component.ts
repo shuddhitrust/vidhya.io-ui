@@ -27,13 +27,14 @@ import { ShowNotificationAction } from 'src/app/shared/state/notifications/notif
 import { AuthState } from '../../state/auth.state';
 import { AuthStateModel } from '../../state/auth.model';
 import { INSTITUTION_DESIGNATIONS } from 'src/app/shared/common/constants';
-import {  map  } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { AddEditInstitutionComponent } from 'src/app/modules/dashboard/modules/admin/modules/institution/components/add-edit-institution/add-edit-institution.component';
 import { ChangePasswordComponent } from 'src/app/modules/public/components/pages/change-password/change-password.component';
 import { SendPasswordResetEmailAction } from '../../state/auth.actions';
 import moment from 'moment';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { ResetInstitutionFormAction } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.actions';
 
 @Component({
   selector: 'app-add-edit-member',
@@ -199,7 +200,7 @@ export class AddEditMemberComponent implements OnInit {
     this.checkIfFormContainsRecord();
   }
 
-  dobDateValidation(){    
+  dobDateValidation() {
     const today = new Date();
     this.maxDob = new Date(
       today.getFullYear() - 10,
@@ -224,7 +225,7 @@ export class AddEditMemberComponent implements OnInit {
       profile: this.fb.group({
         firstName: [memberFormRecord?.firstName, Validators.required],
         lastName: [memberFormRecord?.lastName, Validators.required],
-        dob: [validDobDate ?(memberFormRecord?.dob? moment(memberFormRecord?.dob):null) : null],
+        dob: [validDobDate ? (memberFormRecord?.dob ? moment(memberFormRecord?.dob) : null) : null],
         avatar: [memberFormRecord?.avatar],
         title: [
           memberFormRecord?.title,
@@ -237,7 +238,7 @@ export class AddEditMemberComponent implements OnInit {
         address: [memberFormRecord?.address],
         city: [memberFormRecord?.city],
         pincode: [memberFormRecord?.pincode],
-        state: [memberFormRecord?.state=="NA"?'':memberFormRecord?.state, Validators.required],
+        state: [memberFormRecord?.state == "NA" ? '' : memberFormRecord?.state, Validators.required],
         country: [memberFormRecord?.country, Validators.required],
         mobile: [memberFormRecord?.mobile == "0000000000" ? '' : memberFormRecord?.mobile],
         phone: [memberFormRecord?.phone == "0000000000" ? '' : memberFormRecord?.phone]
@@ -407,6 +408,7 @@ export class AddEditMemberComponent implements OnInit {
   }
 
   addNewInstitution(e) {
+    this.store.dispatch(new ResetInstitutionFormAction());
     const dialogRef = this.dialog.open(AddEditInstitutionComponent, {
       height: '80%',
       data: {
@@ -416,16 +418,18 @@ export class AddEditMemberComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe((result) => {
-      this.institutionOptions = [{ id: result.data.id, name: result.data.name, institutionType: result.data.institutionType }];
-      this.filteredInstitutionOptions$ = of(this.institutionOptions).pipe(map((item) => item));
-      this.designationOptions = result.data.designations ? result.data.designations.split(',') : ['NA'];
-      Object.keys(this.currentMember.institution).forEach(elem => {
-        this.currentMember.institution[elem] = result.data[elem]
-      })
-      this.memberForm.controls['institution'].get('institution').setValue(result.data.id);
-      if (this.memberForm && this.memberForm.controls['institution'].get('institution').value) {
-        if (!this.autoInput.nativeElement.value) {
-          this.autoInput.nativeElement.value = this.currentMember?.institution?.name;
+      if (result) {
+        this.institutionOptions = [{ id: result?.data?.id, name: result?.data?.name, institutionType: result?.data?.institutionType }];
+        this.filteredInstitutionOptions$ = of(this.institutionOptions).pipe(map((item) => item));
+        this.designationOptions = result.data.designations ? result.data.designations.split(',') : ['NA'];
+        Object.keys(this.currentMember.institution).forEach(elem => {
+          this.currentMember.institution[elem] = result.data[elem]
+        })
+        this.memberForm.controls['institution'].get('institution').setValue(result.data.id);
+        if (this.memberForm && this.memberForm.controls['institution'].get('institution').value) {
+          if (!this.autoInput.nativeElement.value) {
+            this.autoInput.nativeElement.value = this.currentMember?.institution?.name;
+          }
         }
       }
     });
@@ -465,7 +469,7 @@ export class AddEditMemberComponent implements OnInit {
       }
     }
   }
-  
+
   displayFn(user) {
     this.institutionName = user && user?.name ? user?.name : '';
     return user?.name;
