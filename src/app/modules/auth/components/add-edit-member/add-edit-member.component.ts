@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild,ChangeDetectorRef, TemplateRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectorRef, TemplateRef } from '@angular/core';
 import { Location } from '@angular/common';
 import {
   FormBuilder,
@@ -13,12 +13,11 @@ import {
   CreateUpdateMemberAction,
   GetMemberAction,
 } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.actions';
-import { fetchInstitutionDesignations, FetchInstitutionsOptions } from 'src/app/shared/state/options/options.actions';
+import { searchInstitution, FetchDesignationByInstitution } from 'src/app/shared/state/options/options.actions';
 import { MemberState } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.state';
 import { Observable, from, of } from 'rxjs';
 import { emptyMemberFormRecord } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.model';
 import { InstitutionState } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.state';
-import { InstitutionStateModel } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.model';
 import { MatSelectOption, User, institutionTypeOptions } from 'src/app/shared/common/models';
 import { OptionsState } from 'src/app/shared/state/options/options.state';
 import { OptionsStateModel } from 'src/app/shared/state/options/options.model';
@@ -27,16 +26,15 @@ import { UploadService } from 'src/app/shared/api/upload.service';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { AuthState } from '../../state/auth.state';
 import { AuthStateModel } from '../../state/auth.model';
-import { INSTITUTION_DESIGNATIONS, defaultSearchParams } from 'src/app/shared/common/constants';
-import { FetchInstitutionsAction } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.actions';
-import { debounceTime, filter, flatMap, map, startWith } from 'rxjs/operators';
+import { INSTITUTION_DESIGNATIONS } from 'src/app/shared/common/constants';
+import { map } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { AddEditInstitutionComponent } from 'src/app/modules/dashboard/modules/admin/modules/institution/components/add-edit-institution/add-edit-institution.component';
-import { PasswordResetComponent } from 'src/app/modules/public/components/pages/password-reset/password-reset.component'
 import { ChangePasswordComponent } from 'src/app/modules/public/components/pages/change-password/change-password.component';
 import { SendPasswordResetEmailAction } from '../../state/auth.actions';
 import moment from 'moment';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { ResetInstitutionFormAction } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.actions';
 
 @Component({
   selector: 'app-add-edit-member',
@@ -71,7 +69,6 @@ export class AddEditMemberComponent implements OnInit {
   isFullyAuthenticated: boolean;
   createForm: boolean;
   memberForm: FormGroup;
-
   isFetchingGroups: boolean;
   @Select(OptionsState.listClassesByInstitution)
   groupOptions$: Observable<MatSelectOption[]>;
@@ -79,6 +76,8 @@ export class AddEditMemberComponent implements OnInit {
   @Select(OptionsState.listInstitutionOptions)
   institutionList$: Observable<MatSelectOption[]>;
   institutionList: MatSelectOption[]
+  @Select(OptionsState.listDesignationsByInstitutionsOptions)
+  designationsList$: Observable<any>;
   @Select(OptionsState)
   optionsState$: Observable<OptionsStateModel>;
   optionsState: OptionsStateModel;
@@ -94,19 +93,17 @@ export class AddEditMemberComponent implements OnInit {
   formName: string = 'profile';
   designationOptions: any = [];
   institutionTypeOptions: MatSelectOption[] = institutionTypeOptions;
-  institutionOptionList: any = [];
   isGoogleLoggedIn: boolean = false;
   isManualLogIn: boolean = false;
-  filteredOptions$: Observable<any>;
+  filteredInstitutionOptions$: Observable<any>;
   filterValue: string;
   institutionName: any = '';
   @ViewChild('autoInput') autoInput;
   maxDob: Date;
   submitBtnName: string = 'Submit';
-  @ViewChild('dialogTemplate',{static:true}) dialogTemplate: TemplateRef<any>;
+  @ViewChild('dialogTemplate', { static: true }) dialogTemplate: TemplateRef<any>;
   memberFormContactDirective: any;
   memberFormContact: any;
-  // @Output() optionSelected = new EventEmitter<MatAutocompleteSelectedEvent>();
 
   constructor(
     private location: Location,
@@ -116,28 +113,25 @@ export class AddEditMemberComponent implements OnInit {
     private router: Router,
     private uploadService: UploadService,
     public dialog: MatDialog,
-    public cdr:ChangeDetectorRef
+    public cdr: ChangeDetectorRef
   ) {
-    const today = new Date();
-    this.maxDob = new Date(
-      today.getFullYear() - 10,
-      today.getMonth(),
-      today.getDate()
-    );
+    this.dobDateValidation()
     this.institutionList$.subscribe(options => {
       if (options) {
-        this.institutionOptionList = options;
-        this.institutionOptions = options;//[this.memberForm.get('institution').get('institutionType').value];
+        this.institutionOptions = options;
         const institutionOptionsObservable$ = of(this.institutionOptions);
-        this.filteredOptions$ = institutionOptionsObservable$.pipe(map((number) => number));
+        this.filteredInstitutionOptions$ = institutionOptionsObservable$.pipe(map((number) => number));
         if (this.memberForm && this.memberForm.controls['institution'].get('institution').value) {
           if (!this.autoInput.nativeElement.value) {
             this.autoInput.nativeElement.value = this.currentMember?.institution?.name;
           }
-          this.designationOptions = this.currentMember?.institution?.designations?.split(',')
         }
       }
     })
+    this.designationsList$.subscribe(val => {
+      this.designationOptions = val;
+    })
+
     this.authState$.subscribe((val) => {
       this.authState = val;
       this.isFullyAuthenticated = this.authState?.isFullyAuthenticated;
@@ -169,7 +163,6 @@ export class AddEditMemberComponent implements OnInit {
           id: this.currentMember?.institution?.id,
           name: this.currentMember?.institution?.name,
           institutionType: this.currentMember?.institution?.institutionType,
-          designations: this.currentMember?.institution?.designations,
           coordinatorId: this.currentMember?.institution?.coordinatorId
         },
         role: {
@@ -177,18 +170,7 @@ export class AddEditMemberComponent implements OnInit {
           permissions: this.currentMember?.role?.permissions,
         },
       };
-
       this.memberForm = this.setupMemberFormGroup(this.currentMember);
-      // if (this.memberForm && this.memberForm.controls['institution'].get('institution').value) {
-      //   if (this.autoInput && !this.autoInput?.nativeElement?.value) {
-      //     this.autoInput.nativeElement.value = this.currentMember?.institution?.name;
-      //   }else{
-      //     this.institutionName = this.institutionName||'';
-      //   }
-      //   this.designationOptions = this.currentMember?.institution?.designations?.split(',')
-      // }
-
-      this.populateInstitution();
       if (this.firstTimeSetup) {
         this.store.dispatch(
           new ShowNotificationAction({
@@ -213,23 +195,18 @@ export class AddEditMemberComponent implements OnInit {
         if (this.autoInput && !this.autoInput.nativeElement?.value) {
           this.autoInput.nativeElement.value = this.currentMember?.institution?.name;
         }
-        this.designationOptions = this.currentMember?.institution?.designations?.split(',')
       }
     }
     this.checkIfFormContainsRecord();
   }
 
-  selectInstitution(e, institution) {
-    this.institutionName = institution.name||'';
-    this.memberForm.controls['institution'].get('institution').setValue(institution.id);
-    this.designationOptions = institution.designations ? institution.designations.split(',') : ['NA'];
-    if (institution?.name != this.currentMember?.institution?.name) {
-      this.memberForm.controls['institution'].get('designation').setValue('');
-    } else if (institution?.name == this.currentMember?.institution?.name) {
-      this.memberForm.controls['institution'].get('designation').setValue(this.currentMember.designation);
-
-    }
-
+  dobDateValidation() {
+    const today = new Date();
+    this.maxDob = new Date(
+      today.getFullYear() - 10,
+      today.getMonth(),
+      today.getDate()
+    );
   }
 
   checkIfFormContainsRecord() {
@@ -241,14 +218,14 @@ export class AddEditMemberComponent implements OnInit {
   ): FormGroup => {
     this.avatarFile = null;
     this.previewPath = null;
-    let validDobDate=  moment(new Date(memberFormRecord?.dob)).isBefore(this.maxDob, 'day') ||moment(new Date(memberFormRecord?.dob)).isSame(this.maxDob, 'day'); // false
+    let validDobDate = moment(new Date(memberFormRecord?.dob)).isBefore(this.maxDob, 'day') || moment(new Date(memberFormRecord?.dob)).isSame(this.maxDob, 'day'); // false
 
     const formGroup = this.fb.group({
       id: [memberFormRecord?.id],
       profile: this.fb.group({
         firstName: [memberFormRecord?.firstName, Validators.required],
         lastName: [memberFormRecord?.lastName, Validators.required],
-        dob: [validDobDate  ? moment(memberFormRecord?.dob) : '', Validators.required],
+        dob: [validDobDate ? (memberFormRecord?.dob ? moment(memberFormRecord?.dob) : null) : null],
         avatar: [memberFormRecord?.avatar],
         title: [
           memberFormRecord?.title,
@@ -261,26 +238,27 @@ export class AddEditMemberComponent implements OnInit {
         address: [memberFormRecord?.address],
         city: [memberFormRecord?.city],
         pincode: [memberFormRecord?.pincode],
-        state: [memberFormRecord?.state],
+        state: [memberFormRecord?.state == "NA" ? '' : memberFormRecord?.state, Validators.required],
         country: [memberFormRecord?.country, Validators.required],
-        mobile: [memberFormRecord?.mobile == "0000000000" ? '' : memberFormRecord?.mobile, Validators.required],
+        mobile: [memberFormRecord?.mobile == "0000000000" ? '' : memberFormRecord?.mobile],
         phone: [memberFormRecord?.phone == "0000000000" ? '' : memberFormRecord?.phone]
       }),
       institution: this.fb.group({
-        // institutionType: [memberFormRecord?.institution.institutionType || this.institutionTypeOptions[0].value],
-        designation: [memberFormRecord?.designation?memberFormRecord?.designation:'', Validators.required],
-        institution: [memberFormRecord?.institution?.id?memberFormRecord?.institution?.id:'', Validators.required]
+        designation: [memberFormRecord?.designation ? memberFormRecord?.designation : '', Validators.required],
+        institution: [memberFormRecord?.institution?.id ? memberFormRecord?.institution?.id : '', Validators.required]
       }),
       accountSetting: this.fb.group({
         username: [memberFormRecord.email == memberFormRecord.username ? '' : memberFormRecord.username, [Validators.minLength(5), Validators.maxLength(16), Validators.required]]
       })
     });
-    if (memberFormRecord?.institution?.name) {
-      this.designationOptions = memberFormRecord?.institution?.designations ? memberFormRecord?.institution?.designations.split(',') : ['NA'];
-      this.store.dispatch(new fetchInstitutionDesignations({ name: memberFormRecord?.institution.name }));
+
+    if (memberFormRecord?.institution?.id) {
+      this.store.dispatch(new searchInstitution({ name: memberFormRecord?.institution.name }));
+      this.store.dispatch(new FetchDesignationByInstitution({ id: memberFormRecord?.institution.id }));
     }
+
     this.previewPath = formGroup.get('profile').get('avatar').value;
-    this.institutionName = memberFormRecord?.institution?.name||'';
+    this.institutionName = memberFormRecord?.institution?.name || '';
     formGroup.get('contact').get('email').disable();
     let regexStr = '^[a-zA-Z0-9_.]*$';
 
@@ -294,12 +272,12 @@ export class AddEditMemberComponent implements OnInit {
         formGroup.get('accountSetting').get('username').setErrors({ 'incorrect': true });
       }
     }
-    if(formGroup.controls['contact'].get('email').value!=null){      
-      if(this.firstTimeSetup!=true && formGroup.valid==false){
+    if (formGroup.controls['contact'].get('email').value != null) {
+      if (this.firstTimeSetup != true && formGroup.valid == false) {
         (Object as any).values(formGroup.controls).forEach((control: any) => {
-          if(control.status=="INVALID"){
-            (Object as any).values(control.controls).forEach((elem:any)=>{
-              if(!elem.valid){
+          if (control.status == "INVALID") {
+            (Object as any).values(control.controls).forEach((elem: any) => {
+              if (!elem.valid) {
                 elem.markAsTouched();
                 elem.markAsDirty();
               }
@@ -307,12 +285,13 @@ export class AddEditMemberComponent implements OnInit {
           }
         })
         this.submitBtnName = 'Complete Registration';
-      }else{
+      } else {
         this.submitBtnName = 'Submit';
       }
     }
     return formGroup;
   };
+
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       this.params = params;
@@ -323,33 +302,15 @@ export class AddEditMemberComponent implements OnInit {
     });
   }
 
-  ngAfterViewInit(){
-    if (!this.autoInput.nativeElement.value &&  this.currentMember?.institution?.name) {
+  ngAfterViewInit() {
+    if (!this.autoInput.nativeElement.value && this.currentMember?.institution?.name) {
       this.autoInput.nativeElement.value = this.currentMember?.institution?.name;
     }
     this.cdr.detectChanges();
   }
 
-  populateInstitution() {
-    // this.memberForm.get('institution')
-    //   .get('institution')
-    //   .setValue(this.currentMember?.institution?.id);
-    this.institutionOptions = [
-      {
-        value: this.currentMember?.institution?.id?this.currentMember?.institution?.id:'',
-        label: this.currentMember?.institution?.name?this.currentMember?.institution?.name:'',
-      },
-    ];
-    if (this.currentMember?.institution?.institutionType) {
-      this.designationOptions = this.currentMember?.institution?.designations.split(',');
-    }
-  }
-
   goHome() {
     this.router.navigate(['/']);
-  }
-  onScroll() {
-    console.log('scrolled!!');
   }
 
   onAvatarChange(event) {
@@ -383,9 +344,6 @@ export class AddEditMemberComponent implements OnInit {
 
   imagePreview(e) {
     const file = (e.target as HTMLInputElement).files[0];
-  }
-
-  onTabChange(e) {
   }
 
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {
@@ -433,9 +391,24 @@ export class AddEditMemberComponent implements OnInit {
       );
     }
   }
-  getPosts(e) {
+
+  selectInstitution(e) {
+    let institution = e;
+    this.institutionName = institution?.name || '';
+    if (institution) {
+      this.memberForm.controls['institution'].get('institution').setValue(institution.id);
+      this.designationOptions = [];
+      this.store.dispatch(new FetchDesignationByInstitution({ id: institution?.id }));
+      if (institution?.name != this.currentMember?.institution?.name) {
+        this.memberForm.controls['institution'].get('designation').setValue('');
+      } else if (institution?.name == this.currentMember?.institution?.name) {
+        this.memberForm.controls['institution'].get('designation').setValue(this.currentMember.designation);
+      }
+    }
   }
+
   addNewInstitution(e) {
+    this.store.dispatch(new ResetInstitutionFormAction());
     const dialogRef = this.dialog.open(AddEditInstitutionComponent, {
       height: '80%',
       data: {
@@ -444,44 +417,61 @@ export class AddEditMemberComponent implements OnInit {
         }
       }
     });
-    dialogRef.afterClosed().subscribe((result) => { });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.institutionOptions = [{ id: result?.data?.id, name: result?.data?.name, institutionType: result?.data?.institutionType }];
+        this.filteredInstitutionOptions$ = of(this.institutionOptions).pipe(map((item) => item));
+        this.designationOptions = result.data.designations ? result.data.designations.split(',') : ['NA'];
+        Object.keys(this.currentMember.institution).forEach(elem => {
+          this.currentMember.institution[elem] = result.data[elem]
+        })
+        this.memberForm.controls['institution'].get('institution').setValue(result.data.id);
+        if (this.memberForm && this.memberForm.controls['institution'].get('institution').value) {
+          if (!this.autoInput.nativeElement.value) {
+            this.autoInput.nativeElement.value = this.currentMember?.institution?.name;
+          }
+        }
+      }
+    });
   }
 
+  //Change Password & Reset password
   passwordUpdate(form, formDirective) {
     if (this.isManualLogIn) {
       let dialogName = ChangePasswordComponent;
       const dialogRef = this.dialog.open(dialogName);
       dialogRef.afterClosed().subscribe((result) => { });
-    } else {      
+    } else {
       this.memberFormContactDirective = formDirective;
       this.memberFormContact = form;
       const dialogRef = this.dialog.open(this.dialogTemplate);
     }
   }
 
-  resetPassword(){
+  resetPassword() {
     let form = this.memberFormContact;
     let formDirective = this.memberFormContactDirective;
     this.store.dispatch(new SendPasswordResetEmailAction({ form, formDirective }));
+    this.dialog.closeAll();
+  }
+
+  //Institution autocomplete 
+  filterInstitution(event: any) {
+    if (event) {
+      this.memberForm.controls['institution'].get('institution').setValue('');
+      this.memberForm.controls['institution'].get('designation').setValue('');
+      this.institutionOptions = []
+      this.designationOptions = [];
+      this.filteredInstitutionOptions$ = of([]).pipe(map((item) => item));
+      this.filterValue = event.target.value.toLowerCase();
+      if (this.filterValue.length >= 3) {
+        this.store.dispatch(new searchInstitution({ name: this.filterValue }));
+      }
+    }
   }
 
   displayFn(user) {
     this.institutionName = user && user?.name ? user?.name : '';
     return user?.name;
-  }
-
-  private _filter(name: string) {
-    this.filterValue = name.toLowerCase();
-    return this.store.dispatch(new fetchInstitutionDesignations({ name: name }));
-  }
-  getData(searchText: string) {
-    return searchText.length < 3 ? of(this.institutionOptions = []) :
-      this._filter(searchText)
-  }
-  filter(event: any) {
-    if (event) {
-      this.memberForm.controls['institution'].get('institution').setValue('');
-      this.filteredOptions$ = this.getData(event.target.value);
-    }
   }
 }

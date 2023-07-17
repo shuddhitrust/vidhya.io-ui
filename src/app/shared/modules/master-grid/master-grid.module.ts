@@ -7,17 +7,13 @@ import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
-import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   declarations: [MasterGridComponent, PaginatorComponent],
   exports: [
     MasterGridComponent,
     PaginatorComponent,
-    MatFormFieldModule,
     MatInputModule,
   ],
   imports: [
@@ -27,10 +23,7 @@ import { MatButtonModule } from '@angular/material/button';
     AgGridModule.withComponents([]),
     NzPaginationModule,
     MatIconModule,
-    MatInputModule,
-    MatAutocompleteModule,
-    MatFormFieldModule,
-    MatButtonModule,
-  ],
+    MatInputModule    
+  ]
 })
 export class MasterGridModule {}

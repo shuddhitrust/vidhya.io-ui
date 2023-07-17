@@ -18,6 +18,7 @@ import {
   CreateUpdateMemberAction,
   DeleteMemberAction,
   FetchMembersAction,
+  FetchMembersByInstitutionAction,
   ForceRefetchMembersAction,
   GetMemberAction,
   MemberSubscriptionAction,
@@ -64,6 +65,11 @@ export class MemberState {
   @Selector()
   static listMembers(state: MemberStateModel): User[] {
     return state.members;
+  }
+
+  @Selector()
+  static listInstitutionMembers(state: MemberStateModel): User[] {
+    return state.institutionMembers;
   }
 
   @Selector()
@@ -119,6 +125,59 @@ export class MemberState {
       new FetchMembersAction({ searchParams: previousSearchParams })
     );
   }
+  
+  @Action(FetchMembersByInstitutionAction)
+  fetchMembersByInstitution(
+    { getState, patchState }: StateContext<MemberStateModel>,
+    { payload }: FetchMembersByInstitutionAction
+  ) {
+    const state = getState();
+    const { searchParams } = payload;
+    const { fetchPolicy, fetchParamObjects } = state;
+    const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
+    let newFetchParams = updateFetchParams({
+      fetchParamObjects,
+      newPageNumber: pageNumber,
+      newPageSize: pageSize,
+      newSearchQuery: searchQuery,
+      newColumnFilters: columnFilters,
+    });
+    patchState({ isFetching: true });
+    const variables = {
+      roles: columnFilters.roles,
+      institution_id:columnFilters.institution_id,
+      limit: newFetchParams.pageSize,
+      offset: newFetchParams.offset,
+    };
+
+    this.apollo
+      .query({
+        query: USER_QUERIES.GET_USERS_BY_INSTITUTION,
+        variables,
+        // fetchPolicy,
+      })
+      .subscribe(
+        ({ data }: any) => {
+          const response = data.usersByInstitution.records;
+          const totalCount = data.usersByInstitution.total ? data.usersByInstitution.total : 0;
+          newFetchParams = { ...newFetchParams, totalCount };
+          patchState({
+            institutionMembers: response,
+            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
+            isFetching: false,
+          });
+        },
+        (error) => {
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+          patchState({ isFetching: false });
+        }
+      );
+  }
 
   @Action(FetchMembersAction)
   fetchMembers(
@@ -127,7 +186,7 @@ export class MemberState {
   ) {
     const state = getState();
     const { searchParams } = payload;
-    const { fetchPolicy, fetchParamObjects } = state;
+    const { fetchParamObjects } = state;
     const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({
       fetchParamObjects,
@@ -150,7 +209,7 @@ export class MemberState {
       .query({
         query: USER_QUERIES.GET_USERS,
         variables,
-        // fetchPolicy,
+        fetchPolicy:'network-only',
       })
       .subscribe(
         ({ data }: any) => {

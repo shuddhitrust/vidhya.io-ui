@@ -7,7 +7,7 @@ import { AddEditInstitutionComponent } from './components/add-edit-institution/a
 import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { InstitutionState } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.state';
 import { NgxsModule } from '@ngxs/store';
-import { MasterGridModule } from 'src/app/shared/modules/master-grid/master-grid.module';
+// import { MasterGridModule } from 'src/app/shared/modules/master-grid/master-grid.module';
 import { InstitutionRoutingModule } from './institution-routing.module';
 
 const declarations = [
@@ -17,7 +17,7 @@ const declarations = [
   InstitutionModalComponent,
 ];
 
-const imports = [SharedModule, MasterGridModule, InstitutionRoutingModule];
+const imports = [SharedModule,/* MasterGridModule, */InstitutionRoutingModule];
 
 @NgModule({
   declarations,

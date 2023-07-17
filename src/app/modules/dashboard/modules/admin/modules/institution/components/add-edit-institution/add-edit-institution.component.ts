@@ -12,8 +12,9 @@ import { ActivatedRoute } from '@angular/router';
 import {
   CreateUpdateInstitutionAction,
   GetInstitutionAction,
+  ResetInstitutionFormAction,
 } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.actions';
-import { FetchMembersAction } from '../../../member/state/member.actions';
+import { FetchMembersByInstitutionAction } from '../../../member/state/member.actions';
 import { MemberState } from '../../../member/state/member.state';
 import { InstitutionState } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.state';
 import { Observable } from 'rxjs';
@@ -47,7 +48,9 @@ export class AddEditInstitutionComponent implements OnInit {
   institutionFormRecord: Institution = emptyInstitutionFormRecord;
   @Select(InstitutionState.formSubmitting)
   formSubmitting$: Observable<boolean>;
-  @Select(MemberState.listMembers)
+  @Select(InstitutionState.isInstitutionModalDialog)
+  isInstitutionModalDialog$: Observable<boolean>;
+  @Select(MemberState.listInstitutionMembers)
   coordinatorsRecord$: Observable<User[]>;
   institutionForm: FormGroup;
   logoFile = null;
@@ -59,10 +62,9 @@ export class AddEditInstitutionComponent implements OnInit {
   isInstitutionModalDialog: any=false;
   columnFilters = {
     roles: [USER_ROLES_NAMES.INSTITUTION_ADMIN],
+    institution_id:null
   };
   today = new Date();
-  dialogTitle: string;
-  dialogText: string;
   
   constructor(
     private location: Location,
@@ -71,7 +73,9 @@ export class AddEditInstitutionComponent implements OnInit {
     private fb: FormBuilder,
     private uploadService: UploadService,
     private auth: AuthorizationService,
-    @Optional()  @Inject(MAT_DIALOG_DATA) public data: any  ) {
+    @Optional()  @Inject(MAT_DIALOG_DATA) public data: any,
+    private dialogRef: MatDialogRef<AddEditInstitutionComponent>
+    ) {
     this.institutionModalData = data?.newInstitutionDialog;
     this.isInstitutionModalDialog = this.institutionModalData?.isDialog
     this.institutionForm = this.setupInstitutionFormGroup();
@@ -80,6 +84,12 @@ export class AddEditInstitutionComponent implements OnInit {
       this.institutionForm = this.setupInstitutionFormGroup(
         this.institutionFormRecord
       );
+    });
+    this.isInstitutionModalDialog$.subscribe((val)=>{
+      if(val){
+        this.dialogRef.close({data: val})
+        this.store.dispatch(new ResetInstitutionFormAction());
+      }
     });
     this.coordinatorsRecord$.subscribe((val)=>{
       for(let coordinator of val){        
@@ -100,7 +110,7 @@ export class AddEditInstitutionComponent implements OnInit {
       code: [institutionFormRecord.code, Validators.required],      
       institutionType:[institutionFormRecord?.institutionType, Validators.required],
       designations:[institutionFormRecord.designations?institutionFormRecord.designations.toString():'NA', Validators.required],
-      coordinator:[institutionFormRecord?.coordinator?.id],
+      coordinator:[institutionFormRecord.coordinator?.id],
       verified:[institutionFormRecord.verified],
       location: [institutionFormRecord.location, Validators.required],
       city: [institutionFormRecord.city, Validators.required],
@@ -123,14 +133,15 @@ export class AddEditInstitutionComponent implements OnInit {
     return formGroup;
   };
   ngOnInit(): void {
-    this.fetchMembers(new SearchParams())
      this.route.queryParams.subscribe((params) => {
       this.params = params;
       const id = params['id'];
       if (id) {
         this.store.dispatch(new GetInstitutionAction({ id }));
+        this.columnFilters.institution_id=id
       }
     });
+    this.fetchMembers(new SearchParams())
   }
 
   sanitizeCode(event) {
@@ -224,7 +235,7 @@ export class AddEditInstitutionComponent implements OnInit {
 
   fetchMembers(searchParams: SearchParams) {
       this.store.dispatch(
-        new FetchMembersAction({
+        new FetchMembersByInstitutionAction({
           searchParams: { ...searchParams, columnFilters: this.columnFilters },
         })
       );

@@ -27,7 +27,6 @@ export const AUTH_QUERIES = {
         institution {
           id
           name
-          designations
           institutionType
         }
         role {
@@ -73,7 +72,6 @@ export const PUBLIC_QUERIES = {
         institution {
           code
           name
-          designations
           institutionType
         }
         courses {
@@ -319,6 +317,9 @@ export const USER_QUERIES = {
           name
           title
           bio
+          email
+          dateJoined
+          designation
           avatar
           membershipStatus
           role {
@@ -327,7 +328,7 @@ export const USER_QUERIES = {
           institution {
             id
             name
-            coordinator {
+            coordinator{
               id
               name
             }
@@ -337,6 +338,31 @@ export const USER_QUERIES = {
       }
     }
   `,
+  GET_USERS_BY_INSTITUTION: gql`
+  query usersByInstitution(
+    $institution_id:Int
+    $roles: [String]
+    $limit: Int
+    $offset: Int
+  ) {
+    usersByInstitution(
+      institutionId:$institution_id
+      roles: $roles
+      limit: $limit
+      offset: $offset
+    ) {
+      records {
+        id
+        username
+        firstName
+        lastName
+        name
+        membershipStatus
+      }
+      total
+    }
+  }
+`,
   GET_USERS_OPTIONS: gql`
     query users(
       $searchField: String
@@ -414,7 +440,7 @@ export const INSTITUTION_QUERIES = {
         invitecode
         designations
         institutionType
-        coordinator {
+        coordinator{
           id
           name
         }
@@ -422,14 +448,18 @@ export const INSTITUTION_QUERIES = {
       }
     }
   `,
-  GET_INSTITUTIONS_DESIGNATIONS: gql`
-    query fetchInstitutionDesignations($name: String!){
-      fetchInstitutionDesignations(name:$name){
+  SEARCH_INSTITUTIONS: gql`
+    query searchInstitution($name: String!){
+      searchInstitution(name:$name){
         records {
           id
           name
-          designations
           institutionType
+          coordinator{
+            id
+            name
+          }
+          verified
         }
         total
       }
@@ -461,6 +491,13 @@ export const INSTITUTION_QUERIES = {
       }
     }
   `,
+  GET_FETCH_DESIGNATION_BY_INSTITUTION: gql`
+  query fetchDesignationByInstitution($id: ID!) {
+    fetchDesignationByInstitution(id: $id) {      
+        designations      
+    }
+  }
+  `
 };
 
 export const GROUP_QUERIES = {

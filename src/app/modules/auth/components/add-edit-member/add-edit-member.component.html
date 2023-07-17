@@ -27,7 +27,8 @@
       <ng-container *ngTemplateOutlet="ContactTemplate"></ng-container>
     </mat-expansion-panel>
 
-    <mat-expansion-panel class="institutionPanel" (opened)="panelOpenState = true" (closed)="panelOpenState = false" [expanded]="true">
+    <mat-expansion-panel class="institutionPanel" (opened)="panelOpenState = true" (closed)="panelOpenState = false"
+      [expanded]="true">
       <mat-expansion-panel-header>
         <mat-panel-title>
           Institution
@@ -40,15 +41,13 @@
 <form [formGroup]="memberForm" novalidate (submit)="submitForm(memberForm, formDirective)" #formDirective="ngForm">
   <!-- ACCOUNT SETTINGS TAB UI -->
   <ng-template #AccountSettingsTemplate>
-    <!-- <div class="scroll-feed" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" [fromRoot]="true"
-      (scrolled)="onScroll()"> -->
     <div>
       <form formGroupName="accountSetting" #formDirective="ngForm">
         <div>
           <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
             <mat-label>User Name</mat-label>
             <input matInput specialIsAlphaNumeric placeholder="Your UserName" required formControlName="username"
-              maxlength="16" pattern="^[a-zA-Z0-9_.]*$"/>
+              maxlength="16" pattern="^[a-zA-Z0-9_.]*$" />
             <mat-hint>You will not able to change the username later. </mat-hint>
             <small class="validation-error my-mat-hint" *ngIf="
             memberForm.get('accountSetting').get('username').hasError('required') &&
@@ -69,8 +68,6 @@
 
   <!-- PROFILE TAB UI -->
   <ng-template #ProfileTemplate>
-    <!-- <div class="scroll-feed" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" [fromRoot]="true"
-      (scrolled)="onScroll()"> -->
     <div>
       <form formGroupName="profile">
         <p></p>
@@ -109,32 +106,30 @@
         </mat-form-field>
         <mat-form-field class="col-lg-9 col-md-12 col-sm-12" appearance="outline">
           <mat-label>Date of birth</mat-label>
-          <input matInput [matDatepicker]="picker" (focus)="picker.open()" readonly="true" required
-            formControlName="dob" [max]="maxDob" placeholder="Date of birth" [class.invalid-input]="memberForm.get('profile').get('dob').invalid && (memberForm.get('profile').get('dob').dirty || memberForm.get('profile').get('dob').touched)"
-            >
+          <input matInput [matDatepicker]="picker" (focus)="picker.open()" readonly="true"
+            formControlName="dob" [max]="maxDob" placeholder="Date of birth"
+            [class.invalid-input]="memberForm.get('profile').get('dob').invalid && (memberForm.get('profile').get('dob').dirty || memberForm.get('profile').get('dob').touched)">
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
-          <small class="validation-error" *ngIf="memberForm.get('profile').get('dob').hasError('required') &&
+          <!-- <small class="validation-error" *ngIf="memberForm.get('profile').get('dob').hasError('required') &&
            formDirective.submitted
-           "> DOB is required </small>
+           "> DOB is required </small> -->
         </mat-form-field>
       </form>
     </div>
   </ng-template>
   <!-- CONTACT TAB UI -->
   <ng-template #ContactTemplate>
-    <!-- <div class="scroll-feed" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" [fromRoot]="true"
-      (scrolled)="onScroll()"> -->
     <div>
       <form formGroupName="contact">
         <div>
           <mat-form-field class="col-lg-6 col-md-6 col-sm-6" disabled appearance="outline">
             <mat-label>Mobile</mat-label>
-            <input matInput required formControlName="mobile" placeholder="Mobile" onlyNumber />
-            <small class="validation-error" *ngIf="
+            <input matInput  formControlName="mobile" placeholder="Mobile" onlyNumber />
+            <!-- <small class="validation-error" *ngIf="
               memberForm.get('contact').get('mobile').hasError('') &&
               formDirective.submitted
-              "> Mobile is required</small>
+              "> Mobile is required</small> -->
           </mat-form-field>
           <mat-form-field class="col-lg-6 col-md-6 col-sm-6" disabled appearance="outline">
             <mat-label>Phone</mat-label>
@@ -154,7 +149,11 @@
           </mat-form-field>
           <mat-form-field class="col-lg-4 col-md-4 col-sm-4" disabled appearance="outline">
             <mat-label>State</mat-label>
-            <input matInput formControlName="state" placeholder="State" />
+            <input matInput formControlName="state" placeholder="State" required/>
+            <small class="validation-error" *ngIf="
+              memberForm.get('contact').get('state').hasError('') &&
+              formDirective.submitted
+              "> State is required</small> 
           </mat-form-field>
           <mat-form-field class="col-lg-4 col-md-4 col-sm-4" disabled appearance="outline">
             <mat-label>Country</mat-label>
@@ -174,8 +173,6 @@
   </ng-template>
   <!-- INSTITUTION TAB UI -->
   <ng-template #InstitutionTemplate>
-    <!-- <div class="scroll-feed" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" [fromRoot]="true"
-      (scrolled)="onScroll()"> -->
     <div>
       <form formGroupName="institution">
         <div>
@@ -183,18 +180,18 @@
             appearance="outline">
             <mat-label>Institution</mat-label>
             <input type="text" matInput required [matAutocomplete]="auto" ([ngModel])="institutionName"
-              (input)="filter($event)" #autoInput>
+              (input)="filterInstitution($event)" #autoInput>
             <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
-              (optionSelected)='getPosts($event.option.value)'>
-              <div *ngIf="filteredOptions$ | async as filteredOptions">
-                <ng-container *ngIf="filteredOptions.length; else noItems">
+              (optionSelected)='selectInstitution($event.option.value)'>
+              <div *ngIf="filteredInstitutionOptions$ | async as filteredInstitutionOptions">
+                <ng-container *ngIf="filteredInstitutionOptions.length; else noItems">
                   <div class="institutionGrid">
                     <div class="row institutionGridHead" style="background-color: #0099ff;">
                       <div class="col"><strong>Name</strong></div>
                       <div class="col"><strong>Institution Type</strong></div>
                     </div>
-                    <mat-option *ngFor="let institution of filteredOptions;let i=index; let l = count"
-                      [value]="institution" (onSelectionChange)="selectInstitution($event,institution)">
+                    <mat-option *ngFor="let institution of filteredInstitutionOptions;let i=index; let l = count"
+                      [value]="institution">
                       <div class="institutionGridBody">
                         <div class="row">
                           <div class="col" [matTooltip]="institution.name" matTooltipPosition="above"> {{
@@ -245,7 +242,9 @@
 
   <div class="col-lg-12 col-md-12 col-sm-12">
     <div>Please click below to logout and check your email
-    <h4 class="displayMail">{{memberForm.get('contact').get('email').value}}</h4> to set password and enable same account to do manual login.</div>
+      <h4 class="displayMail">{{memberForm.get('contact').get('email').value}}</h4> to set password and enable same
+      account to do manual login.
+    </div>
     <button mat-stroked-button color="primary" class="resetLogoutButton" (click)="resetPassword()">Click here</button>
   </div>
 </ng-template>
