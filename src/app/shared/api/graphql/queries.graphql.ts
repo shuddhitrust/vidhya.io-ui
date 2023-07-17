@@ -317,6 +317,9 @@ export const USER_QUERIES = {
           name
           title
           bio
+          email
+          dateJoined
+          designation
           avatar
           membershipStatus
           role {

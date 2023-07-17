@@ -1,17 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { GridOptions } from 'ag-grid-community';
 import { Observable } from 'rxjs';
 import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
 import { MemberProfileRendererComponent } from 'src/app/modules/dashboard/modules/admin/modules/member/components/cell-renderers/member-profile/member-profile-renderer.component';
-import { getOptionLabel } from 'src/app/shared/common/functions';
+import { autoGenOptions, getOptionLabel } from 'src/app/shared/common/functions';
 import {
   MembershipStatusOptions,
+  ModerationMembershipStatusOptions,
   FetchParams,
   resources,
   User,
+  MatSelectOption
 } from 'src/app/shared/common/models';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
@@ -23,6 +25,9 @@ import { MemberState } from 'src/app/modules/dashboard/modules/admin/modules/mem
 import { MemberProfileComponent } from '../../member-profile/member-profile.component';
 import { UserModerationProfileComponent } from '../../modals/moderate-user/user-moderation.component';
 import { UserModerationRendererComponent } from '../../cell-renderers/user-moderation/user-moderation-renderer.component';
+import moment from 'moment';
+import { FetchAssignmentsAction } from 'src/app/modules/dashboard/modules/assignment/state/assignment.actions';
+import { defaultSearchParams } from 'src/app/shared/common/constants';
 
 @Component({
   selector: 'app-awaiting-moderation-table',
@@ -30,6 +35,8 @@ import { UserModerationRendererComponent } from '../../cell-renderers/user-moder
   styleUrls: ['./awaiting-moderation-table.component.scss'],
 })
 export class AwaitingModerationTableComponent implements OnInit {
+  submissionStatusFilter: string = 'PE';
+  params: object = {};
   tableTitle: string = 'Members Pending Approval';
   resource: string = resources.MODERATION;
   members: object[];
@@ -41,9 +48,10 @@ export class AwaitingModerationTableComponent implements OnInit {
   errorFetching$: Observable<boolean>;
   @Select(MemberState.fetchParams)
   fetchParams$: Observable<FetchParams>;
-
-  columnFilters = {
-    membershipStatusNot: [MembershipStatusOptions.APPROVED],
+  groupByFilter: string = resources.MODERATION;
+  columnFilters:any = {
+    groupBy: this.groupByFilter,
+    membershipStatusIs: this.submissionStatusFilter
   };
   columns = [
     {
@@ -53,10 +61,23 @@ export class AwaitingModerationTableComponent implements OnInit {
       field: 'name',
     },
     {
+      field: 'email',
+    },
+    {
       field: 'institution',
       cellRenderer: (params) => {
         return params?.data?.institution?.name;
       },
+    },
+    {
+      field:'designation'
+    },
+    {      
+      field: 'dateJoined',
+      headerName:'Registration Date',
+      cellRenderer:(params)=>{
+        return moment(params.value).format('DD-MM-YYYY HH:mm:ss');
+      }
     },
     { field: 'title' },
     {
@@ -82,11 +103,16 @@ export class AwaitingModerationTableComponent implements OnInit {
     moderationRenderer: UserModerationRendererComponent,
   };
   gridOptions: GridOptions;
+  MembershipStatusTypes = MembershipStatusOptions;
+  moderationMembershipStatusOptions: MatSelectOption[] = autoGenOptions({
+    ...ModerationMembershipStatusOptions,
+  });
 
   constructor(
     public dialog: MatDialog,
     private router: Router,
-    private store: Store
+    private store: Store,
+    private route: ActivatedRoute
   ) {
     this.gridOptions = <GridOptions>{
       context: {
@@ -95,7 +121,11 @@ export class AwaitingModerationTableComponent implements OnInit {
     };
   }
 
-  fetchMembers(searchParams: SearchParams) {
+  fetchMembers(searchParams: SearchParams=null) {
+    if(!searchParams){
+      searchParams = defaultSearchParams
+    }
+    this.updateMemberFilter();
     this.store.dispatch(
       new FetchMembersAction({
         searchParams: { ...searchParams, columnFilters: this.columnFilters },
@@ -127,5 +157,31 @@ export class AwaitingModerationTableComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {});
   }
 
-  ngOnInit(): void {}
+  updateMemberFilter() {
+    const membershipStatusIs = this.submissionStatusFilter;
+    this.columnFilters = {
+      membershipStatusIs,
+    };
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { membershipStatusIs},
+      queryParamsHandling: 'merge',
+      skipLocationChange: false,
+    });
+  }
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe((params) => {
+      this.params = params;
+      const statusOptions = Object.values(ModerationMembershipStatusOptions);
+      const status = params['membershipStatusIs'];
+      this.submissionStatusFilter = statusOptions.includes(status)
+        ? status
+        : 'PE';
+      if (this.submissionStatusFilter) {
+        this.fetchMembers();
+      }
+    });
+
+  }
 }
