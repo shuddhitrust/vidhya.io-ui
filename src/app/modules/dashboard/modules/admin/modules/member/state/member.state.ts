@@ -186,7 +186,7 @@ export class MemberState {
   ) {
     const state = getState();
     const { searchParams } = payload;
-    const { fetchPolicy, fetchParamObjects } = state;
+    const { fetchParamObjects } = state;
     const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
     let newFetchParams = updateFetchParams({
       fetchParamObjects,
@@ -209,7 +209,7 @@ export class MemberState {
       .query({
         query: USER_QUERIES.GET_USERS,
         variables,
-        // fetchPolicy,
+        fetchPolicy:'network-only',
       })
       .subscribe(
         ({ data }: any) => {

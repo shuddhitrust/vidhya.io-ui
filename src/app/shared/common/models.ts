@@ -113,6 +113,15 @@ export const MembershipStatusOptions = {
   SUSPENDED: 'SU',
 };
 
+export type ModerationMembershipStatus = 'UI' | 'PE' | 'AP' | 'SU';
+
+export const ModerationMembershipStatusOptions = {
+  pending: 'PE',
+  uninitialized: 'UI',
+  suspended: 'SU',
+  approved: 'AP'
+};
+
 export type InstitutionType = 'SC' | 'CL' | 'CO' | 'OR';
 export const InstitutionTypeOptions = {
   School: 'SC',
