@@ -57,11 +57,13 @@
       <mat-icon>menu</mat-icon>
     </button>
     <mat-menu #menu="matMenu" color="#0099ff">
-      <button mat-menu-item [routerLink]="dashboardRoute">
+      <!-- <button mat-menu-item [routerLink]="dashboardRoute"> -->
+        <button mat-menu-item (click)="navigationMenuSelect(dashboardRoute)">
         <mat-icon>dashboard</mat-icon>
         <span>Dashboard</span>
       </button>
-      <button mat-menu-item [routerLink]="profileRoute">
+      <button mat-menu-item  (click)="navigationMenuSelect(profileRoute)" >
+    <!-- [routerLink]="profileRoute"> -->
         <mat-icon>account_circle</mat-icon>
         <span>Profile</span>
       </button>
@@ -69,7 +71,8 @@
         <mat-icon>settings</mat-icon>
         <span>Account Settings</span>
       </button> -->
-      <button mat-menu-item [routerLink]="ownIssuesRoute">
+      <button mat-menu-item (click)="navigationMenuSelect(ownIssuesRoute)"> 
+      <!-- [routerLink]="ownIssuesRoute"> -->
         <mat-icon>supporting_agent</mat-icon>
         <span>My Issues</span>
       </button>

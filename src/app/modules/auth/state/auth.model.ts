@@ -44,7 +44,8 @@ const startingCurrentMember: CurrentMember = {
   avatar: null,
   invitecode: null,
   designation:null,
-  institution: { id: null, name: null ,designations:null, institutionType:null,coordinatorId:null},
+  institution: { id: null, name: null ,designations:null, institutionType:null,coordinator:{
+    id:null,name:null}},
   membershipStatus: null,
   projectsClapped: getProjectsClappedFromLocalStorage(),
   role: null,

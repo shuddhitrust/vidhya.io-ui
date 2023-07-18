@@ -45,6 +45,10 @@ export class NavbarComponent implements OnInit {
     });
   }
 
+  navigationMenuSelect(type){
+    this.router.navigateByUrl(type);
+  }
+
   onAvatarClick() {
     this.router.navigateByUrl(this.profileRoute);
   }

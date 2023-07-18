@@ -563,7 +563,10 @@ export class AuthState {
         name: user?.institution?.name,
         designations: user?.institution?.designations,
         institutionType: user?.institution?.institutionType,
-        coordinatorId:user?.institution?.coordinatorId
+        coordinator:{
+          id: user?.institution?.coordinator?.id,
+          name:user?.institution?.coordinator?.name
+        }
       },
       membershipStatus: user?.membershipStatus,
       projectsClapped: user?.projectsClapped?.map((p: any) => { if (p) return p.id }),
