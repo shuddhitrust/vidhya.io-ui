@@ -8,7 +8,7 @@
 //   websocket_graphql_endpoint: `${websocket_api_endpoint}/graphql/`,
 // };
 
-const base_url = 'vidhya-io-api-mw7x.onrender.com';
+const base_url = 'vidhya-io-staging.onrender.com';
 
 const api_endpoint = `https://${base_url}`;
 const websocket_api_endpoint = `wss://${base_url}`;
@@ -24,17 +24,18 @@ export const environment = {
   graphql_endpoint: `${api_endpoint}/graphql/`,
   websocket_graphql_endpoint: `${websocket_api_endpoint}/ws/graphql/`,
   oAuthConfig: {
-    issuer:'https://accounts.google.com',
+    issuer: 'https://accounts.google.com',
     strictDiscoveryDocumentValidation: false,
-    clientId: "573998369995-1sdq6uuj9kit90c73s959rnvrko3a8gr.apps.googleusercontent.com",
+    clientId:
+      '573998369995-1sdq6uuj9kit90c73s959rnvrko3a8gr.apps.googleusercontent.com',
     showDebugInformation: true,
-    redirectUri:window.location.origin,
+    redirectUri: window.location.origin,
     clearHashAfterLogin: true,
-    scope:'openid profile email',
+    scope: 'openid profile email',
     silentRefreshRedirectUri: window.location.origin + '/silent-refresh.html',
     useSilentRefresh: true, // Needed for Code Flow to suggest using iframe-based refreshes
     sessionChecksEnabled: true,
     nonceStateSeparator: 'semicolon', // Real semicolon gets mangled by IdentityServer's URI encoding
     requireHttps: true,
-  }
+  },
 };
