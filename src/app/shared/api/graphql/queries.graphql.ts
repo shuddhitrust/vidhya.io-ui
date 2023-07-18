@@ -28,6 +28,10 @@ export const AUTH_QUERIES = {
           id
           name
           institutionType
+          coordinator{
+            id
+            name
+          }
         }
         role {
           name
@@ -445,6 +449,7 @@ export const INSTITUTION_QUERIES = {
           name
         }
         verified
+        public
       }
     }
   `,

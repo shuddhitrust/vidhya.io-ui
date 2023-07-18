@@ -112,6 +112,7 @@ export class AddEditInstitutionComponent implements OnInit {
       designations:[institutionFormRecord.designations?institutionFormRecord.designations.toString():'NA', Validators.required],
       coordinator:[institutionFormRecord.coordinator?.id],
       verified:[institutionFormRecord.verified],
+      public:[institutionFormRecord.public],
       location: [institutionFormRecord.location, Validators.required],
       city: [institutionFormRecord.city, Validators.required],
       website: [institutionFormRecord.website],
