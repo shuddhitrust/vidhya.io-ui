@@ -214,6 +214,10 @@ export class IssueState {
         },
         (error) => {
           this.store.dispatch(
+            new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
+          );
+          console.error('There was an error ', error);
+          this.store.dispatch(
             new ShowNotificationAction({
               message: getErrorMessageFromGraphQLResponse(error),
               action: 'error',
