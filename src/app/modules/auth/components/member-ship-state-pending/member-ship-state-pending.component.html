@@ -1,6 +1,6 @@
 <div>
     <div class="col-md-6 col-lg-6 col-sm-12 pendingInfo" >
-        <p  class="text-center" > Hi <strong>{{name}}, </strong>
-        {{messageDisplay}}</p>
+        <p  class="text-justify" > Hi <strong>{{name}}, </strong></p>
+        <p  class="text-justify" [innerHTML]="messageDisplay|safeHtml"></p>
     </div>
 </div>
