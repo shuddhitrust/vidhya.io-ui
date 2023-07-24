@@ -163,9 +163,12 @@ export class AddEditMemberComponent implements OnInit {
           id: this.currentMember?.institution?.id,
           name: this.currentMember?.institution?.name,
           institutionType: this.currentMember?.institution?.institutionType,
+          verified: this.currentMember?.institution?.verified,
           coordinator:{
             id:  this.currentMember?.institution?.coordinator?.id,
-            name: this.currentMember?.institution?.coordinator?.name
+            name: this.currentMember?.institution?.coordinator?.name,
+            email: this.currentMember?.institution?.coordinator?.email,
+            mobile: this.currentMember?.institution?.coordinator?.mobile
           }
         },
         role: {

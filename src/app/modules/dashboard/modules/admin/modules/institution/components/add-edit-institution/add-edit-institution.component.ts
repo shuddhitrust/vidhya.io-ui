@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, Optional } from '@angular/core';
+import { Component, Inject, OnInit, Optional, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import {
   FormBuilder,
@@ -14,10 +14,10 @@ import {
   GetInstitutionAction,
   ResetInstitutionFormAction,
 } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.actions';
-import { FetchMembersByInstitutionAction } from '../../../member/state/member.actions';
+import { FetchCoordinatorsByInstitution } from 'src/app/shared/state/options/options.actions';
 import { MemberState } from '../../../member/state/member.state';
 import { InstitutionState } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.state';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { emptyInstitutionFormRecord } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.model';
 import { Institution, institutionTypeOptions, MatSelectOption,User } from 'src/app/shared/common/models';
 import { UploadService } from 'src/app/shared/api/upload.service';
@@ -30,6 +30,8 @@ import moment from 'moment';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { USER_ROLES_NAMES } from 'src/app/shared/common/constants';
 import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
+import { map } from 'rxjs/operators';
+import { OptionsState } from 'src/app/shared/state/options/options.state';
 
 
 @Component({
@@ -42,6 +44,7 @@ import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
 })
 export class AddEditInstitutionComponent implements OnInit {
   formSubmitting: boolean = false;
+  coordinatorName:string = '';
   params: object = {};
   @Select(InstitutionState.getInstitutionFormRecord)
   institutionFormRecord$: Observable<Institution>;
@@ -50,21 +53,23 @@ export class AddEditInstitutionComponent implements OnInit {
   formSubmitting$: Observable<boolean>;
   @Select(InstitutionState.isInstitutionModalDialog)
   isInstitutionModalDialog$: Observable<boolean>;
-  @Select(MemberState.listInstitutionMembers)
+  @Select(OptionsState.listInstitutionCoordinatorMembers)
   coordinatorsRecord$: Observable<User[]>;
   institutionForm: FormGroup;
   logoFile = null;
   previewPath = null;
   institutionTypeOptions: MatSelectOption[] = institutionTypeOptions;
-  coordinatorOptions:MatSelectOption[]=[]
+  coordinatorOptions:any=[];
   institutionDesignationsList: any = INSTITUTION_DESIGNATIONS;
   institutionModalData:any;
   isInstitutionModalDialog: any=false;
   columnFilters = {
-    roles: [USER_ROLES_NAMES.INSTITUTION_ADMIN],
-    institution_id:null
+    roles: [USER_ROLES_NAMES.INSTITUTION_ADMIN,USER_ROLES_NAMES.SUPER_ADMIN],
+    name:null
   };
   today = new Date();
+  filteredCoordinatorOptions$: Observable<any>;
+  @ViewChild('autoInput') autoInput;
   
   constructor(
     private location: Location,
@@ -92,10 +97,9 @@ export class AddEditInstitutionComponent implements OnInit {
       }
     });
     this.coordinatorsRecord$.subscribe((val)=>{
-      for(let coordinator of val){        
-        let optionObject:MatSelectOption={label:coordinator.name,value:coordinator.id}
-        this.coordinatorOptions.push(optionObject)
-      }
+      this.coordinatorOptions = val;
+      const institutionOptionsObservable$ = of(this.coordinatorOptions);
+      this.filteredCoordinatorOptions$ = institutionOptionsObservable$.pipe(map((number) => number));   
     })
   }
 
@@ -129,20 +133,21 @@ export class AddEditInstitutionComponent implements OnInit {
       let defaultDesignations = this.institutionTypeOptions.find(item=>item.value==formGroup.controls['institutionType'].value);
       formGroup.controls['designations'].setValue(this.institutionDesignationsList[defaultDesignations.label].toString());
     }
-
+    if(institutionFormRecord?.coordinator?.id && this.autoInput?.nativeElement){
+      this.autoInput.nativeElement.value=this.institutionFormRecord.coordinator.name;
+    }
     this.previewPath = formGroup.get('logo').value;
     return formGroup;
   };
+
   ngOnInit(): void {
      this.route.queryParams.subscribe((params) => {
       this.params = params;
       const id = params['id'];
       if (id) {
         this.store.dispatch(new GetInstitutionAction({ id }));
-        this.columnFilters.institution_id=id
       }
     });
-    this.fetchMembers(new SearchParams())
   }
 
   sanitizeCode(event) {
@@ -222,6 +227,7 @@ export class AddEditInstitutionComponent implements OnInit {
       );
     }
   }
+  
   institutionTypeChange(e){
     let selectedType = this.institutionTypeOptions.find(item=>item.value==e);
     if(selectedType){
@@ -229,20 +235,40 @@ export class AddEditInstitutionComponent implements OnInit {
       this.institutionForm.controls['designations'].setValue(designationValue);
     }
   }
-  
-  coordinatorChange(e){
-    this.institutionForm.controls['coordinator'].setValue(e);
-    }
-
-  fetchMembers(searchParams: SearchParams) {
-      this.store.dispatch(
-        new FetchMembersByInstitutionAction({
-          searchParams: { ...searchParams, columnFilters: this.columnFilters },
-        })
-      );
-    }
 
   isAuthorizedMember(){    
     return this.auth.currentMemberRoleName===USER_ROLES_NAMES.SUPER_ADMIN
   }
+
+   /******************
+    * Autocomplete Coordinator
+    * ***************/
+  filterCoordinator(event: any) {
+    // debugger;
+    console.log(event.target.value);
+    if (event) {
+      let searchParams=new SearchParams();
+      this.columnFilters =Object.assign({},this.columnFilters,{'name': event.target.value.toLowerCase()});
+      this.filteredCoordinatorOptions$ = of([]).pipe(map((item) => item));
+      this.coordinatorOptions = [];
+      this.fetchMembers(searchParams);
+      // else
+      //   this.filteredCoordinatorOptions$=of([]);
+    }
+  }
+
+  displayFn(user) {
+    return user && user?.name ? user?.name : '';
+  }
+  
+  fetchMembers(searchParams: SearchParams) {
+    this.store.dispatch(
+      new FetchCoordinatorsByInstitution({
+        searchParams: { ...searchParams, columnFilters: this.columnFilters },
+      })
+    );
+  }
+  /****************
+   * END OF AUTOCOMPLETE
+   * **************/
 }

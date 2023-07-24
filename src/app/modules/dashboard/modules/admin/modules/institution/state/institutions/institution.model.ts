@@ -22,7 +22,7 @@ export const emptyInstitutionFormRecord: Institution = {
   invitecode: null,
   institutionType:null,
   designations:null,
-  coordinator:{id:null,name:null},
+  coordinator:{id:null,name:null,email:null,mobile:null},
   verified:false,
   public:false,
   address:null,

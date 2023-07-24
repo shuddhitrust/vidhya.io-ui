@@ -28,9 +28,12 @@ export const AUTH_QUERIES = {
           id
           name
           institutionType
+          verified
           coordinator{
             id
             name
+            email
+            mobile
           }
         }
         role {
@@ -342,26 +345,25 @@ export const USER_QUERIES = {
       }
     }
   `,
-  GET_USERS_BY_INSTITUTION: gql`
-  query usersByInstitution(
-    $institution_id:Int
+  GET_COORDINATORS_BY_INSTITUTION: gql`
+  query coordinatorOptions(
+    $query:String
     $roles: [String]
     $limit: Int
     $offset: Int
   ) {
-    usersByInstitution(
-      institutionId:$institution_id
+    coordinatorOptions(
+      query:$query
       roles: $roles
       limit: $limit
       offset: $offset
     ) {
       records {
         id
-        username
-        firstName
-        lastName
         name
-        membershipStatus
+        role {
+          name
+        }
       }
       total
     }
@@ -447,11 +449,52 @@ export const INSTITUTION_QUERIES = {
         coordinator{
           id
           name
+          email
+          mobile
+          institution{
+            id
+            name           
+          }
         }
         verified
         public
       }
     }
+  `,
+  GET_INSTITUTION_ADMIN: gql`
+  query institutionAdmin($id: ID!) {
+    institutionAdmin(id: $id) {
+      id
+      name
+      code
+      location
+      city
+      website
+      phone
+      logo
+      bio
+      address
+      pincode
+      state
+      dob
+      country
+      invitecode
+      designations
+      institutionType
+      coordinator{
+        id
+        name
+        email
+        mobile
+        institution{
+          id
+          name           
+        }
+      }
+      verified
+      public
+    }
+  }
   `,
   SEARCH_INSTITUTIONS: gql`
     query searchInstitution($name: String!){

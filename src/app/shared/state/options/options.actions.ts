@@ -1,3 +1,5 @@
+import { SearchParams } from "../../modules/master-grid/table.model";
+
 export class FetchMemberOptionsByInstitution {
   static readonly type = '[MEMBER] Fetch members by institution';
 
@@ -34,4 +36,10 @@ export class searchInstitution{
   static readonly type = '[MEMBER] Fetch Institution by Names';
 
   constructor(public payload: { name: string }) {}
+}
+
+export class FetchCoordinatorsByInstitution {
+  static readonly type = '[MEMBERS] Fetch by Institution';
+
+  constructor(public payload: { searchParams: SearchParams }) {}
 }

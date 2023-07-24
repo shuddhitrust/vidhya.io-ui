@@ -84,8 +84,9 @@ export type CurrentMember = {
   avatar: string;
   designation:string;
   invitecode?: string;
-  institution?: { id: number; name: string,designations: string; institutionType: string;
-    coordinator:{id:number;name:string;}};
+  institution?: {
+    verified: boolean; id: number; name: string,designations: string; institutionType: string;
+    coordinator:{id:number;name:string;email:string;mobile:string}};
   membershipStatus: string;
   projectsClapped: string[];
   role: { name?: string; permissions: UserPermissions };
@@ -187,9 +188,11 @@ export type User = {
   name?: string;
   email?: string;
   avatar?: string;
-  institution?: {id: number, name: string, institutionType: string,coordinator:{
+  institution?: {id: number, name: string,verified:boolean, institutionType: string,coordinator:{
     id:number,
-    name:string
+    name:string,
+    email:string,
+    mobile:string
   }
 },
   invitecode?: string;
@@ -267,7 +270,7 @@ export type Institution = {
   code: string;
   institutionType:string,
   designations:string,
-  coordinator:{id:String,name:String},
+  coordinator:{id:string,name:string,email:string,mobile:string},
   verified:boolean,
   public:boolean,
   location?: string;
