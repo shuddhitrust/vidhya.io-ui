@@ -6,11 +6,12 @@ import { AddEditMemberComponent } from './components/add-edit-member/add-edit-me
 import { AuthState } from './state/auth.state';
 import { SpecialCharacterDirective } from 'src/app/shared/directives/SpecialCharacterDirective.directive';
 import { OnlyNumberDirective } from 'src/app/shared/directives/OnlyNumberDirective.directive';
-import {MatExpansionModule} from '@angular/material/expansion';
-import {MatTooltipModule} from '@angular/material/tooltip';
+import { MatExpansionModule} from '@angular/material/expansion';
+import { MatTooltipModule} from '@angular/material/tooltip';
 import { MemberShipStatePendingComponent } from './components/member-ship-state-pending/member-ship-state-pending.component';
+import { SafeHtmlPipe } from 'src/app/shared/pipes/safeHTMLPipe.pipe';
 
-const declarations = [AddEditMemberComponent,SpecialCharacterDirective,OnlyNumberDirective,MemberShipStatePendingComponent];
+const declarations = [AddEditMemberComponent,SpecialCharacterDirective,OnlyNumberDirective,MemberShipStatePendingComponent, SafeHtmlPipe];
 const imports = [SharedModule, AuthRoutingModule, MatExpansionModule,MatTooltipModule];
 
 @NgModule({
