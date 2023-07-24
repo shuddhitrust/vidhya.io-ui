@@ -563,9 +563,12 @@ export class AuthState {
         name: user?.institution?.name,
         designations: user?.institution?.designations,
         institutionType: user?.institution?.institutionType,
+        verified: user?.institution?.verified,
         coordinator:{
           id: user?.institution?.coordinator?.id,
-          name:user?.institution?.coordinator?.name
+          name:user?.institution?.coordinator?.name,
+          mobile:user?.institution?.coordinator?.mobile,
+          email:user?.institution?.coordinator?.email
         }
       },
       membershipStatus: user?.membershipStatus,

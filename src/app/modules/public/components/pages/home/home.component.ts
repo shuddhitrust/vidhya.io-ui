@@ -127,7 +127,7 @@ export class HomeComponent implements OnInit {
 
   processMembershipStatusOptions() {
     if (this.membershipStatus == MembershipStatusOptions.PENDING) {
-      this.router.navigate([uiroutes.MEMBERSHIPSTATUS_PENDING_STATE_ROUTE.route], { state: { 'firstName': this.currentMember?.firstName, 'lastName': this.currentMember?.lastName } });
+      this.router.navigate([uiroutes.MEMBERSHIPSTATUS_PENDING_STATE_ROUTE.route], { state: { 'firstName': this.currentMember?.firstName, 'lastName': this.currentMember?.lastName,'institution':this.currentMember?.institution } });
       this.store.dispatch(
         new ShowNotificationAction({
           message:

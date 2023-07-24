@@ -6,18 +6,21 @@ import {
   FetchMemberOptionsByInstitution,
   FetchInstitutionsOptions,
   searchInstitution,
-  FetchDesignationByInstitution} from './options.actions';
+  FetchDesignationByInstitution,
+  FetchCoordinatorsByInstitution
+} from './options.actions';
 import { Injectable } from '@angular/core';
-import { groupTypeOptions, MatSelectOption } from '../../common/models';
+import { groupTypeOptions, MatSelectOption, User } from '../../common/models';
 import {
   getErrorMessageFromGraphQLResponse,
   getOptionLabel,
+  updateFetchParams,
 } from '../../common/functions';
 import { GROUP_QUERIES, USER_QUERIES, INSTITUTION_QUERIES } from '../../api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import { USER_ROLES_NAMES } from '../../common/constants';
-import { error } from 'console';
+import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
 
 @State<OptionsStateModel>({
   name: 'optionsState',
@@ -25,7 +28,7 @@ import { error } from 'console';
 })
 @Injectable()
 export class OptionsState {
-  constructor(private apollo: Apollo, private store: Store) {}
+  constructor(private apollo: Apollo, private store: Store) { }
 
   @Selector()
   static listMembersByInstitution(state: OptionsStateModel): MatSelectOption[] {
@@ -35,7 +38,7 @@ export class OptionsState {
     return options;
   }
 
-  @Selector()  
+  @Selector()
   static listDesignationsByInstitutionsOptions(
     state: OptionsStateModel
   ) {
@@ -94,12 +97,18 @@ export class OptionsState {
   @Selector()
   static listInstitutionOptions(state: OptionsStateModel) {
     let options = {};
-    return state.institutionsList['records'];  
+    return state.institutionsList['records'];
   }
 
   @Selector()
   static getIsFetchingInstitutions(state: OptionsStateModel): boolean {
     return state.isFetchingAllInstitutions;
+  }
+
+
+  @Selector()
+  static listInstitutionCoordinatorMembers(state: OptionsStateModel): User[] {
+    return state.institutionCoordiatorMembers;
   }
 
   @Action(FetchMemberOptionsByInstitution)
@@ -202,18 +211,18 @@ export class OptionsState {
   }
 
 
-  
+
   // To Fetch all the Institutios
   @Action(searchInstitution)
   searchInstitution({ getState, patchState }: StateContext<OptionsStateModel>,
     { payload }: searchInstitution
-  ) {    
+  ) {
     const state = getState();
     let { isFetchingAllInstitutions, institutionsList, designationsByInsitution } = state;
     isFetchingAllInstitutions = true;
     institutionsList = [];
     designationsByInsitution = [];
-    patchState({ isFetchingAllInstitutions,institutionsList,designationsByInsitution });
+    patchState({ isFetchingAllInstitutions, institutionsList, designationsByInsitution });
     const variables = {
       name: payload.name
     };
@@ -230,9 +239,9 @@ export class OptionsState {
           patchState({
             institutionsList,
             isFetchingAllInstitutions,
-          });        
+          });
           // institutionsList.filter(option => option.name.toLowerCase().includes(filterValue)
-        },error=>{
+        }, error => {
           new ShowNotificationAction({
             message: getErrorMessageFromGraphQLResponse(error),
             action: 'error',
@@ -246,7 +255,7 @@ export class OptionsState {
     getState,
     patchState,
   }: StateContext<OptionsStateModel>,
-  { payload }: FetchDesignationByInstitution
+    { payload }: FetchDesignationByInstitution
   ) {
     const state = getState();
     let { isFetchingDesignationsByInsitution, institutionsList } = state;
@@ -258,17 +267,17 @@ export class OptionsState {
     this.apollo
       .query({
         query: INSTITUTION_QUERIES.GET_FETCH_DESIGNATION_BY_INSTITUTION,
-        variables        
+        variables
       })
       .subscribe(
         (res: any) => {
           let designationsList = res?.data?.fetchDesignationByInstitution.designations;
           patchState({ isFetchingDesignationsByInsitution: false });
-          const response = designationsList?designationsList.split(','):['NA'];
+          const response = designationsList ? designationsList.split(',') : ['NA'];
           patchState({
             designationsByInsitution: response,
           });
-        },error=>{
+        }, error => {
           new ShowNotificationAction({
             message: getErrorMessageFromGraphQLResponse(error),
             action: 'error',
@@ -289,7 +298,7 @@ export class OptionsState {
     this.apollo
       .query({
         query: INSTITUTION_QUERIES.GET_INSTITUTIONS,
-        
+
       })
       .subscribe(
         (res: any) => {
@@ -298,8 +307,8 @@ export class OptionsState {
           patchState({
             institutionsList,
             isFetchingAllInstitutions,
-          });        
-        },error=>{
+          });
+        }, error => {
           this.store.dispatch(
             new ShowNotificationAction({
               message: getErrorMessageFromGraphQLResponse(error),
@@ -307,5 +316,73 @@ export class OptionsState {
             })
           );
         })
+  }
+
+  @Action(FetchCoordinatorsByInstitution)
+  fetchCoordinatorsByInstitution(
+    { getState, patchState }: StateContext<OptionsStateModel>,
+    { payload }: FetchCoordinatorsByInstitution
+  ) {
+    const state = getState();
+    const { searchParams } = payload;
+    const { fetchParamObjects, institutionCoordiatorMembers } = state;
+    let { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
+      let newFetchParams = updateFetchParams({
+        fetchParamObjects,
+        newPageNumber: pageNumber,
+        newPageSize: pageSize,
+        newSearchQuery: searchQuery,
+        newColumnFilters: columnFilters,
+      });
+      patchState({ isFetchingCoordinators: true, institutionCoordiatorMembers: [] });
+      if (columnFilters.name.length >= 3) {
+
+      const variables = {
+        roles: columnFilters.roles,
+        query: columnFilters.name,
+        limit: newFetchParams.pageSize,
+        offset: newFetchParams.offset,
+      };
+      this.apollo
+        .query({
+          query: USER_QUERIES.GET_COORDINATORS_BY_INSTITUTION,
+          variables,
+          fetchPolicy: 'network-only'
+        })
+        .subscribe(
+          ({ data }: any) => {
+            const response = data.coordinatorOptions.records;
+            const totalCount = data.coordinatorOptions.total ? data.coordinatorOptions.total : 0;
+            newFetchParams = { ...newFetchParams, totalCount };
+            patchState({
+              institutionCoordiatorMembers: response,
+              fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
+              isFetchingCoordinators: false,
+            });
+          },
+          (error) => {
+            this.store.dispatch(
+              new ToggleLoadingScreen({
+                showLoadingScreen: false,
+                message: '',
+              }))
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(error),
+                action: 'error',
+              })
+            );
+            patchState({ isFetchingCoordinators: false });
+          }
+        );
+    } else {
+      // newFetchParams = { ...newFetchParams };           
+
+      patchState({
+        institutionCoordiatorMembers: [],
+        fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
+        isFetchingCoordinators:false
+      })
+    }
   }
 }

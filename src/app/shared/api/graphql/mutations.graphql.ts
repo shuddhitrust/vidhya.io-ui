@@ -38,6 +38,13 @@ export const USER_MUTATIONS = {
             id
             name                  
             institutionType
+            verified
+            coordinator{
+              name
+              id
+              email
+              mobile
+            }
           }
           role {
             name
@@ -1016,6 +1023,13 @@ export const AUTH_MUTATIONS = {
             id
             name                  
             institutionType
+            verified
+            coordinator{
+              name
+              id
+              email
+              mobile                
+            }
           }
           role {
             name

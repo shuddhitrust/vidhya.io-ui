@@ -11,6 +11,28 @@
   height: 96px;
 }
 
+.coordinatorGridHead {
+  background-color: #0099ff;
+  margin: auto;
+  padding: 7px;
+}
+
+.coordinatorGrid mat-option {
+  border: 1px solid #0099ff;
+}
+
+.coordinatorGrid mat-option .col:first-child {
+  border-right: 1px solid #0099ff;
+  ;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.coordinatorGrid .col {
+  width: 50%;
+}
+
 @media screen and (max-width: 768px) {
   .floating-logo {
     float: none;

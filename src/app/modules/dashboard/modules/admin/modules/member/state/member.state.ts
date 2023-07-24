@@ -18,7 +18,6 @@ import {
   CreateUpdateMemberAction,
   DeleteMemberAction,
   FetchMembersAction,
-  FetchMembersByInstitutionAction,
   ForceRefetchMembersAction,
   GetMemberAction,
   MemberSubscriptionAction,
@@ -48,6 +47,7 @@ import { SearchParams } from '../../../../../../../shared/modules/master-grid/ta
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { UpdateCurrentUserInStateAction, CloseMemberFormAction} from 'src/app/modules/auth/state/auth.actions';
 import moment from 'moment';
+import { USER_ROLES_NAMES } from 'src/app/shared/common/constants';
 
 @State<MemberStateModel>({
   name: 'memberState',
@@ -65,11 +65,6 @@ export class MemberState {
   @Selector()
   static listMembers(state: MemberStateModel): User[] {
     return state.members;
-  }
-
-  @Selector()
-  static listInstitutionMembers(state: MemberStateModel): User[] {
-    return state.institutionMembers;
   }
 
   @Selector()
@@ -126,59 +121,6 @@ export class MemberState {
     );
   }
   
-  @Action(FetchMembersByInstitutionAction)
-  fetchMembersByInstitution(
-    { getState, patchState }: StateContext<MemberStateModel>,
-    { payload }: FetchMembersByInstitutionAction
-  ) {
-    const state = getState();
-    const { searchParams } = payload;
-    const { fetchPolicy, fetchParamObjects } = state;
-    const { searchQuery, pageSize, pageNumber, columnFilters } = searchParams;
-    let newFetchParams = updateFetchParams({
-      fetchParamObjects,
-      newPageNumber: pageNumber,
-      newPageSize: pageSize,
-      newSearchQuery: searchQuery,
-      newColumnFilters: columnFilters,
-    });
-    patchState({ isFetching: true });
-    const variables = {
-      roles: columnFilters.roles,
-      institution_id:columnFilters.institution_id,
-      limit: newFetchParams.pageSize,
-      offset: newFetchParams.offset,
-    };
-
-    this.apollo
-      .query({
-        query: USER_QUERIES.GET_USERS_BY_INSTITUTION,
-        variables,
-        // fetchPolicy,
-      })
-      .subscribe(
-        ({ data }: any) => {
-          const response = data.usersByInstitution.records;
-          const totalCount = data.usersByInstitution.total ? data.usersByInstitution.total : 0;
-          newFetchParams = { ...newFetchParams, totalCount };
-          patchState({
-            institutionMembers: response,
-            fetchParamObjects: state.fetchParamObjects.concat([newFetchParams]),
-            isFetching: false,
-          });
-        },
-        (error) => {
-          this.store.dispatch(
-            new ShowNotificationAction({
-              message: getErrorMessageFromGraphQLResponse(error),
-              action: 'error',
-            })
-          );
-          patchState({ isFetching: false });
-        }
-      );
-  }
-
   @Action(FetchMembersAction)
   fetchMembers(
     { getState, patchState }: StateContext<MemberStateModel>,

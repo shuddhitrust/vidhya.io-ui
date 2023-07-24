@@ -285,15 +285,45 @@ formDirective.submitted
     <ng-template #adminFeatures>
       <mat-form-field class="col-lg-6 col-md-6 col-sm-12" appearance="outline">
         <mat-label>Coordinator</mat-label>
-        <mat-select formControlName="coordinator" #choosedValue  placeholder="Coordinator"
+        <input type="text" matInput [matAutocomplete]="auto" (input)="filterCoordinator($event)" #autoInput>
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)" 
+        (optionSelected)="institutionForm.controls.coordinator.setValue($event.option.value.id)"        >
+          <div *ngIf="filteredCoordinatorOptions$ | async as filteredCoordinatorOptions">
+          <ng-container *ngIf="filteredCoordinatorOptions.length; else noItems">
+            <div class="coordinatorGrid">
+              <div class="row coordinatorGridHead" style="background-color: #0099ff;">
+                <div class="col"><strong>Name</strong></div>
+                <div class="col"><strong>Role</strong></div>
+              </div>
+              <mat-option *ngFor="let coordinator of filteredCoordinatorOptions;let i=index; let l = count"
+                [value]="coordinator">
+                <div class="coordinatorGridBody">
+                  <div class="row">
+                    <div class="col"> {{
+                      coordinator.name }}</div>
+                    <div class="col">
+                      {{coordinator.role.name}}
+                    </div>
+                  </div>
+                </div>
+              </mat-option>
+            </div>
+          </ng-container>
+          
+          <ng-template #noItems>
+            <div>No Items!</div>
+          </ng-template>
+          </div>
+        </mat-autocomplete>
+        <!-- <mat-select formControlName="coordinator" #choosedValue  placeholder="Coordinator"
           (valueChange)="coordinatorChange($event)">
           <mat-option *ngFor="let coordinator of coordinatorOptions" [value]="coordinator.value">
             {{ coordinator.label }}
           </mat-option>
-        </mat-select>
+        </mat-select> -->
       </mat-form-field>
-      
-      <mat-checkbox class="col-lg-3 col-md-6 col-sm-6" color="primary" formControlName="verified">Verified Institution</mat-checkbox>
+      <!-- <input mat-input ([ngModel])="coordinatorName" (input)="coordinatorValue($event)"> -->
+      <mat-checkbox class="col-lg-3 col-md-6 col-sm-6" color="primary" formControlName="verified" [disabled]="!(institutionForm.get('coordinator').value)">Verified Institution</mat-checkbox>
       <mat-checkbox class="col-lg-3 col-md-6 col-sm-6" color="primary" formControlName="public">Public</mat-checkbox>
 
     </ng-template>
