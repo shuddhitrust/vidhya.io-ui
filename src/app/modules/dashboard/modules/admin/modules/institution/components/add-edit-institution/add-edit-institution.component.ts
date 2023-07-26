@@ -244,16 +244,12 @@ export class AddEditInstitutionComponent implements OnInit {
     * Autocomplete Coordinator
     * ***************/
   filterCoordinator(event: any) {
-    // debugger;
-    console.log(event.target.value);
     if (event) {
       let searchParams=new SearchParams();
       this.columnFilters =Object.assign({},this.columnFilters,{'name': event.target.value.toLowerCase()});
       this.filteredCoordinatorOptions$ = of([]).pipe(map((item) => item));
       this.coordinatorOptions = [];
       this.fetchMembers(searchParams);
-      // else
-      //   this.filteredCoordinatorOptions$=of([]);
     }
   }
 

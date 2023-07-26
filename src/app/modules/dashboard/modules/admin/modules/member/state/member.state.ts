@@ -248,7 +248,12 @@ export class MemberState {
       let values: any = {};
       Object.keys(form.getRawValue()).forEach(elem => {
         if (elem != 'id') {
-          values = Object.assign({}, values, form.getRawValue()[elem]);
+          if(elem=='institution'){
+            let institution = Object.assign({},form.getRawValue()[elem],{'institution': form.getRawValue()[elem]['institution'].id});
+            values = Object.assign({}, values, institution);
+          }else{
+            values = Object.assign({}, values, form.getRawValue()[elem]);
+          }
           values.dob = JSON.parse(JSON.stringify(values.dob));
         } else {
           values = Object.assign({}, values, { 'id': form.getRawValue()['id'] });

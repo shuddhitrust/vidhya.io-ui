@@ -67,6 +67,10 @@
   margin-bottom: 50px !important;
 }
 
+.errorBoxExist{
+  margin-bottom: 16px !important;
+}
+
 .my-mat-hint {
   line-height: 1.2em;
   transform: translateY(10px);
@@ -87,6 +91,10 @@
 .resetLogoutButton{
   display: block;
   margin: auto;
+}
+
+.error{
+  color:#f44336 ;
 }
 
 @media screen and (max-width: 990px) {

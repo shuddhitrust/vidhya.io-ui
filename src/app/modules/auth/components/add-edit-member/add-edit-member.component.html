@@ -27,7 +27,7 @@
       <ng-container *ngTemplateOutlet="ContactTemplate"></ng-container>
     </mat-expansion-panel>
 
-    <mat-expansion-panel class="institutionPanel" (opened)="panelOpenState = true" (closed)="panelOpenState = false"
+    <mat-expansion-panel [ngClass]="invalidFields.length>0 ? 'errorBoxExist' : 'institutionPanel'" (opened)="panelOpenState = true" (closed)="panelOpenState = false"
       [expanded]="true">
       <mat-expansion-panel-header>
         <mat-panel-title>
@@ -42,7 +42,7 @@
   <!-- ACCOUNT SETTINGS TAB UI -->
   <ng-template #AccountSettingsTemplate>
     <div>
-      <form formGroupName="accountSetting" #formDirective="ngForm">
+      <form formGroupName="accountSetting">
         <div>
           <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
             <mat-label>User Name</mat-label>
@@ -50,16 +50,18 @@
               maxlength="16" pattern="^[a-zA-Z0-9_.]*$" />
             <mat-hint>You will not able to change the username later. </mat-hint>
             <small class="validation-error my-mat-hint" *ngIf="
-            memberForm.get('accountSetting').get('username').hasError('required') &&
+            registerFormControl.accountSetting.get('username').hasError('required') &&
             formDirective.submitted
             "> UserName is required </small>
-            <small class="validation-error  my-mat-hint" *ngIf="!memberForm.get('accountSetting').get('username')?.valid && (memberForm.get('accountSetting').get('username')?.dirty
-            ||memberForm.get('accountSetting').get('username')?.touched)"> Please Enter Valid UserName </small>
+
+            <small class="validation-error  my-mat-hint" *ngIf="!registerFormControl.accountSetting.get('username')?.valid && (registerFormControl.accountSetting.get('username')?.dirty
+            ||registerFormControl.accountSetting.get('username')?.touched) && registerFormControl.accountSetting.get('username').value.length>0
+            "> Please Enter Valid UserName </small>
           </mat-form-field>
           <p></p>
           <div class="col-lg-9 col-md-12 col-sm-12">
             <button mat-stroked-button color="primary"
-              (click)="passwordUpdate(memberForm.get('contact').get('email'),formDirective)">Change Password</button>
+              (click)="passwordUpdate(registerFormControl.contact.get('email'),formDirective)">Change Password</button>
           </div>
         </div>
       </form>
@@ -72,7 +74,7 @@
       <form formGroupName="profile">
         <p></p>
         <div class="col-lg-3 col-md-4 col-sm-12 floating-avatar">
-          <div *ngIf="memberForm.get('profile').get('avatar').value" class="col-lg-12 col-md-12 col-sm-12">
+          <div *ngIf="registerFormControl.profile.get('avatar').value" class="col-lg-12 col-md-12 col-sm-12">
             <div class="image-container" (click)="avatarUpdate.click()">
               <img [src]="previewPath" class="thumbnail" alt="Your avatar" />
               <div class="centered">Click here to update image</div>
@@ -92,7 +94,7 @@
           <mat-label>First Name</mat-label>
           <input matInput required formControlName="firstName" placeholder="Your first name" />
           <small class="validation-error" *ngIf="
-           memberForm.get('profile').get('firstName').hasError('required') &&
+           registerFormControl.profile.get('firstName').hasError('required') &&
            formDirective.submitted
            "> First Name is required </small>
         </mat-form-field>
@@ -100,18 +102,18 @@
           <mat-label>Last Name</mat-label>
           <input matInput required formControlName="lastName" placeholder="Your last name" />
           <small class="validation-error" *ngIf="
-           memberForm.get('profile').get('lastName').hasError('required') &&
+           registerFormControl.profile.get('lastName').hasError('required') &&
            formDirective.submitted
            "> Last Name is required </small>
         </mat-form-field>
         <mat-form-field class="col-lg-9 col-md-12 col-sm-12" appearance="outline">
           <mat-label>Date of birth</mat-label>
-          <input matInput [matDatepicker]="picker" (focus)="picker.open()" readonly="true"
-            formControlName="dob" [max]="maxDob" placeholder="Date of birth"
-            [class.invalid-input]="memberForm.get('profile').get('dob').invalid && (memberForm.get('profile').get('dob').dirty || memberForm.get('profile').get('dob').touched)">
+          <input matInput [matDatepicker]="picker" (focus)="picker.open()" readonly="true" formControlName="dob"
+            [max]="maxDob" placeholder="Date of birth"
+            [class.invalid-input]="registerFormControl.profile.get('dob').invalid && (registerFormControl.profile.get('dob').dirty || registerFormControl.profile.get('dob').touched)">
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
-          <!-- <small class="validation-error" *ngIf="memberForm.get('profile').get('dob').hasError('required') &&
+          <!-- <small class="validation-error" *ngIf="registerFormControl.profile.get('dob').hasError('required') &&
            formDirective.submitted
            "> DOB is required </small> -->
         </mat-form-field>
@@ -125,11 +127,7 @@
         <div>
           <mat-form-field class="col-lg-6 col-md-6 col-sm-6" disabled appearance="outline">
             <mat-label>Mobile</mat-label>
-            <input matInput  formControlName="mobile" placeholder="Mobile" onlyNumber />
-            <!-- <small class="validation-error" *ngIf="
-              memberForm.get('contact').get('mobile').hasError('') &&
-              formDirective.submitted
-              "> Mobile is required</small> -->
+            <input matInput formControlName="mobile" placeholder="Mobile" onlyNumber />
           </mat-form-field>
           <mat-form-field class="col-lg-6 col-md-6 col-sm-6" disabled appearance="outline">
             <mat-label>Phone</mat-label>
@@ -149,17 +147,17 @@
           </mat-form-field>
           <mat-form-field class="col-lg-4 col-md-4 col-sm-4" disabled appearance="outline">
             <mat-label>State</mat-label>
-            <input matInput formControlName="state" placeholder="State" required/>
+            <input matInput formControlName="state" placeholder="State" required />
             <small class="validation-error" *ngIf="
-              memberForm.get('contact').get('state').hasError('') &&
+              registerFormControl.contact.get('state').hasError('required') &&
               formDirective.submitted
-              "> State is required</small> 
+              "> State is required</small>
           </mat-form-field>
           <mat-form-field class="col-lg-4 col-md-4 col-sm-4" disabled appearance="outline">
             <mat-label>Country</mat-label>
             <input matInput required formControlName="country" placeholder="Country" />
             <small class="validation-error" *ngIf="
-              memberForm.get('contact').get('country').hasError('') &&
+              registerFormControl.contact.get('country').hasError('required') &&
               formDirective.submitted
               "> Country is required</small>
           </mat-form-field>
@@ -179,7 +177,7 @@
           <mat-form-field class="col-lg-12 col-md-12 col-sm-12" [class.dropdoawn-loading]="isFetchingInstitutions"
             appearance="outline">
             <mat-label>Institution</mat-label>
-            <input type="text" matInput required [matAutocomplete]="auto" ([ngModel])="institutionName"
+            <input type="text" matInput required [matAutocomplete]="auto" formControlName="institution"
               (input)="filterInstitution($event)" #autoInput>
             <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
               (optionSelected)='selectInstitution($event.option.value)'>
@@ -212,9 +210,13 @@
                 </ng-template>
               </div>
             </mat-autocomplete>
+            <small class="validation-error" *ngIf="
+            registerFormControl.institution.get('institution').hasError('required') &&
+            formDirective.submitted
+            ">Institution is required </small>
           </mat-form-field>
           <mat-form-field class="col-lg-12 col-md-12 col-sm-12"
-            *ngIf="memberForm.get('institution').get('institution').value?true:false" appearance="outline">
+            *ngIf="registerFormControl.institution.get('institution').value?true:false" appearance="outline">
             <mat-label>Designation</mat-label>
             <mat-select formControlName="designation" required placeholder="Designation">
               <mat-option *ngFor="let designation of designationOptions" [value]="designation">
@@ -222,7 +224,7 @@
               </mat-option>
             </mat-select>
             <small class="validation-error" *ngIf="
-              memberForm.get('institution').get('designation').hasError('required') &&
+              registerFormControl.institution.get('designation').hasError('required') &&
               formDirective.submitted">
               Designation is required
             </small>
@@ -231,8 +233,22 @@
       </form>
     </div>
   </ng-template>
+  <div>
+
+    <div class="col-lg-8 col-sm-12 form-container" id="scrollId">
+      <div class="mb-5">
+        <mat-card *ngIf="invalidFields.length>0">
+          <ul>
+            <li *ngFor="let field of invalidFields" class="error">{{field}} is required</li>
+          </ul>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+
+  <!-- </ng-template> -->
   <button type="submit" class="floating-button-bottom" mat-raised-button color="primary"
-    [disabled]="(formSubmitting$ | async) === true  || memberForm.valid!=true">
+    [disabled]="(formSubmitting$ | async) === true">
     {{ (formSubmitting$ | async) === true ? "Submitting..." : submitBtnName }}
   </button>
 </form>
@@ -242,7 +258,7 @@
 
   <div class="col-lg-12 col-md-12 col-sm-12">
     <div>Please click below to logout and check your email
-      <h4 class="displayMail">{{memberForm.get('contact').get('email').value}}</h4> to set password and enable same
+      <h4 class="displayMail">{{registerFormControl.contact.get('email').value}}</h4> to set password and enable same
       account to do manual login.
     </div>
     <button mat-stroked-button color="primary" class="resetLogoutButton" (click)="resetPassword()">Click here</button>
