@@ -21,6 +21,7 @@ import {
 import { InstitutionState } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.state';
 import { InstitutionModalComponent } from '../institution-modal/institution-modal.component';
 import { ADMIN_SECTION_LABELS } from 'src/app/shared/common/constants';
+import moment from 'moment';
 
 @Component({
   selector: 'app-institutions-table',
@@ -46,6 +47,21 @@ export class InstitutionsTableComponent implements OnInit {
     { field: 'location' },
     { field: 'city' },
     { field: 'bio' },
+    {
+      field: 'author',
+      cellRenderer: (params) => {
+        return params?.data?.author?.name;
+      },
+    },
+    {      
+      field: 'createdAt',
+      headerName:'Creation Date',
+      cellRenderer:(params)=>{
+        return moment(params.value).format('DD-MM-YYYY HH:mm:ss');
+      }
+    },
+    {field: 'verified'},
+    {field: 'public'}    
   ];
   frameworkComponents = {
     institutionRenderer: InstitutionProfileRendererComponent,

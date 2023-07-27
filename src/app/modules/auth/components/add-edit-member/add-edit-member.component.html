@@ -237,7 +237,7 @@
 
     <div class="col-lg-8 col-sm-12 form-container" id="scrollId">
       <div class="mb-5">
-        <mat-card *ngIf="invalidFields.length>0">
+        <mat-card *ngIf="invalidFields.length>0" class="errorCard">
           <ul>
             <li *ngFor="let field of invalidFields" class="error">{{field}} is required</li>
           </ul>

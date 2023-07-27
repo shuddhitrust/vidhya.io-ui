@@ -25,6 +25,7 @@ export const emptyInstitutionFormRecord: Institution = {
   coordinator:{id:null,name:null,email:null,mobile:null},
   verified:false,
   public:false,
+  author:null,
   address:null,
 };
 export interface InstitutionStateModel {
