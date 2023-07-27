@@ -273,6 +273,7 @@ export type Institution = {
   coordinator:{id:string,name:string,email:string,mobile:string},
   verified:boolean,
   public:boolean,
+  author?:{id:string,name:string};
   location?: string;
   address?:string;
   dob?:string;

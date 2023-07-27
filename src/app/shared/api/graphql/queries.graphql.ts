@@ -458,6 +458,10 @@ export const INSTITUTION_QUERIES = {
         }
         verified
         public
+        author{
+          id
+          name
+        }
       }
     }
   `,
@@ -534,6 +538,13 @@ export const INSTITUTION_QUERIES = {
           invitecode
           designations
           institutionType
+          author{
+            id
+            name
+          }
+          verified
+          public
+          createdAt
         }
         total
       }
