@@ -540,7 +540,28 @@ export const INSTITUTION_QUERIES = {
           institutionType
           author{
             id
+          username
+          firstName
+          lastName
+          name
+          title
+          bio
+          email
+          dateJoined
+          designation
+          avatar
+          membershipStatus
+          role {
             name
+          }
+          institution {
+            id
+            name
+            coordinator{
+              id
+              name
+            }
+          }
           }
           verified
           public
