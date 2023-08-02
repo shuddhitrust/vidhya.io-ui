@@ -995,8 +995,8 @@ export const AUTH_MUTATIONS = {
     }
   `,
   LOGIN: gql`
-    mutation tokenAuth($username: String!, $password: String!) {
-      tokenAuth(username: $username, password: $password) {
+    mutation tokenAuth($email: String!, $password: String!) {
+      tokenAuth(email: $email, password: $password) {
         success
         errors
         token

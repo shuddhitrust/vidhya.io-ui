@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ICellRendererParams } from 'ag-grid-community';
-import { MemberProfileComponent } from 'src/app/modules/dashboard/modules/admin/modules/member/components/member-profile/member-profile.component';
 import { AuthorizationService } from '../../../../../../../../../shared/api/authorization/authorization.service';
 import {
   resources,
