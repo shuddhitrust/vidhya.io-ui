@@ -37,11 +37,11 @@
       </div>
     </div>
     <form [formGroup]="loginForm" novalidate #formDirective="ngForm" (submit)="login(loginForm, formDirective)">
-      <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline" data-cy="username-field">
-        <mat-label>Username</mat-label>
-        <input autofocus (keyup)="preventSpaces($event)" matInput formControlName="username" placeholder="Username" />
+      <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline" data-cy="email-field">
+        <mat-label>Email ID</mat-label>
+        <input autofocus (keyup)="preventSpaces($event)" matInput formControlName="email" placeholder="Email" required />
         <small class="validation-error" *ngIf="
-            loginForm.get('username').hasError('required') &&
+            loginForm.get('email').hasError('required') &&
             formDirective.submitted
           ">
           Username is required

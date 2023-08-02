@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { GridOptions } from 'ag-grid-community';
 import { Observable } from 'rxjs';
-
 import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
 import { InstitutionProfileRendererComponent } from 'src/app/modules/dashboard/modules/admin/modules/institution/components/institution-profile-cell-renderer/institution-profile-renderer.component';
 import {
@@ -22,6 +21,8 @@ import { InstitutionState } from 'src/app/modules/dashboard/modules/admin/module
 import { InstitutionModalComponent } from '../institution-modal/institution-modal.component';
 import { ADMIN_SECTION_LABELS } from 'src/app/shared/common/constants';
 import moment from 'moment';
+import { MemberProfileRendererComponent } from 'src/app/modules/dashboard/modules/admin/modules/member/components/cell-renderers/member-profile/member-profile-renderer.component';
+import { MemberProfileComponent } from '../../../member/components/member-profile/member-profile.component';
 
 @Component({
   selector: 'app-institutions-table',
@@ -38,7 +39,6 @@ export class InstitutionsTableComponent implements OnInit {
   isFetching$: Observable<boolean>;
   @Select(InstitutionState.fetchParams)
   fetchParams$: Observable<FetchParams>;
-
   columns = [
     {
       field: 'name',
@@ -49,7 +49,8 @@ export class InstitutionsTableComponent implements OnInit {
     { field: 'bio' },
     {
       field: 'author',
-      cellRenderer: (params) => {
+      cellRenderer:'memberprofileRenderer',
+      valueFormatter: (params) => {
         return params?.data?.author?.name;
       },
     },
@@ -60,11 +61,29 @@ export class InstitutionsTableComponent implements OnInit {
         return moment(params.value).format('DD-MM-YYYY HH:mm:ss');
       }
     },
-    {field: 'verified'},
-    {field: 'public'}    
+    {field: 'verified',
+    cellRenderer: params => {
+      let eIconGui = document.createElement('span');  
+      if(params.data.verified==true){
+        return  eIconGui.innerHTML = '<em class="material-icons" style="color: green;font-weight: 800;">check</em>';         
+      }else{
+        return  eIconGui.innerHTML = '<em class="material-icons" style="color: red;font-weight: 800;">close</em>';          
+      }    
+    }
+  },
+    {field: 'public',
+    cellRenderer: params => {
+      let eIconGui = document.createElement('span');  
+      if(params.data.public==true){
+        return  eIconGui.innerHTML = '<em class="material-icons" style="color: green;font-weight: 800;">check</em>';         
+      }else{
+        return  eIconGui.innerHTML = '<em class="material-icons" style="color: red;font-weight: 800;">close</em>';          
+      }  
+    }}    
   ];
   frameworkComponents = {
     institutionRenderer: InstitutionProfileRendererComponent,
+    memberprofileRenderer:MemberProfileRendererComponent
   };
   gridOptions: GridOptions;
 
@@ -96,6 +115,14 @@ export class InstitutionsTableComponent implements OnInit {
   openInstitutionProfile(rowData) {
     const dialogRef = this.dialog.open(InstitutionModalComponent, {
       data: rowData,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {});
+  }
+
+  openMemberProfile(rowData) {
+    const dialogRef = this.dialog.open(MemberProfileComponent, {
+      data: rowData?.author            ,
     });
 
     dialogRef.afterClosed().subscribe((result) => {});
