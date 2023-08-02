@@ -619,7 +619,7 @@ export class AuthState {
         .mutate({
           mutation: AUTH_MUTATIONS.LOGIN,
           variables: {
-            username: values.username,
+            email: values.email,
             password: values.password,
           },
         })
@@ -680,7 +680,7 @@ export class AuthState {
                   message:
                     getErrorMessageFromGraphQLResponse(response?.errors) ==
                       'Please, enter valid credentials.'
-                      ? 'Your username or password is incorrect. Please check their spelling and case and then retry.'
+                      ? 'Your Email or Password is incorrect. Please check their spelling and case and then retry.'
                       : getErrorMessageFromGraphQLResponse(response?.errors),
                   action: 'error',
                 })
@@ -884,7 +884,7 @@ export class AuthState {
               this.store.dispatch(new SetAuthSessionAction());
               state = getState();
               let loginForm = this.fb.group({
-                'username': values.username,
+                'email': values.email,
                 'password': values.password1
               })
               this.store.dispatch(new LoginAction({ form: loginForm, formDirective }));
