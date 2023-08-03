@@ -44,7 +44,13 @@
             loginForm.get('email').hasError('required') &&
             formDirective.submitted
           ">
-          Username is required
+          Email ID is required
+        </small>
+
+        <small class="validation-error" *ngIf="
+        loginForm.get('email').hasError('email')
+          ">
+          Please enter a valid email
         </small>
       </mat-form-field>
 
@@ -69,7 +75,7 @@
         Remember me on this device
       </mat-checkbox>
       <button data-cy="login-submit-button" type="submit" class="submit-button" mat-raised-button color="primary"
-        [disabled]="isSubmittingForm === true">
+        [disabled]="isSubmittingForm === true ">
         {{ isSubmittingForm === true ? "Logging in..." : "Login" }}
       </button>
     </form>
