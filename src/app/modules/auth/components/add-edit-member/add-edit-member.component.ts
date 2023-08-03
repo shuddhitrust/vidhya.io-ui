@@ -18,7 +18,7 @@ import { MemberState } from 'src/app/modules/dashboard/modules/admin/modules/mem
 import { Observable, from, of } from 'rxjs';
 import { emptyMemberFormRecord } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.model';
 import { InstitutionState } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.state';
-import { MatSelectOption, User, institutionTypeOptions } from 'src/app/shared/common/models';
+import { MatSelectOption, User, institutionTypeOptions, genderOptions } from 'src/app/shared/common/models';
 import { OptionsState } from 'src/app/shared/state/options/options.state';
 import { OptionsStateModel } from 'src/app/shared/state/options/options.model';
 import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
@@ -94,6 +94,7 @@ export class AddEditMemberComponent implements OnInit {
   formName: string = 'profile';
   designationOptions: any = [];
   institutionTypeOptions: MatSelectOption[] = institutionTypeOptions;
+  genderOptions: MatSelectOption[] = genderOptions;
   isGoogleLoggedIn: boolean = false;
   isManualLogIn: boolean = false;
   filteredInstitutionOptions$: Observable<any>;
@@ -105,6 +106,7 @@ export class AddEditMemberComponent implements OnInit {
   memberFormContactDirective: any;
   memberFormContact: any;
   invalidFields: any = [];
+  memberShipStatus: string;
   constructor(
     private location: Location,
     private store: Store,
@@ -133,12 +135,14 @@ export class AddEditMemberComponent implements OnInit {
     })
 
     this.authState$.subscribe((val) => {
+      debugger;
       this.authState = val;
       this.isFullyAuthenticated = this.authState?.isFullyAuthenticated;
       this.currentMember = this.authState?.currentMember;
       this.firstTimeSetup = this.authState?.firstTimeSetup;
       this.isGoogleLoggedIn = this.authState?.isGoogleLoggedIn;
       this.isManualLogIn = this.authState?.isManualLogIn;
+      this.memberShipStatus = this.authState?.memberShipStatus;
       this.currentMember = {
         id: this.currentMember?.id,
         username: this.currentMember?.username,
@@ -149,6 +153,7 @@ export class AddEditMemberComponent implements OnInit {
         title: this.currentMember?.title,
         bio: this.currentMember?.bio,
         dob: this.currentMember?.dob,
+        gender: this.currentMember?.gender,
         address: this.currentMember?.address,
         city: this.currentMember?.city,
         pincode: this.currentMember?.pincode,
@@ -225,13 +230,22 @@ export class AddEditMemberComponent implements OnInit {
     this.avatarFile = null;
     this.previewPath = null;
     let validDobDate = moment(new Date(memberFormRecord?.dob)).isBefore(this.maxDob, 'day') || moment(new Date(memberFormRecord?.dob)).isSame(this.maxDob, 'day'); // false
-
+   
+    /***********************************************************
+     * 
+     * !!!!IMPORTANT INFO:
+     * Add all the required field form name 
+     * to processMemberFormValid method in home.component.ts 
+     * To the array variable requiredField
+     * 
+     * ************************* *************************************/
     const formGroup = this.fb.group({
       id: [memberFormRecord?.id],
       profile: this.fb.group({
         firstName: [memberFormRecord?.firstName, [Validators.required]],
         lastName: [memberFormRecord?.lastName, [Validators.required]],
         dob: [validDobDate ? (memberFormRecord?.dob ? moment(memberFormRecord?.dob) : null) : null],
+        gender:[memberFormRecord?.gender,[Validators.required]],
         avatar: [memberFormRecord?.avatar],
         title: [
           memberFormRecord?.title,

@@ -116,6 +116,18 @@
           <!-- <small class="validation-error" *ngIf="registerFormControl.profile.get('dob').hasError('required') &&
            formDirective.submitted
            "> DOB is required </small> -->
+        </mat-form-field>        
+        <mat-form-field class="col-lg-9 col-md-12 col-sm-12" appearance="outline">
+          <mat-label>Gender</mat-label>
+          <mat-select formControlName="gender" required placeholder="Gender">
+            <mat-option *ngFor="let gender of genderOptions" [value]="gender.value">
+              {{gender.label}}
+            </mat-option>
+          </mat-select>          
+          <small class="validation-error" *ngIf="
+           registerFormControl.profile.get('gender').hasError('required') &&
+           formDirective.submitted
+           "> Gender is required </small>
         </mat-form-field>
       </form>
     </div>

@@ -34,6 +34,7 @@ const startingCurrentMember: CurrentMember = {
   bio: null,
   email: null,
   dob: null,
+  gender:null,
   mobile: null,
   phone: null,
   address: null,
