@@ -25,6 +25,7 @@ export const USER_MUTATIONS = {
           name
           avatar
           dob
+          gender
           email
           phone
           mobile
@@ -1009,6 +1010,7 @@ export const AUTH_MUTATIONS = {
           phone
           address
           dob
+          gender
           country
           city
           state

@@ -548,6 +548,7 @@ export class AuthState {
       title: user?.title,
       bio: user?.bio,
       dob: user?.dob,
+      gender:user?.gender,
       mobile: user?.mobile,
       phone: user?.phone,
       address: user?.address,

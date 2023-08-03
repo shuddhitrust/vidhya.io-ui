@@ -1,3 +1,4 @@
+import { type } from 'os';
 import { defaultPageSize } from '../modules/master-grid/table.model';
 import { defaultSearchParams } from './constants';
 import { autoGenOptions } from './functions';
@@ -74,6 +75,7 @@ export type CurrentMember = {
   bio: string;
   email: string;
   dob: string;
+  gender: string;
   mobile: string;
   phone:string;
   address: string;
@@ -134,6 +136,18 @@ export const InstitutionTypeOptions = {
 
 export const institutionTypeOptions: MatSelectOption[] =
   autoGenOptions(InstitutionTypeOptions);
+
+export type GenderType = 'M'|'F'|'O'|'P';
+
+export const GenderOptions = {
+  Male : 'M',
+  Female : 'F',
+  Other : 'O',
+  "Prefer Not To Say":'N'
+}
+
+export const genderOptions: MatSelectOption[] =
+  autoGenOptions(GenderOptions);
 
 export type GroupType = 'CL' | 'TE' | 'CO';
 
@@ -199,6 +213,7 @@ export type User = {
   title?: string;
   bio?: string;
   dob?:string;
+  gender?:string;
   address?:string;
   city?:string;
   pincode?:string;

@@ -13,6 +13,7 @@ export const AUTH_QUERIES = {
         bio
         email
         dob
+        gender
         phone
         mobile
         address
