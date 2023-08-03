@@ -136,16 +136,9 @@ export class HomeComponent implements OnInit {
 
   processMembershipStatusOptions() {
     if (this.membershipStatus == MembershipStatusOptions.PENDING) {
-      this.router.navigate([uiroutes.MEMBERSHIPSTATUS_PENDING_STATE_ROUTE.route], { state: { 'firstName': this.currentMember?.firstName, 'lastName': this.currentMember?.lastName,'institution':this.currentMember?.institution } });
-      this.store.dispatch(
-        new ShowNotificationAction({
-          message:
-            "Your account is pending approval by your institution's moderators. Please wait for them to approve you.",
-          action: 'show',
-          autoClose: false,
-          id: 'pendinig-approval',
-        })
-      );
+      this.router.navigate([uiroutes.MEMBERSHIPSTATUS_STATE_ROUTE.route]);
+    }else if (this.membershipStatus == MembershipStatusOptions.SUSPENDED) {
+      this.router.navigate([uiroutes.MEMBERSHIPSTATUS_STATE_ROUTE.route]);
     }
   }
 
