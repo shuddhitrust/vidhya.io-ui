@@ -19,6 +19,7 @@ export interface MemberInput {
   institution: Number;
   email: String;
   avatar: String;
+  gender: String;
   member: Number;
   title: String;
   bio: String;
@@ -40,6 +41,7 @@ export const emptyMemberFormRecord: User = {
   bio: null,
   role: null,
   dob:null,
+  gender:null,
   address:null,
   city:null,
   pincode:null,

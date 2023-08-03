@@ -103,7 +103,16 @@ export class HomeComponent implements OnInit {
   }
   processMemberFormValid() {
     const regexStr = '^([a-zA-Z0-9_.]*)$';
-    const requiredField = ['username', 'firstName', 'lastName', 'dob', 'email', 'institution', 'state', 'designation'];
+    
+    /**************************
+     * 
+     * !!!!IMPORTANT INFO:
+     * Get all the required field from 
+     * setupMemberFormGroup method in add-edit-member.component.ts and paste it to
+     * the array variable requiredField
+     * 
+     * ** ********************/
+    const requiredField = ['username', 'firstName', 'lastName', 'dob', 'email', 'institution', 'state', 'designation', 'gender'];
     let isEmptyFieldValueExist = requiredField.find(item => {
       if (!this.currentMember[item] && item!='dob') {
         return true;
