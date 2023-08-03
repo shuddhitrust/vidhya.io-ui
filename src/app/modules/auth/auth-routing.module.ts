@@ -6,7 +6,7 @@ import {
 } from 'src/app/shared/api/authentication.guard';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { AddEditMemberComponent } from './components/add-edit-member/add-edit-member.component';
-import { MemberShipStatePendingComponent } from './components/member-ship-state-pending/member-ship-state-pending.component';
+import { MemberShipStatusComponent } from './components/member-ship-status/member-ship-status.component';
 const routes: Routes = [
   {
     path: uiroutes.MEMBER_FORM_ROUTE.route,
@@ -16,8 +16,8 @@ const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path: uiroutes.MEMBERSHIPSTATUS_PENDING_STATE_ROUTE.route,
-    component: MemberShipStatePendingComponent,
+    path: uiroutes.MEMBERSHIPSTATUS_STATE_ROUTE.route,
+    component: MemberShipStatusComponent,
     canActivate: [RegistrationFormAuthGuard],
     pathMatch: 'full',
   },

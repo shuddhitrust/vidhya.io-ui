@@ -65,8 +65,8 @@ export const uiroutes = {
       actions: [RESOURCE_ACTIONS.CREATE, RESOURCE_ACTIONS.UPDATE],
     },
   },  
-  MEMBERSHIPSTATUS_PENDING_STATE_ROUTE: {
-    route: 'membership-pending',
+  MEMBERSHIPSTATUS_STATE_ROUTE: {
+    route: 'membership-status',
     auth: { resource: null, actions: [] },
   },
   PROJECT_PROFILE_ROUTE: {

@@ -33,7 +33,7 @@ export class PublicComponent {
     const routes = [
       uiroutes.NEWS_PROFILE_ROUTE.route,
       uiroutes.MEMBER_FORM_ROUTE.route,
-      uiroutes.MEMBERSHIPSTATUS_PENDING_STATE_ROUTE.route,
+      uiroutes.MEMBERSHIPSTATUS_STATE_ROUTE.route,
       uiroutes.PROJECT_PROFILE_ROUTE.route,
       uiroutes.PASSWORD_RESET_ROUTE.route,
       uiroutes.CHANGE_PASSWORD.route,
@@ -77,8 +77,8 @@ export class PublicComponent {
           return true;
         }
         break;      
-      case uiroutes.MEMBERSHIPSTATUS_PENDING_STATE_ROUTE.route:
-          if (this.routeIs(uiroutes.MEMBERSHIPSTATUS_PENDING_STATE_ROUTE.route)) {
+      case uiroutes.MEMBERSHIPSTATUS_STATE_ROUTE.route:
+          if (this.routeIs(uiroutes.MEMBERSHIPSTATUS_STATE_ROUTE.route)) {
             return true;
           }
           break;
