@@ -12,11 +12,11 @@ import { FetchCoordinatorsByInstitution } from 'src/app/shared/state/options/opt
 import { OptionsState } from 'src/app/shared/state/options/options.state';
 
 @Component({
-  selector: 'app-member-ship-state-pending',
-  templateUrl: './member-ship-state-pending.component.html',
-  styleUrls: ['./member-ship-state-pending.component.scss']
+  selector: 'app-member-ship-status',
+  templateUrl: './member-ship-status.component.html',
+  styleUrls: ['./member-ship-status.component.scss']
 })
-export class MemberShipStatePendingComponent implements OnInit {
+export class MemberShipStatusComponent implements OnInit {
   @Select(AuthState.getCurrentMember)
   currentMember$: Observable<CurrentMember>;
   currentMember: CurrentMember;
@@ -35,20 +35,21 @@ export class MemberShipStatePendingComponent implements OnInit {
     this.currentMember$
       .pipe(takeUntil(this.ngDestroyed$))
       .subscribe((val) => {
+        this.currentMember = val;
+        this.name = this.currentMember?.firstName + " " + this.currentMember?.lastName;
         if (val?.membershipStatus == 'PE') {
-          this.currentMember = val;
-          console.log("currentMember",this.currentMember);
-          this.name = this.currentMember?.firstName + " " + this.currentMember?.lastName;
           if (this.currentMember?.institution?.verified == false) {
             this.messageDisplay = "Your institution '"+this.currentMember?.institution?.name+"' is currently not verified. In order to fully use the application, you must ensure that your institution is verified.<br> Please request the administrators of your institution to reach out to '"+this.currentMember?.institution?.coordinator?.name+"' at <strong><a href='mailto:"+this.currentMember?.institution?.coordinator?.email+"' style='color: #0099ff;text-decoration: none;'>"+this.currentMember?.institution?.coordinator?.email+"</a></strong> or <strong>"+this.currentMember?.institution?.coordinator?.mobile+"</strong> and have your institution verified.";
           } else {
             this.messageDisplay = "Your account is currently not verified. <br>Please contact '" + this.currentMember?.institution?.coordinator?.name + "' at '" + this.currentMember.institution?.name + "' to complete your registration. You may reach them at <strong><a href='mailto:"+this.currentMember?.institution?.coordinator?.email+"' style='color: #0099ff;text-decoration: none;'>"+this.currentMember?.institution?.coordinator?.email+"</a></strong> or <strong>"+this.currentMember?.institution?.coordinator?.mobile+".</strong>";
           }
-        }
+        }else if(val?.membershipStatus == 'SU') {
+            this.messageDisplay = 'Your account is curently suspended. The following was added as the reason for suspension <br><strong>"'+this?.currentMember?.bio+'"</strong> <br>If you wish to reach out to someone to seek further information, please reach out to the coordinator of your institution, <strong>'+this.currentMember?.institution?.coordinator?.name +'</strong> at <strong>'+this.currentMember?.institution?.coordinator?.email+'</strong> or <strong>'+this.currentMember?.institution?.coordinator?.mobile+'.</strong>';
+          }
       });
   }
 
   ngOnInit(): void {
-    this.currentMember = history.state;
+    // this.currentMember = history.state;
   }
 }

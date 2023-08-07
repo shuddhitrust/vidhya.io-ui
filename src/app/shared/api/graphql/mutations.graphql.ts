@@ -143,6 +143,7 @@ export const INSTITUTION_MUTATIONS = {
           bio
           designations
           institutionType
+          verified
         }
       }
     }
@@ -1010,6 +1011,7 @@ export const AUTH_MUTATIONS = {
           phone
           address
           dob
+          bio
           gender
           country
           city
