@@ -30,6 +30,7 @@ export class NavbarComponent implements OnInit {
   currentMember: CurrentMember;
   isLoggedIn: boolean;
   isFullyAuthenticated: Boolean;
+  dialogHeight: string = "200px";
 
   constructor(
     private store: Store,
@@ -59,8 +60,23 @@ export class NavbarComponent implements OnInit {
 
   login() {
     this.store.dispatch(new OpenLoginFormAction());
-    const dialogRef = this.dialog.open(LoginModalComponent);
-    dialogRef.afterClosed().subscribe((result) => {});
+    const dialogRef = this.dialog.open(LoginModalComponent,{
+      height:this.dialogHeight
+    });
+    dialogRef.componentInstance.dialogUIStyle.subscribe(data=>{
+      if(data ==  'LOGIN'){
+        this.dialogHeight = "200px";
+      }else if(data == 'GENERATE_EMAIL_OTP'){
+        this.dialogHeight = "302px";
+      }else{
+        this.dialogHeight = "auto";
+      }
+      dialogRef.updateSize("",this.dialogHeight);
+    })
+    dialogRef.afterClosed().subscribe((result)=>{
+      this.dialogHeight = "200px";
+      dialogRef.updateSize("",this.dialogHeight);
+    })
   }
 
   logout() {
