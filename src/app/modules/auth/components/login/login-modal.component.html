@@ -38,15 +38,15 @@
         </button> -->
         <button mat-stroked-button class="googleLoginBtn" (click)="openGoogleLogin($event)">
           <mat-icon svgIcon="logo" class="loginLogo"></mat-icon>
-        <span class="signINGoogle">  Sign in with Google</span>
+          <span class="signINGoogle"> Sign in with Google</span>
         </button>
 
       </div>
-      
-      <div class="text-center pt-10" >
+
+      <div class="text-center pt-10">
         <button mat-stroked-button class="emailLogin" (click)="showEmailLogin()">
-          <mat-icon  class="emailLoginLogo">mail</mat-icon>
-          <span  class="signINGoogle">Sign in with Email</span>
+          <mat-icon class="emailLoginLogo">mail</mat-icon>
+          <span class="signINGoogle">Sign in with Email</span>
           <!-- <mat-icon class="googleLoginIcon" svgIcon="logo"></mat-icon> Sign in with Google -->
         </button>
       </div>
@@ -67,12 +67,19 @@
   <div data-cy="login-dialog-box" mat-dialog-content class="login-dialog-box">
     <mat-card-header class="form-title loginTitle">
       <div class="row">
-        <button mat-icon-button (click)="goBack()" class="floating-back-button col-md-2">
-          <mat-icon>keyboard_arrow_left</mat-icon>
-          <span>Back</span>
-        </button>
+        <div class="col-md-12">
+          <div class="w-2">
+
+            <button mat-icon-button (click)="goBack()" class="floating-back-button">
+              <mat-icon>keyboard_backspace</mat-icon>
+            </button>
+          </div>
+          <div class="w-98">
+            <mat-card-title data-cy="dialog-box-title">Login</mat-card-title>
+
+          </div>
+        </div>
       </div>
-    
     </mat-card-header>
 
     <form [formGroup]="loginForm" novalidate #formDirective="ngForm" (submit)="login(loginForm, formDirective)">
@@ -147,10 +154,10 @@
       <mat-card-title data-cy="dialog-box-title" class="col-md-10">Register</mat-card-title>
       </div>
     </mat-card-header>
-    <hr />
+    <!-- <hr />
     <mat-card-subtitle style="text-align: left">
       <p>Email Id</p>
-    </mat-card-subtitle>
+    </mat-card-subtitle> -->
     <form [formGroup]="emailForm" novalidate #formDirective="ngForm"
       (submit)="generateEmailOTP(emailForm, formDirective)">
       <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline" data-cy="email-field">
@@ -194,7 +201,7 @@
     <mat-card-header class="form-title">
       <mat-card-title data-cy="dialog-box-title">Verify OTP</mat-card-title>
     </mat-card-header>
-    <hr />
+    <!-- <hr /> -->
     <mat-card-subtitle style="text-align: left">
       <p>
         Check the email OTP that you received in your email inbox and enter it
@@ -244,7 +251,7 @@
   <div data-cy="password-reset-dialog-box" mat-dialog-content class="email-input-dialog-box">
     <mat-card-header class="form-title">
       <mat-card-title data-cy="dialog-box-title">Send Password Reset Email</mat-card-title>
-      <hr />
+      <!-- <hr /> -->
       <mat-card-subtitle style="text-align: left">
         <p>
           Enter the email ID tied to your account and submit this form to
@@ -296,7 +303,7 @@
     <mat-card-header class="form-title">
       <mat-card-title data-cy="dialog-box-title">Resend activation Email</mat-card-title>
       <br />
-      <hr />
+      <!-- <hr /> -->
       <mat-card-subtitle style="text-align: left">
         <p>
           Enter the email ID you used to register and submit this form to

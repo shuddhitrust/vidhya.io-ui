@@ -30,8 +30,17 @@ export class NavbarComponent implements OnInit {
   currentMember: CurrentMember;
   isLoggedIn: boolean;
   isFullyAuthenticated: Boolean;
-  dialogHeight: string = "200px";
-
+  defaultDialogHeight:string = "200px";
+  dialogHeight: string = this.defaultDialogHeight;
+  dialogHeightObject = {
+    GENERATE_EMAIL_OTP:"251px",
+    LOGIN:"200px",
+    EMAIL_LOGIN:"380px",
+    VERIFY_EMAIL_OTP:"370px",
+    TROUBLE_SIGNING_IN:"290px",
+    RESEND_ACTIVATION_EMAIL:"310px",
+    FORGOT_PASSWORD:"350px"
+  }  
   constructor(
     private store: Store,
     public dialog: MatDialog,
@@ -64,17 +73,27 @@ export class NavbarComponent implements OnInit {
       height:this.dialogHeight
     });
     dialogRef.componentInstance.dialogUIStyle.subscribe(data=>{
-      if(data ==  'LOGIN'){
-        this.dialogHeight = "200px";
-      }else if(data == 'GENERATE_EMAIL_OTP'){
-        this.dialogHeight = "302px";
+      if(data ==  "LOGIN"){
+        this.dialogHeight = this.dialogHeightObject.LOGIN;
+      }else if(data == "GENERATE_EMAIL_OTP"){
+        this.dialogHeight = this.dialogHeightObject.GENERATE_EMAIL_OTP;
+      }else if(data == "EMAIL_LOGIN"){
+        this.dialogHeight = this.dialogHeightObject.EMAIL_LOGIN;
+      }else if(data == "VERIFY_EMAIL_OTP"){
+        this.dialogHeight = this.dialogHeightObject.VERIFY_EMAIL_OTP;
+      }else if(data == "TROUBLE_SIGNING_IN"){
+        this.dialogHeight = this.dialogHeightObject.TROUBLE_SIGNING_IN;
+      }else if(data=="RESEND_ACTIVATION_EMAIL"){
+        this.dialogHeight =this.dialogHeightObject.RESEND_ACTIVATION_EMAIL;
+      }else if(data=="FORGOT_PASSWORD"){
+        this.dialogHeight = this.dialogHeightObject.FORGOT_PASSWORD;
       }else{
         this.dialogHeight = "auto";
       }
       dialogRef.updateSize("",this.dialogHeight);
     })
     dialogRef.afterClosed().subscribe((result)=>{
-      this.dialogHeight = "200px";
+      this.dialogHeight = this.defaultDialogHeight;
       dialogRef.updateSize("",this.dialogHeight);
     })
   }
