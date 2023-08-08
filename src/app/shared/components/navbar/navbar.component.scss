@@ -53,3 +53,7 @@
 #login-button:visited {
   color: inherit;
 }
+
+::ng-deep .mat-dialog-container {
+  overflow: unset !important;
+}

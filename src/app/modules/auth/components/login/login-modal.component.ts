@@ -3,6 +3,7 @@ import {
   ElementRef,
   Inject,
   OnInit,
+  EventEmitter
 } from '@angular/core';
 import {
   FormBuilder,
@@ -52,6 +53,7 @@ const LOGIN = 'LOGIN';
 const FORGOT_PASSWORD = 'FORGOT_PASSWORD';
 const TROUBLE_SIGNING_IN = 'TROUBLE_SIGNING_IN';
 const RESEND_ACTIVATION_EMAIL = 'RESEND_ACTIVATION_EMAIL';
+const EMAIL_LOGIN = 'EMAIL_LOGIN';
 declare global {
   const google: typeof import('google-one-tap');
 }
@@ -74,6 +76,7 @@ export class LoginModalComponent implements OnInit {
   TROUBLE_SIGNING_IN = TROUBLE_SIGNING_IN;
   FORGOT_PASSWORD = FORGOT_PASSWORD;
   RESEND_ACTIVATION_EMAIL = RESEND_ACTIVATION_EMAIL;
+  EMAIL_LOGIN = EMAIL_LOGIN;
   registration: boolean = false;
   showDialog: string = LOGIN;
   loginForm: FormGroup;
@@ -100,6 +103,8 @@ export class LoginModalComponent implements OnInit {
   );
   googleLogo: any = "btn_google_signin_dark_normal_web.png";
   registerDirective: FormGroupDirective;
+  dialogUIStyle = new EventEmitter();
+  showEmailLoginDialog: boolean=false;
   // @ViewChild('buttonDiv') buttonDiv: ElementRef = new ElementRef({});
 
   constructor(
@@ -284,6 +289,7 @@ export class LoginModalComponent implements OnInit {
   showLogin() {
     this.registration = false;
     this.showDialog = LOGIN;
+    this.dialogUIStyle.emit(this.showDialog);
   }
 
   showRegister() {
@@ -297,9 +303,11 @@ export class LoginModalComponent implements OnInit {
     } else {
       if (this.isEmailOTPGenerated) {
         this.showDialog = VERIFY_EMAIL_OTP;
+        this.dialogUIStyle.emit(this.showDialog);
         this.emailForm.controls['otp'].setValidators(Validators.required);
       } else {
         this.showDialog = GENERATE_EMAIL_OTP;
+        this.dialogUIStyle.emit(this.showDialog);
       }
     }
     // } else {
@@ -309,16 +317,29 @@ export class LoginModalComponent implements OnInit {
 
   showTroubleSigningIn() {
     this.showDialog = TROUBLE_SIGNING_IN;
+    this.dialogUIStyle.emit(this.showDialog);
   }
 
   showForgotPassword() {
     this.showDialog = FORGOT_PASSWORD;
+    this.dialogUIStyle.emit(this.showDialog);
   }
 
   showResendActivation() {
     this.showDialog = RESEND_ACTIVATION_EMAIL;
+    this.dialogUIStyle.emit(this.showDialog);
   }
 
+  showEmailLogin() {
+    this.showDialog = EMAIL_LOGIN;
+    this.dialogUIStyle.emit(this.showDialog);
+  }
+goBack(){
+  // debugger
+  this.showDialog = LOGIN;
+  this.dialogUIStyle.emit(this.showDialog);
+
+}
   openGoogleLogin(e) {
     this.oauthService.loadDiscoveryDocument()
       .then(() => this.oauthService.tryLogin())
@@ -327,5 +348,10 @@ export class LoginModalComponent implements OnInit {
           this.oauthService.initImplicitFlow();
         }
       });
+  }
+  ngOnDestroy(){
+    console.log(this.showDialog);
+    this.showDialog = LOGIN;
+    this.dialogUIStyle.emit(this.showDialog);
   }
 }
