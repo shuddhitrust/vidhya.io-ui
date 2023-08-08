@@ -352,6 +352,7 @@ goBack(){
   ngOnDestroy(){
     console.log(this.showDialog);
     this.showDialog = LOGIN;
+    this.registration = false;
     this.dialogUIStyle.emit(this.showDialog);
   }
 }
