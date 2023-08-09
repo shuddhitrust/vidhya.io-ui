@@ -122,8 +122,9 @@
   // vertical-align: middle;
 }
 
-.loginTitle{
+.loginTitle,.registerTitle{
   line-height: 50px;
+  display: block;
 }
 // .separator {
 //   // margin: 43px auto 0;

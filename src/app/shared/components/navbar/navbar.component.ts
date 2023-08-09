@@ -33,11 +33,11 @@ export class NavbarComponent implements OnInit {
   defaultDialogHeight:string = "200px";
   dialogHeight: string = this.defaultDialogHeight;
   dialogHeightObject = {
-    GENERATE_EMAIL_OTP:"251px",
+    GENERATE_EMAIL_OTP:"275px",
     LOGIN:"200px",
     EMAIL_LOGIN:"380px",
     VERIFY_EMAIL_OTP:"370px",
-    TROUBLE_SIGNING_IN:"290px",
+    TROUBLE_SIGNING_IN:"290px", 
     RESEND_ACTIVATION_EMAIL:"310px",
     FORGOT_PASSWORD:"350px"
   }  
