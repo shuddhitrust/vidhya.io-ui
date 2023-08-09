@@ -145,13 +145,18 @@
  -->
 <ng-template #generateEmailOTPTemplate>
   <div data-cy="generate-email-otp-dialog-box" mat-dialog-content class="email-input-dialog-box">
-    <mat-card-header class="form-title">
+    <mat-card-header class="form-title registerTitle">
       <div class="row">
-        <button mat-icon-button (click)="goBack()" class="floating-back-button col-md-2">
-          <mat-icon>keyboard_backspace</mat-icon>
-        </button>
-      
-      <mat-card-title data-cy="dialog-box-title" class="col-md-10">Register</mat-card-title>
+        <div class="col-md-12">
+          <div class="w-2">
+            <button mat-icon-button (click)="goBack()" class="floating-back-button col-md-2">
+              <mat-icon>keyboard_backspace</mat-icon>
+            </button>
+          </div>
+          <div class="w-98">
+            <mat-card-title data-cy="dialog-box-title" class="col-md-10">Register</mat-card-title>
+          </div>
+        </div>
       </div>
     </mat-card-header>
     <!-- <hr />
