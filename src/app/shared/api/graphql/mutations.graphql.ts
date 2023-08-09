@@ -910,6 +910,7 @@ export const AUTH_MUTATIONS = {
           address
           dob
           country
+          gender
           city
           state
           pincode
