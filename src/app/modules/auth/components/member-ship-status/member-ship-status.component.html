@@ -1,4 +1,4 @@
-<div>
+<div *ngIf="currentMember?.username">
     <div class="col-md-6 col-lg-6 col-sm-12 pendingInfo" >
         <p  class="text-justify" > Hi <strong>{{name}}, </strong></p>
         <p  class="text-justify" [innerHTML]="messageDisplay|safeHtml"></p>

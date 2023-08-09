@@ -107,6 +107,7 @@ export class AddEditMemberComponent implements OnInit {
   memberFormContact: any;
   invalidFields: any = [];
   memberShipStatus: string;
+  windowOriginUrl:any = window.location.origin;
   constructor(
     private location: Location,
     private store: Store,
