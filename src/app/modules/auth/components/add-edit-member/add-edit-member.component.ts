@@ -136,7 +136,6 @@ export class AddEditMemberComponent implements OnInit {
     })
 
     this.authState$.subscribe((val) => {
-      debugger;
       this.authState = val;
       this.isFullyAuthenticated = this.authState?.isFullyAuthenticated;
       this.currentMember = this.authState?.currentMember;

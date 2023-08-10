@@ -905,30 +905,38 @@ export const AUTH_MUTATIONS = {
           id
           username
           firstName
-          mobile
-          phone
-          address
-          dob
-          country
-          gender
-          city
-          state
-          pincode
-          designation
           lastName
           name
           avatar
           email
+          mobile
+          phone
+          address
+          dob
+          bio
+          gender
+          country
+          city
+          state
+          pincode
+          designation          
           membershipStatus          
           institution {
             id
-            name
+            name                  
             institutionType
+            verified
+            coordinator{
+              name
+              id
+              email
+              mobile                
+            }
           }
           role {
             name
             permissions
-          }          
+          }
           googleLogin
           manualLogin
         }  
@@ -1008,6 +1016,10 @@ export const AUTH_MUTATIONS = {
           id
           username
           firstName
+          lastName
+          name
+          avatar
+          email
           mobile
           phone
           address
@@ -1018,11 +1030,7 @@ export const AUTH_MUTATIONS = {
           city
           state
           pincode
-          designation
-          lastName
-          name
-          avatar
-          email
+          designation          
           membershipStatus          
           institution {
             id
