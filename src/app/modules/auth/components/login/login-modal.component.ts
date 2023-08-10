@@ -335,7 +335,6 @@ export class LoginModalComponent implements OnInit {
     this.dialogUIStyle.emit(this.showDialog);
   }
 goBack(){
-  // debugger
   this.showDialog = LOGIN;
   this.dialogUIStyle.emit(this.showDialog);
 

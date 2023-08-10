@@ -81,6 +81,7 @@ export const PUBLIC_QUERIES = {
           code
           name
           institutionType
+          id
         }
         courses {
           course {

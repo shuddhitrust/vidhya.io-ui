@@ -27,8 +27,8 @@
       <ng-container *ngTemplateOutlet="ContactTemplate"></ng-container>
     </mat-expansion-panel>
 
-    <mat-expansion-panel [ngClass]="invalidFields.length>0 ? 'errorBoxExist' : 'institutionPanel'" (opened)="panelOpenState = true" (closed)="panelOpenState = false"
-      [expanded]="true">
+    <mat-expansion-panel [ngClass]="invalidFields.length>0 ? 'errorBoxExist' : 'institutionPanel'"
+      (opened)="panelOpenState = true" (closed)="panelOpenState = false" [expanded]="true">
       <mat-expansion-panel-header>
         <mat-panel-title>
           Institution
@@ -44,19 +44,40 @@
     <div>
       <form formGroupName="accountSetting">
         <div>
-          <mat-form-field class="col-lg-12 col-md-12 col-sm-12" appearance="outline">
-            <mat-label>User Name</mat-label>
-            <input matInput specialIsAlphaNumeric placeholder="Your UserName" required formControlName="username"
+          <mat-form-field class="col-lg-12 col-md-12 col-sm-12 fieldHeight" appearance="outline">
+            <mat-label>Username</mat-label>
+            <input matInput specialIsAlphaNumeric placeholder="Your Username" required formControlName="username"
               maxlength="16" pattern="^[a-zA-Z0-9_.]*$" />
-            <mat-hint>You will not able to change the username later. </mat-hint>
-            <small class="validation-error my-mat-hint" *ngIf="
+            <mat-hint>People can find you through your username.You will not able to change the username later.
+              <br>
+              <br>
+              Your profile link will appear like this <a
+                href="{{windowOriginUrl}}/profile/{{registerFormControl.accountSetting.get('username').value}}">https://vidhya.io/profile/{{registerFormControl.accountSetting.get('username').value}}</a>
+            </mat-hint>
+            <mat-error class=" my-mat-hint" *ngIf="
             registerFormControl.accountSetting.get('username').hasError('required') &&
             formDirective.submitted
-            "> UserName is required </small>
+            ">
+              <mat-hint>People can find you through your username.You will not able to change the username later.
+                <br>
+                <br>
+                Your profile link will appear like this <a
+                  href="{{windowOriginUrl}}/profile/{{registerFormControl.accountSetting.get('username').value}}">https://vidhya.io/profile/{{registerFormControl.accountSetting.get('username').value}}</a>
+              </mat-hint>
+              <br>
+              <small class="validation-error">Username is required</small>
+            </mat-error>
 
-            <small class="validation-error  my-mat-hint" *ngIf="!registerFormControl.accountSetting.get('username')?.valid && (registerFormControl.accountSetting.get('username')?.dirty
+            <mat-error class="my-mat-hint" *ngIf="!registerFormControl.accountSetting.get('username')?.valid && (registerFormControl.accountSetting.get('username')?.dirty
             ||registerFormControl.accountSetting.get('username')?.touched) && registerFormControl.accountSetting.get('username').value.length>0
-            "> Please Enter Valid UserName </small>
+            ">
+              <mat-hint>People can find you through your username.You will not able to change the username later.
+                <br>
+                <br>
+                Your profile link will appear like this <a
+                  href="{{windowOriginUrl}}/profile/{{registerFormControl.accountSetting.get('username').value}}">https://vidhya.io/profile/{{registerFormControl.accountSetting.get('username').value}}</a>
+              </mat-hint> <br>
+              <small class="validation-error"> Please Enter Valid Username</small> </mat-error>
           </mat-form-field>
           <p></p>
           <div class="col-lg-9 col-md-12 col-sm-12">
@@ -116,14 +137,14 @@
           <!-- <small class="validation-error" *ngIf="registerFormControl.profile.get('dob').hasError('required') &&
            formDirective.submitted
            "> DOB is required </small> -->
-        </mat-form-field>        
+        </mat-form-field>
         <mat-form-field class="col-lg-9 col-md-12 col-sm-12" appearance="outline">
           <mat-label>Gender</mat-label>
           <mat-select formControlName="gender" required placeholder="Gender">
             <mat-option *ngFor="let gender of genderOptions" [value]="gender.value">
               {{gender.label}}
             </mat-option>
-          </mat-select>          
+          </mat-select>
           <small class="validation-error" *ngIf="
            registerFormControl.profile.get('gender').hasError('required') &&
            formDirective.submitted

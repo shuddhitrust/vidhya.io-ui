@@ -107,6 +107,7 @@ export class AddEditMemberComponent implements OnInit {
   memberFormContact: any;
   invalidFields: any = [];
   memberShipStatus: string;
+  windowOriginUrl:any = window.location.origin;
   constructor(
     private location: Location,
     private store: Store,
@@ -135,7 +136,6 @@ export class AddEditMemberComponent implements OnInit {
     })
 
     this.authState$.subscribe((val) => {
-      debugger;
       this.authState = val;
       this.isFullyAuthenticated = this.authState?.isFullyAuthenticated;
       this.currentMember = this.authState?.currentMember;
