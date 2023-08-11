@@ -1,10 +1,10 @@
-import { Component, Inject, Input } from '@angular/core';
+import { Component, Inject, Input, NgZone, ChangeDetectorRef } from '@angular/core';
 import {
   MatDialog,
   MatDialogRef,
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import {
@@ -19,6 +19,8 @@ import {
 } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { DeleteInstitutionAction } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.actions';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
+import { Location } from '@angular/common';
+
 @Component({
   selector: 'app-institution-modal',
   templateUrl: './institution-modal.component.html',
@@ -28,6 +30,7 @@ export class InstitutionModalComponent {
   profileData: Institution;
   resource = resources.INSTITUTION;
   resourceActions = RESOURCE_ACTIONS;
+  // dialogRef: any;
 
   constructor(
     public dialog: MatDialog,
@@ -35,8 +38,11 @@ export class InstitutionModalComponent {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private route: ActivatedRoute,
     private router: Router,
+    public location:Location,
     private store: Store,
-    private auth: AuthorizationService
+    private auth: AuthorizationService,
+    public ngZone: NgZone,
+    private cdRef: ChangeDetectorRef
   ) {
     this.profileData = data;
   }
@@ -56,16 +62,20 @@ export class InstitutionModalComponent {
     );
   }
   closeDialog(): void {
-    this.dialogRef.close();
+    if (this.dialogRef)
+      this.dialogRef.close();
   }
   onClickInstitutionName() {
     this.closeDialog();
     const id = this.profileData.id;
-    this.router.navigate([uiroutes.INSTITUTION_PROFILE_ROUTE.route], {
-      queryParams: { id },
-      queryParamsHandling: 'merge',
-      skipLocationChange: false,
-    });
+    this.ngZone.run(() =>
+      this.router.navigate([uiroutes.INSTITUTION_PROFILE_ROUTE.route], {
+        queryParams: { id },
+        queryParamsHandling: 'merge',
+        skipLocationChange: false,
+      }));
+      // this.cdRef.detectChanges();
+
   }
 
   authorizeResourceMethod(action) {
@@ -73,16 +83,16 @@ export class InstitutionModalComponent {
       institutionId: this.profileData?.id,
     });
   }
+  onRouteActivated() {
+    // Call OnInit of routed component
+    // this.cdRef.detectChanges();
+  }
 
-  editInstitution() {
-    this.closeDialog();
+  editInstitution() {    
     const id = this.profileData.id;
-    this.router.navigate([uiroutes.INSTITUTION_FORM_ROUTE.route], {
-      relativeTo: this.route,
-      queryParams: { id },
-      queryParamsHandling: 'merge',
-      skipLocationChange: false,
-    });
+    this.dialogRef.close({event:'institution',data:id});
+
+ 
   }
 
   deleteConfirmation() {
@@ -96,7 +106,7 @@ export class InstitutionModalComponent {
       data: masterDialogConfirmationObject,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    this.dialogRef.afterClosed().subscribe((result) => {
       if (result == true) {
         this.deleteInstitution();
       }

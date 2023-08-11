@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { GridOptions } from 'ag-grid-community';
 import { Observable } from 'rxjs';
@@ -90,6 +90,8 @@ export class InstitutionsTableComponent implements OnInit {
   constructor(
     public dialog: MatDialog,
     private router: Router,
+    private route: ActivatedRoute,
+
     private store: Store
   ) {
     this.gridOptions = <GridOptions>{
@@ -117,12 +119,24 @@ export class InstitutionsTableComponent implements OnInit {
       data: rowData,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed().subscribe((result) => {
+      if(result?.event=='institution'){
+        this.router.navigate([uiroutes.INSTITUTION_FORM_ROUTE.route], {
+      relativeTo: this.route,
+      queryParams: { id:result['data'] },
+      queryParamsHandling: 'merge',
+      skipLocationChange: false,
+    })
+
+  }
+
+
+    });
   }
 
   openMemberProfile(rowData) {
     const dialogRef = this.dialog.open(MemberProfileComponent, {
-      data: rowData?.author            ,
+      data: rowData?.author,
     });
 
     dialogRef.afterClosed().subscribe((result) => {});
