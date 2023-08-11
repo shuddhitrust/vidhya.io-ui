@@ -233,10 +233,11 @@ export class PublicState {
 
   @Action(GetMemberByUsernameAction)
   getMemberByUsername(
-    { patchState }: StateContext<PublicStateModel>,
+    { patchState,getState }: StateContext<PublicStateModel>,
     { payload }: GetMemberByUsernameAction
   ) {
     const { username } = payload;
+    const state = getState();
     patchState({ isFetchingFormRecord: true });
     this.apollo
       .query({
