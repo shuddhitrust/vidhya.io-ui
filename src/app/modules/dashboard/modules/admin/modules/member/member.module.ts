@@ -6,6 +6,7 @@ import {
   UserApprovalConfirmationDialog,
   UserDenialConfirmationDialog,
   UserModerationProfileComponent,
+  UserInstitutionChangeConfirmationDialog
 } from './components/modals/moderate-user/user-moderation.component';
 // import { MasterGridModule } from 'src/app/shared/modules/master-grid/master-grid.module';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
@@ -27,6 +28,7 @@ const declarations = [
   UserModerationProfileComponent,
   UserApprovalConfirmationDialog,
   UserDenialConfirmationDialog,
+  UserInstitutionChangeConfirmationDialog,
   MemberProfileRendererComponent,
   UserModerationRendererComponent,
   MemberProfileComponent,

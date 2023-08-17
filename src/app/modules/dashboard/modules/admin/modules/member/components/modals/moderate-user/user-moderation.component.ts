@@ -15,9 +15,13 @@ import {
   RESOURCE_ACTIONS,
   User,
   UserRole,
+  MatSelectOption,
+  institutionTypeOptions,
 } from 'src/app/shared/common/models';
 import {
   ApproveMemberAction,
+  GetMemberAction,
+  ModifyUserInstitutionAction,
   SuspendMemberAction,
 } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.actions';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
@@ -59,7 +63,33 @@ export class UserModerationProfileComponent implements OnInit, OnDestroy {
     .subscribe((val) => {
       this.roleOptions = val;
     });
-    this.profileData = data;
+    this.memberFormRecord$.subscribe((val) => {
+      if(val && val?.username){        
+        console.log(this.profileData);
+        this.profileData = val;
+      }
+    })
+
+    this.institutionList$.subscribe(options => {
+      if (options) {
+        this.institutionOptions = options;
+        const institutionOptionsObservable$ = of(this.institutionOptions);
+        this.filteredInstitutionOptions$ = institutionOptionsObservable$.pipe(map((number) => number));
+        if (this.moderationForm && this.moderationForm.controls['institution'].value) {
+          if (!this.autoInput.nativeElement.value) {
+            this.autoInput.nativeElement.value = this.profileData?.institution?.name;
+          }
+        }
+      }
+    })
+    
+    this.designationsList$.subscribe(val => {
+      this.designationOptions = val;
+    })
+  this.profileData = data;
+  this.store.dispatch(new GetMemberAction({ id:this.profileData.id}));
+
+  console.log(this.profileData);
     this.moderationForm = this.setupModerationFormGroup(this.profileData);
   }
 
@@ -67,6 +97,10 @@ export class UserModerationProfileComponent implements OnInit, OnDestroy {
     this.store.dispatch(
       new FetchUserRolesAction({ searchParams: defaultSearchParams })
     );
+    this.store.dispatch(new searchInstitution({ name:this.profileData?.institution?.name}));
+    this.store.dispatch(new FetchDesignationByInstitution({ id: this.profileData?.institution?.id }));
+
+
   }
 
   authorizeResourceMethod(action) {
@@ -86,6 +120,8 @@ export class UserModerationProfileComponent implements OnInit, OnDestroy {
     const formGroup = this.fb.group({
       role: [user?.role?.name],
       remarks: [],
+      institution:[user?.institution],
+      designation:[user?.designation]
     });
     return formGroup;
   };
@@ -94,6 +130,41 @@ export class UserModerationProfileComponent implements OnInit, OnDestroy {
     this.dialogRef.close();
   }
 
+  modifyInstitutionConfirmation(){
+    debugger;
+    const institutionValue = this.moderationForm.get('institution').value;
+    if(institutionValue) {
+      const dialogRef = this.dialog.open(UserInstitutionChangeConfirmationDialog, {
+        data: JSON.stringify({'profileData':this.profileData,'currentinstitution':this.moderationForm.getRawValue().institution})
+      });
+
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result == true) {
+          this.modifyInstitution();
+        }
+      });
+    } else {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message: 'Please add a remark before attempting to deny.',
+          action: 'error',
+        })
+      );
+    }
+  }
+
+  modifyInstitution(){
+    this.store.dispatch(
+      new ModifyUserInstitutionAction({
+        userId: this.profileData.id,
+        institutionId: this.moderationForm.controls['institution'].value?.id,
+        designation: this.moderationForm.controls['designation'].value//.get('role').value,
+      })
+    );
+
+    this.closeDialog();
+  }
+  
   approvalConfirmation() {
     const roleValue = this.moderationForm.get('role').value;
     if (roleValue) {
@@ -184,4 +255,20 @@ export class UserDenialConfirmationDialog {
     public dialogRef: MatDialogRef<UserApprovalConfirmationDialog>,
     @Inject(MAT_DIALOG_DATA) public data: User
   ) {}
+}
+
+@Component({
+  selector:'user-institution-modification-confirmation-dialog',
+  templateUrl:'institution-change-dialog.html',
+})
+export class UserInstitutionChangeConfirmationDialog {
+  userData:any 
+  constructor(
+    public dialogRef: MatDialogRef<UserInstitutionChangeConfirmationDialog>,
+    @Inject(MAT_DIALOG_DATA) public data:any
+  ) {
+    this.userData = JSON.parse(data)
+
+// this.userData=JSON.parse(this.data);
+  }
 }
