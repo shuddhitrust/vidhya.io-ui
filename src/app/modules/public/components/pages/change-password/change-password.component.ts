@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -7,19 +7,20 @@ import {
 } from '@angular/forms';
 import { Location } from '@angular/common';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { Router } from '@angular/router';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { PasswordChangeAction } from 'src/app/modules/auth/state/auth.actions';
 import { AuthStateModel } from 'src/app/modules/auth/state/auth.model';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-change-password',
   templateUrl: './change-password.component.html',
   styleUrls: ['./change-password.component.scss']
 })
-export class ChangePasswordComponent {
+export class ChangePasswordComponent implements OnDestroy{
   hide: boolean = true;
   passwordResetForm: FormGroup;
   @Select(AuthState.getIsSubmittingForm)
@@ -34,24 +35,32 @@ export class ChangePasswordComponent {
   authState: AuthStateModel;
   @Select(AuthState.getFirstTimeSetup)
   firstTimeSetup$: Observable<any>;
-  
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private location: Location,
     private store: Store,
     private fb: FormBuilder,
     private router: Router
   ) {
-    this.isLoggedIn$.subscribe((val) => {
+    this.isLoggedIn$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.isLoggedIn = val;
     });
     
-    this.isSubmittingForm$.subscribe((val) => {
+    this.isSubmittingForm$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.isSubmittingForm = val;
     })
-    this.authState$.subscribe((val) => {
+    this.authState$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.isSubmittingForm = val?.isSubmittingForm;
     })
     this.firstTimeSetup$
+    .pipe(takeUntil(this.destroy$))
     .subscribe((status) => {
       if (status) {
         this.firstTimeSetup = status?.firstTimeSetup;      
@@ -73,5 +82,10 @@ export class ChangePasswordComponent {
 
   resetPasswordForm(form: FormGroup, formDirective: FormGroupDirective) {
     this.store.dispatch(new PasswordChangeAction({ form, formDirective }));
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

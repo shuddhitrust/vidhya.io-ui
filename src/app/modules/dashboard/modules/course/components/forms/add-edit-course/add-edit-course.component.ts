@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import {
   FormBuilder,
@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { Select, Store } from '@ngxs/store';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { Course, MatSelectOption } from 'src/app/shared/common/models';
 import { InstitutionState } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.state';
 import { FetchInstitutionsAction } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.actions';
@@ -27,6 +27,7 @@ import {
   FetchCoursesAction,
   GetCourseAction,
 } from '../../../state/courses/course.actions';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-add-edit-course',
@@ -36,7 +37,7 @@ import {
     './../../../../../../../shared/common/shared-styles.css',
   ],
 })
-export class AddEditCourseComponent implements OnInit {
+export class AddEditCourseComponent implements OnInit, OnDestroy {
   gridApi;
   gridColumnApi;
   memberColumns = [{ field: 'label', headerName: 'Members' }];
@@ -79,13 +80,17 @@ export class AddEditCourseComponent implements OnInit {
   @Select(AuthState.getCurrentMemberInstitutionId)
   memberInstitutionId$: Observable<number>;
   memberInstitutionId: number;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private location: Location,
     private store: Store,
     private route: ActivatedRoute,
     private fb: FormBuilder
   ) {
-    this.memberInstitutionId$.subscribe((val) => {
+    this.memberInstitutionId$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.memberInstitutionId = val;
       this.store.dispatch(
         new FetchMemberOptionsByInstitution({
@@ -93,11 +98,15 @@ export class AddEditCourseComponent implements OnInit {
         })
       );
     });
-    this.memberOptions$.subscribe((options) => {
+    this.memberOptions$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((options) => {
       this.memberOptions = options;
       this.memberRows = this.memberOptions;
     });
-    this.graderOptions$.subscribe((options) => {
+    this.graderOptions$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((options) => {
       this.graderOptions = options;
     });
     this.store.dispatch(
@@ -112,15 +121,21 @@ export class AddEditCourseComponent implements OnInit {
     this.store.dispatch(
       new FetchCoursesAction({ searchParams: defaultSearchParams })
     );
-    this.currentUserId$.subscribe((val) => {
+    this.currentUserId$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.currentUserId = val;
     });
     this.setupCourseFormGroup();
-    this.courseOptions$.subscribe((val) => {
+    this.courseOptions$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.courseOptions = val;
     });
 
-    this.courseFormRecord$.subscribe((val) => {
+    this.courseFormRecord$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.courseFormRecord = val;
       this.setupCourseFormGroup(this.courseFormRecord);
       // Filtering out the current coursee from the options
@@ -218,7 +233,9 @@ export class AddEditCourseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((params) => {
       this.params = params;
       const id = params['id'];
       if (id) {
@@ -249,5 +266,10 @@ export class AddEditCourseComponent implements OnInit {
         formDirective,
       })
     );
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

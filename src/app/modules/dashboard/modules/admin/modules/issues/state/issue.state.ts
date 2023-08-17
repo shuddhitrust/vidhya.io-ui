@@ -5,7 +5,7 @@ import {
   IssueStateModel,
 } from './issue.model';
 
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import { Router } from '@angular/router';
 import {
@@ -40,13 +40,16 @@ import { SUBSCRIPTIONS } from 'src/app/shared/api/graphql/subscriptions.graphql'
 import { ISSUE_MUTATIONS } from 'src/app/shared/api/graphql/mutations.graphql';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { ADMIN } from '../../../../../dashboard.component';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @State<IssueStateModel>({
   name: 'issueState',
   defaults: defaultIssueState,
 })
 @Injectable()
-export class IssueState {
+export class IssueState implements OnDestroy{
+  destroy$: Subject<boolean> = new Subject<boolean>();
   constructor(
     private apollo: Apollo,
     private store: Store,
@@ -184,6 +187,7 @@ export class IssueState {
         variables,
         // fetchPolicy,
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           this.store.dispatch(
@@ -274,6 +278,7 @@ export class IssueState {
         variables: { id },
         fetchPolicy: 'network-only',
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.issue;
@@ -320,6 +325,7 @@ export class IssueState {
             : ISSUE_MUTATIONS.CREATE_ISSUE,
           variables,
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           ({ data }: any) => {
             const response = updateForm ? data.updateIssue : data.createIssue;
@@ -401,6 +407,7 @@ export class IssueState {
         mutation: ISSUE_MUTATIONS.UPDATE_ISSUE_STATUS,
         variables: { id, status, remarks },
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.updateIssueStatus;
@@ -457,6 +464,7 @@ export class IssueState {
         mutation: ISSUE_MUTATIONS.DELETE_ISSUE,
         variables: { id },
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteIssue;
@@ -514,5 +522,10 @@ export class IssueState {
       issueFormRecord: emptyIssueFormRecord,
       formSubmitting: false,
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

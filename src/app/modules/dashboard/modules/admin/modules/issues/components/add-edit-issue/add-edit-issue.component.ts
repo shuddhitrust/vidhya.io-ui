@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import {
   FormBuilder,
@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { Select, Store } from '@ngxs/store';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {
   CurrentMember,
   Issue,
@@ -26,6 +26,7 @@ import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { UploadService } from 'src/app/shared/api/upload.service';
 import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
+import { takeUntil } from 'rxjs/operators';
 
 export const ResourceTypeParamName = 'resourceType';
 export const ResourceIdParamName = 'resourceId';
@@ -39,7 +40,7 @@ export const LinkParamName = 'link';
     './../../../../../../../../shared/common/shared-styles.css',
   ],
 })
-export class AddEditIssueComponent implements OnInit {
+export class AddEditIssueComponent implements OnInit, OnDestroy {
   formSubmitting: boolean = false;
   params: object = {};
   @Select(IssueState.getIssueFormRecord)
@@ -57,6 +58,8 @@ export class AddEditIssueComponent implements OnInit {
   resourceTypeFromParams: string = null;
   resourceIdFromParams: string = null;
   linkFromParams: string = null;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private location: Location,
     private store: Store,
@@ -66,10 +69,14 @@ export class AddEditIssueComponent implements OnInit {
   ) {
     this.issueForm = this.setupIssueFormIssue();
 
-    this.currentMember$.subscribe((val) => {
+    this.currentMember$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.currentMember = val;
     });
-    this.issueFormRecord$.subscribe((val) => {
+    this.issueFormRecord$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.issueFormRecord = val;
       this.issueForm = this.setupIssueFormIssue(this.issueFormRecord);
     });
@@ -113,7 +120,9 @@ export class AddEditIssueComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((params) => {
       this.params = params;
       const id = params['id'];
       this.resourceTypeFromParams = params[ResourceTypeParamName];
@@ -184,7 +193,9 @@ export class AddEditIssueComponent implements OnInit {
       );
       const formData = new FormData();
       formData.append('file', file);
-      this.uploadService.upload(formData).subscribe(
+      this.uploadService.upload(formData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
         (res) => {
           this.store.dispatch(
             new ToggleLoadingScreen({
@@ -224,5 +235,10 @@ export class AddEditIssueComponent implements OnInit {
       }
       this.store.dispatch(new CreateUpdateIssueAction({ form, formDirective }));
     }
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

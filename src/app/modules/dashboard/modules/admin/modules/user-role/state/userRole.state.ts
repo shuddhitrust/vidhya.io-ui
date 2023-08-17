@@ -12,7 +12,7 @@ import {
   UserRoleStateModel,
 } from './userRole.model';
 
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import {
   CreateUpdateUserRoleAction,
   DeleteUserRoleAction,
@@ -25,7 +25,7 @@ import {
 import { Apollo } from 'apollo-angular';
 
 import { Router, ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {
   FetchParams,
   MatSelectOption,
@@ -47,13 +47,15 @@ import { USER_ROLE_MUTATIONS } from 'src/app/shared/api/graphql/mutations.graphq
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { UserCoursesComponent } from 'src/app/modules/public/components/profiles/public-user-profile/user-profile-tabs/user-profile-courses/user-profile-courses.component';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
+import { takeUntil } from 'rxjs/operators';
 
 @State<UserRoleStateModel>({
   name: 'roleState',
   defaults: defaultRoleState,
 })
 @Injectable()
-export class UserRoleState {
+export class UserRoleState implements OnDestroy{
+  destroy$: Subject<boolean> = new Subject<boolean>();
   constructor(
     private apollo: Apollo,
     private store: Store,
@@ -161,6 +163,7 @@ export class UserRoleState {
         variables,
         // fetchPolicy,
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.userRoles.records;
@@ -195,6 +198,8 @@ export class UserRoleState {
         .subscribe({
           query: SUBSCRIPTIONS.userRole,
         })
+        .pipe(takeUntil(this.destroy$))
+
         .subscribe((result: any) => {
           const state = getState();
           const method = result?.data?.notifyUserRole?.method;
@@ -228,6 +233,8 @@ export class UserRoleState {
         variables: { roleName },
         fetchPolicy: 'no-cache',
       })
+      .pipe(takeUntil(this.destroy$))
+
       .subscribe(
         ({ data }: any) => {
           let response = data.userRole;
@@ -289,6 +296,8 @@ export class UserRoleState {
             : USER_ROLE_MUTATIONS.CREATE_USER_ROLE,
           variables,
         })
+        .pipe(takeUntil(this.destroy$))
+
         .subscribe(
           ({ data }: any) => {
             const response = updateForm
@@ -355,6 +364,8 @@ export class UserRoleState {
         mutation: USER_ROLE_MUTATIONS.DELETE_USER_ROLE,
         variables: { id },
       })
+      .pipe(takeUntil(this.destroy$))
+
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteUserRole;
@@ -393,5 +404,10 @@ export class UserRoleState {
       userRoleFormRecord: emptyUserRoleFormRecord,
       formSubmitting: false,
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

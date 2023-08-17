@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
@@ -51,6 +51,7 @@ import {
 import { emptyCourseSectionFormRecord } from '../../../state/courseSections/courseSection.model';
 import { CourseSectionModalComponent } from '../../modals/course-section-modal/course-section-modal.component';
 import { CourseInfoModalComponent } from '../../modals/course-info-modal/course-info-modal.component';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-course-profile',
@@ -83,6 +84,8 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
   courseStatusOptions = CourseStatusOptions;
   courseId = null;
   courseSectionColumnFilters;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+ 
   constructor(
     public dialog: MatDialog,
     private route: ActivatedRoute,
@@ -91,16 +94,24 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
     private auth: AuthorizationService
   ) {
     // this.fetchChapters()
-    this.courseSections$.subscribe((val) => {
+    this.courseSections$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.courseSections = sortByIndex(val);
     });
-    this.isFetchingChapters$.subscribe((val) => {
+    this.isFetchingChapters$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.isFetchingChapters = val;
     });
-    this.chapters$.subscribe((val) => {
+    this.chapters$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.chapters = sortByIndex(val);
     });
-    this.course$.subscribe((val) => {
+    this.course$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.course = val;
     });
   }
@@ -131,7 +142,9 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((params) => {
       this.courseId = params['id'];
       if (this.courseId) {
         this.store.dispatch(
@@ -211,7 +224,7 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
       data: masterDialogConfirmationObject,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
       if (result == true) {
         this.deleteCourse();
       }
@@ -230,7 +243,7 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
       data: sectionsList,
     });
 
-    dialogRef.afterClosed().subscribe((newIndexArray) => {
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((newIndexArray) => {
       for (let i = 0; i < newIndexArray.length; i++) {
         let id = newIndexArray[i];
         let section = this.courseSections.find((c) => c.id == id);
@@ -261,7 +274,7 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
       data: chaptersList,
     });
 
-    dialogRef.afterClosed().subscribe((newIndexArray) => {
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((newIndexArray) => {
       for (let i = 0; i < newIndexArray.length; i++) {
         const id = newIndexArray[i];
         let chapter = this.chapters.find((c) => c.id == id);
@@ -296,7 +309,7 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
       },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {});
   }
 
   sectionChapters(section = { id: null }) {
@@ -312,7 +325,7 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
       },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {});
   }
   reportCourse() {
     this.router.navigate([uiroutes.ISSUE_FORM_ROUTE.route], {
@@ -346,6 +359,8 @@ export class CourseProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.store.dispatch(new ResetCourseFormAction());
+    this.store.dispatch(new ResetCourseFormAction());    
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

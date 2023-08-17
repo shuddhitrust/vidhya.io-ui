@@ -13,7 +13,7 @@ import {
   ProjectStateModel,
 } from './project.model';
 
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import { Router } from '@angular/router';
 import {
@@ -48,15 +48,17 @@ import { SUBSCRIPTIONS } from 'src/app/shared/api/graphql/subscriptions.graphql'
 import { PROJECT_MUTATIONS } from 'src/app/shared/api/graphql/mutations.graphql';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { AuthStateModel } from 'src/app/modules/auth/state/auth.model';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { localStorageKeys } from 'src/app/shared/common/constants';
+import { takeUntil } from 'rxjs/operators';
 
 @State<ProjectStateModel>({
   name: 'projectState',
   defaults: defaultProjectState,
 })
 @Injectable()
-export class ProjectState {
+export class ProjectState implements OnDestroy {
+  destroy$: Subject<boolean> = new Subject<boolean>();
   constructor(
     private apollo: Apollo,
     private store: Store,
@@ -195,6 +197,7 @@ export class ProjectState {
         variables,
         // fetchPolicy,
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           this.store.dispatch(
@@ -282,6 +285,7 @@ export class ProjectState {
           variables: { id },
           fetchPolicy: 'network-only',
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           ({ data }: any) => {
             const response = data.project;
@@ -329,6 +333,7 @@ export class ProjectState {
             : PROJECT_MUTATIONS.CREATE_PROJECT,
           variables,
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           ({ data }: any) => {
             const response = updateForm
@@ -408,6 +413,7 @@ export class ProjectState {
         mutation: PROJECT_MUTATIONS.CLAP_PROJECT,
         variables: { id },
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.clapProject;
@@ -454,6 +460,7 @@ export class ProjectState {
         mutation: PROJECT_MUTATIONS.DELETE_PROJECT,
         variables: { id },
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteProject;
@@ -507,5 +514,10 @@ export class ProjectState {
       projectFormRecord: emptyProjectFormRecord,
       formSubmitting: false,
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

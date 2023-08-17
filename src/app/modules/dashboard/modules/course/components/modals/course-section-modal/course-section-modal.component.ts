@@ -1,4 +1,4 @@
-import { Component, Inject, Input } from '@angular/core';
+import { Component, Inject, Input, OnDestroy } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -12,7 +12,7 @@ import {
 } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import {
   Course,
@@ -30,6 +30,7 @@ import {
 } from '../../../state/courseSections/courseSection.actions';
 import { emptyCourseSectionFormRecord } from '../../../state/courseSections/courseSection.model';
 import { CourseSectionState } from '../../../state/courseSections/courseSection.state';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'course-section-modal',
@@ -39,7 +40,7 @@ import { CourseSectionState } from '../../../state/courseSections/courseSection.
     './../../../../../../../shared/common/shared-styles.css',
   ],
 })
-export class CourseSectionModalComponent {
+export class CourseSectionModalComponent implements OnDestroy {
   resource = resources.COURSE;
   resourceActions = RESOURCE_ACTIONS;
   @Input()
@@ -49,6 +50,7 @@ export class CourseSectionModalComponent {
   @Select(CourseSectionState.formSubmitting)
   formSubmitting$: Observable<boolean>;
   sectionForm: FormGroup;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     public dialog: MatDialog,
@@ -118,7 +120,7 @@ export class CourseSectionModalComponent {
       data: masterDialogConfirmationObject,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
       if (result == true) {
         this.deleteCourseSection();
       }
@@ -129,5 +131,10 @@ export class CourseSectionModalComponent {
       new DeleteCourseSectionAction({ id: this.courseSection.id })
     );
     this.closeDialog();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

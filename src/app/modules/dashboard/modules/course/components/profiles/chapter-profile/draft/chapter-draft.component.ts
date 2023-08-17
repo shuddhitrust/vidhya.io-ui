@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {
   DeleteChapterAction,
   PublishChapterAction,
@@ -68,6 +68,7 @@ import {
   ResetExerciseStateAction,
 } from '../../../../state/exercises/exercise.actions';
 import { ResetExerciseSubmissionFormAction } from '../../../../state/exerciseSubmissions/exerciseSubmission.actions';
+import { takeUntil } from 'rxjs/operators';
 const startingExerciseFormOptions = ['', ''];
 
 type previewImage = {
@@ -133,6 +134,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   pointsAccountedFor: number = 0;
   rubricComplete: boolean = false;
   showAddCriterion: boolean = false;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     public dialog: MatDialog,
@@ -144,22 +146,32 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private uploadService: UploadService
   ) {
-    this.isFetchingExerciseKeys$.subscribe((val) => {
+    this.isFetchingExerciseKeys$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.isFetchingExerciseKeys = val;
     });
-    this.exerciseKeys$.subscribe((val) => {
+    this.exerciseKeys$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.exerciseKeys = sortByIndex(val, 'exercise.index');
       this.closeExerciseForm();
     });
-    this.chapter$.subscribe((val) => {
+    this.chapter$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.chapter = val;
       this.fetchExerciseKeys();
       this.setupExerciseForm();
     });
-    this.formSubmitting$.subscribe((val) => {
+    this.formSubmitting$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.formSubmitting = val;
     });
-    this.errorFetching$.subscribe((val) => {
+    this.errorFetching$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.errorFetching = val;
     });
   }
@@ -295,7 +307,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
       data: masterDialogConfirmationObject,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
       if (result == true) {
         this.deleteChapter();
       }
@@ -338,7 +350,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
       data: masterDialogConfirmationObject,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
       if (result == true) {
         this.deleteExercise(key);
       }
@@ -356,7 +368,7 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
       data: exercisesList,
     });
 
-    dialogRef.afterClosed().subscribe((newIndexArray) => {
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((newIndexArray) => {
       let i = 1;
       const reorderedList = newIndexArray.map((id) => {
         let exerciseKey = this.exerciseKeys.find(
@@ -529,7 +541,9 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
           message: 'Uploading file',
         })
       );
-      this.uploadService.upload(formData).subscribe(
+      this.uploadService.upload(formData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
         (res) => {
           this.store.dispatch(
             new ToggleLoadingScreen({ showLoadingScreen: false, message: '' })
@@ -649,7 +663,9 @@ export class ChapterDraftComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.store.dispatch(new ResetExerciseKeyStateAction());
     this.store.dispatch(new ResetExerciseStateAction());
-    this.store.dispatch(new ResetExerciseSubmissionFormAction());
+    this.store.dispatch(new ResetExerciseSubmissionFormAction());    
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 
   updateFormBeforeSubmit(form, formDirective) {

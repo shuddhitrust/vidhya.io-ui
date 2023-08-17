@@ -1,6 +1,6 @@
 import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
 
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { PUBLIC_QUERIES } from '../../../../shared/api/graphql/queries.graphql';
 import { Apollo } from 'apollo-angular';
 
@@ -43,13 +43,16 @@ import {
 import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
 import { SUBSCRIPTIONS } from 'src/app/shared/api/graphql/subscriptions.graphql';
 import { AnnouncementSubscriptionAction } from 'src/app/modules/dashboard/modules/announcement/state/announcement.actions';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @State<PublicStateModel>({
   name: 'publicState',
   defaults: defaultPublicState,
 })
 @Injectable()
-export class PublicState {
+export class PublicState implements OnDestroy{
+  destroy$: Subject<boolean> = new Subject<boolean>();
   constructor(private apollo: Apollo, private store: Store) {}
 
   @Selector()
@@ -192,6 +195,7 @@ export class PublicState {
         variables,
         fetchPolicy: 'cache-first',
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           state = getState();
@@ -245,6 +249,7 @@ export class PublicState {
         variables: { username },
         fetchPolicy: 'network-only',
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.userByUsername;
@@ -344,6 +349,7 @@ export class PublicState {
         variables,
         fetchPolicy: 'cache-first',
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           state = getState();
@@ -395,6 +401,7 @@ export class PublicState {
         variables: { code },
         fetchPolicy: 'network-only',
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.publicInstitution;
@@ -496,6 +503,7 @@ export class PublicState {
         variables,
         fetchPolicy: 'cache-first',
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           this.store.dispatch(
@@ -549,6 +557,7 @@ export class PublicState {
         .subscribe({
           query: SUBSCRIPTIONS.announcement,
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe((result: any) => {
           const response = result?.data?.notifyAnnouncement;
           if (response) {
@@ -585,6 +594,7 @@ export class PublicState {
         variables: { id },
         fetchPolicy: 'network-only',
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.publicAnnouncement;
@@ -680,6 +690,7 @@ export class PublicState {
         variables,
         fetchPolicy: 'cache-first',
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           state = getState();
@@ -732,6 +743,7 @@ export class PublicState {
         variables: { id },
         fetchPolicy: 'network-only',
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.publicCourse;
@@ -775,5 +787,10 @@ export class PublicState {
       institutionFormRecord: defaultPublicState.institutionFormRecord,
       institutions: defaultPublicState.institutions,
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

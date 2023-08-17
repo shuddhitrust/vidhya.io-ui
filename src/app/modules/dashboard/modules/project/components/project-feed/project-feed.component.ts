@@ -1,7 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import {
   defaultSearchParams,
@@ -21,6 +21,7 @@ import {
   ResetProjectFormAction,
 } from '../../state/project.actions';
 import { ProjectState } from '../../state/project.state';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-project-feed',
@@ -30,7 +31,7 @@ import { ProjectState } from '../../state/project.state';
     './../../../../../../shared/common/shared-styles.css',
   ],
 })
-export class ProjectFeedComponent implements OnInit {
+export class ProjectFeedComponent implements OnInit, OnDestroy {
   @Input() author: User = null;
   @Input() ownProfile: boolean = false;
   resource: string = resources.PROJECT;
@@ -41,13 +42,16 @@ export class ProjectFeedComponent implements OnInit {
   @Select(ProjectState.isFetching)
   isFetching$: Observable<boolean>;
   isFetching: boolean;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     private store: Store,
     private router: Router,
     private auth: AuthorizationService
   ) {
-    this.isFetching$.subscribe((val) => {
+    this.isFetching$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.isFetching = val;
     });
   }
@@ -102,5 +106,10 @@ export class ProjectFeedComponent implements OnInit {
     this.router.navigate([uiroutes.PROJECT_PROFILE_ROUTE.route], {
       queryParams: { id: project.id },
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

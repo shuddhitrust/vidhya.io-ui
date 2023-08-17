@@ -1,8 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import {
   FetchNextProjectsAction,
@@ -26,13 +26,14 @@ import {
   ResetPublicHomePageListsAction,
 } from '../../../state/public/public.actions';
 import { PublicState } from '../../../state/public/public.state';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-news-feed',
   templateUrl: './news-feed.component.html',
   styleUrls: ['./news-feed.component.scss'],
 })
-export class PublicNewsFeedComponent implements OnInit {
+export class PublicNewsFeedComponent implements OnInit, OnDestroy {
   @Input() currentQuery: string = null;
   @Select(PublicState.listNews)
   news$: Observable<Announcement[]>;
@@ -56,25 +57,35 @@ export class PublicNewsFeedComponent implements OnInit {
   @Select(ProjectState.isFetching)
   isFetchingProjects$: Observable<boolean>;
   isFetchingProjects: boolean;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private store: Store,
     private router: Router,
     public dialog: MatDialog
   ) {
-    this.news$.subscribe((val) => {
+    this.news$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.news = val;
     });
 
-    this.projectsClapped$.subscribe((val) => {
+    this.projectsClapped$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.projectsClapped = val;
     });
 
-    this.isFetchingProjects$.subscribe((val) => {
+    this.isFetchingProjects$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.isFetchingProjects = val;
     });
 
     this.fetchProjects();
-    this.isFetching$.subscribe((val) => {
+    this.isFetching$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.isFetching = val;
     });
   }
@@ -123,7 +134,9 @@ export class PublicNewsFeedComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    this.store.dispatch(new ResetPublicHomePageListsAction());
+    this.store.dispatch(new ResetPublicHomePageListsAction());    
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 
   fetchProjects() {
@@ -174,4 +187,5 @@ export class PublicNewsFeedComponent implements OnInit {
       queryParams: { id: project.id },
     });
   }
+  
 }

@@ -1,8 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { Institution } from 'src/app/shared/common/models';
 import {
@@ -11,13 +11,14 @@ import {
 } from '../../../state/public/public.actions';
 import { getInstitutionProfileLink } from '../../../state/public/public.model';
 import { PublicState } from '../../../state/public/public.state';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-institutions-feed',
   templateUrl: './institutions-feed.component.html',
   styleUrls: ['./institutions-feed.component.scss'],
 })
-export class InstitutionsFeedComponent {
+export class InstitutionsFeedComponent implements OnDestroy{
   @Input() currentQuery: string = null;
   @Select(PublicState.listInstitutions)
   institutions$: Observable<Institution[]>;
@@ -25,13 +26,17 @@ export class InstitutionsFeedComponent {
   @Select(PublicState.isFetchingInstitutions)
   isFetchingInstitutions$: Observable<boolean>;
   isFetchingInstitutions: boolean;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private store: Store,
     private router: Router,
     public dialog: MatDialog
   ) {
     this.fetchInstitutions();
-    this.institutions$.subscribe((val) => {
+    this.institutions$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.institutions = val;
     });
   }
@@ -57,5 +62,10 @@ export class InstitutionsFeedComponent {
 
   onClickInstitutionCard(institution) {
     this.router.navigateByUrl(getInstitutionProfileLink(institution));
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { DeleteAnnouncementAction } from 'src/app/modules/dashboard/modules/announcement/state/announcement.actions';
 import { MatDialog } from '@angular/material/dialog';
 import {
@@ -22,6 +22,7 @@ import {
   ResetNewsProfileAction,
 } from '../../../state/public/public.actions';
 import { generateMemberProfileLink } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.model';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-public-news-profile',
@@ -39,6 +40,7 @@ export class NewsProfileComponent implements OnInit, OnDestroy {
   newsRecord: Announcement;
   @Select(PublicState.isFetchingNews)
   isFetching$: Observable<boolean>;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     public dialog: MatDialog,
@@ -48,7 +50,9 @@ export class NewsProfileComponent implements OnInit, OnDestroy {
     private store: Store,
     private auth: AuthorizationService
   ) {
-    this.newsRecord$.subscribe((val) => {
+    this.newsRecord$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.newsRecord = val;
     });
   }
@@ -60,7 +64,9 @@ export class NewsProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((params) => {
       const newsId = params['id'];
       if (newsId) {
         this.store.dispatch(
@@ -87,7 +93,7 @@ export class NewsProfileComponent implements OnInit, OnDestroy {
       data: masterDialogConfirmationObject,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
       if (result == true) {
         this.deleteAnnouncement();
       }
@@ -109,7 +115,9 @@ export class NewsProfileComponent implements OnInit, OnDestroy {
     this.goBack();
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy(): void {    
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
     this.store.dispatch(new ResetNewsProfileAction());
   }
 }

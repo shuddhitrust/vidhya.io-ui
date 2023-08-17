@@ -5,7 +5,7 @@ import {
   AnnouncementStateModel,
 } from './announcement.model';
 
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import {
   AnnouncementSubscriptionAction,
   CreateUpdateAnnouncementAction,
@@ -44,18 +44,27 @@ import { GetUnreadCountAction } from '../../../state/dashboard.actions';
 import { ANNOUNCEMENTS } from '../../../dashboard.component';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { Console } from 'console';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @State<AnnouncementStateModel>({
   name: 'announcementState',
   defaults: defaultAnnouncementState,
 })
 @Injectable()
-export class AnnouncementState {
+export class AnnouncementState implements OnDestroy{
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private apollo: Apollo,
     private store: Store,
     private router: Router
   ) {}
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
 
   @Selector()
   static listAnnouncements(state: AnnouncementStateModel): Announcement[] {
@@ -192,6 +201,7 @@ export class AnnouncementState {
         variables,
         // fetchPolicy,
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           this.store.dispatch(
@@ -246,6 +256,7 @@ export class AnnouncementState {
         .subscribe({
           query: SUBSCRIPTIONS.announcement,
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe((result: any) => {
           const response = result?.data?.notifyAnnouncement;
           if (response) {
@@ -284,6 +295,7 @@ export class AnnouncementState {
         variables: { id },
         fetchPolicy: 'cache-first',
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.announcement;
@@ -333,6 +345,7 @@ export class AnnouncementState {
             : ANNOUNCEMENT_MUTATIONS.CREATE_ANNOUNCEMENT,
           variables,
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           ({ data }: any) => {
             const response = updateForm
@@ -414,6 +427,7 @@ export class AnnouncementState {
         mutation: ANNOUNCEMENT_MUTATIONS.DELETE_ANNOUNCEMENT,
         variables: { id },
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteAnnouncement;
@@ -481,6 +495,7 @@ export class AnnouncementState {
       .mutate({
         mutation: ANNOUNCEMENT_MUTATIONS.MARK_ANNOUNCEMENTS_SEEN,
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.markAnnouncementsSeen;

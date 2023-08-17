@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import {
   MatDialog,
@@ -6,7 +6,7 @@ import {
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import {
@@ -23,6 +23,7 @@ import {
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { UserRoleState } from '../../../../user-role/state/userRole.state';
 import { FetchUserRolesAction } from '../../../../user-role/state/userRole.actions';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-moderation-profile',
@@ -32,7 +33,7 @@ import { FetchUserRolesAction } from '../../../../user-role/state/userRole.actio
     './../../../../../../../../../shared/common/shared-styles.css',
   ],
 })
-export class UserModerationProfileComponent implements OnInit {
+export class UserModerationProfileComponent implements OnInit, OnDestroy {
   resource = resources.MODERATION;
   resourceActions = RESOURCE_ACTIONS;
   profileData: any = {};
@@ -43,6 +44,8 @@ export class UserModerationProfileComponent implements OnInit {
   @Select(UserRoleState.isFetching)
   isFetchingUserRoles$: Observable<boolean>;
   isFetchingUserRoles: boolean;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<UserModerationProfileComponent>,
@@ -51,7 +54,9 @@ export class UserModerationProfileComponent implements OnInit {
     private fb: FormBuilder,
     private auth: AuthorizationService
   ) {
-    this.roleOptions$.subscribe((val) => {
+    this.roleOptions$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.roleOptions = val;
     });
     this.profileData = data;
@@ -98,7 +103,7 @@ export class UserModerationProfileComponent implements OnInit {
         data: { ...this.profileData, role: { id: roleValue, name: roleName } },
       });
 
-      dialogRef.afterClosed().subscribe((result) => {
+      dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
         if (result == true) {
           this.approveUser();
         }
@@ -129,7 +134,7 @@ export class UserModerationProfileComponent implements OnInit {
         data: this.profileData,
       });
 
-      dialogRef.afterClosed().subscribe((result) => {
+      dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
         if (result == true) {
           this.denyUser();
         }
@@ -151,6 +156,11 @@ export class UserModerationProfileComponent implements OnInit {
       })
     );
     this.closeDialog();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }
 

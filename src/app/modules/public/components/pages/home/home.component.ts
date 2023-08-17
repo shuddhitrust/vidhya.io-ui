@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit,NgZone } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit,NgZone, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
@@ -24,7 +24,7 @@ import moment from 'moment';
   // changeDetection: ChangeDetectionStrategy.OnPush //// this line
 
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
   url: string;
   currentYear = new Date().getFullYear();
   privacyRoute = uiroutes.PRIVACY_ROUTE.route;
@@ -47,7 +47,7 @@ export class HomeComponent implements OnInit {
   navigationSubscription: any;
   isGoogleLogin: boolean = false;
   isChangePasswordEnable: boolean = false;
-  public ngDestroyed$ = new Subject();
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     private store: Store,
@@ -56,12 +56,12 @@ export class HomeComponent implements OnInit {
     private ngZone: NgZone
   ) {
     this.isLoggedIn$
-      .pipe(takeUntil(this.ngDestroyed$))
+      .pipe(takeUntil(this.destroy$))
       .subscribe((val) => {
         this.isLoggedIn = val;
       });
     this.currentMember$
-      .pipe(takeUntil(this.ngDestroyed$))
+      .pipe(takeUntil(this.destroy$))
       .subscribe((val) => {
         if (this.isLoggedIn == true && this.firstTimeSetup == false && this.isChangePasswordEnable == false && val != undefined && val?.membershipStatus) {
           this.currentMember = val;
@@ -74,7 +74,7 @@ export class HomeComponent implements OnInit {
     }
 
     this.membershipStatus$
-      .pipe(takeUntil(this.ngDestroyed$))
+      .pipe(takeUntil(this.destroy$))
       .subscribe((val) => {
         if (this.membershipStatus != val && val !== undefined) {
           this.membershipStatus = val;
@@ -83,7 +83,7 @@ export class HomeComponent implements OnInit {
       });
 
     this.firstTimeSetup$
-      .pipe(takeUntil(this.ngDestroyed$))
+      .pipe(takeUntil(this.destroy$))
       .subscribe((status) => {
         if (status) {
           this.firstTimeSetup = status?.firstTimeSetup;
@@ -180,7 +180,7 @@ export class HomeComponent implements OnInit {
     }
   }
   ngOnDestroy() {
-    this.ngDestroyed$.next();
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
-
 }

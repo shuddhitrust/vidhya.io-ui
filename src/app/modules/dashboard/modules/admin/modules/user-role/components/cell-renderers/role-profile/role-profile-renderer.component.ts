@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ICellRendererParams } from 'ag-grid-community';
 import { RoleProfileComponent } from 'src/app/modules/dashboard/modules/admin/modules/user-role/components/profiles/role-profile/role-profile.component';
@@ -7,18 +7,21 @@ import {
   resources,
   RESOURCE_ACTIONS,
 } from '../../../../../../../../../shared/common/models';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-role-profile',
   templateUrl: './role-profile-renderer.component.html',
   styleUrls: ['./role-profile-renderer.component.scss'],
 })
-export class RoleProfileRendererComponent {
+export class RoleProfileRendererComponent implements OnDestroy{
   resource = resources.USER_ROLE;
   resourceActions = RESOURCE_ACTIONS;
   cellValue: string;
   rowData: any;
   params: any;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   // gets called once before the renderer is used
   agInit(params: ICellRendererParams): void {
@@ -50,6 +53,12 @@ export class RoleProfileRendererComponent {
       data: this.rowData,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed()   
+    .pipe(takeUntil(this.destroy$)).subscribe((result) => {});
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

@@ -9,7 +9,7 @@ import {
   FetchDesignationByInstitution,
   FetchCoordinatorsByInstitution
 } from './options.actions';
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { groupTypeOptions, MatSelectOption, User } from '../../common/models';
 import {
   getErrorMessageFromGraphQLResponse,
@@ -21,13 +21,16 @@ import { Apollo } from 'apollo-angular';
 import { ShowNotificationAction } from '../notifications/notification.actions';
 import { USER_ROLES_NAMES } from '../../common/constants';
 import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @State<OptionsStateModel>({
   name: 'optionsState',
   defaults: defaultOptionsState,
 })
 @Injectable()
-export class OptionsState {
+export class OptionsState implements OnDestroy{
+  destroy$: Subject<boolean> = new Subject<boolean>();
   constructor(private apollo: Apollo, private store: Store) { }
 
   @Selector()
@@ -127,6 +130,7 @@ export class OptionsState {
         query: USER_QUERIES.GET_USERS_OPTIONS,
         variables,
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           patchState({ isFetchingMembersByInstitution: false });
@@ -158,6 +162,7 @@ export class OptionsState {
         query: USER_QUERIES.GET_USERS_OPTIONS,
         variables,
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           patchState({ isFetchingGraders: false });
@@ -190,6 +195,7 @@ export class OptionsState {
       .query({
         query: GROUP_QUERIES.GET_ADMIN_GROUP_OPTIONS,
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         (res: any) => {
           isFetchingAdminGroups = false;
@@ -232,6 +238,7 @@ export class OptionsState {
         variables,
         fetchPolicy: 'network-only',
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         (res: any) => {
           isFetchingAllInstitutions = false;
@@ -269,6 +276,7 @@ export class OptionsState {
         query: INSTITUTION_QUERIES.GET_FETCH_DESIGNATION_BY_INSTITUTION,
         variables
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         (res: any) => {
           let designationsList = res?.data?.fetchDesignationByInstitution.designations;
@@ -300,6 +308,7 @@ export class OptionsState {
         query: INSTITUTION_QUERIES.GET_INSTITUTIONS,
 
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         (res: any) => {
           isFetchingAllInstitutions = false;
@@ -349,6 +358,7 @@ export class OptionsState {
           variables,
           fetchPolicy: 'network-only'
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           ({ data }: any) => {
             const response = data.coordinatorOptions.records;
@@ -384,5 +394,10 @@ export class OptionsState {
         isFetchingCoordinators:false
       })
     }
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

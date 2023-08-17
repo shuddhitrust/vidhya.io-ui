@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import {
   CurrentMember,
@@ -9,13 +9,14 @@ import {
 } from '../../common/models';
 import { Select } from '@ngxs/store';
 import { USER_ROLES_NAMES } from '../../common/constants';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
+import { takeUntil } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthorizationService {
+export class AuthorizationService implements OnDestroy{
   @Select(AuthState.getPermissions)
   permissions$: Observable<UserPermissions>;
   @Select(AuthState.getCurrentMember)
@@ -26,11 +27,17 @@ export class AuthorizationService {
   currentMemberRoleName: string;
   permissions: UserPermissions;
   FILE_UPLOAD_ENDPOINT: string = environment.file_uplod_endpoint;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor() {
-    this.permissions$.subscribe((val) => {
+    this.permissions$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.permissions = val;
     });
-    this.currentMember$.subscribe((val) => {
+    this.currentMember$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.currentMember = val;
       this.currentUserId = this.currentMember?.id;
       this.currentUserInsitutionId = this.currentMember?.institution?.id;
@@ -123,4 +130,9 @@ export class AuthorizationService {
 
     return permissionsTableData;
   };
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
 }

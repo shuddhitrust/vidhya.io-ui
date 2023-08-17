@@ -5,7 +5,7 @@ import {
   ChapterStateModel,
 } from './chapter.model';
 
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import {
   ChapterSubscriptionAction,
   CreateUpdateChapterAction,
@@ -45,13 +45,17 @@ import { SUBSCRIPTIONS } from '../../../../../../shared/api/graphql/subscription
 import { SearchParams } from '../../../../../../shared/modules/master-grid/table.model';
 import { Location } from '@angular/common';
 import { uiroutes } from '../../../../../../shared/common/ui-routes';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @State<ChapterStateModel>({
   name: 'chapterState',
   defaults: defaultChapterState,
 })
 @Injectable()
-export class ChapterState {
+export class ChapterState implements OnDestroy{
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private apollo: Apollo,
     private store: Store,
@@ -206,6 +210,7 @@ export class ChapterState {
         variables,
         // fetchPolicy,
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.chapters;
@@ -253,6 +258,7 @@ export class ChapterState {
         .subscribe({
           query: SUBSCRIPTIONS.chapter,
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe((result: any) => {
           const state = getState();
           const method = result?.data?.notifyChapter?.method;
@@ -288,6 +294,7 @@ export class ChapterState {
         variables: { id },
         fetchPolicy: 'network-only',
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.chapter;
@@ -337,6 +344,7 @@ export class ChapterState {
             : CHAPTER_MUTATIONS.CREATE_CHAPTER,
           variables,
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           ({ data }: any) => {
             const response = updateForm
@@ -415,6 +423,7 @@ export class ChapterState {
         mutation: CHAPTER_MUTATIONS.PUBLISH_CHAPTER,
         variables: { id },
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.publishCourse;
@@ -457,6 +466,7 @@ export class ChapterState {
         mutation: CHAPTER_MUTATIONS.DELETE_CHAPTER,
         variables: { id },
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteChapter;
@@ -525,6 +535,7 @@ export class ChapterState {
         mutation: CHAPTER_MUTATIONS.REORDER_CHAPTERS,
         variables: { indexList },
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.reorderChapters;
@@ -538,5 +549,10 @@ export class ChapterState {
           );
         }
       );
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

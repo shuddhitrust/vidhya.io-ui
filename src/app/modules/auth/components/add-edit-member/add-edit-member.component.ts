@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ChangeDetectorRef, TemplateRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectorRef, TemplateRef, OnDestroy } from '@angular/core';
 import { Location } from '@angular/common';
 import {
   FormBuilder,
@@ -15,7 +15,7 @@ import {
 } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.actions';
 import { searchInstitution, FetchDesignationByInstitution } from 'src/app/shared/state/options/options.actions';
 import { MemberState } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.state';
-import { Observable, from, of } from 'rxjs';
+import { Observable, Subject, from, of } from 'rxjs';
 import { emptyMemberFormRecord } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.model';
 import { InstitutionState } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.state';
 import { MatSelectOption, User, institutionTypeOptions, genderOptions } from 'src/app/shared/common/models';
@@ -27,7 +27,7 @@ import { ShowNotificationAction } from 'src/app/shared/state/notifications/notif
 import { AuthState } from '../../state/auth.state';
 import { AuthStateModel } from '../../state/auth.model';
 import { INSTITUTION_DESIGNATIONS } from 'src/app/shared/common/constants';
-import { map } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { AddEditInstitutionComponent } from 'src/app/modules/dashboard/modules/admin/modules/institution/components/add-edit-institution/add-edit-institution.component';
 import { ChangePasswordComponent } from 'src/app/modules/public/components/pages/change-password/change-password.component';
@@ -44,7 +44,7 @@ import { ResetInstitutionFormAction } from 'src/app/modules/dashboard/modules/ad
     './../../../../shared/common/shared-styles.css',
   ]
 })
-export class AddEditMemberComponent implements OnInit {
+export class AddEditMemberComponent implements OnInit, OnDestroy {
 
   formDirective: FormGroupDirective;
   panelOpenState: boolean = false;
@@ -108,6 +108,8 @@ export class AddEditMemberComponent implements OnInit {
   invalidFields: any = [];
   memberShipStatus: string;
   windowOriginUrl:any = window.location.origin;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private location: Location,
     private store: Store,
@@ -119,7 +121,9 @@ export class AddEditMemberComponent implements OnInit {
     public cdr: ChangeDetectorRef,
   ) {
     this.dobDateValidation()
-    this.institutionList$.subscribe(options => {
+    this.institutionList$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(options => {
       if (options) {
         this.institutionOptions = options;
         const institutionOptionsObservable$ = of(this.institutionOptions);
@@ -131,11 +135,15 @@ export class AddEditMemberComponent implements OnInit {
         }
       }
     })
-    this.designationsList$.subscribe(val => {
+    this.designationsList$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(val => {
       this.designationOptions = val;
     })
 
-    this.authState$.subscribe((val) => {
+    this.authState$    
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.authState = val;
       this.isFullyAuthenticated = this.authState?.isFullyAuthenticated;
       this.currentMember = this.authState?.currentMember;
@@ -191,11 +199,15 @@ export class AddEditMemberComponent implements OnInit {
           })
         );
       } else {
-        this.optionsState$.subscribe((val: OptionsStateModel) => {
+        this.optionsState$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((val: OptionsStateModel) => {
           this.optionsState = val;
           this.isFetchingGroups = val.isFetchingAdminGroups;
         });
-        this.groupOptions$.subscribe((val) => {
+        this.groupOptions$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((val) => {
           this.groupOptions = val;
         });
       }
@@ -332,7 +344,9 @@ export class AddEditMemberComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((params) => {
       this.params = params;
       const id = params['id'];
       if (id) {
@@ -412,7 +426,9 @@ export class AddEditMemberComponent implements OnInit {
         );
         const formData = new FormData();
         formData.append('file', this.avatarFile);
-        this.uploadService.upload(formData).subscribe(
+        this.uploadService.upload(formData)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(
           (res) => {
             const url = res.secure_url;
             form.get('profile').get('avatar').setValue(url);
@@ -472,7 +488,7 @@ export class AddEditMemberComponent implements OnInit {
         }
       }
     });
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
       if (result) {
         this.institutionOptions = [{ id: result?.data?.id, name: result?.data?.name, institutionType: result?.data?.institutionType }];
         this.filteredInstitutionOptions$ = of(this.institutionOptions).pipe(map((item) => item));
@@ -495,7 +511,7 @@ export class AddEditMemberComponent implements OnInit {
     if (this.isManualLogIn) {
       let dialogName = ChangePasswordComponent;
       const dialogRef = this.dialog.open(dialogName);
-      dialogRef.afterClosed().subscribe((result) => { });
+      dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => { });
     } else {
       this.memberFormContactDirective = formDirective;
       this.memberFormContact = form;
@@ -526,5 +542,10 @@ export class AddEditMemberComponent implements OnInit {
 
   displayFn(user) {
     return user?.name;
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

@@ -2,7 +2,7 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {
   DeleteAnnouncementAction,
   GetAnnouncementAction,
@@ -26,6 +26,7 @@ import {
   MasterConfirmationDialogObject,
 } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { generateMemberProfileLink } from '../../../admin/modules/member/state/member.model';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-announcement-profile',
@@ -43,6 +44,8 @@ export class AnnouncementProfileComponent implements OnInit, OnDestroy {
   announcement: Announcement;
   @Select(AnnouncementState.isFetching)
   isFetching$: Observable<boolean>;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
 
   constructor(
     public dialog: MatDialog,
@@ -52,7 +55,9 @@ export class AnnouncementProfileComponent implements OnInit, OnDestroy {
     private auth: AuthorizationService,
     private router: Router
   ) {
-    this.announcement$.subscribe((val) => {
+    this.announcement$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.announcement = val;
     });
   }
@@ -64,7 +69,9 @@ export class AnnouncementProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((params) => {
       const announcementId = params['id'];
       this.store.dispatch(
         new GetAnnouncementAction({
@@ -90,7 +97,7 @@ export class AnnouncementProfileComponent implements OnInit, OnDestroy {
       data: masterDialogConfirmationObject,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
       if (result == true) {
         this.deleteAnnouncement();
       }
@@ -112,7 +119,9 @@ export class AnnouncementProfileComponent implements OnInit, OnDestroy {
     this.goBack();
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy(): void {    
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
     this.store.dispatch(new ResetAnnouncementFormAction());
   }
 }

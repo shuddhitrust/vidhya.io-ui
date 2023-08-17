@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnDestroy } from '@angular/core';
 import {
   MatDialog,
   MatDialogRef,
@@ -6,7 +6,7 @@ import {
 } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { convertKeyToLabel } from 'src/app/shared/common/functions';
 import {
@@ -26,13 +26,14 @@ import {
   GetUserRoleAction,
 } from '../../../state/userRole.actions';
 import { UserRoleState } from '../../../state/userRole.state';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-role-profile',
   templateUrl: './role-profile.component.html',
   styleUrls: ['./role-profile.component.scss'],
 })
-export class RoleProfileComponent {
+export class RoleProfileComponent implements OnDestroy{
   profileData: any = {};
   resource = resources.USER_ROLE;
   resourceActions = RESOURCE_ACTIONS;
@@ -58,6 +59,8 @@ export class RoleProfileComponent {
   permissionsTable: object[] = this.auth.convertPermissionsToTable(
     this.permissionsObject
   );
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<RoleProfileComponent>,
@@ -71,7 +74,9 @@ export class RoleProfileComponent {
     this.store.dispatch(
       new GetUserRoleAction({ roleName: this.profileData?.name })
     );
-    this.userRoleFormRecord$.subscribe((val) => {
+    this.userRoleFormRecord$
+    .pipe(takeUntil(this.destroy$))  
+    .subscribe((val) => {
       if (val) {
         this.profileData = val;
         this.permissionsObject = this.profileData.permissions;
@@ -80,7 +85,9 @@ export class RoleProfileComponent {
         );
       }
     });
-    this.isFetching$.subscribe((val) => {
+    this.isFetching$
+    .pipe(takeUntil(this.destroy$))  
+    .subscribe((val) => {
       this.isFetching = val;
     });
   }
@@ -119,7 +126,7 @@ export class RoleProfileComponent {
       data: masterDialogConfirmationObject,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
       if (result == true) {
         this.deleteRole();
       }
@@ -128,5 +135,10 @@ export class RoleProfileComponent {
   deleteRole() {
     this.store.dispatch(new DeleteUserRoleAction({ id: this.profileData.id }));
     this.closeDialog();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

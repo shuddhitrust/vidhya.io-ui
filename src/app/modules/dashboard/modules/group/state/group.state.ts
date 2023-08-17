@@ -5,7 +5,7 @@ import {
   GroupStateModel,
 } from './group.model';
 
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import { Router } from '@angular/router';
 import {
@@ -39,13 +39,17 @@ import { SUBSCRIPTIONS } from 'src/app/shared/api/graphql/subscriptions.graphql'
 import { GROUP_MUTATIONS } from 'src/app/shared/api/graphql/mutations.graphql';
 import { GROUPS } from '../../../dashboard.component';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @State<GroupStateModel>({
   name: 'groupState',
   defaults: defaultGroupState,
 })
 @Injectable()
-export class GroupState {
+export class GroupState implements OnDestroy{
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private apollo: Apollo,
     private store: Store,
@@ -179,6 +183,7 @@ export class GroupState {
         variables,
         // fetchPolicy,
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           this.store.dispatch(
@@ -227,6 +232,7 @@ export class GroupState {
         .subscribe({
           query: SUBSCRIPTIONS.group,
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe((result: any) => {
           const state = getState();
           const method = result?.data?.notifyGroup?.method;
@@ -260,6 +266,7 @@ export class GroupState {
         variables: { id },
         fetchPolicy: 'network-only',
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.group;
@@ -306,6 +313,7 @@ export class GroupState {
             : GROUP_MUTATIONS.CREATE_GROUP,
           variables,
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           ({ data }: any) => {
             const response = updateForm ? data.updateGroup : data.createGroup;
@@ -386,6 +394,7 @@ export class GroupState {
         mutation: GROUP_MUTATIONS.DELETE_GROUP,
         variables: { id },
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteGroup;
@@ -442,5 +451,10 @@ export class GroupState {
       groupFormRecord: emptyGroupFormRecord,
       formSubmitting: false,
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

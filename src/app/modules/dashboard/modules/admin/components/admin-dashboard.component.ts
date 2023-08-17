@@ -1,6 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { resources } from 'src/app/shared/common/models';
 
 const sectionParamKey = 'adminSection';
@@ -9,7 +11,7 @@ const sectionParamKey = 'adminSection';
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.scss'],
 })
-export class AdminDashboardComponent implements OnInit {
+export class AdminDashboardComponent implements OnInit, OnDestroy {
   @Input() params: object = {};
   opened: boolean = true;
   @Input() entities: any[] = [];
@@ -22,17 +24,22 @@ export class AdminDashboardComponent implements OnInit {
   classAdmins: string = resources.CLASS_ADMIN;
   learners: string = resources.LEARNER;
   selectedEntity;
+  routeParams: any;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     public dialog: MatDialog,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {
     this.selectedEntity = this.entities[0]?.value;
   }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
+   this.routeParams= this.route.queryParams
+   .pipe(takeUntil(this.destroy$))
+   .subscribe((params) => {
       this.params = params;
       const paramSection = params[sectionParamKey];
       if (paramSection) {
@@ -45,6 +52,10 @@ export class AdminDashboardComponent implements OnInit {
   }
   ngOnChanges(changes) {
     if (changes.entities) {
+      // if(this.routeParams){
+      //   this.routeParams.unsubscribe();
+      // }
+      
       this.selectedEntity = this.selectedEntity
         ? this.selectedEntity
         : this.entities[0]?.value;
@@ -52,16 +63,28 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   onSelectEntity(entity) {
+    debugger;
+    // this.destroy$.next();
     this.selectedEntity = entity;
+    // if(this.routeParams){
+    //   this.routeParams.unsubscribe();
+    // }
     this.onSelectionChange();
+    // this.cdr.detectChanges();
   }
 
   onSelectionChange() {
-    this.router.navigate([], {
+    debugger
+   this.routeParams= this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { [sectionParamKey]: this.selectedEntity },
       queryParamsHandling: 'merge',
       skipLocationChange: false,
     });
   }
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
+  
 }

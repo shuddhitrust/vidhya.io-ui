@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {
   Institution,
   IssueResourceTypeOptions,
@@ -13,6 +13,7 @@ import { AuthorizationService } from 'src/app/shared/api/authorization/authoriza
 import { PublicState } from '../../../state/public/public.state';
 import { GetPublicInstitutionAction } from '../../../state/public/public.actions';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-institution-profile',
@@ -22,7 +23,7 @@ import { uiroutes } from 'src/app/shared/common/ui-routes';
     './../../../../../shared/common/shared-styles.css',
   ],
 })
-export class InstitutionProfileComponent implements OnInit {
+export class InstitutionProfileComponent implements OnInit, OnDestroy {
   url: string;
   code: string;
   institutionDoesNotExist: boolean;
@@ -35,6 +36,7 @@ export class InstitutionProfileComponent implements OnInit {
 
   @Select(PublicState.isFetchingFormRecord)
   isFetchingFormRecord$: Observable<boolean>;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     private location: Location,
@@ -42,7 +44,9 @@ export class InstitutionProfileComponent implements OnInit {
     private router: Router,
     private auth: AuthorizationService
   ) {
-    this.institutionFormRecord$.subscribe((val) => {
+    this.institutionFormRecord$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.institution = val;
     });
   }
@@ -87,5 +91,10 @@ export class InstitutionProfileComponent implements OnInit {
         this.institutionDoesNotExist = true;
       }
     }
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

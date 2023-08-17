@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import {
   CanActivate,
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
   Router,
 } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { Select, Store } from '@ngxs/store';
 import { ShowNotificationAction } from '../state/notifications/notification.actions';
 import {
@@ -18,21 +18,26 @@ import { environment } from 'src/environments/environment';
 import { AuthorizationService } from './authorization/authorization.service';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { AuthStateModel } from 'src/app/modules/auth/state/auth.model';
+import { takeUntil } from 'rxjs/operators';
 
 @Injectable()
-export class AuthenticationGuard implements CanActivate {
+export class AuthenticationGuard implements CanActivate, OnDestroy {
   @Select(AuthState)
   authState$: Observable<AuthStateModel>;
   authState: AuthStateModel;
   activeMember: boolean = false;
   isFullyAuthenticated: boolean = false;
   isLoggedIn: boolean = false;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private _router: Router,
     private store: Store,
     private auth: AuthorizationService
   ) {
-    this.authState$.subscribe((val) => {
+    this.authState$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.authState = val;
       // this.membershipStatus = this.authState?.membershipStatus;
       this.isFullyAuthenticated = this.authState?.isFullyAuthenticated;
@@ -98,18 +103,28 @@ export class AuthenticationGuard implements CanActivate {
     //     return false;
     //   });
   }
+
+  
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
 }
 
 @Injectable()
-export class RegistrationFormAuthGuard implements CanActivate {
+export class RegistrationFormAuthGuard implements CanActivate, OnDestroy {
   @Select(AuthState)
   authState$: Observable<AuthStateModel>;
   authState: AuthStateModel;
   isLoggedIn: boolean;
   firstTimeSetup: boolean;
   isFullyAuthenticated: boolean;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(private _router: Router, private store: Store) {
-    this.authState$.subscribe((val) => {
+    this.authState$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.authState = val;
       this.isLoggedIn = this.authState?.isLoggedIn;
       this.firstTimeSetup = this.authState?.firstTimeSetup;
@@ -134,6 +149,12 @@ export class RegistrationFormAuthGuard implements CanActivate {
     //   return false;
     // }
   }
+
+  
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
 }
 
 @Injectable()
@@ -142,8 +163,12 @@ export class AuthInterceptor implements HttpInterceptor {
   authState$: Observable<AuthStateModel>;
   authState: AuthStateModel;
   token: string;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor() {
-    this.authState$.subscribe((val) => {
+    this.authState$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.authState = val;
       this.token = this.authState?.token;
     });
@@ -163,5 +188,10 @@ export class AuthInterceptor implements HttpInterceptor {
     }
 
     return next.handle(request);
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }
