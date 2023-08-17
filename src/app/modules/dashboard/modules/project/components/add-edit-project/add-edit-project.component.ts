@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import {
   FormBuilder,
@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { Select, Store } from '@ngxs/store';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {
   Course,
   CurrentMember,
@@ -27,6 +27,7 @@ import { ShowNotificationAction } from 'src/app/shared/state/notifications/notif
 import { CourseState } from '../../../course/state/courses/course.state';
 import { FetchCoursesAction } from '../../../course/state/courses/course.actions';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-add-edit-project',
@@ -36,7 +37,7 @@ import { defaultSearchParams } from 'src/app/shared/common/constants';
     './../../../../../../shared/common/shared-styles.css',
   ],
 })
-export class AddEditProjectComponent implements OnInit {
+export class AddEditProjectComponent implements OnInit, OnDestroy {
   formSubmitting: boolean = false;
   params: object = {};
   @Select(ProjectState.getProjectFormRecord)
@@ -55,6 +56,8 @@ export class AddEditProjectComponent implements OnInit {
   contributors: ProjectContributor[];
   @Select(CourseState.listCourseOptions)
   courseOptions$: Observable<MatSelectOption[]>;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private location: Location,
     private store: Store,
@@ -62,15 +65,21 @@ export class AddEditProjectComponent implements OnInit {
     private fb: FormBuilder
   ) {
     this.fetchCourses();
-    this.currentUserId$.subscribe((val) => {
+    this.currentUserId$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.currentUserId = val;
     });
-    this.currentMember$.subscribe((val) => {
+    this.currentMember$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.currentMember = val;
     });
 
     this.projectForm = this.setupProjectFormProject();
-    this.projectFormRecord$.subscribe((val) => {
+    this.projectFormRecord$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.projectFormRecord = val;
       this.projectForm = this.setupProjectFormProject(this.projectFormRecord);
     });
@@ -111,7 +120,9 @@ export class AddEditProjectComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((params) => {
       this.params = params;
       const id = params['id'];
       if (id) {
@@ -129,5 +140,10 @@ export class AddEditProjectComponent implements OnInit {
   submitForm(form: FormGroup, formDirective: FormGroupDirective) {
     form.get('description').setValue(this.description);
     this.store.dispatch(new CreateUpdateProjectAction({ form, formDirective }));
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

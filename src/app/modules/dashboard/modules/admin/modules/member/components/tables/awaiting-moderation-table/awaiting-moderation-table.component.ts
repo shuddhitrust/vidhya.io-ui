@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { GridOptions } from 'ag-grid-community';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
 import { MemberProfileRendererComponent } from 'src/app/modules/dashboard/modules/admin/modules/member/components/cell-renderers/member-profile/member-profile-renderer.component';
 import { autoGenOptions, getOptionLabel } from 'src/app/shared/common/functions';
@@ -28,13 +28,14 @@ import { UserModerationRendererComponent } from '../../cell-renderers/user-moder
 import moment from 'moment';
 import { FetchAssignmentsAction } from 'src/app/modules/dashboard/modules/assignment/state/assignment.actions';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-awaiting-moderation-table',
   templateUrl: './awaiting-moderation-table.component.html',
   styleUrls: ['./awaiting-moderation-table.component.scss'],
 })
-export class AwaitingModerationTableComponent implements OnInit {
+export class AwaitingModerationTableComponent implements OnInit,OnDestroy {
   submissionStatusFilter: string = 'PE';
   params: object = {};
   tableTitle: string = 'Members Pending Approval';
@@ -114,6 +115,8 @@ export class AwaitingModerationTableComponent implements OnInit {
   moderationMembershipStatusOptions: MatSelectOption[] = autoGenOptions({
     ...ModerationMembershipStatusOptions,
   });
+  routerParams: any;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     public dialog: MatDialog,
@@ -153,7 +156,7 @@ export class AwaitingModerationTableComponent implements OnInit {
       data: rowData,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {});
   }
 
   openMemberProfile(rowData) {
@@ -161,7 +164,7 @@ export class AwaitingModerationTableComponent implements OnInit {
       data: rowData,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {});
   }
 
   updateMemberFilter() {
@@ -178,7 +181,10 @@ export class AwaitingModerationTableComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
+    this.routerParams = this.route.queryParams
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((params) => {
+      console.log('params',params);
       this.params = params;
       const statusOptions = Object.values(ModerationMembershipStatusOptions);
       const status = params['membershipStatusIs'];
@@ -190,5 +196,15 @@ export class AwaitingModerationTableComponent implements OnInit {
       }
     });
 
+  }
+
+  ngOnDestroy(){
+    // debugger
+    this.destroy$.next(true);
+    this.destroy$.complete();
+
+    // if(this.routerParams){
+    //   this.routerParams.unsubscribe();
+    // }
   }
 }

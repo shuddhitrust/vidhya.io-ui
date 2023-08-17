@@ -1,7 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import {
@@ -26,6 +26,7 @@ import {
   ResetIssueFormAction,
 } from '../../state/issue.actions';
 import { IssueState } from '../../state/issue.state';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-issue-feed',
@@ -35,7 +36,7 @@ import { IssueState } from '../../state/issue.state';
     './../../../../../../../../shared/common/shared-styles.css',
   ],
 })
-export class IssueFeedComponent implements OnInit {
+export class IssueFeedComponent implements OnInit, OnDestroy {
   @Input() reporterId: number = null;
   @Input() link: string = null;
   @Input() ownProfile: boolean = false;
@@ -53,6 +54,7 @@ export class IssueFeedComponent implements OnInit {
   @Select(IssueState.isFetching)
   isFetching$: Observable<boolean>;
   isFetching: boolean;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     private store: Store,
@@ -61,7 +63,9 @@ export class IssueFeedComponent implements OnInit {
   ) {
     this.issueStatusFilter = IssueStatusTypeOptions.pending;
     this.fetchIssues();
-    this.isFetching$.subscribe((val) => {
+    this.isFetching$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.isFetching = val;
     });
   }
@@ -161,5 +165,10 @@ export class IssueFeedComponent implements OnInit {
     this.router.navigate([uiroutes.ISSUE_PROFILE_ROUTE.route], {
       queryParams: { id: issue.id },
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnDestroy } from '@angular/core';
 import {
   MatDialog,
   MatDialogRef,
@@ -13,6 +13,8 @@ import {
   MasterConfirmationDialog,
   MasterConfirmationDialogObject,
 } from '../confirmation-dialog/confirmation-dialog.component';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-rubric-display-dialog',
@@ -22,9 +24,11 @@ import {
     './../../common/shared-styles.css',
   ],
 })
-export class ExerciseRubricDialog {
+export class ExerciseRubricDialog implements OnDestroy{
   rubric: any = [];
   rubricDatatableColumns: string[] = ['description', 'points', 'remarks'];
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     public dialogRef: MatDialogRef<ExerciseRubricDialog>,
     public dialog: MatDialog,
@@ -56,6 +60,12 @@ export class ExerciseRubricDialog {
       data: masterDialogConfirmationObject,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed()   
+    .pipe(takeUntil(this.destroy$)).subscribe((result) => {});
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

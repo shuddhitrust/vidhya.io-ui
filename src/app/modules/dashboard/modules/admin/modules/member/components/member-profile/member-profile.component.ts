@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnDestroy } from '@angular/core';
 import {
   MatDialog,
   MatDialogRef,
@@ -20,16 +20,19 @@ import {
 } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { DeleteMemberAction } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.actions';
 import { UserModerationProfileComponent } from '../modals/moderate-user/user-moderation.component';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-member-profile',
   templateUrl: './member-profile.component.html',
   styleUrls: ['./member-profile.component.scss'],
 })
-export class MemberProfileComponent {
+export class MemberProfileComponent implements OnDestroy{
   profileData: any = {};
   resource = resources.MEMBER;
   resourceActions = RESOURCE_ACTIONS;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     public dialog: MatDialog,
@@ -71,7 +74,8 @@ export class MemberProfileComponent {
       data: this.profileData,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed()   
+    .pipe(takeUntil(this.destroy$)).subscribe((result) => {});
   }
 
   deleteConfirmation() {
@@ -85,7 +89,7 @@ export class MemberProfileComponent {
       data: masterDialogConfirmationObject,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
       if (result == true) {
         this.deleteMember();
       }
@@ -94,5 +98,10 @@ export class MemberProfileComponent {
   deleteMember() {
     this.store.dispatch(new DeleteMemberAction({ id: this.profileData.id }));
     this.closeDialog();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

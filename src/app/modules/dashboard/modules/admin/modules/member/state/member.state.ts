@@ -12,7 +12,7 @@ import {
   MemberStateModel,
 } from './member.model';
 
-import { Injectable,NgZone } from '@angular/core';
+import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import {
   ApproveMemberAction,
   CreateUpdateMemberAction,
@@ -41,21 +41,23 @@ import {
   updateFetchParams,
 } from '../../../../../../../shared/common/functions';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { SUBSCRIPTIONS } from '../../../../../../../shared/api/graphql/subscriptions.graphql';
 import { uiroutes } from '../../../../../../../shared/common/ui-routes';
 import { SearchParams } from '../../../../../../../shared/modules/master-grid/table.model';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
-import { UpdateCurrentUserInStateAction, CloseMemberFormAction} from 'src/app/modules/auth/state/auth.actions';
+import { UpdateCurrentUserInStateAction, CloseMemberFormAction } from 'src/app/modules/auth/state/auth.actions';
 import moment from 'moment';
 import { USER_ROLES_NAMES } from 'src/app/shared/common/constants';
+import { takeUntil } from 'rxjs/operators';
 
 @State<MemberStateModel>({
   name: 'memberState',
   defaults: defaultMemberState,
 })
 @Injectable()
-export class MemberState {
+export class MemberState implements OnDestroy{
+  destroy$: Subject<boolean> = new Subject<boolean>();
   constructor(
     private apollo: Apollo,
     private store: Store,
@@ -121,7 +123,7 @@ export class MemberState {
       new FetchMembersAction({ searchParams: previousSearchParams })
     );
   }
-  
+
   @Action(FetchMembersAction)
   fetchMembers(
     { getState, patchState }: StateContext<MemberStateModel>,
@@ -152,8 +154,9 @@ export class MemberState {
       .query({
         query: USER_QUERIES.GET_USERS,
         variables,
-        fetchPolicy:'network-only',
+        fetchPolicy: 'network-only',
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.users.records;
@@ -185,6 +188,7 @@ export class MemberState {
         .subscribe({
           query: SUBSCRIPTIONS.user,
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe((result: any) => {
           const state = getState();
           const method = result?.data?.notifyUser?.method;
@@ -217,6 +221,7 @@ export class MemberState {
         variables: { id },
         fetchPolicy: 'network-only',
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.member;
@@ -249,10 +254,10 @@ export class MemberState {
       let values: any = {};
       Object.keys(form.getRawValue()).forEach(elem => {
         if (elem != 'id') {
-          if(elem=='institution'){
-            let institution = Object.assign({},form.getRawValue()[elem],{'institution': form.getRawValue()[elem]['institution'].id});
+          if (elem == 'institution') {
+            let institution = Object.assign({}, form.getRawValue()[elem], { 'institution': form.getRawValue()[elem]['institution'].id });
             values = Object.assign({}, values, institution);
-          }else{
+          } else {
             values = Object.assign({}, values, form.getRawValue()[elem]);
           }
           values.dob = JSON.parse(JSON.stringify(values.dob));
@@ -270,6 +275,7 @@ export class MemberState {
           mutation: USER_MUTATIONS.UPDATE_USER,
           variables,
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           ({ data }: any) => {
             const response = data.updateUser;
@@ -279,7 +285,7 @@ export class MemberState {
               const user = response?.user;
 
               this.store.dispatch(new UpdateCurrentUserInStateAction({ user }));
-              this.store.dispatch(new CloseMemberFormAction({user}));
+              this.store.dispatch(new CloseMemberFormAction({ user }));
 
               this.store.dispatch(
                 new ShowNotificationAction({
@@ -288,8 +294,8 @@ export class MemberState {
                 })
               );
               // if (firstTimeSetup) {
-                // this.router.navigateByUrl(uiroutes.HOME_ROUTE.route);
-                // this.ngZone.run(() => this.router.navigateByUrl(uiroutes.HOME_ROUTE.route)).then();
+              // this.router.navigateByUrl(uiroutes.HOME_ROUTE.route);
+              // this.ngZone.run(() => this.router.navigateByUrl(uiroutes.HOME_ROUTE.route)).then();
 
               // } else {
               //   this.router.navigate([
@@ -337,6 +343,7 @@ export class MemberState {
         mutation: USER_MUTATIONS.DELETE_USER,
         variables: { id },
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteMember;
@@ -384,6 +391,7 @@ export class MemberState {
         mutation: USER_MUTATIONS.APPROVE_USER,
         variables: { userId, roleName },
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.approveUser;
@@ -431,6 +439,7 @@ export class MemberState {
         mutation: USER_MUTATIONS.SUSPEND_USER,
         variables: { userId, remarks },
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.suspendUser;
@@ -518,5 +527,9 @@ export class MemberState {
       memberFormRecord: emptyMemberFormRecord,
       formSubmitting: false,
     });
+  }
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

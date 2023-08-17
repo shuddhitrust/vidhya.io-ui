@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import {
   FormBuilder,
@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { Select, Store } from '@ngxs/store';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { InstitutionState } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.state';
 import {
   CurrentMember,
@@ -33,6 +33,7 @@ import {
   CreateUpdateGroupAction,
   GetGroupAction,
 } from '../../state/group.actions';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-add-edit-group',
@@ -42,7 +43,7 @@ import {
     './../../../../../../shared/common/shared-styles.css',
   ],
 })
-export class AddEditGroupComponent implements OnInit {
+export class AddEditGroupComponent implements OnInit, OnDestroy {
   selectedMemberColumns = [
     { field: 'label', headerName: 'Group Members' },
     { field: 'role', headerName: 'Role' },
@@ -76,6 +77,8 @@ export class AddEditGroupComponent implements OnInit {
   memberInstitutionId$: Observable<number>;
   memberInstitutionId: number;
   showInstitutionField: boolean = false;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private location: Location,
     private store: Store,
@@ -83,26 +86,38 @@ export class AddEditGroupComponent implements OnInit {
     private fb: FormBuilder,
     private uploadService: UploadService
   ) {
-    this.currentMember$.subscribe((val) => {
+    this.currentMember$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.currentMember = val;
     });
-    this.memberInstitutionId$.subscribe((val) => {
+    this.memberInstitutionId$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.memberInstitutionId = val;
     });
-    this.institutionOptions$.subscribe((options) => {
+    this.institutionOptions$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((options) => {
       this.institutionOptions = options;
     });
-    this.memberOptions$.subscribe((options) => {
+    this.memberOptions$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((options) => {
       this.memberOptions = options;
     });
 
-    this.isFetchingMembers$.subscribe((val) => {
+    this.isFetchingMembers$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.isFetchingMembers = val;
     });
     this.fetchMemberOptions();
     this.setupInstitution();
     this.groupForm = this.setupGroupFormGroup();
-    this.groupFormRecord$.subscribe((val) => {
+    this.groupFormRecord$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.groupFormRecord = val;
       this.groupForm = this.setupGroupFormGroup(this.groupFormRecord);
     });
@@ -191,7 +206,9 @@ export class AddEditGroupComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((params) => {
       this.params = params;
       const id = params['id'];
       if (id) {
@@ -231,7 +248,9 @@ export class AddEditGroupComponent implements OnInit {
       );
       const formData = new FormData();
       formData.append('file', this.logoFile);
-      this.uploadService.upload(formData).subscribe(
+      this.uploadService.upload(formData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
         (res) => {
           const url = res.secure_url;
           form.get('avatar').setValue(url);
@@ -260,5 +279,10 @@ export class AddEditGroupComponent implements OnInit {
         })
       );
     }
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

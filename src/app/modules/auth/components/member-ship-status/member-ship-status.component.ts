@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
@@ -16,12 +16,12 @@ import { OptionsState } from 'src/app/shared/state/options/options.state';
   templateUrl: './member-ship-status.component.html',
   styleUrls: ['./member-ship-status.component.scss']
 })
-export class MemberShipStatusComponent implements OnInit {
+export class MemberShipStatusComponent implements OnInit, OnDestroy {
   @Select(AuthState.getCurrentMember)
   currentMember$: Observable<CurrentMember>;
   currentMember: CurrentMember;
   messageDisplay: any = '';
-  public ngDestroyed$ = new Subject();
+  destroy$: Subject<boolean> = new Subject<boolean>();
   columnFilters = {
     roles: [USER_ROLES_NAMES.SUPER_ADMIN],
     institution_id: null
@@ -33,7 +33,7 @@ export class MemberShipStatusComponent implements OnInit {
   constructor(private router: Router, private activatedRoute: ActivatedRoute, private store: Store) {
 
     this.currentMember$
-      .pipe(takeUntil(this.ngDestroyed$))
+      .pipe(takeUntil(this.destroy$))
       .subscribe((val) => {
         if (val?.username) {
           this.currentMember = val;
@@ -61,5 +61,10 @@ export class MemberShipStatusComponent implements OnInit {
 
   ngOnInit(): void {
     // this.currentMember = history.state;
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

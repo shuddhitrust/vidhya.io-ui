@@ -4,6 +4,7 @@ import {
   ElementRef,
   Inject,
   Input,
+  OnDestroy,
   QueryList,
   ViewChildren,
 } from '@angular/core';
@@ -14,7 +15,8 @@ import {
 } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { generateMemberProfileLink } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.model';
 import { GetPublicCourseAction } from 'src/app/modules/public/state/public/public.actions';
 import { PublicState } from 'src/app/modules/public/state/public/public.state';
@@ -25,7 +27,7 @@ import { PublicCourse } from 'src/app/shared/common/models';
   templateUrl: './course-display.component.html',
   styleUrls: ['./course-display.component.scss'],
 })
-export class CourseDisplayComponent implements AfterViewInit {
+export class CourseDisplayComponent implements AfterViewInit, OnDestroy {
   @ViewChildren('iframeContainer') iframeContainer: QueryList<ElementRef>;
   @Input()
   courseId: number;
@@ -37,6 +39,7 @@ export class CourseDisplayComponent implements AfterViewInit {
 
   @Select(PublicState.getIsFetchingPublicCourseRecord)
   isFetchingCourse$: Observable<boolean>;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     private store: Store,
@@ -47,7 +50,9 @@ export class CourseDisplayComponent implements AfterViewInit {
   ) {
     this.courseId = this.data.courseId;
     this.store.dispatch(new GetPublicCourseAction({ id: this.courseId }));
-    this.course$.subscribe((val) => {
+    this.course$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       if (val) {
         this.course = val;
         if (this.course?.video?.startsWith('https://www.youtube.com/embed/')) {
@@ -99,5 +104,10 @@ export class CourseDisplayComponent implements AfterViewInit {
 
   closeDialog(): void {
     this.dialogRef.close();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

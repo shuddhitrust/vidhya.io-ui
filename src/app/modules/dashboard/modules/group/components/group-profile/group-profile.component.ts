@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
@@ -31,6 +31,7 @@ import {
   clipLongText,
   generateGroupSubtitle,
 } from 'src/app/shared/common/functions';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-group-profile',
@@ -61,6 +62,8 @@ export class GroupProfileComponent implements OnInit, OnDestroy {
     { field: 'role', headerName: 'Role' },
   ];
   memberRows: any[] = [];
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     public dialog: MatDialog,
     private store: Store,
@@ -70,11 +73,15 @@ export class GroupProfileComponent implements OnInit, OnDestroy {
     private auth: AuthorizationService
   ) {
     this.fetchMemberOptions();
-    this.memberOptions$.subscribe((val) => {
+    this.memberOptions$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.memberOptions = val;
       this.populateMemberRows();
     });
-    this.group$.subscribe((val) => {
+    this.group$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.group = val;
       this.populateMemberRows();
       this.groupTypeLabel = this.groupTypeOptions.find(
@@ -90,7 +97,9 @@ export class GroupProfileComponent implements OnInit, OnDestroy {
     return clipLongText(string, 100);
   }
   fetchMemberOptions() {
-    this.currentMember$.subscribe((val) => {
+    this.currentMember$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.currentMember = val;
     });
     this.store.dispatch(
@@ -122,7 +131,9 @@ export class GroupProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((params) => {
       const groupId = params['id'];
 
       this.store.dispatch(new GetGroupAction({ id: groupId }));
@@ -151,7 +162,7 @@ export class GroupProfileComponent implements OnInit, OnDestroy {
       data: masterDialogConfirmationObject,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
       if (result == true) {
         this.deleteGroup();
       }
@@ -161,7 +172,9 @@ export class GroupProfileComponent implements OnInit, OnDestroy {
     this.store.dispatch(new DeleteGroupAction({ id: this.group.id }));
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy(): void {    
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
     this.store.dispatch(new ResetGroupFormAction());
   }
 }

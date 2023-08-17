@@ -8,7 +8,7 @@ import {
   GradingUrl,
 } from './exerciseSubmission.model';
 
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import {
   ExerciseSubmissionSubscriptionAction,
   CreateUpdateExerciseSubmissionsAction,
@@ -49,13 +49,16 @@ import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.action
 import { SUBSCRIPTIONS } from 'src/app/shared/api/graphql/subscriptions.graphql';
 import { EXERCISE_SUBMISSION_MUTATIONS } from 'src/app/shared/api/graphql/mutations.graphql';
 import { ForceRefetchAssignmentsAction } from '../../../assignment/state/assignment.actions';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @State<ExerciseSubmissionStateModel>({
   name: 'exerciseSubmissionState',
   defaults: defaultExerciseSubmissionState,
 })
 @Injectable()
-export class ExerciseSubmissionState {
+export class ExerciseSubmissionState implements OnDestroy{
+  destroy$: Subject<boolean> = new Subject<boolean>();
   constructor(
     private apollo: Apollo,
     private store: Store,
@@ -219,6 +222,7 @@ export class ExerciseSubmissionState {
           variables,
           fetchPolicy: 'network-only',
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           ({ data }: any) => {
             const response = data.submissionHistory;
@@ -314,6 +318,7 @@ export class ExerciseSubmissionState {
           variables,
           fetchPolicy: 'network-only',
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           ({ data }: any) => {
             this.store.dispatch(
@@ -447,6 +452,7 @@ export class ExerciseSubmissionState {
         variables,
         fetchPolicy: 'network-only',
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           this.store.dispatch(
@@ -501,6 +507,7 @@ export class ExerciseSubmissionState {
         .subscribe({
           query: SUBSCRIPTIONS.exerciseSubmission,
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe((result: any) => {
           const state = getState();
           const method = result?.data?.notifyExerciseSubmission?.method;
@@ -535,6 +542,7 @@ export class ExerciseSubmissionState {
         variables: { id },
         fetchPolicy: 'network-only',
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.exerciseSubmission;
@@ -578,6 +586,7 @@ export class ExerciseSubmissionState {
           EXERCISE_SUBMISSION_MUTATIONS.CREATE_UPDATE_EXERCISE_SUBMISSIONS,
         variables,
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.createUpdateExerciseSubmissions;
@@ -657,6 +666,7 @@ export class ExerciseSubmissionState {
         mutation: EXERCISE_SUBMISSION_MUTATIONS.DELETE_EXERCISE_SUBMISSION,
         variables: { id },
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteExerciseSubmission;
@@ -711,5 +721,10 @@ export class ExerciseSubmissionState {
       exerciseSubmissionFormRecord: emptyExerciseSubmissionFormRecord,
       formSubmitting: false,
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

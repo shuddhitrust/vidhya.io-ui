@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import {
   FormBuilder,
@@ -9,7 +9,7 @@ import {
 import { Select, Store } from '@ngxs/store';
 import { ActivatedRoute } from '@angular/router';
 
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {
   RESOURCE_ACTIONS,
   defaultResourcePermissions,
@@ -23,6 +23,7 @@ import {
   CreateUpdateUserRoleAction,
   GetUserRoleAction,
 } from '../../../state/userRole.actions';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-add-edit-user-role',
@@ -32,7 +33,7 @@ import {
     './../../../../../../../../../shared/common/shared-styles.css',
   ],
 })
-export class AddEditUserRoleComponent implements OnInit {
+export class AddEditUserRoleComponent implements OnInit, OnDestroy {
   LIST = RESOURCE_ACTIONS.LIST;
   GET = RESOURCE_ACTIONS.GET;
   CREATE = RESOURCE_ACTIONS.CREATE;
@@ -60,6 +61,8 @@ export class AddEditUserRoleComponent implements OnInit {
     this.permissionsObject
   );
   permissionItems: string[] = Object.keys(defaultResourcePermissions);
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private location: Location,
     private store: Store,
@@ -68,7 +71,9 @@ export class AddEditUserRoleComponent implements OnInit {
     private auth: AuthorizationService
   ) {
     this.userRoleForm = this.setupUserRoleFormGroup();
-    this.userRoleFormRecord$.subscribe((val) => {
+    this.userRoleFormRecord$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.userRoleFormRecord = val;
       this.userRoleForm = this.setupUserRoleFormGroup(this.userRoleFormRecord);
     });
@@ -97,7 +102,9 @@ export class AddEditUserRoleComponent implements OnInit {
     return formGroup;
   };
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((params) => {
       this.params = params;
       const id = params['id'];
       if (id) {
@@ -164,5 +171,10 @@ export class AddEditUserRoleComponent implements OnInit {
     this.store.dispatch(
       new CreateUpdateUserRoleAction({ form: this.userRoleForm, formDirective })
     );
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

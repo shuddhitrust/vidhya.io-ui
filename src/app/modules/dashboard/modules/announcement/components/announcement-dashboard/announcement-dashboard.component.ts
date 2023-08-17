@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { clipLongText, parseDateTime } from 'src/app/shared/common/functions';
@@ -24,6 +24,7 @@ import {
   MasterConfirmationDialogObject,
 } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-announcement-dashboard',
@@ -33,7 +34,7 @@ import { MatDialog } from '@angular/material/dialog';
     '../../../../../../../../src/app/shared/common/shared-styles.css',
   ],
 })
-export class AnnouncementDashboardComponent implements OnInit {
+export class AnnouncementDashboardComponent implements OnInit, OnDestroy {
   resource: string = resources.ANNOUNCEMENT;
   resourceActions = RESOURCE_ACTIONS;
 
@@ -46,19 +47,25 @@ export class AnnouncementDashboardComponent implements OnInit {
   @Select(OptionsState.listAdminGroupOptions)
   groupOptions$: Observable<MatSelectOption[]>;
   adminGroups = [];
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private store: Store,
     private router: Router,
     private dialog: MatDialog,
     private auth: AuthorizationService
   ) {
-    this.groupOptions$.subscribe((val) => {
+    this.groupOptions$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.adminGroups = val;
     });
     this.store.dispatch(
       new FetchAnnouncementsAction({ searchParams: defaultSearchParams })
     );
-    this.isFetching$.subscribe((val) => {
+    this.isFetching$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.isFetching = val;
     });
   }
@@ -82,7 +89,9 @@ export class AnnouncementDashboardComponent implements OnInit {
       data: masterDialogConfirmationObject,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$))
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((result) => {
       if (result == true) {
         this.store.dispatch(new MarkAllAnnouncementsSeenAction());
       }
@@ -113,5 +122,10 @@ export class AnnouncementDashboardComponent implements OnInit {
     this.router.navigate([uiroutes.ANNOUNCEMENT_PROFILE_ROUTE.route], {
       queryParams: { id: announcement.id },
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

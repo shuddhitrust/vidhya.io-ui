@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { GridOptions } from 'ag-grid-community';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
 import { InstitutionProfileRendererComponent } from 'src/app/modules/dashboard/modules/admin/modules/institution/components/institution-profile-cell-renderer/institution-profile-renderer.component';
 import {
@@ -23,13 +23,14 @@ import { ADMIN_SECTION_LABELS } from 'src/app/shared/common/constants';
 import moment from 'moment';
 import { MemberProfileRendererComponent } from 'src/app/modules/dashboard/modules/admin/modules/member/components/cell-renderers/member-profile/member-profile-renderer.component';
 import { MemberProfileComponent } from '../../../member/components/member-profile/member-profile.component';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-institutions-table',
   templateUrl: './institutions-table.component.html',
   styleUrls: ['./institutions-table.component.scss'],
 })
-export class InstitutionsTableComponent implements OnInit {
+export class InstitutionsTableComponent implements OnInit, OnDestroy {
   tableTitle: string = ADMIN_SECTION_LABELS.INSTITUTIONS;
   resource: string = resources.INSTITUTION;
   institutions: object[];
@@ -86,6 +87,7 @@ export class InstitutionsTableComponent implements OnInit {
     memberprofileRenderer:MemberProfileRendererComponent
   };
   gridOptions: GridOptions;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     public dialog: MatDialog,
@@ -119,7 +121,9 @@ export class InstitutionsTableComponent implements OnInit {
       data: rowData,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$))
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((result) => {
       if(result?.event=='institution'){
         this.router.navigate([uiroutes.INSTITUTION_FORM_ROUTE.route], {
       relativeTo: this.route,
@@ -139,8 +143,13 @@ export class InstitutionsTableComponent implements OnInit {
       data: rowData?.author,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {});
   }
 
   ngOnInit(): void {}
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
 }

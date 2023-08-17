@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 import { ChapterState } from 'src/app/modules/dashboard/modules/course/state/chapters/chapter.state';
 import {
@@ -15,6 +15,7 @@ import {
 } from 'src/app/modules/dashboard/modules/course/state/chapters/chapter.actions';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { ActivatedRoute } from '@angular/router';
+import { takeUntil } from 'rxjs/operators';
 
 type previewImage = {
   url: string;
@@ -39,12 +40,16 @@ export class ChapterProfileComponent implements OnDestroy {
   @Select(ChapterState.isFetching)
   isFetchingChapter$: Observable<boolean>;
   isFetchingChapter: boolean;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private store: Store,
     private route: ActivatedRoute,
     private auth: AuthorizationService
   ) {
-    this.isFetchingChapter$.subscribe((val) => {
+    this.isFetchingChapter$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.isFetchingChapter = val;
     });
     this.chapter$.subscribe((val) => {
@@ -72,6 +77,8 @@ export class ChapterProfileComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
-    this.store.dispatch(new ResetChapterFormAction());
+    this.store.dispatch(new ResetChapterFormAction());  
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

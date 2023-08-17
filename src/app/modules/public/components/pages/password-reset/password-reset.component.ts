@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -7,11 +7,12 @@ import {
 } from '@angular/forms';
 import { Location } from '@angular/common';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { Router } from '@angular/router';
 import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { PasswordResetAction } from 'src/app/modules/auth/state/auth.actions';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-password-reset',
@@ -21,7 +22,7 @@ import { PasswordResetAction } from 'src/app/modules/auth/state/auth.actions';
     './../../../../../shared/common/shared-styles.css',
   ],
 })
-export class PasswordResetComponent implements OnInit {
+export class PasswordResetComponent implements OnInit, OnDestroy {
   url: string;
   token: string;
   hide: boolean = true;
@@ -32,13 +33,17 @@ export class PasswordResetComponent implements OnInit {
   @Select(AuthState.getIsLoggedIn)
   isLoggedIn$: Observable<boolean>;
   isLoggedIn: boolean;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private location: Location,
     private store: Store,
     private fb: FormBuilder,
     private router: Router
   ) {
-    this.isLoggedIn$.subscribe((val) => {
+    this.isLoggedIn$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.isLoggedIn = val;
     });
     this.setupPasswordResetForm();
@@ -77,5 +82,10 @@ export class PasswordResetComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchTokenFromUrl();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

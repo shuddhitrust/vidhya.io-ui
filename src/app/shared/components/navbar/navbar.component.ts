@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Store, Select } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {
   LogoutAction,
   OpenLoginFormAction,
@@ -12,13 +12,14 @@ import { AuthState } from 'src/app/modules/auth/state/auth.state';
 import { LoginModalComponent } from 'src/app/modules/auth/components/login/login-modal.component';
 import { CurrentMember } from '../../common/models';
 import { uiroutes } from '../../common/ui-routes';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy {
   dashboardRoute: string = uiroutes.DASHBOARD_ROUTE.route;
   profileRoute: string;
   accountRoute: string = uiroutes.ACCOUNT_ROUTE.route;
@@ -41,12 +42,18 @@ export class NavbarComponent implements OnInit {
     RESEND_ACTIVATION_EMAIL:"310px",
     FORGOT_PASSWORD:"350px"
   }  
+  subscriptionParam: any;
+  subscriptionAuthStateParam: any;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private store: Store,
     public dialog: MatDialog,
     private router: Router
   ) {
-    this.authState$.subscribe((val) => {
+    this.authState$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.authState = val;
       this.isLoggedIn = this.authState?.isLoggedIn;
       this.isFullyAuthenticated = this.authState?.isFullyAuthenticated;
@@ -72,7 +79,9 @@ export class NavbarComponent implements OnInit {
     const dialogRef = this.dialog.open(LoginModalComponent,{
       height:this.dialogHeight
     });
-    dialogRef.componentInstance.dialogUIStyle.subscribe(data=>{
+    dialogRef.componentInstance.dialogUIStyle
+   .pipe(takeUntil(this.destroy$))
+   .subscribe(data=>{
       if(data ==  "LOGIN"){
         this.dialogHeight = this.dialogHeightObject.LOGIN;
       }else if(data == "GENERATE_EMAIL_OTP"){
@@ -92,7 +101,7 @@ export class NavbarComponent implements OnInit {
       }
       dialogRef.updateSize("",this.dialogHeight);
     })
-    dialogRef.afterClosed().subscribe((result)=>{
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result)=>{
       this.dialogHeight = this.defaultDialogHeight;
       dialogRef.updateSize("",this.dialogHeight);
     })
@@ -102,4 +111,9 @@ export class NavbarComponent implements OnInit {
     this.store.dispatch(new LogoutAction());
   }
   ngOnInit(): void {}
+  
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
 }

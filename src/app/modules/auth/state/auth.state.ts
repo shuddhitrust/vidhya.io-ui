@@ -13,7 +13,7 @@ import {
   getProjectsClappedFromLocalStorage,
 } from './auth.model';
 
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import {
   RegisterAction,
   LoginAction,
@@ -50,7 +50,7 @@ import {
 import { Apollo } from 'apollo-angular';
 
 import jwtDecode from 'jwt-decode';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { Router } from '@angular/router';
 import { localStorageKeys, minute } from 'src/app/shared/common/constants';
 import {
@@ -81,6 +81,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { error } from 'console';
+import { takeUntil } from 'rxjs/operators';
 /**
  * Auth flow steps:-
  * - When the application loads, it runs the AuthenticationCheckAction which checks for what kind of storage is used.
@@ -108,10 +109,11 @@ import { error } from 'console';
   defaults: defaultAuthState,
 })
 @Injectable()
-export class AuthState {
+export class AuthState implements OnDestroy{
   refreshTokenTimeout; // Variable that stores the timeout method for the next RefreshToken call
   SSOLogin: boolean;
   registerForm: FormGroup;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     private store: Store,
@@ -358,6 +360,7 @@ export class AuthState {
           token,
         },
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.verifyToken;
@@ -409,6 +412,7 @@ export class AuthState {
             refreshToken,
           },
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           ({ data }: any) => {
             const response = data.refreshToken;
@@ -496,7 +500,9 @@ export class AuthState {
         })
       );
       patchState({ isFetchingCurrentMember: true });
-      this.apollo.query({ query: AUTH_QUERIES.ME }).subscribe(
+      this.apollo.query({ query: AUTH_QUERIES.ME })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
         ({ data }: any) => {
           const user = data.me;
           let getChangePasswordEnable = AuthStorage('session').getItem(localStorageKeys.CHANGE_PASSWORD_ENABLE_KEY) == 'true' ? true : false;
@@ -624,6 +630,7 @@ export class AuthState {
             password: values.password,
           },
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           ({ data }: any) => {
             const response = data.tokenAuth;
@@ -728,6 +735,7 @@ export class AuthState {
         mutation: AUTH_MUTATIONS.VERIFY_USER_GET_EMAILOTP,
         variables: { email: user.email, user_id: user.id },
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.verifyUserLoginGetEmailOtp;
@@ -792,6 +800,7 @@ export class AuthState {
         mutation: AUTH_MUTATIONS.REVOKE_TOKEN,
         variables: { refreshToken },
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.revokeToken;
@@ -857,6 +866,7 @@ export class AuthState {
             email: values.email
           },
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           ({ data }: any) => {
             this.store.dispatch(
@@ -947,6 +957,7 @@ export class AuthState {
           token,
         },
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.verifyAccount;
@@ -1012,6 +1023,7 @@ export class AuthState {
             email: values.email,
           },
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           ({ data }: any) => {
             const response = data.resendActivationEmail;
@@ -1087,6 +1099,7 @@ export class AuthState {
             email: values?.email ? values.email : values,
           },
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           ({ data }: any) => {
             const response = data.sendPasswordResetEmail;
@@ -1182,6 +1195,7 @@ export class AuthState {
             email: values.email,
           },
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           ({ data }: any) => {
             const response = data.generateEmailOtp;
@@ -1262,6 +1276,7 @@ export class AuthState {
             otp: values.otp,
           },
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           ({ data }: any) => {
             const response = data.verifyEmailOtp;
@@ -1333,6 +1348,7 @@ export class AuthState {
             newPassword2: values.newPassword2,
           },
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           ({ data }: any) => {
             const response = data.passwordReset;
@@ -1406,7 +1422,8 @@ export class AuthState {
           accessToken: socialAuthData.accessToken,
         },
       })
-      .subscribe(
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(
         ({ data }: any) => {
           const response = data.socialAuth;
           let user: any = {};
@@ -1446,7 +1463,8 @@ export class AuthState {
           input: { email: user.email, firstName: user.firstName, lastName: user.lastName }
         },
       })
-      .subscribe(
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(
         ({ data }: any) => {
           const state = getState();
           let { currentMember, firstTimeSetup } = state;
@@ -1524,6 +1542,7 @@ export class AuthState {
             newPassword2: values.newPassword2,
           },
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           ({ data }: any) => {
             const response = data.passwordChange;
@@ -1631,6 +1650,7 @@ export class AuthState {
             invitecode,
           },
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           ({ data }: any) => {
             this.store.dispatch(
@@ -1707,6 +1727,7 @@ export class AuthState {
             email,
           },
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           ({ data }: any) => {
             const response = data.addInvitecode;
@@ -1786,6 +1807,12 @@ export class AuthState {
         uiroutes.MEMBER_PROFILE_ROUTE.route + '/' + user.username])
     }
   }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
+
 }
 
 const calculateFirstTimeSetup = (currentMember: CurrentMember): boolean => {

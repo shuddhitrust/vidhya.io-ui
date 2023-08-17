@@ -1,8 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { CourseState } from 'src/app/modules/dashboard/modules/course/state/courses/course.state';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import {
@@ -19,13 +19,14 @@ import {
 } from '../../../state/public/public.actions';
 import { PublicState } from '../../../state/public/public.state';
 import { CourseDisplayComponent } from './course-dialog/course-display.component';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-courses-feed',
   templateUrl: './courses-feed.component.html',
   styleUrls: ['./courses-feed.component.scss'],
 })
-export class CoursesFeedComponent implements OnInit {
+export class CoursesFeedComponent implements OnInit, OnDestroy {
   @Input()
   currentQuery: string = null;
   @Select(PublicState.listPublicCourses)
@@ -34,6 +35,8 @@ export class CoursesFeedComponent implements OnInit {
   @Select(CourseState.isFetching)
   isFetching$: Observable<boolean>;
   isFetching: boolean;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
 
   constructor(
     private store: Store,
@@ -48,7 +51,9 @@ export class CoursesFeedComponent implements OnInit {
         },
       })
     );
-    this.isFetching$.subscribe((val) => {
+    this.isFetching$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.isFetching = val;
     });
   }
@@ -80,6 +85,11 @@ export class CoursesFeedComponent implements OnInit {
       },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {});
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

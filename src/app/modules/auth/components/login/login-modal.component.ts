@@ -3,7 +3,8 @@ import {
   ElementRef,
   Inject,
   OnInit,
-  EventEmitter
+  EventEmitter,
+  OnDestroy
 } from '@angular/core';
 import {
   FormBuilder,
@@ -18,7 +19,7 @@ import {
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import { ActivatedRoute } from '@angular/router';
 import {
@@ -44,6 +45,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DOCUMENT } from '@angular/common';
 import { AuthConfig, OAuthService, JwksValidationHandler } from 'angular-oauth2-oidc';
+import { takeUntil } from 'rxjs/operators';
 
 const INVITECODE = 'INVITECODE';
 const GENERATE_EMAIL_OTP = 'GENERATE_EMAIL_OTP';
@@ -66,7 +68,7 @@ const authConfig: AuthConfig = environment.oAuthConfig;
   styleUrls: ['./login-modal.component.scss'],
 })
 
-export class LoginModalComponent implements OnInit {
+export class LoginModalComponent implements OnInit,OnDestroy {
   url: string;
   INVITECODE = INVITECODE;
   GENERATE_EMAIL_OTP = GENERATE_EMAIL_OTP;
@@ -106,6 +108,7 @@ export class LoginModalComponent implements OnInit {
   dialogUIStyle = new EventEmitter();
   showEmailLoginDialog: boolean=false;
   // @ViewChild('buttonDiv') buttonDiv: ElementRef = new ElementRef({});
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     private store: Store,
@@ -127,13 +130,17 @@ export class LoginModalComponent implements OnInit {
     this.setupForgotPasswordForm();
     this.setupRegisterForm();
     this.setupInvitecodeForm();
-    this.isEmailVerified$.subscribe((val)=>{
+    this.isEmailVerified$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val)=>{
       this.isEmailVerified=val;
       if(this.isEmailVerified===true){
         this.finalizeRegistration()
       }
     })
-    this.authState$.subscribe((val) => {
+    this.authState$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.authState = val;
       // this.invited = this.authState?.currentMember?.invitecode;
       this.isEmailOTPGenerated = this.authState?.isEmailOTPGenerated;
@@ -179,7 +186,9 @@ export class LoginModalComponent implements OnInit {
     this.url = window.location.href;
     if (this.url.includes(uiroutes.REGISTER_ROUTE.route) && !this.isLoggedIn) {
       const invitecode = this.url.split(uiroutes.REGISTER_ROUTE.route + '/')[1];
-      this.route.queryParams.subscribe((params) => {
+      this.route.queryParams
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((params) => {
         const invitecode = params['invitecode'];
         if (invitecode) {
           this.showRegister();
@@ -352,6 +361,8 @@ goBack(){
     console.log(this.showDialog);
     this.showDialog = LOGIN;
     this.registration = false;
-    this.dialogUIStyle.emit(this.showDialog);
+    this.dialogUIStyle.emit(this.showDialog);    
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

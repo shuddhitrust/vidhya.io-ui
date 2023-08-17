@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import {
   FormBuilder,
@@ -15,7 +15,7 @@ import {
   GetChapterAction,
 } from 'src/app/modules/dashboard/modules/course/state/chapters/chapter.actions';
 import { ChapterState } from 'src/app/modules/dashboard/modules/course/state/chapters/chapter.state';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { emptyChapterFormRecord } from 'src/app/modules/dashboard/modules/course/state/chapters/chapter.model';
 import {
   Chapter,
@@ -29,6 +29,7 @@ import { CourseSectionState } from '../../../state/courseSections/courseSection.
 import { FetchCoursesAction } from '../../../state/courses/course.actions';
 import { FetchCourseSectionsAction } from '../../../state/courseSections/courseSection.actions';
 import { GroupState } from '../../../../group/state/group.state';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-add-edit-chapter',
@@ -38,7 +39,7 @@ import { GroupState } from '../../../../group/state/group.state';
     './../../../../../../../shared/common/shared-styles.css',
   ],
 })
-export class AddEditChapterComponent implements OnInit {
+export class AddEditChapterComponent implements OnInit, OnDestroy {
   formSubmitting: boolean = false;
   chapterStatusOptions = ChapterStatusOptions;
   currentDate = new Date();
@@ -65,6 +66,8 @@ export class AddEditChapterComponent implements OnInit {
   @Select(CourseSectionState.listCourseSectionOptions)
   courseSectionOptions$: Observable<MatSelectOption[]>;
   courseId = null;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private location: Location,
     private store: Store,
@@ -73,12 +76,16 @@ export class AddEditChapterComponent implements OnInit {
   ) {
     this.ngOnInit();
     this.fetchCourses();
-    this.courseOptions$.subscribe((val) => {
+    this.courseOptions$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       if (this.courseId) {
         this.chapterForm?.get('course')?.setValue(this.courseId);
       }
     });
-    this.chapterFormRecord$.subscribe((val) => {
+    this.chapterFormRecord$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.chapterFormRecord = val;
       this.chapterForm = this.setupChapterFormGroup(this.chapterFormRecord);
     });
@@ -116,7 +123,9 @@ export class AddEditChapterComponent implements OnInit {
     });
   };
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((params) => {
       this.params = params;
       const id = params['id'];
       this.courseId = params['courseId'];
@@ -159,5 +168,10 @@ export class AddEditChapterComponent implements OnInit {
         formDirective,
       })
     );
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

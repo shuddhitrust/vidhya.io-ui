@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import { autoGenOptions, parseDateTime } from 'src/app/shared/common/functions';
@@ -18,6 +18,7 @@ import {
 } from '../../state/assignment.actions';
 import { Assignment } from '../../state/assignment.model';
 import { AssignmentState } from '../../state/assignment.state';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-assignment-dashboard',
@@ -27,7 +28,7 @@ import { AssignmentState } from '../../state/assignment.state';
     './../../../../../../shared/common/shared-styles.css',
   ],
 })
-export class AssignmentDashboardComponent implements OnInit {
+export class AssignmentDashboardComponent implements OnInit, OnDestroy {
   resource: string = resources.ANNOUNCEMENT;
   resourceActions = RESOURCE_ACTIONS;
   exerciseSubmissionColumnFilters = {};
@@ -50,6 +51,7 @@ export class AssignmentDashboardComponent implements OnInit {
   @Select(AssignmentState.isFetching)
   isFetching$: Observable<boolean>;
   isFetching: boolean;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     private store: Store,
@@ -58,10 +60,14 @@ export class AssignmentDashboardComponent implements OnInit {
     private route: ActivatedRoute
   ) {
     this.fetchAssignments();
-    this.isFetching$.subscribe((val) => {
+    this.isFetching$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.isFetching = val;
     });
-    this.assignments$.subscribe((val) => {
+    this.assignments$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.assignments = val ? val : [];
     });
   }
@@ -74,7 +80,9 @@ export class AssignmentDashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((params) => {
       this.params = params;
       const statusOptions = Object.values(ExerciseSubmissionStatusOptions);
       const status = params['status'];
@@ -160,5 +168,10 @@ export class AssignmentDashboardComponent implements OnInit {
     this.router.navigate([uiroutes.CHAPTER_PROFILE_ROUTE.route], {
       queryParams: { id: chapter.id },
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

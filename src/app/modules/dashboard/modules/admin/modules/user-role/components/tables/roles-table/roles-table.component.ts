@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { GridOptions } from 'ag-grid-community';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
 import { RoleProfileRendererComponent } from 'src/app/modules/dashboard/modules/admin/modules/user-role/components/cell-renderers/role-profile/role-profile-renderer.component';
@@ -17,13 +17,14 @@ import {
   ForceRefetchUserRolesAction,
   ResetUserRoleFormAction,
 } from '../../../state/userRole.actions';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-roles-table',
   templateUrl: './roles-table.component.html',
   styleUrls: ['./roles-table.component.scss'],
 })
-export class RolesTableComponent implements OnInit {
+export class RolesTableComponent implements OnInit, OnDestroy {
   tableTitle: string = ADMIN_SECTION_LABELS.USER_ROLES;
   resource: string = resources.USER_ROLE;
   roles: object[];
@@ -55,6 +56,7 @@ export class RolesTableComponent implements OnInit {
     userRoleRenderer: RoleProfileRendererComponent,
   };
   gridOptions: GridOptions;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     public dialog: MatDialog,
@@ -86,8 +88,14 @@ export class RolesTableComponent implements OnInit {
       data: rowData,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {});
   }
 
   ngOnInit(): void {}
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
+
 }

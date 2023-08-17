@@ -2,9 +2,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
-import { filter } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
   CurrentMember,
@@ -53,6 +53,8 @@ export class PublicUserProfileComponent implements OnInit, OnDestroy {
   @Select(AuthState.getCurrentMember)
   currentMember$: Observable<CurrentMember>;
   currentMember: CurrentMember;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private location: Location,
     private router: Router,
@@ -62,6 +64,7 @@ export class PublicUserProfileComponent implements OnInit, OnDestroy {
     // subscribing to changes in the URL and refetching user from it.
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
+      .pipe(takeUntil(this.destroy$))
       .subscribe((event: NavigationEnd) => {
         this.url = event.url;
         this.fetchUserFromUrl();
@@ -82,7 +85,9 @@ export class PublicUserProfileComponent implements OnInit, OnDestroy {
   }
 
   setActiveIndexFromParams() {
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((params) => {
       this.params = params;
       const tabName = params['tab'];
       if (tabName) {
@@ -169,6 +174,8 @@ export class PublicUserProfileComponent implements OnInit, OnDestroy {
   };
 
   ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
     this.store.dispatch(new ResetPublicMemberFormAction());
   }
 }

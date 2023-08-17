@@ -7,7 +7,7 @@ import {
   InstitutionStateModel,
 } from './institution.model';
 
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable, NgZone, OnDestroy } from '@angular/core';
 import {
   CreateUpdateInstitutionAction,
   DeleteInstitutionAction,
@@ -40,12 +40,16 @@ import {
 } from '../../../../../../../../shared/common/constants';
 import { SUBSCRIPTIONS } from '../../../../../../../../shared/api/graphql/subscriptions.graphql';
 import { SearchParams } from '../../../../../../../../shared/modules/master-grid/table.model';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 @State<InstitutionStateModel>({
   name: 'institutionState',
   defaults: defaultInstitutionState,
 })
 @Injectable()
-export class InstitutionState {
+export class InstitutionState implements OnDestroy{
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private apollo: Apollo,
     private store: Store,
@@ -167,6 +171,7 @@ export class InstitutionState {
         variables,
         // fetchPolicy,
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.institutions.records;
@@ -205,6 +210,7 @@ export class InstitutionState {
         .subscribe({
           query: SUBSCRIPTIONS.institution,
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe((result: any) => {
           const state = getState();
           const method = result?.data?.notifyInstitution?.method;
@@ -237,6 +243,7 @@ export class InstitutionState {
         variables: { id },
         fetchPolicy: 'network-only',
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.institution;
@@ -284,6 +291,7 @@ export class InstitutionState {
             : INSTITUTION_MUTATIONS.CREATE_INSTITUTION,
           variables,
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           ({ data }: any) => {
             const response = updateForm
@@ -359,6 +367,7 @@ export class InstitutionState {
         mutation: INSTITUTION_MUTATIONS.DELETE_INSTITUTION,
         variables: { id },
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteInstitution;
@@ -401,5 +410,9 @@ export class InstitutionState {
     });
   }
 
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
   
 }
