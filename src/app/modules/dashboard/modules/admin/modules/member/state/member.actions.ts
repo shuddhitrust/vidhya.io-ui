@@ -61,3 +61,9 @@ export class SuspendMemberAction {
 
   constructor(public payload: { userId: number; remarks: string }) {}
 }
+
+export class ModifyUserInstitutionAction {
+  static readonly type = '[MEMBER] Modify User Institution';
+
+  constructor(public payload: { userId: number; institutionId: number; designation: string }) {}
+}

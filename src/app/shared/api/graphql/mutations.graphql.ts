@@ -89,6 +89,26 @@ export const USER_MUTATIONS = {
       }
     }
   `,
+  MODIFY_USER_INSTITUTION: gql`
+    mutation modifyUserInstitution($userId: ID!,$institutionId: ID!,$designation: String!){
+      modifyUserInstitution(userId: $userId,institutionId: $institutionId,designation: $designation){
+        ok
+        user {
+          id
+          name
+          designation
+          institution {
+            id
+            name
+            coordinator{
+              id
+              name
+            }
+          } 
+        }
+      }
+    }
+  `
 };
 
 export const USER_ROLE_MUTATIONS = {

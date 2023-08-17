@@ -1,9 +1,11 @@
 <div mat-dialog-content class="dialog-box">
   <mat-card>
     <mat-card-header>
-      <mat-card-title>{{ profileData.name }}</mat-card-title>
-      <mat-card-subtitle>{{ profileData.location }}</mat-card-subtitle>
-      <mat-card-subtitle>{{ profileData.title }}</mat-card-subtitle>
+      <mat-card-title>{{ profileData.name }}name</mat-card-title>
+      <mat-card-subtitle>{{ profileData.dob }}</mat-card-subtitle>
+
+      <mat-card-subtitle>{{ profileData.location }}location</mat-card-subtitle>
+      <mat-card-subtitle>{{ profileData.title }}title</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content style="min-height: 100px">
       <img
@@ -12,9 +14,9 @@
         [src]="profileData.avatar"
         alt="User avatar"
       />
-      <p class="bio-text">
-        {{ profileData.bio }}
-      </p>
+      <p class="bio-text">{{ profileData.bio }}bio</p>
+      <p>{{ profileData.designation }}</p>
+
     </mat-card-content>
     <hr />
     <form [formGroup]="moderationForm" novalidate #formDirective="ngForm">
@@ -49,6 +51,69 @@
         </button>
         <hr />
       </div>
+      <p>
+        In order to update the institution <b>{{ profileData?.institution?.name }}</b>, choose one below and click "Modify Institution" :-</p>
+      <mat-form-field
+        class="col-lg-12 col-md-12 col-sm-12"
+        [class.dropdoawn-loading]="isFetchingUserRoles"
+        appearance="outline"
+      >
+        <mat-label>Institution</mat-label>
+        <!-- <mat-select
+          formControlName="role"
+          placeholder="The role of this member in the institution"
+        >
+          <mat-option *ngFor="let role of roleOptions" [value]="role.value">
+            {{ role.label }}
+          </mat-option>
+        </mat-select> -->
+        <input type="text" matInput required [matAutocomplete]="auto" formControlName="institution"
+        (input)="filterInstitution($event)" #autoInput>
+      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)" (optionSelected)='selectInstitution($event.option.value)'>
+        <div *ngIf="filteredInstitutionOptions$ | async as filteredInstitutionOptions">
+          <ng-container *ngIf="filteredInstitutionOptions.length; else noItems">
+            <div class="institutionGrid">
+              <div class="row institutionGridHead" style="background-color: #0099ff;">
+                <div class="col"><strong>Name</strong></div>
+                <div class="col"><strong>Institution Type</strong></div>
+              </div>
+              <mat-option *ngFor="let institution of filteredInstitutionOptions;let i=index; let l = count"
+                [value]="institution">
+                <div class="institutionGridBody">
+                  <div class="row">
+                    <div class="col" > {{
+                      institution.name }}</div>
+                    <div class="col">
+                      {{institution.institutionType=='SC'?'School':institution.institutionType=='CL'?'College':institution.institutionType=='CO'?'Company':institution.institutionType=='OR'?'Organization':'SC'}}
+                    </div>
+                  </div>
+                </div>
+              </mat-option>
+            </div>
+          </ng-container>
+          <ng-template #noItems>No Items!</ng-template>
+        </div>
+      </mat-autocomplete>
+     
+      </mat-form-field>
+      
+      <mat-form-field class="col-lg-8 col-md-8 col-sm-8" appearance="outline">
+      <mat-label>Designation</mat-label>
+      <mat-select required placeholder="Designation" formControlName="designation">
+        <mat-option *ngFor="let designation of designationOptions" [value]="designation">
+          {{designation }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+      <button col-lg-4 col-md-4 col-sm-4
+        mat-raised-button
+        color="primary"
+        *ngIf="authorizeResourceMethod(resourceActions.UPDATE)"
+        (click)="modifyInstitutionConfirmation()"
+      >
+        Modify Institution
+      </button>
+      <hr />
       <p>
         If <b>{{ profileData?.firstName }}</b> is not a member at
         <b>{{ profileData?.institution?.name }}</b

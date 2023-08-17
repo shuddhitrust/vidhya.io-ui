@@ -21,6 +21,7 @@ import {
   ForceRefetchMembersAction,
   GetMemberAction,
   MemberSubscriptionAction,
+  ModifyUserInstitutionAction,
   ResetMemberFormAction,
   SuspendMemberAction,
 } from './member.actions';
@@ -461,6 +462,56 @@ export class MemberState {
       );
   }
 
+  @Action(ModifyUserInstitutionAction)
+  modifyUserInstitution(
+    { getState, patchState }: StateContext<MemberStateModel>,
+    { payload }: ModifyUserInstitutionAction
+  ) {
+    debugger;
+    let { userId, institutionId, designation} = payload;
+    this.apollo
+      .mutate({
+        mutation: USER_MUTATIONS.MODIFY_USER_INSTITUTION,
+        variables: { userId,institutionId,designation },
+      })
+      .subscribe(
+        ({ data }: any) => {
+          const response = data.modifyUserInstitution;
+
+          if (response.ok) {
+            const state = getState();
+            console.log('state',state.members);
+            const arrCopy = [...state.members]; // 👈️ create copy
+            var rowIndex = arrCopy.findIndex(m=>m.id == response?.user?.id);            
+            if(rowIndex>=0){
+              arrCopy[rowIndex]= Object.assign({},arrCopy[rowIndex]
+                ,{institution:response.user.institution,designation:response.user.designation})                
+            }
+            const newMembers = arrCopy;
+            patchState({ members: newMembers });
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: 'Institution changed successfully!',
+                action: 'success',
+              })
+            );
+          } else {
+            this.store.dispatch(
+              new ShowNotificationAction({
+                message: getErrorMessageFromGraphQLResponse(response?.errors),
+                action: 'error',
+              })
+            );
+          }
+        },error=>{
+          this.store.dispatch(
+            new ShowNotificationAction({
+              message: getErrorMessageFromGraphQLResponse(error),
+              action: 'error',
+            })
+          );
+        })
+  }
   @Action(ResetMemberFormAction)
   resetMemberForm({ patchState }: StateContext<MemberStateModel>) {
     patchState({
