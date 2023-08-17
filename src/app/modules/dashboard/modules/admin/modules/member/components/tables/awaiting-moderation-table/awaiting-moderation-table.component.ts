@@ -84,7 +84,14 @@ export class AwaitingModerationTableComponent implements OnInit {
       field: 'membershipStatus',
       cellRenderer: (params) => {
         return getOptionLabel(params.value, membershipStatusOptions);
-      },
+      }
+    },
+    {
+      headerName:'dob',
+      field:'dob',
+      hide: true,
+      suppressColumnsToolPanel: true
+
     },
     // {
     //   field: 'lastActive',

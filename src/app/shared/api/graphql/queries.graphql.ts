@@ -559,6 +559,7 @@ export const INSTITUTION_QUERIES = {
           institution {
             id
             name
+            institutionType
             coordinator{
               id
               name
