@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, Optional, ViewChild } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, Optional, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import {
   FormBuilder,
@@ -17,7 +17,7 @@ import {
 import { FetchCoordinatorsByInstitution } from 'src/app/shared/state/options/options.actions';
 import { MemberState } from '../../../member/state/member.state';
 import { InstitutionState } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.state';
-import { Observable, of } from 'rxjs';
+import { Observable, Subject, of } from 'rxjs';
 import { emptyInstitutionFormRecord } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.model';
 import { Institution, institutionTypeOptions, MatSelectOption,User } from 'src/app/shared/common/models';
 import { UploadService } from 'src/app/shared/api/upload.service';
@@ -30,7 +30,7 @@ import moment from 'moment';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { USER_ROLES_NAMES } from 'src/app/shared/common/constants';
 import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
-import { map } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { OptionsState } from 'src/app/shared/state/options/options.state';
 
 
@@ -42,7 +42,7 @@ import { OptionsState } from 'src/app/shared/state/options/options.state';
     './../../../../../../../../shared/common/shared-styles.css',
   ]
 })
-export class AddEditInstitutionComponent implements OnInit {
+export class AddEditInstitutionComponent implements OnInit, OnDestroy {
   formSubmitting: boolean = false;
   coordinatorName:string = '';
   params: object = {};
@@ -70,7 +70,8 @@ export class AddEditInstitutionComponent implements OnInit {
   today = new Date();
   filteredCoordinatorOptions$: Observable<any>;
   @ViewChild('autoInput') autoInput;
-  
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private location: Location,
     private store: Store,
@@ -84,19 +85,25 @@ export class AddEditInstitutionComponent implements OnInit {
     this.institutionModalData = data?.newInstitutionDialog;
     this.isInstitutionModalDialog = this.institutionModalData?.isDialog
     this.institutionForm = this.setupInstitutionFormGroup();
-    this.institutionFormRecord$.subscribe((val) => {      
+    this.institutionFormRecord$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {      
       this.institutionFormRecord = val;
       this.institutionForm = this.setupInstitutionFormGroup(
         this.institutionFormRecord
       );
     });
-    this.isInstitutionModalDialog$.subscribe((val)=>{
+    this.isInstitutionModalDialog$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val)=>{
       if(val){
         this.dialogRef.close({data: val})
         this.store.dispatch(new ResetInstitutionFormAction());
       }
     });
-    this.coordinatorsRecord$.subscribe((val)=>{
+    this.coordinatorsRecord$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val)=>{
       this.coordinatorOptions = val;
       const institutionOptionsObservable$ = of(this.coordinatorOptions);
       this.filteredCoordinatorOptions$ = institutionOptionsObservable$.pipe(map((number) => number));   
@@ -142,7 +149,9 @@ export class AddEditInstitutionComponent implements OnInit {
   };
 
   ngOnInit(): void {
-     this.route.queryParams.subscribe((params) => {
+     this.route.queryParams
+     .pipe(takeUntil(this.destroy$))
+     .subscribe((params) => {
       this.params = params;
       const id = params['id'];
       if (id) {
@@ -198,7 +207,9 @@ export class AddEditInstitutionComponent implements OnInit {
       );
       const formData = new FormData();
       formData.append('file', this.logoFile);
-      this.uploadService.upload(formData).subscribe(
+      this.uploadService.upload(formData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
         (res) => {
           const url = res.secure_url;
           form.get('logo').setValue(url);
@@ -268,4 +279,9 @@ export class AddEditInstitutionComponent implements OnInit {
   /****************
    * END OF AUTOCOMPLETE
    * **************/
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
 }

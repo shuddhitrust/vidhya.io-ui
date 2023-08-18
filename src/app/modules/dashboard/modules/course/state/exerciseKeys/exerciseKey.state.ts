@@ -5,7 +5,7 @@ import {
   ExerciseKeyStateModel,
 } from './exerciseKey.model';
 
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import {
   ExerciseKeySubscriptionAction,
   FetchExerciseKeysAction,
@@ -33,13 +33,16 @@ import {
 import { EXERCISE_KEY_QUERIES } from 'src/app/shared/api/graphql/queries.graphql';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { SUBSCRIPTIONS } from 'src/app/shared/api/graphql/subscriptions.graphql';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @State<ExerciseKeyStateModel>({
   name: 'exerciseKeyState',
   defaults: defaultExerciseKeyState,
 })
 @Injectable()
-export class ExerciseKeyState {
+export class ExerciseKeyState implements OnDestroy{
+  destroy$: Subject<boolean> = new Subject<boolean>();
   constructor(private apollo: Apollo, private store: Store) {}
 
   @Selector()
@@ -173,6 +176,7 @@ export class ExerciseKeyState {
         variables,
         // fetchPolicy,
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.exerciseKeys;
@@ -221,6 +225,7 @@ export class ExerciseKeyState {
         .subscribe({
           query: SUBSCRIPTIONS.exerciseKey,
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe((result: any) => {
           const state = getState();
           const method = result?.data?.notifyExerciseKey?.method;
@@ -253,6 +258,7 @@ export class ExerciseKeyState {
         variables: { exerciseId },
         fetchPolicy: 'network-only',
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.exerciseKey;
@@ -281,5 +287,10 @@ export class ExerciseKeyState {
   @Action(ResetExerciseKeyStateAction)
   resetExerciseKeyState({ patchState }: StateContext<ExerciseKeyStateModel>) {
     patchState(defaultExerciseKeyState);
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

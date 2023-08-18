@@ -5,6 +5,7 @@ import {
   Output,
   EventEmitter,
   OnChanges,
+  OnDestroy,
 } from '@angular/core';
 import { GridOptions } from 'ag-grid-community';
 import { pageSizeOptions } from '../../table.config';
@@ -20,14 +21,15 @@ import {
   startingFetchParams,
   UserPermissions,
 } from 'src/app/shared/common/models';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
+import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'app-master-grid',
   templateUrl: './master-grid.component.html',
   styleUrls: ['./master-grid.component.scss'],
 })
-export class MasterGridComponent implements OnInit, OnChanges {
+export class MasterGridComponent implements OnInit, OnChanges, OnDestroy {
   gridApi;
   gridColumnApi;
   overlayLoadingTemplate =
@@ -104,6 +106,8 @@ export class MasterGridComponent implements OnInit, OnChanges {
   previewPageStyles: object[] = [];
   isFetchingCSVDownload = false;
   csvDownloadReady = false;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   calculateTableHeight = () => {
     if (this.tableHeightStatic) {
       return this.tableHeightStatic;
@@ -111,11 +115,14 @@ export class MasterGridComponent implements OnInit, OnChanges {
       return `calc(${this.tableHeight} - ${this.tableHeightClearanceInPx}px)`;
     }
   };
+  subscriptionParam: any;
   constructor(private auth: AuthorizationService) {}
 
   ngOnChanges(changes) {
     if (changes.fetchParams$) {
-      this.fetchParams$.subscribe((val) => {
+     this.subscriptionParam= this.fetchParams$
+     .pipe(takeUntil(this.destroy$))
+     .subscribe((val) => {
         this.totalRecords = val?.totalCount;
         this.pageSize = val?.pageSize;
         this.currentPage = val?.currentPage;
@@ -291,4 +298,9 @@ export class MasterGridComponent implements OnInit, OnChanges {
   };
 
   ngOnInit(): void {}
+
+  ngOnDestroy(): void{    
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
 }

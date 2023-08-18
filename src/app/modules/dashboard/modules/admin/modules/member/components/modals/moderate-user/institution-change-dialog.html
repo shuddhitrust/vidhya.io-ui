@@ -1,0 +1,20 @@
+<h2 mat-dialog-title>Confirm institution modification?</h2>
+<mat-dialog-content class="mat-typography">
+  <p>
+    <i><b>Please read carefully before confirming!</b></i>
+  </p>
+  <p>
+    Are you sure, Do you want to modify institution the <b>{{userData?.profileData?.institution?.name}}</b> to <b>{{userData?.currentinstitution?.name}}</b>?
+  </p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-raised-button mat-dialog-close>No</button>
+  <button
+    mat-raised-button
+    [mat-dialog-close]="true"
+    cdkFocusInitial
+    color="primary"
+  >
+    Yes, I'm sure
+  </button>
+</mat-dialog-actions>

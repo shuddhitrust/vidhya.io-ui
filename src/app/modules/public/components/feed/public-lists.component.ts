@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngxs/store';
@@ -14,6 +14,8 @@ import {
   FetchPublicInstitutionssAction,
   FetchPublicMembersAction,
 } from '../../state/public/public.actions';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 const NEWS_LABEL = 'News';
 const SCHOOLS_LABEL = 'Institutions';
@@ -25,7 +27,7 @@ const COURSES_LABEL = 'Courses';
   templateUrl: './public-lists.component.html',
   styleUrls: ['./public-lists.component.scss'],
 })
-export class PublicTabsComponent implements OnInit {
+export class PublicTabsComponent implements OnInit, OnDestroy {
   tabs = [NEWS_LABEL, COURSES_LABEL, SCHOOLS_LABEL, STUDENTS_LABEL];
   activeTabIndex = 0;
   params;
@@ -35,6 +37,7 @@ export class PublicTabsComponent implements OnInit {
   Learners = STUDENTS_LABEL;
   draftSearchQuery: string = null;
   currentQuery: string = null;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     private route: ActivatedRoute,
@@ -122,7 +125,9 @@ export class PublicTabsComponent implements OnInit {
     this.fetchQueriesForTab();
   }
   setActiveIndexFromParams() {
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((params) => {
       this.params = params;
       const tabName = params['tab'];
       if (tabName) {
@@ -154,4 +159,9 @@ export class PublicTabsComponent implements OnInit {
 
     return index?.toString();
   };
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
 }

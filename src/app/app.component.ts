@@ -2,11 +2,11 @@ import { Location } from '@angular/common';
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { GetAuthStorage } from './modules/auth/state/auth.actions';
 import { AuthState } from './modules/auth/state/auth.state';
 import { uiroutes } from './shared/common/ui-routes';
-import { filter } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 
 declare var gtag: Function;
 @Component({
@@ -25,12 +25,16 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   isChangePasswordEnable;
   routerSubscription: Subscription;
   isGoogleLogin: any;
+  public ngDestroyed$ = new Subject();
+
   constructor(
     private store: Store,
     private router: Router,
     private readonly location: Location
   ) {
-    this.firstTimeSetup$.subscribe((val) => {
+    this.firstTimeSetup$
+    .pipe(takeUntil(this.ngDestroyed$))
+    .subscribe((val) => {
       if (val) {
         this.firstTimeSetup = val?.firstTimeSetup;
         this.isGoogleLogin = val?.isGoogleLoggedIn;
@@ -51,6 +55,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   ngOnDestroy(): void {
     this.routerSubscription.unsubscribe();
+    this.ngDestroyed$.next();
   }
 
   currentRoute(): string {
@@ -70,4 +75,5 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   checkAuthentication() {
     this.store.dispatch(new GetAuthStorage());
   }
+  
 }

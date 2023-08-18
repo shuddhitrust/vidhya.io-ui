@@ -6,7 +6,7 @@ import {
   CourseSectionStateModel,
 } from './courseSection.model';
 
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import {
   CourseSectionSubscriptionAction,
   CreateUpdateCourseSectionAction,
@@ -36,13 +36,17 @@ import { COURSE_SECTION_QUERIES } from 'src/app/shared/api/graphql/queries.graph
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { SUBSCRIPTIONS } from 'src/app/shared/api/graphql/subscriptions.graphql';
 import { COURSE_SECTION_MUTATIONS } from 'src/app/shared/api/graphql/mutations.graphql';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @State<CourseSectionStateModel>({
   name: 'courseSectionState',
   defaults: defaultCourseSectionState,
 })
 @Injectable()
-export class CourseSectionState {
+export class CourseSectionState implements OnDestroy{
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private apollo: Apollo,
     private store: Store,
@@ -127,6 +131,7 @@ export class CourseSectionState {
         variables,
         // fetchPolicy,
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.courseSections;
@@ -178,6 +183,7 @@ export class CourseSectionState {
         .subscribe({
           query: SUBSCRIPTIONS.courseSection,
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe((result: any) => {
           const state = getState();
           const method = result?.data?.notifyCourseSection?.method;
@@ -214,6 +220,7 @@ export class CourseSectionState {
         variables: { id },
         fetchPolicy: 'network-only',
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.courseSection;
@@ -260,6 +267,7 @@ export class CourseSectionState {
             : COURSE_SECTION_MUTATIONS.CREATE_COURSE_SECTION,
           variables,
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           ({ data }: any) => {
             const response = updateForm
@@ -338,6 +346,7 @@ export class CourseSectionState {
         mutation: COURSE_SECTION_MUTATIONS.DELETE_COURSE_SECTION,
         variables: { id },
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteCourseSection;
@@ -404,6 +413,7 @@ export class CourseSectionState {
         mutation: COURSE_SECTION_MUTATIONS.REORDER_COURSE_SECTIONS,
         variables: { indexList },
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.reorderChapters;
@@ -417,5 +427,10 @@ export class CourseSectionState {
           );
         }
       );
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

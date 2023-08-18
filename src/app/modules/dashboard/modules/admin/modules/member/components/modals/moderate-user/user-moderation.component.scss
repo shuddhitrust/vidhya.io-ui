@@ -28,6 +28,28 @@
   padding-left: 10px;
 }
 
+.institutionGridHead {
+  background-color: #0099ff;
+  margin: auto;
+  padding: 7px;
+}
+
+.institutionGrid mat-option {
+  border: 1px solid #0099ff;
+}
+
+.institutionGrid mat-option .col:first-child {
+  border-right: 1px solid #0099ff;
+  ;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.institutionGrid .col {
+  width: 50%;
+}
+
 @media screen and (max-width: 480px) {
   .dialog-box {
     width: 100%;

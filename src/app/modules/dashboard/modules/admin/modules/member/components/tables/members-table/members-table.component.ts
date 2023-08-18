@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { GridOptions } from 'ag-grid-community';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 import { SearchParams } from 'src/app/shared/modules/master-grid/table.model';
 import { MemberProfileRendererComponent } from 'src/app/modules/dashboard/modules/admin/modules/member/components/cell-renderers/member-profile/member-profile-renderer.component';
@@ -17,13 +17,14 @@ import {
 import { memberColumns } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.model';
 import { MemberState } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.state';
 import { MemberProfileComponent } from '../../member-profile/member-profile.component';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-members-table',
   templateUrl: './members-table.component.html',
   styleUrls: ['./members-table.component.scss'],
 })
-export class MembersTableComponent implements OnInit {
+export class MembersTableComponent implements OnInit, OnDestroy {
   tableTitle: string = ADMIN_SECTION_LABELS.MEMBERS;
   resource: string = resources.MEMBER;
   members: object[];
@@ -41,6 +42,7 @@ export class MembersTableComponent implements OnInit {
     memberRenderer: MemberProfileRendererComponent,
   };
   gridOptions: GridOptions;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     public dialog: MatDialog,
@@ -71,8 +73,15 @@ export class MembersTableComponent implements OnInit {
       data: rowData,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed()   
+    .pipe(takeUntil(this.destroy$)).subscribe((result) => {});
   }
 
   ngOnInit(): void {}
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
+
 }

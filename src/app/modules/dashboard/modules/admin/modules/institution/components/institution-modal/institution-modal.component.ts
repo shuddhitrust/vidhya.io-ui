@@ -1,4 +1,4 @@
-import { Component, Inject, Input, NgZone, ChangeDetectorRef } from '@angular/core';
+import { Component, Inject, Input, NgZone, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import {
   MatDialog,
   MatDialogRef,
@@ -20,17 +20,19 @@ import {
 import { DeleteInstitutionAction } from 'src/app/modules/dashboard/modules/admin/modules/institution/state/institutions/institution.actions';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { Location } from '@angular/common';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-institution-modal',
   templateUrl: './institution-modal.component.html',
   styleUrls: ['./institution-modal.component.scss'],
 })
-export class InstitutionModalComponent {
+export class InstitutionModalComponent implements OnDestroy {
   profileData: Institution;
   resource = resources.INSTITUTION;
   resourceActions = RESOURCE_ACTIONS;
-  // dialogRef: any;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     public dialog: MatDialog,
@@ -106,7 +108,7 @@ export class InstitutionModalComponent {
       data: masterDialogConfirmationObject,
     });
 
-    this.dialogRef.afterClosed().subscribe((result) => {
+    this.dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
       if (result == true) {
         this.deleteInstitution();
       }
@@ -117,5 +119,10 @@ export class InstitutionModalComponent {
       new DeleteInstitutionAction({ id: this.profileData.id })
     );
     this.closeDialog();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

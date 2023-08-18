@@ -2,7 +2,7 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {
   DeleteChapterAction,
   ResetChapterFormAction,
@@ -77,6 +77,7 @@ import {
 import { ExerciseRubricDialog } from 'src/app/shared/components/rubric-display/rubric-display-dialog.component';
 import { ResetExerciseKeyStateAction } from '../../../../state/exerciseKeys/exerciseKey.actions';
 import { Console } from 'console';
+import { takeUntil } from 'rxjs/operators';
 
 const startingExerciseFormOptions = ['', ''];
 
@@ -144,6 +145,8 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
   previousAnswers = {};
   previousLinks = {};
   previousImages = {};
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     public dialog: MatDialog,
     private location: Location,
@@ -154,27 +157,39 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
     private uploadService: UploadService,
     private exerciseSubmissionService: ExerciseSubmissionService
   ) {
-    this.currentMember$.subscribe((val) => {
+    this.currentMember$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.currentMember = val;
     });
-    this.isFetchingExercises$.subscribe((val) => {
+    this.isFetchingExercises$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.isFetchingExercises = val;
     });
-    this.chapter$.subscribe((val) => {
+    this.chapter$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.chapter = val;
       if (this.chapter.id) {
         this.fetchExercises();
       }
     });
-    this.exercises$.subscribe((val) => {
+    this.exercises$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.exercises = sortByIndex(val.exercises);
       this.setupExerciseSubmissions(val.submissions);
     });
 
-    this.formSubmitting$.subscribe((val) => {
+    this.formSubmitting$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.formSubmitting = val;
     });
-    this.errorFetching$.subscribe((val) => {
+    this.errorFetching$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.errorFetching = val;
     });
   }
@@ -290,7 +305,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
       },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {});
   }
 
   parseDate(date) {
@@ -378,7 +393,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
       data: masterDialogConfirmationObject,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
       if (result == true) {
         this.deleteChapter();
       }
@@ -399,7 +414,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
       data: masterDialogConfirmationObject,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
       if (result == true) {
         this.deleteExercise(exercise);
       }
@@ -418,7 +433,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
       data: exercisesList,
     });
 
-    dialogRef.afterClosed().subscribe((newIndexArray) => {
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((newIndexArray) => {
       let i = 1;
       const reorderedList = newIndexArray.map((index) => {
         let exercise = this.exercises.find((e) => e.id == index);
@@ -647,7 +662,9 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
 
     const formData = new FormData();
     formData.append('file', file);
-    this.uploadService.upload(formData).subscribe(
+    this.uploadService.upload(formData)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(
       (res) => {
         const url = res.secure_url;
 
@@ -713,7 +730,7 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
       },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {});
   }
 
   updateFormBeforeSubmit() {
@@ -761,7 +778,9 @@ export class ChapterPublishedComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.store.dispatch(new ResetChapterFormAction());
     this.store.dispatch(new ResetExerciseStateAction());
-    this.store.dispatch(new ResetExerciseSubmissionFormAction());
+    this.store.dispatch(new ResetExerciseSubmissionFormAction());    
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 
   getSubmittableExercises(): ExerciseSubmission[] {

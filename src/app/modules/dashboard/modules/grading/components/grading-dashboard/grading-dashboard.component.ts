@@ -12,7 +12,7 @@ import {
 } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import {
   defaultSearchParams,
@@ -67,6 +67,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { GRADING } from 'src/app/modules/dashboard/dashboard.component';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { ClearServerCacheAction } from 'src/app/modules/dashboard/state/dashboard.actions';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * URL Param Labels for filters
@@ -108,7 +109,7 @@ const exerciseSubmissionStatusTypes = {
   ],
   encapsulation: ViewEncapsulation.None,
 })
-export class GradingDashboardComponent implements OnInit {
+export class GradingDashboardComponent implements OnInit, OnDestroy {
   resource: string = resources.GRADING;
   resourceActions = RESOURCE_ACTIONS;
   groupByOptions: MatSelectOption[] = autoGenOptions(groupByTypes);
@@ -171,6 +172,8 @@ export class GradingDashboardComponent implements OnInit {
   currentMember: CurrentMember;
   rubricDatatableColumns: string[] = ['description', 'points', 'remarks'];
   tempRemarks = {};
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private store: Store,
     private router: Router,
@@ -180,17 +183,25 @@ export class GradingDashboardComponent implements OnInit {
     private route: ActivatedRoute,
     private exerciseSubmissionService: ExerciseSubmissionService
   ) {
-    this.currentMember$.subscribe((val) => {
+    this.currentMember$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.currentMember = val;
     });
-    this.gradingGroups$.subscribe((val) => {
+    this.gradingGroups$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.gradingGroups = val;
       this.currentCard = emptyGradingGroup;
     });
-    this.isFetchingGradingGroup$.subscribe((val) => {
+    this.isFetchingGradingGroup$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.isFetchingGradingGroup = val;
     });
-    this.exerciseSubmissions$.subscribe((val) => {
+    this.exerciseSubmissions$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       const existingSubmissions = this.exerciseSubmissions; // This stores any unsaved existing submissions in a temp variable
       this.exerciseSubmissions = sortByIndex(val, 'exercise.index'); // Sorting the submissions
       this.exerciseSubmissions = this.exerciseSubmissions.map((e) => {
@@ -203,7 +214,9 @@ export class GradingDashboardComponent implements OnInit {
       });
       this.setupTempVariables();
     });
-    this.isFetching$.subscribe((val) => {
+    this.isFetching$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.isFetching = val;
     });
   }
@@ -234,7 +247,9 @@ export class GradingDashboardComponent implements OnInit {
   }
 
   getFiltersFromParams() {
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((params) => {
       this.params = params;
       this.submissionFilter = params[URL_PARAMS.submission];
       if (this.submissionFilter) {
@@ -356,7 +371,7 @@ export class GradingDashboardComponent implements OnInit {
       data: masterDialogConfirmationObject,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
       if (result == true) {
         this.showGroupCards = true;
       }
@@ -498,7 +513,7 @@ export class GradingDashboardComponent implements OnInit {
       },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {});
   }
 
   openExerciseSubmission(exerciseSubmission) {
@@ -524,7 +539,7 @@ export class GradingDashboardComponent implements OnInit {
         },
       });
 
-      dialogRef.afterClosed().subscribe((result) => {});
+      dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {});
     }
   }
 
@@ -540,7 +555,7 @@ export class GradingDashboardComponent implements OnInit {
       data: {},
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {});
   }
 
   showRubric(exerciseSubmission: ExerciseSubmission) {
@@ -635,7 +650,7 @@ export class GradingDashboardComponent implements OnInit {
       },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
       if (result.remarksUpdated == true) {
         criterionResponse = Object.assign({
           ...criterionResponse,
@@ -822,7 +837,7 @@ export class GradingDashboardComponent implements OnInit {
       data: masterDialogConfirmationObject,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
       if (result == true) {
         this.store.dispatch(
           new CreateUpdateExerciseSubmissionsAction({
@@ -846,7 +861,7 @@ export class GradingDashboardComponent implements OnInit {
       data: masterDialogConfirmationObject,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
       if (result == true) {
         this.store.dispatch(new ClearServerCacheAction());
       }
@@ -884,6 +899,11 @@ export class GradingDashboardComponent implements OnInit {
       );
     }
   }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
 }
 
 @Component({
@@ -899,18 +919,29 @@ export class ExerciseKeyDialog {
   isFetchingExerciseKey: boolean = false;
   chapterRoute = '';
   questionTypes: any = ExerciseQuestionTypeOptions;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<ExerciseKeyDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    data.exerciseKeyRecord$.subscribe((val) => {
+    data.exerciseKeyRecord$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.exerciseKey = val;
       this.chapterRoute = `/${uiroutes.CHAPTER_PROFILE_ROUTE.route}?id=${this.exerciseKey.exercise?.chapter?.id}&courseId=${this.exerciseKey?.exercise?.course?.id}`;
     });
-    data.isFetchingExerciseKey$.subscribe((val) => {
+    data.isFetchingExerciseKey$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.isFetchingExerciseKey = val;
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 
   showExpandedImage(image) {
@@ -920,7 +951,7 @@ export class ExerciseKeyDialog {
       },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {});
   }
   trackByFn(index: any, item: any) {
     return index;
@@ -939,6 +970,8 @@ export class CriterionRemarkInputDialog {
   criterionResponse: CriterionResponse;
   newRemarks: string;
   remarksUpdated: boolean = false;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     public dialogRef: MatDialogRef<CriterionRemarkInputDialog>,
     public dialog: MatDialog,
@@ -947,11 +980,17 @@ export class CriterionRemarkInputDialog {
     this.criterionResponse = data.criterionResponse;
     this.newRemarks = this.criterionResponse.remarks;
     this.dialogRef.disableClose = true; //disable default close operation
-    this.dialogRef.backdropClick().subscribe((result) => {
+    this.dialogRef.backdropClick()
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((result) => {
       this.discardChangesCloseConfirmation();
     });
   }
 
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
   discardChangesCloseConfirmation() {
     if (this.remarksUpdated) {
       const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
@@ -964,7 +1003,7 @@ export class CriterionRemarkInputDialog {
         data: masterDialogConfirmationObject,
       });
 
-      dialogRef.afterClosed().subscribe((result) => {
+      dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
         if (result == true) {
           this.discardChangesClose();
         }
@@ -985,7 +1024,7 @@ export class CriterionRemarkInputDialog {
         data: masterDialogConfirmationObject,
       });
 
-      dialogRef.afterClosed().subscribe((result) => {
+      dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
         if (result == true) {
           this.saveCloseDialog();
         }
@@ -1030,19 +1069,26 @@ export class SubmissionHistoryDialog implements OnDestroy {
   @Select(ExerciseSubmissionState.submissionHistory)
   submissionHistory$: Observable<ExerciseSubmission[]>;
   rubricDatatableColumns: string[] = ['description', 'points', 'remarks'];
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private store: Store,
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<ExerciseKeyDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    this.submissionHistory$.subscribe((val) => {
+    this.submissionHistory$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.history = val;
     });
-    this.isFetchingSubmissionHistory$.subscribe((val) => {
+    this.isFetchingSubmissionHistory$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.isFetchingSubmissionHistory = val;
     });
   }
+
   showRemarks(criterion: CriterionResponse) {
     const masterDialogConfirmationObject: MasterConfirmationDialogObject = {
       title: `Remarks by ${criterion?.remarker?.name}`,
@@ -1054,7 +1100,7 @@ export class SubmissionHistoryDialog implements OnDestroy {
       data: masterDialogConfirmationObject,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {});
   }
   trackByFn(index: any, item: any) {
     return index;
@@ -1091,5 +1137,7 @@ export class SubmissionHistoryDialog implements OnDestroy {
 
   ngOnDestroy() {
     this.store.dispatch(new ResetSubmissionHistory());
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

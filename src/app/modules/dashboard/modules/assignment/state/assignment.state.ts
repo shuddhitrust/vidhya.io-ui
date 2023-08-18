@@ -5,7 +5,7 @@ import {
   Assignment,
 } from './assignment.model';
 
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import {
   FetchAssignmentsAction,
   FetchNextAssignmentsAction,
@@ -23,13 +23,16 @@ import {
 import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
 import { ASSIGNMENT_QUERIES } from 'src/app/shared/api/graphql/queries.graphql';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @State<AssignmentStateModel>({
   name: 'assignmentState',
   defaults: defaultAssignmentState,
 })
 @Injectable()
-export class AssignmentState {
+export class AssignmentState implements OnDestroy{
+  destroy$: Subject<boolean> = new Subject<boolean>();
   constructor(private apollo: Apollo, private store: Store) {}
 
   @Selector()
@@ -149,6 +152,7 @@ export class AssignmentState {
         variables,
         // fetchPolicy,
       })
+      .pipe(takeUntil(this.destroy$))      
       .subscribe(
         ({ data }: any) => {
           this.store.dispatch(
@@ -188,5 +192,10 @@ export class AssignmentState {
           patchState({ isFetching: false });
         }
       );
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

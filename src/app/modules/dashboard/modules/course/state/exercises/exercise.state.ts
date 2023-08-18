@@ -5,7 +5,7 @@ import {
   ExerciseStateModel,
 } from './exercise.model';
 
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import {
   ExerciseSubscriptionAction,
   CreateUpdateExerciseAction,
@@ -40,13 +40,16 @@ import {
 import { EXERCISE_QUERIES } from 'src/app/shared/api/graphql/queries.graphql';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { EXERCISE_MUTATIONS } from 'src/app/shared/api/graphql/mutations.graphql';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @State<ExerciseStateModel>({
   name: 'exerciseState',
   defaults: defaultExerciseState,
 })
 @Injectable()
-export class ExerciseState {
+export class ExerciseState implements OnDestroy{
+  destroy$: Subject<boolean> = new Subject<boolean>();
   constructor(
     private apollo: Apollo,
     private store: Store,
@@ -195,6 +198,7 @@ export class ExerciseState {
           variables,
           // fetchPolicy,
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           ({ data }: any) => {
             const response = data.exercises;
@@ -258,6 +262,7 @@ export class ExerciseState {
         .subscribe({
           query: SUBSCRIPTIONS.exercise,
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe((result: any) => {
           const state = getState();
           const method = result?.data?.notifyExercise?.method;
@@ -290,6 +295,7 @@ export class ExerciseState {
         variables: { id },
         fetchPolicy: 'network-only',
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.exercise;
@@ -345,6 +351,7 @@ export class ExerciseState {
             : EXERCISE_MUTATIONS.CREATE_EXERCISE,
           variables,
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           ({ data }: any) => {
             const response = updateForm
@@ -427,6 +434,7 @@ export class ExerciseState {
         mutation: EXERCISE_MUTATIONS.DELETE_EXERCISE,
         variables: { id },
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteExercise;
@@ -489,6 +497,7 @@ export class ExerciseState {
         mutation: EXERCISE_MUTATIONS.REORDER_EXERCISES,
         variables: { indexList },
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.reorderExercses;
@@ -502,5 +511,10 @@ export class ExerciseState {
           );
         }
       );
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

@@ -1,7 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { Location } from '@angular/common';
 import { Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { DeleteAnnouncementAction } from 'src/app/modules/dashboard/modules/announcement/state/announcement.actions';
 import { MatDialog } from '@angular/material/dialog';
 import {
@@ -17,6 +17,7 @@ import {
 } from 'src/app/shared/components/confirmation-dialog/confirmation-dialog.component';
 import { generateMemberProfileLink } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.model';
 import { Router } from '@angular/router';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-announcement-profile-renderer',
@@ -26,13 +27,14 @@ import { Router } from '@angular/router';
     './../../../shared/common/shared-styles.css',
   ],
 })
-export class AnnouncementProfileRendererComponent {
+export class AnnouncementProfileRendererComponent implements OnDestroy{
   resource = resources.ANNOUNCEMENT;
   resourceActions = RESOURCE_ACTIONS;
   @Input()
   announcement: Announcement;
   @Input()
   isFetching$: Observable<boolean>;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     public dialog: MatDialog,
@@ -63,7 +65,7 @@ export class AnnouncementProfileRendererComponent {
       data: masterDialogConfirmationObject,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
       if (result == true) {
         this.deleteAnnouncement();
       }
@@ -84,4 +86,10 @@ export class AnnouncementProfileRendererComponent {
     );
     this.goBack();
   }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
+
 }

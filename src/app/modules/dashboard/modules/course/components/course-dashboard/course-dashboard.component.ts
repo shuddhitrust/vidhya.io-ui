@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import {
@@ -16,6 +16,7 @@ import {
   FetchNextCoursesAction,
 } from '../../state/courses/course.actions';
 import { CourseState } from '../../state/courses/course.state';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-course-dashboard',
@@ -25,7 +26,7 @@ import { CourseState } from '../../state/courses/course.state';
     './../../../../../../shared/common/shared-styles.css',
   ],
 })
-export class CourseDashboardComponent implements OnInit {
+export class CourseDashboardComponent implements OnInit, OnDestroy {
   resource: string = resources.COURSE;
   resourceActions = RESOURCE_ACTIONS;
 
@@ -35,6 +36,7 @@ export class CourseDashboardComponent implements OnInit {
   @Select(CourseState.isFetching)
   isFetching$: Observable<boolean>;
   isFetching: boolean;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     private store: Store,
@@ -44,7 +46,9 @@ export class CourseDashboardComponent implements OnInit {
     this.store.dispatch(
       new FetchCoursesAction({ searchParams: defaultSearchParams })
     );
-    this.isFetching$.subscribe((val) => {
+    this.isFetching$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.isFetching = val;
     });
   }
@@ -53,6 +57,10 @@ export class CourseDashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {}
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
   onScroll() {
     if (!this.isFetching) {
       this.store.dispatch(new FetchNextCoursesAction());

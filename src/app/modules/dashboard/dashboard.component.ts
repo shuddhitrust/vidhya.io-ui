@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { resourceUsage } from 'process';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import {
   ADMIN_SECTION_LABELS,
@@ -19,6 +19,7 @@ import { AuthState } from '../auth/state/auth.state';
 import { GetUnreadCountAction } from './state/dashboard.actions';
 import { unreadCountType } from './state/dashboard.model';
 import { DashboardState } from './state/dashboard.state';
+import { takeUntil } from 'rxjs/operators';
 
 export const ADMIN = 'Admin';
 export const ANNOUNCEMENTS = 'Announcements';
@@ -57,7 +58,7 @@ const adminEntities = [
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   ADMIN = ADMIN;
   ANNOUNCEMENTS = ANNOUNCEMENTS;
   ASSIGNMENTS = ASSIGNMENTS;
@@ -79,21 +80,29 @@ export class DashboardComponent implements OnInit {
   @Select(AuthState.getIsFullyAuthenticated)
   isFullyAuthenticated$: Observable<boolean>;
   isFullyAuthenticated: boolean = false;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private auth: AuthorizationService,
     private store: Store
   ) {
-    this.permissions$.subscribe((val) => {
+    this.permissions$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.populateVisibleTabs();
     });
-    this.unreadCount$.subscribe((val) => {
+    this.unreadCount$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.unreadCount = val;
     });
     this.store.dispatch(new GetUnreadCountAction());
 
-    this.isFullyAuthenticated$.subscribe((val) => {
+    this.isFullyAuthenticated$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       if (this.isFullyAuthenticated == false && val) {
         this.isFullyAuthenticated = val;
         if (this.isFullyAuthenticated) {
@@ -113,7 +122,9 @@ export class DashboardComponent implements OnInit {
   }
 
   setActiveIndexFromParams() {
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((params) => {
       this.params = params;
       const tabName = params['tab'];
       if (tabName) {
@@ -127,6 +138,11 @@ export class DashboardComponent implements OnInit {
         // Do this after authorization is implemented
       }
     });
+  }
+
+  ngOnDestroy(){
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
   populateVisibleTabs() {
     const keys = Object.keys(this.tabIndexList);

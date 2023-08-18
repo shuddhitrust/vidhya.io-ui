@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
@@ -35,6 +35,7 @@ import { clipLongText, parseDateTime } from 'src/app/shared/common/functions';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { ImageDisplayDialog } from 'src/app/shared/components/image-display/image-display-dialog.component';
+import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'app-issue-profile',
   templateUrl: './issue-profile.component.html',
@@ -58,6 +59,8 @@ export class IssueProfileComponent implements OnInit, OnDestroy {
   memberRows: any[] = [];
   issueStatusOptions = IssueStatusTypeOptions;
   remarks: string;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     public dialog: MatDialog,
     private store: Store,
@@ -67,7 +70,9 @@ export class IssueProfileComponent implements OnInit, OnDestroy {
     private router: Router,
     private auth: AuthorizationService
   ) {
-    this.issue$.subscribe((val) => {
+    this.issue$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.issue = val;
       if (!this.issue.link) {
         this.issueDoesNotExist = true;
@@ -116,7 +121,7 @@ export class IssueProfileComponent implements OnInit, OnDestroy {
       },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {});
   }
 
   renderStatusLabel(status) {
@@ -127,7 +132,9 @@ export class IssueProfileComponent implements OnInit, OnDestroy {
     return clipLongText(string, 100);
   }
   fetchMemberOptions() {
-    this.currentMember$.subscribe((val) => {
+    this.currentMember$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.currentMember = val;
     });
     this.store.dispatch(
@@ -141,7 +148,8 @@ export class IssueProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams.pipe(takeUntil(this.destroy$))
+    .subscribe((params) => {
       const issueId = params['id'];
 
       this.store.dispatch(
@@ -168,7 +176,7 @@ export class IssueProfileComponent implements OnInit, OnDestroy {
         data: masterDialogConfirmationObject,
       });
 
-      dialogRef.afterClosed().subscribe((result) => {
+      dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
         if (result == true) {
           this.store.dispatch(
             new UpdateIssueStatusAction({
@@ -207,7 +215,7 @@ export class IssueProfileComponent implements OnInit, OnDestroy {
       data: masterDialogConfirmationObject,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
       {
       }
       if (result == true) {
@@ -221,5 +229,7 @@ export class IssueProfileComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.store.dispatch(new ResetIssueFormAction());
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

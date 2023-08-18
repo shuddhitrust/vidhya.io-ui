@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
 import {
@@ -31,6 +31,7 @@ import {
 import { generateMemberProfileLink } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.model';
 import { AuthStateModel } from 'src/app/modules/auth/state/auth.model';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-project-profile',
@@ -63,6 +64,7 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
 
   @Select(AuthState)
   authState$: Observable<AuthStateModel>;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     public dialog: MatDialog,
@@ -72,7 +74,9 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
     private router: Router,
     private auth: AuthorizationService
   ) {
-    this.project$.subscribe((val) => {
+    this.project$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.project = val;
       if (!this.project.title) {
         this.projectDoesNotExist = true;
@@ -81,7 +85,9 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.authState$.subscribe((state) => {
+    this.authState$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((state) => {
       this.projectsClapped = state.currentMember.projectsClapped;
       this.isLoggedIn = state.isLoggedIn;
     });
@@ -100,7 +106,9 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
   }
 
   fetchMemberOptions() {
-    this.currentMember$.subscribe((val) => {
+    this.currentMember$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.currentMember = val;
     });
     this.store.dispatch(
@@ -117,7 +125,9 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((params) => {
       const projectId = params['id'];
       if (projectId) {
         this.store.dispatch(
@@ -158,7 +168,7 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
       data: masterDialogConfirmationObject,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
       if (result == true) {
         this.deleteProject();
       }
@@ -209,6 +219,8 @@ export class ProjectProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.store.dispatch(new ResetProjectFormAction());
+    this.store.dispatch(new ResetProjectFormAction());    
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

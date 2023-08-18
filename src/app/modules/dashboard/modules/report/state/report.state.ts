@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import { Router } from '@angular/router';
 import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
@@ -37,13 +37,17 @@ import { SUBSCRIPTIONS } from 'src/app/shared/api/graphql/subscriptions.graphql'
 import { REPORT_MUTATIONS } from 'src/app/shared/api/graphql/mutations.graphql';
 import { REPORTS } from '../../../dashboard.component';
 import { uiroutes } from 'src/app/shared/common/ui-routes';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @State<ReportStateModel>({
   name: 'reportState',
   defaults: defaultReportState,
 })
 @Injectable()
-export class ReportState {
+export class ReportState implements OnDestroy{
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private apollo: Apollo,
     private store: Store,
@@ -171,6 +175,7 @@ export class ReportState {
         variables,
         // fetchPolicy,
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.reports.records;
@@ -203,6 +208,7 @@ export class ReportState {
         .subscribe({
           query: SUBSCRIPTIONS.report,
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe((result: any) => {
           const state = getState();
           const method = result?.data?.notifyReport?.method;
@@ -235,6 +241,7 @@ export class ReportState {
         variables: { id },
         fetchPolicy: 'network-only',
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.report;
@@ -281,6 +288,7 @@ export class ReportState {
             : REPORT_MUTATIONS.CREATE_REPORT,
           variables,
         })
+        .pipe(takeUntil(this.destroy$))
         .subscribe(
           ({ data }: any) => {
             const response = updateForm ? data.updateReport : data.createReport;
@@ -347,6 +355,7 @@ export class ReportState {
         mutation: REPORT_MUTATIONS.DELETE_REPORT,
         variables: { id },
       })
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
         ({ data }: any) => {
           const response = data.deleteReport;
@@ -390,5 +399,10 @@ export class ReportState {
       reportFormRecord: emptyReportFormRecord,
       formSubmitting: false,
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

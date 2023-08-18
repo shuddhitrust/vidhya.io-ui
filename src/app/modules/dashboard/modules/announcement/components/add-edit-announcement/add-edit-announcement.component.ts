@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import {
   FormBuilder,
@@ -14,7 +14,7 @@ import {
   GetAnnouncementAction,
 } from 'src/app/modules/dashboard/modules/announcement/state/announcement.actions';
 import { AnnouncementState } from 'src/app/modules/dashboard/modules/announcement/state/announcement.state';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { emptyAnnouncementFormRecord } from 'src/app/modules/dashboard/modules/announcement/state/announcement.model';
 import {
   Announcement,
@@ -34,6 +34,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ToggleLoadingScreen } from 'src/app/shared/state/loading/loading.actions';
 import { UploadService } from 'src/app/shared/api/upload.service';
 import { Clipboard } from '@angular/cdk/clipboard';
+import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'app-add-edit-announcement',
   templateUrl: './add-edit-announcement.component.html',
@@ -42,7 +43,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
     './../../../../../../shared/common/shared-styles.css',
   ],
 })
-export class AddEditAnnouncementComponent implements OnInit {
+export class AddEditAnnouncementComponent implements OnInit, OnDestroy {
   formSubmitting: boolean = false;
   recipientsGlobal = 'recipientsGlobal';
   recipientsInstitution = 'recipientsInstitution';
@@ -69,6 +70,7 @@ export class AddEditAnnouncementComponent implements OnInit {
   currentMember: CurrentMember;
   announcementFormRecord: Announcement = emptyAnnouncementFormRecord;
   announcementForm: FormGroup;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(
     private location: Location,
@@ -80,13 +82,19 @@ export class AddEditAnnouncementComponent implements OnInit {
     public clipboard: Clipboard
   ) {
     this.store.dispatch(new FetchAdminGroupOptions());
-    this.currentUserId$.subscribe((val) => {
+    this.currentUserId$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.currentUserId = val;
     });
-    this.currentMember$.subscribe((val) => {
+    this.currentMember$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.currentMember = val;
     });
-    this.announcementFormRecord$.subscribe((val) => {
+    this.announcementFormRecord$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.announcementFormRecord = val;
       this.announcementForm = this.setupAnnouncementFormGroup(
         this.announcementFormRecord
@@ -139,7 +147,9 @@ export class AddEditAnnouncementComponent implements OnInit {
       );
       const formData = new FormData();
       formData.append('file', file);
-      this.uploadService.upload(formData).subscribe(
+      this.uploadService.upload(formData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
         (res) => {
           const url = res.secure_url;
           this.store.dispatch(
@@ -194,11 +204,13 @@ export class AddEditAnnouncementComponent implements OnInit {
         action: 'success',
       })
     );
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {});
   }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((params) => {
       this.params = params;
       const id = params['id'];
       if (id) {
@@ -271,5 +283,10 @@ export class AddEditAnnouncementComponent implements OnInit {
         })
       );
     }
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import {
   MatDialog,
@@ -6,7 +6,7 @@ import {
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { AuthorizationService } from 'src/app/shared/api/authorization/authorization.service';
 import { defaultSearchParams } from 'src/app/shared/common/constants';
 import {
@@ -15,14 +15,19 @@ import {
   RESOURCE_ACTIONS,
   User,
   UserRole,
+  MatSelectOption,
+  institutionTypeOptions,
 } from 'src/app/shared/common/models';
 import {
   ApproveMemberAction,
+  GetMemberAction,
+  ModifyUserInstitutionAction,
   SuspendMemberAction,
 } from 'src/app/modules/dashboard/modules/admin/modules/member/state/member.actions';
 import { ShowNotificationAction } from 'src/app/shared/state/notifications/notification.actions';
 import { UserRoleState } from '../../../../user-role/state/userRole.state';
 import { FetchUserRolesAction } from '../../../../user-role/state/userRole.actions';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-moderation-profile',
@@ -32,7 +37,7 @@ import { FetchUserRolesAction } from '../../../../user-role/state/userRole.actio
     './../../../../../../../../../shared/common/shared-styles.css',
   ],
 })
-export class UserModerationProfileComponent implements OnInit {
+export class UserModerationProfileComponent implements OnInit, OnDestroy {
   resource = resources.MODERATION;
   resourceActions = RESOURCE_ACTIONS;
   profileData: any = {};
@@ -43,6 +48,8 @@ export class UserModerationProfileComponent implements OnInit {
   @Select(UserRoleState.isFetching)
   isFetchingUserRoles$: Observable<boolean>;
   isFetchingUserRoles: boolean;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<UserModerationProfileComponent>,
@@ -51,10 +58,38 @@ export class UserModerationProfileComponent implements OnInit {
     private fb: FormBuilder,
     private auth: AuthorizationService
   ) {
-    this.roleOptions$.subscribe((val) => {
+    this.roleOptions$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((val) => {
       this.roleOptions = val;
     });
-    this.profileData = data;
+    this.memberFormRecord$.subscribe((val) => {
+      if(val && val?.username){        
+        console.log(this.profileData);
+        this.profileData = val;
+      }
+    })
+
+    this.institutionList$.subscribe(options => {
+      if (options) {
+        this.institutionOptions = options;
+        const institutionOptionsObservable$ = of(this.institutionOptions);
+        this.filteredInstitutionOptions$ = institutionOptionsObservable$.pipe(map((number) => number));
+        if (this.moderationForm && this.moderationForm.controls['institution'].value) {
+          if (!this.autoInput.nativeElement.value) {
+            this.autoInput.nativeElement.value = this.profileData?.institution?.name;
+          }
+        }
+      }
+    })
+    
+    this.designationsList$.subscribe(val => {
+      this.designationOptions = val;
+    })
+  this.profileData = data;
+  this.store.dispatch(new GetMemberAction({ id:this.profileData.id}));
+
+  console.log(this.profileData);
     this.moderationForm = this.setupModerationFormGroup(this.profileData);
   }
 
@@ -62,6 +97,10 @@ export class UserModerationProfileComponent implements OnInit {
     this.store.dispatch(
       new FetchUserRolesAction({ searchParams: defaultSearchParams })
     );
+    this.store.dispatch(new searchInstitution({ name:this.profileData?.institution?.name}));
+    this.store.dispatch(new FetchDesignationByInstitution({ id: this.profileData?.institution?.id }));
+
+
   }
 
   authorizeResourceMethod(action) {
@@ -81,6 +120,8 @@ export class UserModerationProfileComponent implements OnInit {
     const formGroup = this.fb.group({
       role: [user?.role?.name],
       remarks: [],
+      institution:[user?.institution],
+      designation:[user?.designation]
     });
     return formGroup;
   };
@@ -89,6 +130,41 @@ export class UserModerationProfileComponent implements OnInit {
     this.dialogRef.close();
   }
 
+  modifyInstitutionConfirmation(){
+    debugger;
+    const institutionValue = this.moderationForm.get('institution').value;
+    if(institutionValue) {
+      const dialogRef = this.dialog.open(UserInstitutionChangeConfirmationDialog, {
+        data: JSON.stringify({'profileData':this.profileData,'currentinstitution':this.moderationForm.getRawValue().institution})
+      });
+
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result == true) {
+          this.modifyInstitution();
+        }
+      });
+    } else {
+      this.store.dispatch(
+        new ShowNotificationAction({
+          message: 'Please add a remark before attempting to deny.',
+          action: 'error',
+        })
+      );
+    }
+  }
+
+  modifyInstitution(){
+    this.store.dispatch(
+      new ModifyUserInstitutionAction({
+        userId: this.profileData.id,
+        institutionId: this.moderationForm.controls['institution'].value?.id,
+        designation: this.moderationForm.controls['designation'].value//.get('role').value,
+      })
+    );
+
+    this.closeDialog();
+  }
+  
   approvalConfirmation() {
     const roleValue = this.moderationForm.get('role').value;
     if (roleValue) {
@@ -98,7 +174,7 @@ export class UserModerationProfileComponent implements OnInit {
         data: { ...this.profileData, role: { id: roleValue, name: roleName } },
       });
 
-      dialogRef.afterClosed().subscribe((result) => {
+      dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
         if (result == true) {
           this.approveUser();
         }
@@ -129,7 +205,7 @@ export class UserModerationProfileComponent implements OnInit {
         data: this.profileData,
       });
 
-      dialogRef.afterClosed().subscribe((result) => {
+      dialogRef.afterClosed()   .pipe(takeUntil(this.destroy$)).subscribe((result) => {
         if (result == true) {
           this.denyUser();
         }
@@ -151,6 +227,11 @@ export class UserModerationProfileComponent implements OnInit {
       })
     );
     this.closeDialog();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }
 
@@ -174,4 +255,20 @@ export class UserDenialConfirmationDialog {
     public dialogRef: MatDialogRef<UserApprovalConfirmationDialog>,
     @Inject(MAT_DIALOG_DATA) public data: User
   ) {}
+}
+
+@Component({
+  selector:'user-institution-modification-confirmation-dialog',
+  templateUrl:'institution-change-dialog.html',
+})
+export class UserInstitutionChangeConfirmationDialog {
+  userData:any 
+  constructor(
+    public dialogRef: MatDialogRef<UserInstitutionChangeConfirmationDialog>,
+    @Inject(MAT_DIALOG_DATA) public data:any
+  ) {
+    this.userData = JSON.parse(data)
+
+// this.userData=JSON.parse(this.data);
+  }
 }
